@@ -56,7 +56,7 @@ public abstract class TileGenerator : MonoBehaviour {
 
 		print(m_currentTileZ + ", " + tileZ + ", " + tileMoveZ + ", " + playerPos.z);
 
-		// todo: handle if tileMoveZ > 1
+		// todo: handle if abs(tileMoveZ) > 1
 		int bottomIndex = (m_topIndex + 1) % m_tileDiameter;
 		int verticalIndex = tileMoveZ > 0 ? m_topIndex : bottomIndex;
 
