@@ -105,12 +105,6 @@ public abstract class TileGenerator : MonoBehaviour {
 		return (pos * m_tileWidth) + (m_tileWidth / 2);
 	}
 
-//	public float listIndex(int x, int y)
-//	{
-//		int tileRowIndex = (m_matrixLeftIndex + col) % m_matrixColumnCount;
-//		int listIndex = (indexOfRowToReuse * m_matrixColumnCount) + tileRowIndex;
-//	}
-
 	public abstract void updateTile(GameObject tile);
 }
 
