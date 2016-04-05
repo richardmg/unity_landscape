@@ -7,17 +7,17 @@ public abstract class TileGenerator : MonoBehaviour {
 	public GameObject player;
 	public GameObject tile;
 
-	const int m_tileRadius = 2;
-	const int m_tileDiameter = m_tileRadius * 2;
-	const int m_tileCount = m_tileDiameter * m_tileDiameter;
+	const int m_matrixColumnCount = 4;
+	const int m_matrixColumnCountHalf = m_matrixColumnCount / 2;
+	const int m_tileCount = m_matrixColumnCount * m_matrixColumnCount;
 	const int m_tileWidth = 10;
 
 	int m_currentTileX;
 	int m_currentTileZ;
 
-	List<GameObject> m_tileList = new List<GameObject>();
-	int m_topIndex = m_tileDiameter - 1;
-	int m_leftIndex = 0;
+	List<GameObject> m_tileMatrix = new List<GameObject>();
+	int m_matrixTopIndex = m_matrixColumnCount - 1;
+	int m_matrixLeftIndex = 0;
 
 	// Use this for initialization
 	void Start () {
@@ -27,53 +27,62 @@ public abstract class TileGenerator : MonoBehaviour {
 
 		for (int t = 0; t < m_tileCount; ++t) {
 			GameObject tileObject = (GameObject)Instantiate(tile, Vector3.zero, Quaternion.identity);
-			m_tileList.Add(tileObject);
-			int x = (t % m_tileDiameter) - m_tileRadius;
-			int z = (int)(t / m_tileDiameter) - m_tileRadius;
-			float tilePosX = Mathf.FloorToInt(playerPos.x) + (x * m_tileWidth) + m_tileWidth;
-			float tilePosZ = Mathf.FloorToInt(playerPos.z) + (z * m_tileWidth) + m_tileWidth;
+			m_tileMatrix.Add(tileObject);
+			int x = (t % m_matrixColumnCount) - m_matrixColumnCountHalf;
+			int z = Mathf.FloorToInt(t / m_matrixColumnCount) - m_matrixColumnCountHalf;
+			float tilePosX = Mathf.FloorToInt(playerPos.x) + tilePosToWorldPos(x);
+			float tilePosZ = Mathf.FloorToInt(playerPos.z) + tilePosToWorldPos(z);
 			tileObject.transform.position = new Vector3(tilePosX, 0, tilePosZ);
 		}
 				
-		float w = m_tileList[0].GetComponent<Renderer>().bounds.size.x;
+		float w = m_tileMatrix[0].GetComponent<Renderer>().bounds.size.x;
 		Debug.AssertFormat(m_tileWidth == w, "Game object tile width does not match const m_tileWidth");
 	}
 
 	// Update is called once per frame
 	void Update () {
+		if (Input.GetKeyDown("q"))
+			player.transform.position += new Vector3 (0, 0, 20);
+		if (Input.GetKeyDown ("e"))
+			player.transform.position += new Vector3 (0, 0, -20);
+
 		Vector3 playerPos = player.transform.position;
-		int tileX = Mathf.FloorToInt(playerPos.x / m_tileWidth);
-		int tileZ = Mathf.FloorToInt(playerPos.z / m_tileWidth);
-		if (tileX == m_currentTileX && tileZ == m_currentTileZ)
+		int playerTileX = Mathf.FloorToInt(playerPos.x / m_tileWidth);
+		int playerTileZ = Mathf.FloorToInt(playerPos.z / m_tileWidth);
+		if (playerTileX == m_currentTileX && playerTileZ == m_currentTileZ)
 			return;
 
-		int tileMoveX = tileX - m_currentTileX;
-		int tileMoveZ = tileZ - m_currentTileZ;
+		int tilesCrossedZ = playerTileZ - m_currentTileZ;
+		int moveDirectionZ = tilesCrossedZ > 0 ? 1 : -1;
+		int nuberOfTileRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedZ), m_matrixColumnCount);
+		m_matrixTopIndex = (m_matrixTopIndex + tilesCrossedZ) % m_matrixColumnCount;
+		m_matrixTopIndex += (m_matrixTopIndex < 0) ? m_matrixColumnCount : 0;
 
-		m_topIndex = (m_topIndex + tileMoveZ) % m_tileDiameter;
-		m_topIndex += m_topIndex < 0 ? m_tileDiameter : 0;
-		m_leftIndex = 0;//(m_leftIndex + tileMoveX) % m_tileDiameter;
+		for (int row = 0; row < nuberOfTileRowsToUpdate; ++row) {
+			// Get the matrix row that contains the tiles that are now
+			// out of sight, and should be moved in front of the player
+			int indexOfRowToReuse = (m_matrixTopIndex + (row * -moveDirectionZ)) % m_matrixColumnCount;
+			indexOfRowToReuse = moveDirectionZ > 0 ? indexOfRowToReuse : (indexOfRowToReuse + 1) % m_matrixColumnCount;
+			// For each tile in the row of tiles we're going to reuse, calculate the new tile z coordinate
+			int tileZ = moveDirectionZ > 0 ? playerTileZ + m_matrixColumnCountHalf - row - 1 : playerTileZ - m_matrixColumnCountHalf + row;
 
-		print(m_currentTileZ + ", " + tileZ + ", " + tileMoveZ + ", " + playerPos.z);
-
-		// todo: handle if abs(tileMoveZ) > 1
-		int bottomIndex = (m_topIndex + 1) % m_tileDiameter;
-		int verticalIndex = tileMoveZ > 0 ? m_topIndex : bottomIndex;
-
-		for (int x = 0; x < m_tileDiameter; ++x) {
-			// Figure out which tile should be reused
-			int tileLeftIndex = (m_leftIndex + x) % m_tileDiameter;
-			int tileListIndex = (verticalIndex * m_tileDiameter) + tileLeftIndex;
-			GameObject tileObject = m_tileList[tileListIndex];
-
-			// Calculate where the tile should be moved 
-			int zOffset = tileMoveZ > 0 ? m_tileRadius - 1 : -m_tileRadius;
-			float tilePosZ = ((tileZ + zOffset) * m_tileWidth) + m_tileWidth;
-			tileObject.transform.position = new Vector3(tileObject.transform.position.x, 0, tilePosZ);
+			for (int col = 0; col < m_matrixColumnCount; ++col) {
+				// Get the game object representing the tile from the
+				// matrix, and move it to it's new position
+				int tileLeftIndex = (m_matrixLeftIndex + col) % m_matrixColumnCount;
+				int tileListIndex = (indexOfRowToReuse * m_matrixColumnCount) + tileLeftIndex;
+				GameObject tileObject = m_tileMatrix[tileListIndex];
+				tileObject.transform.position = new Vector3(tileObject.transform.position.x, 0, tilePosToWorldPos(tileZ));
+			}
 		}
 
-		m_currentTileX = tileX;
-		m_currentTileZ = tileZ;
+		m_currentTileX = playerTileX;
+		m_currentTileZ = playerTileZ;
+	}
+
+	public float tilePosToWorldPos(int pos)
+	{
+		return (pos * m_tileWidth) + (m_tileWidth / 2);
 	}
 
 	public abstract void updateTile(GameObject tile);
