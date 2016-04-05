@@ -16,7 +16,7 @@ public abstract class TileGenerator : MonoBehaviour {
 
 	GameObject[,] m_tileMatrix = new GameObject[m_matrixColumnCount, m_matrixColumnCount];
 	int m_matrixTopIndex = m_matrixColumnCount - 1;
-	int m_matrixLeftIndex = 0;
+	int m_matrixRightIndex = m_matrixColumnCount - 1;
 
 	// Use this for initialization
 	void Start () {
@@ -41,9 +41,9 @@ public abstract class TileGenerator : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetKeyDown("q"))
-			player.transform.position += new Vector3 (0, 0, 20);
+			player.transform.position += new Vector3 (0, 0, 25);
 		if (Input.GetKeyDown ("e"))
-			player.transform.position += new Vector3 (0, 0, -20);
+			player.transform.position += new Vector3 (0, 0, -22);
 
 		Vector3 playerPos = player.transform.position;
 		int playerTileX = Mathf.FloorToInt(playerPos.x / m_tileWidth);
@@ -77,17 +77,18 @@ public abstract class TileGenerator : MonoBehaviour {
 			int tilesCrossedX = playerTileX - m_currentTileX;
 			int moveDirectionX = tilesCrossedX > 0 ? 1 : -1;
 			int nuberOfTileColsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedX), m_matrixColumnCount);
-			m_matrixLeftIndex = (m_matrixLeftIndex + tilesCrossedX) % m_matrixColumnCount;
-			m_matrixLeftIndex += (m_matrixLeftIndex < 0) ? m_matrixColumnCount : 0;
+			m_matrixRightIndex = (m_matrixRightIndex + tilesCrossedX) % m_matrixColumnCount;
+			m_matrixRightIndex += (m_matrixRightIndex < 0) ? m_matrixColumnCount : 0;
 
 			for (int col = 0; col < nuberOfTileColsToUpdate; ++col) {
 				// Get the matrix col that contains the tiles that are now
 				// out of sight, and should be moved in front of the player
-				int indexOfColToReuse = (m_matrixLeftIndex + (col * -moveDirectionX)) % m_matrixColumnCount;
+				int indexOfColToReuse = (m_matrixRightIndex + (col * -moveDirectionX)) % m_matrixColumnCount;
 				indexOfColToReuse = moveDirectionX > 0 ? indexOfColToReuse : (indexOfColToReuse + 1) % m_matrixColumnCount;
 				// For each tile in the row of tiles we're going to reuse, calculate the new tile z coordinate
 				int tileX = moveDirectionX > 0 ? playerTileX + m_matrixColumnCountHalf - col - 1 : playerTileX - m_matrixColumnCountHalf + col;
 
+				print(indexOfColToReuse + ", " + moveDirectionX);
 				for (int row = 0; row < m_matrixColumnCount; ++row) {
 					// Get the game object representing the tile, and move it to it's new position
 					GameObject tileObject = m_tileMatrix[indexOfColToReuse, row];
