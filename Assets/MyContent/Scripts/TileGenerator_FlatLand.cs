@@ -53,12 +53,12 @@ public abstract class TileGenerator : MonoBehaviour {
 		updateTiles(ref m_currentTileX, playerTileX, ref m_matrixRightIndex, false);
 	}
 
-	private void updateTiles(ref int oldPlayerTileCoord, int newPlayerTileCoord, ref int matrixFrontIndex, bool updateZAxis)
+	private void updateTiles(ref int oldTileCoord, int newTileCoord, ref int matrixFrontIndex, bool updateZAxis)
 	{
-		if (newPlayerTileCoord == oldPlayerTileCoord)
+		if (newTileCoord == oldTileCoord)
 			return;
 		
-		int tilesCrossed = newPlayerTileCoord - oldPlayerTileCoord;
+		int tilesCrossed = newTileCoord - oldTileCoord;
 		int moveDirection = tilesCrossed > 0 ? 1 : -1;
 		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossed), m_matrixColumnCount);
 		int newMatrixFrontIndex = (m_matrixColumnCount + matrixFrontIndex + (tilesCrossed % m_matrixColumnCount)) % m_matrixColumnCount;
@@ -72,8 +72,8 @@ public abstract class TileGenerator : MonoBehaviour {
 			}
 
 			int tileCoord = moveDirection > 0 ?
-				newPlayerTileCoord + m_matrixColumnCountHalf - i - 1 :
-				newPlayerTileCoord - m_matrixColumnCountHalf + i;
+				newTileCoord + m_matrixColumnCountHalf - i - 1 :
+				newTileCoord - m_matrixColumnCountHalf + i;
 
 			if (updateZAxis) {
 				for (int col = 0; col < m_matrixColumnCount; ++col) {
@@ -90,7 +90,7 @@ public abstract class TileGenerator : MonoBehaviour {
 		}
 
 		matrixFrontIndex = newMatrixFrontIndex;
-		oldPlayerTileCoord = newPlayerTileCoord;
+		oldTileCoord = newTileCoord;
 	}
 
 	private float tilePosToWorldPos(int pos)
