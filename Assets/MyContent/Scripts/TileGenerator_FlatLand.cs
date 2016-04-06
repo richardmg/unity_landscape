@@ -7,7 +7,7 @@ public abstract class TileGenerator : MonoBehaviour {
 	public GameObject player;
 	public GameObject tile;
 
-	const int m_matrixColumnCount = 4;
+	const int m_matrixColumnCount = 10;
 	const int m_matrixColumnCountHalf = m_matrixColumnCount / 2;
 	const int m_tileWidth = 10;
 
@@ -46,8 +46,8 @@ public abstract class TileGenerator : MonoBehaviour {
 			player.transform.position += new Vector3 (0, 0, -42);
 
 		Vector3 playerPos = player.transform.position;
-		int playerTileX = Mathf.FloorToInt(playerPos.x / m_tileWidth);
-		int playerTileZ = Mathf.FloorToInt(playerPos.z / m_tileWidth);
+		int playerTileX = Mathf.FloorToInt((playerPos.x + (m_tileWidth / 2)) / m_tileWidth);
+		int playerTileZ = Mathf.FloorToInt((playerPos.z + (m_tileWidth / 2)) / m_tileWidth);
 
 		updateTiles(ref m_currentTileZ, playerTileZ, ref m_matrixTopIndex, true);
 		updateTiles(ref m_currentTileX, playerTileX, ref m_matrixRightIndex, false);
