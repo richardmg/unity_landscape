@@ -53,20 +53,22 @@ public abstract class TileGenerator : MonoBehaviour {
 			int tilesCrossedZ = playerTileZ - m_currentTileZ;
 			int moveDirectionZ = tilesCrossedZ > 0 ? 1 : -1;
 			int nuberOfTileRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedZ), m_matrixColumnCount);
-			m_matrixTopIndex = (m_matrixTopIndex + tilesCrossedZ) % m_matrixColumnCount;
-			m_matrixTopIndex += (m_matrixTopIndex < 0) ? m_matrixColumnCount : 0;
+			// Update m_matrixTopIndex to point to the matrix row that contains the tiles furthest away from the player along positive z
+			m_matrixTopIndex = (m_matrixColumnCount + m_matrixTopIndex + (tilesCrossedZ % m_matrixColumnCount)) % m_matrixColumnCount;
 
 			for (int row = 0; row < nuberOfTileRowsToUpdate; ++row) {
-				// Get the matrix row that contains the tiles that are now
-				// out of sight, and should be moved in front of the player
+				// Get the matrix row that contains tiles that are out of sight, and move it in front of the player
 				int indexOfRowToReuse = (m_matrixColumnCount + m_matrixTopIndex + (row * -moveDirectionZ)) % m_matrixColumnCount;
-				indexOfRowToReuse = moveDirectionZ > 0 ? indexOfRowToReuse : (indexOfRowToReuse + 1) % m_matrixColumnCount;
+				if (moveDirectionZ < 0) {
+					// When moving "backwards", reuse the new bottom index instead
+					indexOfRowToReuse = (indexOfRowToReuse + 1) % m_matrixColumnCount;
+				}
 
 				// For each tile in the row of tiles we're going to reuse, calculate the new tile z coordinate
 				int tileZ = moveDirectionZ > 0 ? playerTileZ + m_matrixColumnCountHalf - row - 1 : playerTileZ - m_matrixColumnCountHalf + row;
 
+				// Get the game objects for the tiles, and move them to their new positions
 				for (int col = 0; col < m_matrixColumnCount; ++col) {
-					// Get the game object representing the tile, and move it to it's new position
 					GameObject tileObject = m_tileMatrix[col, indexOfRowToReuse];
 					tileObject.transform.position = new Vector3(tileObject.transform.position.x, 0, tilePosToWorldPos(tileZ));
 				}
@@ -78,8 +80,7 @@ public abstract class TileGenerator : MonoBehaviour {
 			int tilesCrossedX = playerTileX - m_currentTileX;
 			int moveDirectionX = tilesCrossedX > 0 ? 1 : -1;
 			int nuberOfTileColsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedX), m_matrixColumnCount);
-			m_matrixRightIndex = (m_matrixRightIndex + tilesCrossedX) % m_matrixColumnCount;
-			m_matrixRightIndex += (m_matrixRightIndex < 0) ? m_matrixColumnCount : 0;
+			m_matrixRightIndex = (m_matrixColumnCount + m_matrixRightIndex + (tilesCrossedX % m_matrixColumnCount)) % m_matrixColumnCount;
 
 			for (int col = 0; col < nuberOfTileColsToUpdate; ++col) {
 				// Get the matrix col that contains the tiles that are now
