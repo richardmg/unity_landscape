@@ -49,59 +49,51 @@ public abstract class TileGenerator : MonoBehaviour {
 		int playerTileX = Mathf.FloorToInt(playerPos.x / m_tileWidth);
 		int playerTileZ = Mathf.FloorToInt(playerPos.z / m_tileWidth);
 
-		if (playerTileZ != m_currentTileZ) {
-			int tilesCrossedZ = playerTileZ - m_currentTileZ;
-			int moveDirectionZ = tilesCrossedZ > 0 ? 1 : -1;
-			int nuberOfTileRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedZ), m_matrixColumnCount);
-			// Update m_matrixTopIndex to point to the matrix row that contains the tiles furthest away from the player along positive z
-			m_matrixTopIndex = (m_matrixColumnCount + m_matrixTopIndex + (tilesCrossedZ % m_matrixColumnCount)) % m_matrixColumnCount;
-
-			for (int row = 0; row < nuberOfTileRowsToUpdate; ++row) {
-				// Get the matrix row that contains tiles that are out of sight, and move it in front of the player
-				int indexOfRowToReuse = (m_matrixColumnCount + m_matrixTopIndex + (row * -moveDirectionZ)) % m_matrixColumnCount;
-				if (moveDirectionZ < 0) {
-					// When moving "backwards", reuse the new bottom index instead
-					indexOfRowToReuse = (indexOfRowToReuse + 1) % m_matrixColumnCount;
-				}
-
-				// For each tile in the row of tiles we're going to reuse, calculate the new tile z coordinate
-				int tileZ = moveDirectionZ > 0 ? playerTileZ + m_matrixColumnCountHalf - row - 1 : playerTileZ - m_matrixColumnCountHalf + row;
-
-				// Get the game objects for the tiles, and move them to their new positions
-				for (int col = 0; col < m_matrixColumnCount; ++col) {
-					GameObject tileObject = m_tileMatrix[col, indexOfRowToReuse];
-					tileObject.transform.position = new Vector3(tileObject.transform.position.x, 0, tilePosToWorldPos(tileZ));
-				}
-			}
-			m_currentTileZ = playerTileZ;
-		}
-
-		if (playerTileX != m_currentTileX) {
-			int tilesCrossedX = playerTileX - m_currentTileX;
-			int moveDirectionX = tilesCrossedX > 0 ? 1 : -1;
-			int nuberOfTileColsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedX), m_matrixColumnCount);
-			m_matrixRightIndex = (m_matrixColumnCount + m_matrixRightIndex + (tilesCrossedX % m_matrixColumnCount)) % m_matrixColumnCount;
-
-			for (int col = 0; col < nuberOfTileColsToUpdate; ++col) {
-				// Get the matrix col that contains the tiles that are now
-				// out of sight, and should be moved in front of the player
-				int indexOfColToReuse = (m_matrixColumnCount + m_matrixRightIndex + (col * -moveDirectionX)) % m_matrixColumnCount;
-				indexOfColToReuse = moveDirectionX > 0 ? indexOfColToReuse : (indexOfColToReuse + 1) % m_matrixColumnCount;
-
-				// For each tile in the row of tiles we're going to reuse, calculate the new tile z coordinate
-				int tileX = moveDirectionX > 0 ? playerTileX + m_matrixColumnCountHalf - col - 1 : playerTileX - m_matrixColumnCountHalf + col;
-
-				for (int row = 0; row < m_matrixColumnCount; ++row) {
-					// Get the game object representing the tile, and move it to it's new position
-					GameObject tileObject = m_tileMatrix[indexOfColToReuse, row];
-					tileObject.transform.position = new Vector3(tilePosToWorldPos(tileX), 0, tileObject.transform.position.z);
-				}
-			}
-			m_currentTileX = playerTileX;
-		}
+		updateTiles(ref m_currentTileZ, playerTileZ, ref m_matrixTopIndex, true);
+		updateTiles(ref m_currentTileX, playerTileX, ref m_matrixRightIndex, false);
 	}
 
-	public float tilePosToWorldPos(int pos)
+	private void updateTiles(ref int oldPlayerTileCoord, int newPlayerTileCoord, ref int matrixFrontIndex, bool updateZAxis)
+	{
+		if (newPlayerTileCoord == oldPlayerTileCoord)
+			return;
+		
+		int tilesCrossed = newPlayerTileCoord - oldPlayerTileCoord;
+		int moveDirection = tilesCrossed > 0 ? 1 : -1;
+		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossed), m_matrixColumnCount);
+		int newMatrixFrontIndex = (m_matrixColumnCount + matrixFrontIndex + (tilesCrossed % m_matrixColumnCount)) % m_matrixColumnCount;
+
+		for (int i = 0; i < nuberOfRowsToUpdate; ++i) {
+			// Get the matrix row that contains tiles that are out of sight, and move it in front of the player
+			int matrixIndexToReuse = (m_matrixColumnCount + newMatrixFrontIndex + (i * -moveDirection)) % m_matrixColumnCount;
+			if (moveDirection < 0) {
+				// When moving "backwards", reuse the new bottom index instead
+				matrixIndexToReuse = (matrixIndexToReuse + 1) % m_matrixColumnCount;
+			}
+
+			int tileCoord = moveDirection > 0 ?
+				newPlayerTileCoord + m_matrixColumnCountHalf - i - 1 :
+				newPlayerTileCoord - m_matrixColumnCountHalf + i;
+
+			if (updateZAxis) {
+				for (int col = 0; col < m_matrixColumnCount; ++col) {
+					GameObject tileObject = m_tileMatrix[col, matrixIndexToReuse];
+					tileObject.transform.position = new Vector3(tileObject.transform.position.x, 0, tilePosToWorldPos(tileCoord));
+				}
+			} else {
+				for (int row = 0; row < m_matrixColumnCount; ++row) {
+					// Get the game object representing the tile, and move it to it's new position
+					GameObject tileObject = m_tileMatrix[matrixIndexToReuse, row];
+					tileObject.transform.position = new Vector3(tilePosToWorldPos(tileCoord), 0, tileObject.transform.position.z);
+				}
+			}
+		}
+
+		matrixFrontIndex = newMatrixFrontIndex;
+		oldPlayerTileCoord = newPlayerTileCoord;
+	}
+
+	private float tilePosToWorldPos(int pos)
 	{
 		// Return the 'bottom left' corner of the tile 
 		return (pos * m_tileWidth) + (m_tileWidth / 2);
