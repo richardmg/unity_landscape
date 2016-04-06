@@ -28,8 +28,8 @@ public abstract class TileGenerator : MonoBehaviour {
 			for (int x = 0; x < m_matrixColumnCount; ++x) {
 				GameObject tileObject = (GameObject)Instantiate(tile, Vector3.zero, Quaternion.identity);
 				m_tileMatrix[x, z] = tileObject;
-				float tilePosX = Mathf.FloorToInt(playerPos.x) + tilePosToWorldPos(x - m_matrixColumnCountHalf);
-				float tilePosZ = Mathf.FloorToInt(playerPos.z) + tilePosToWorldPos(z - m_matrixColumnCountHalf);
+				float tilePosX = Mathf.FloorToInt(playerPos.x) + tileCoordToWorldPos(x - m_matrixColumnCountHalf);
+				float tilePosZ = Mathf.FloorToInt(playerPos.z) + tileCoordToWorldPos(z - m_matrixColumnCountHalf);
 				tileObject.transform.position = new Vector3(tilePosX, 0, tilePosZ);
 			}
 		}
@@ -78,13 +78,13 @@ public abstract class TileGenerator : MonoBehaviour {
 			if (updateZAxis) {
 				for (int col = 0; col < m_matrixColumnCount; ++col) {
 					GameObject tileObject = m_tileMatrix[col, matrixIndexToReuse];
-					tileObject.transform.position = new Vector3(tileObject.transform.position.x, 0, tilePosToWorldPos(tileCoord));
+					tileObject.transform.position = new Vector3(tileObject.transform.position.x, 0, tileCoordToWorldPos(tileCoord));
 				}
 			} else {
 				for (int row = 0; row < m_matrixColumnCount; ++row) {
 					// Get the game object representing the tile, and move it to it's new position
 					GameObject tileObject = m_tileMatrix[matrixIndexToReuse, row];
-					tileObject.transform.position = new Vector3(tilePosToWorldPos(tileCoord), 0, tileObject.transform.position.z);
+					tileObject.transform.position = new Vector3(tileCoordToWorldPos(tileCoord), 0, tileObject.transform.position.z);
 				}
 			}
 		}
@@ -93,7 +93,7 @@ public abstract class TileGenerator : MonoBehaviour {
 		oldTileCoord = newTileCoord;
 	}
 
-	private float tilePosToWorldPos(int pos)
+	private float tileCoordToWorldPos(int pos)
 	{
 		// Return the 'bottom left' corner of the tile 
 		return (pos * m_tileWidth) + (m_tileWidth / 2);
