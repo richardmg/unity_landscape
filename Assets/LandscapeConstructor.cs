@@ -13,6 +13,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	{
 		m_tileEngine = new TileEngine(2, 10);
 		m_tileEngine.addTileLayer(new TileGroundLayer(tile, m_tileEngine));
+		m_tileEngine.start(player.transform.position);
 	}
 
 	// Update is called once per frame
@@ -41,7 +42,7 @@ public class TileGroundLayer : TileLayer
 
 	public override void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos)
 	{
-		MonoBehaviour.print("move: " + tileGridCoord);
+		MonoBehaviour.print("tileMatrixCoord: " + tileMatrixCoord + ", tileGridCoord: " + tileGridCoord);
 		GameObject tile = m_tileMatrix[(int)tileMatrixCoord.x, (int)tileMatrixCoord.y];
 		tile.transform.position = tileWorldPos;
 		tile.GetComponent<TileGround>().onTileMoved();
