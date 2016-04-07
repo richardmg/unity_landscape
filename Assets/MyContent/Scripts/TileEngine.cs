@@ -118,7 +118,6 @@ public class TileEngine {
 				}
 			} else {
 				for (int j = 0; j < m_matrixColumnCount; ++j) {
-					// Jeg kan ikke bare flytte over fra row = 0, siden tilen der ligger nødvendigvis på nederste rad i matrisen.
 					int matrixRow = (m_matrixColumnCount + m_matrixTopIndex - j) % m_matrixColumnCount;
 					Vector2 tileMatrixCoord = new Vector2(matrixRowOrColToReuse, matrixRow);
 					Vector2 tileGridCoord = new Vector2(tileCoordXorZ, m_playerTileCoordZ + m_matrixColumnCountHalf - j - 1);
