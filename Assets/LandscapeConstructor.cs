@@ -13,7 +13,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	void Start()
 	{
 		m_tileEngine = new TileEngine(4, 10);
-		m_tileEngine.addTileLayer(new TileGroundLayer(tile, tile2, m_tileEngine));
+		m_tileEngine.addTileLayer(new TileGroundLayer(tile, m_tileEngine));
 		m_tileEngine.startx(player.transform.position);
 	}
 
@@ -28,13 +28,13 @@ public class TileGroundLayer : TileLayer
 {
 	GameObject[,] m_tileMatrix;
 
-	public TileGroundLayer(GameObject tilePrefab, GameObject tilePrefab2, TileEngine tileEngine)
+	public TileGroundLayer(GameObject tilePrefab, TileEngine tileEngine)
 	{
 		int count = tileEngine.columnCount();
 		m_tileMatrix = new GameObject[count, count];
 		for (int z = 0; z < count; ++z) {
 			for (int x = 0; x < count; ++x)
-				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(((x + z) % 2) == 0 ? tilePrefab : tilePrefab2, Vector3.zero, Quaternion.identity);;
+				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);;
 		}
 
 		float w = m_tileMatrix[0, 0].GetComponent<Renderer>().bounds.size.x;
