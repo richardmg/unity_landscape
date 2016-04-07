@@ -57,7 +57,7 @@ public class TileEngine {
 		return new Vector3(x, 0, z);
 	}
 
-	public void start(Vector3 playerPos)
+	public void startx(Vector3 playerPos)
 	{
 		m_playerTileCoordX = Mathf.FloorToInt((playerPos.x + m_tileWidthHalf) / m_tileWidth);
 		m_playerTileCoordZ = Mathf.FloorToInt((playerPos.z + m_tileWidthHalf) / m_tileWidth);
@@ -94,9 +94,6 @@ public class TileEngine {
 		// Update matrix pointer, which is passed as ref
 		matrixFrontIndex = (m_matrixColumnCount + matrixFrontIndex + (tilesCrossed % m_matrixColumnCount)) % m_matrixColumnCount;
 
-//		MonoBehaviour.print("**** top: " + m_matrixTopIndex + ", right: " + m_matrixRightIndex + ", isZ: " + updateZAxis);
-//		MonoBehaviour.print("**** update rows: " + nuberOfRowsToUpdate + ", isZ: " + updateZAxis + ", current tile coord: " + currentTileCoord + ", direction: " + moveDirection + ", frontIndex: " + matrixFrontIndex);
-
 		for (int i = 0; i < nuberOfRowsToUpdate; ++i) {
 			// Get the matrix row that contains tiles that are out of sight, and move it in front of the player
 			int matrixRowOrColToReuse = (m_matrixColumnCount + matrixFrontIndex + (i * -moveDirection)) % m_matrixColumnCount;
@@ -110,22 +107,21 @@ public class TileEngine {
 				currentTileCoord - m_matrixColumnCountHalf + i;
 
 			if (updateZAxis) {
-				for (int col = 0; col < m_matrixColumnCount; ++col) {
-					Vector2 tileMatrixCoord = new Vector2(col, matrixRowOrColToReuse);
-					Vector2 tileGridCoord = new Vector2(m_playerTileCoordX - m_matrixColumnCountHalf + col, tileCoordXorZ);
+				for (int j = 0; j < m_matrixColumnCount; ++j) {
+					int matrixCol = (m_matrixColumnCount + m_matrixRightIndex - j) % m_matrixColumnCount;
+					Vector2 tileMatrixCoord = new Vector2(matrixCol, matrixRowOrColToReuse);
+					Vector2 tileGridCoord = new Vector2(m_playerTileCoordX + m_matrixColumnCountHalf - j - 1, tileCoordXorZ);
 					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
-//					if (col == 0)
-//						MonoBehaviour.print("worldPos Z: " + worldPos + ", tileGridCoord: " + tileGridCoord);
 					foreach (TileLayer tileLayer in m_tileLayerList)
 						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
 				}
 			} else {
-				for (int row = 0; row < m_matrixColumnCount; ++row) {
-					Vector2 tileMatrixCoord = new Vector2(matrixRowOrColToReuse, row);
-					Vector2 tileGridCoord = new Vector2(tileCoordXorZ, m_playerTileCoordZ - m_matrixColumnCountHalf + row);
+				for (int j = 0; j < m_matrixColumnCount; ++j) {
+					// Jeg kan ikke bare flytte over fra row = 0, siden tilen der ligger nødvendigvis på nederste rad i matrisen.
+					int matrixRow = (m_matrixColumnCount + m_matrixTopIndex - j) % m_matrixColumnCount;
+					Vector2 tileMatrixCoord = new Vector2(matrixRowOrColToReuse, matrixRow);
+					Vector2 tileGridCoord = new Vector2(tileCoordXorZ, m_playerTileCoordZ + m_matrixColumnCountHalf - j - 1);
 					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
-//					if (row == 0)
-//						MonoBehaviour.print("worldPos X: " + worldPos + ", tileGridCoord: " + tileGridCoord);
 					foreach (TileLayer tileLayer in m_tileLayerList)
 						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
 				}
