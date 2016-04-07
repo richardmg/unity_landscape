@@ -76,13 +76,14 @@ public class TileEngine {
 	public void update(Vector3 playerPos)
 	{
 		int prevTileCoordX = m_playerTileCoordX;
-		int prevTileCoordZ = m_playerTileCoordZ;
 		m_playerTileCoordX = Mathf.FloorToInt((playerPos.x + m_tileWidthHalf) / m_tileWidth);
+		if (m_playerTileCoordX != prevTileCoordX)
+			updateTiles(m_playerTileCoordX, prevTileCoordX, ref m_matrixRightIndex, false);
+
+		int prevTileCoordZ = m_playerTileCoordZ;
 		m_playerTileCoordZ = Mathf.FloorToInt((playerPos.z + m_tileWidthHalf) / m_tileWidth);
 		if (prevTileCoordZ != m_playerTileCoordZ)
 			updateTiles(m_playerTileCoordZ, prevTileCoordZ, ref m_matrixTopIndex, true);
-		if (m_playerTileCoordX != prevTileCoordX)
-			updateTiles(m_playerTileCoordX, prevTileCoordX, ref m_matrixRightIndex, false);
 	}
 
 	private void updateTiles(int currentTileCoord, int prevTileCoord, ref int matrixFrontIndex, bool updateZAxis)
