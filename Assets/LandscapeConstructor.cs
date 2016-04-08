@@ -35,7 +35,7 @@ public class TileGroundLayer : TileLayer
 		m_tileMatrix = new GameObject[count, count];
 		for (int z = 0; z < count; ++z) {
 			for (int x = 0; x < count; ++x)
-				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);;
+				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);
 		}
 
 		float w = m_tileMatrix[0, 0].GetComponent<Renderer>().bounds.size.x;
