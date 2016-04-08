@@ -3,8 +3,9 @@ using System.Collections;
 
 public class LandscapeConstructor : MonoBehaviour {
 
+	public int rows = 4;
+	public int tileWidth = 10;
 	public GameObject tile;
-	public GameObject tile2;
 	public GameObject player;
 
 	TileEngine m_tileEngine;
@@ -12,7 +13,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	// Use this for initialization
 	void Start()
 	{
-		m_tileEngine = new TileEngine(4, 10);
+		m_tileEngine = new TileEngine(rows, tileWidth);
 		m_tileEngine.addTileLayer(new TileGroundLayer(tile, m_tileEngine));
 		m_tileEngine.startx(player.transform.position);
 	}
@@ -30,7 +31,7 @@ public class TileGroundLayer : TileLayer
 
 	public TileGroundLayer(GameObject tilePrefab, TileEngine tileEngine)
 	{
-		int count = tileEngine.columnCount();
+		int count = tileEngine.rowCount();
 		m_tileMatrix = new GameObject[count, count];
 		for (int z = 0; z < count; ++z) {
 			for (int x = 0; x < count; ++x)
