@@ -60,7 +60,7 @@ public class TileEngine {
 		return new Vector3(x, 0, z);
 	}
 
-	public void startx(Vector3 playerPos)
+	public void start(Vector3 playerPos)
 	{
 		m_playerTileCoordX = Mathf.FloorToInt((playerPos.x + m_tileWidthHalf) / m_tileWidth);
 		m_playerTileCoordZ = Mathf.FloorToInt((playerPos.z + m_tileWidthHalf) / m_tileWidth);

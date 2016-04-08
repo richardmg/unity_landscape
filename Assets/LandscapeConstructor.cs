@@ -15,7 +15,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	{
 		m_tileEngine = new TileEngine(rows, tileWidth);
 		m_tileEngine.addTileLayer(new TileGroundLayer(tile, m_tileEngine));
-		m_tileEngine.startx(player.transform.position);
+		m_tileEngine.start(player.transform.position);
 	}
 
 	// Update is called once per frame
