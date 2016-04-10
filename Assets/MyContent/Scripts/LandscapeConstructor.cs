@@ -38,14 +38,13 @@ public class TileGroundLayer : TileLayer
 				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);
 		}
 
-		float w = m_tileMatrix[0, 0].GetComponent<Renderer>().bounds.size.x;
-		Debug.AssertFormat(w == tileEngine.tileWidth(), "TileGroundLayer: tilePrefab needs to have the same size as tileEngine.tileWidth()");
+//		float w = m_tileMatrix[0, 0].GetComponent<Renderer>().bounds.size.x;
+//		Debug.AssertFormat(w == tileEngine.tileWidth(), "TileGroundLayer: tilePrefab needs to have the same size as tileEngine.tileWidth()");
 	}
 
 	public override void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos)
 	{
 		GameObject tile = m_tileMatrix[(int)tileMatrixCoord.x, (int)tileMatrixCoord.y];
-		tile.transform.position = tileWorldPos;
-//		tile.GetComponent<TileGround>().onTileMoved();
+		tile.GetComponent<TileGround>().moveTile(tileGridCoord, tileWorldPos);
 	}
 }
