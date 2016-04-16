@@ -9,9 +9,12 @@ public class TileGround : MonoBehaviour {
 
 		float scale = 0.15f;
 		Mesh mesh = GetComponent<MeshFilter>().mesh;
+
+		// todo: will this create a copy of the array? If so, can it be avoided?
 		Vector3[] vertices = mesh.vertices;
+
 		for (int i = 0; i < vertices.Length; ++i)
-			vertices[i].y = Mathf.PerlinNoise((vertices[i].x + tileWorldPos.x) * scale, (vertices[i].z * tileWorldPos.z) * scale);
+			vertices[i].y = Mathf.PerlinNoise((vertices[i].x + tileWorldPos.x) * scale, (vertices[i].z + tileWorldPos.z) * scale);
 		mesh.vertices = vertices;
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
@@ -31,4 +34,3 @@ public class TileGround : MonoBehaviour {
 //		tdata.SetHeights(0, 0, heights);
 	}
 }
-		
