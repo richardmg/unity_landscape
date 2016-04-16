@@ -7,14 +7,15 @@ public class TileGround : MonoBehaviour {
 	{
 		transform.position = tileWorldPos;
 
-		float scale = 0.15f;
+		float perlinScale = 0.02f;
+		float tileHeightScale = 20f;
 		Mesh mesh = GetComponent<MeshFilter>().mesh;
 
 		// todo: will this create a copy of the array? If so, can it be avoided?
 		Vector3[] vertices = mesh.vertices;
 
 		for (int i = 0; i < vertices.Length; ++i)
-			vertices[i].y = Mathf.PerlinNoise((vertices[i].x + tileWorldPos.x) * scale, (vertices[i].z + tileWorldPos.z) * scale) * 10;
+			vertices[i].y = Mathf.PerlinNoise((vertices[i].x + tileWorldPos.x) * perlinScale, (vertices[i].z + tileWorldPos.z) * perlinScale) * tileHeightScale;
 		mesh.vertices = vertices;
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
