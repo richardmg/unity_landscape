@@ -14,10 +14,15 @@ public class TileGround : MonoBehaviour {
 		Vector3[] vertices = mesh.vertices;
 
 		for (int i = 0; i < vertices.Length; ++i)
-			vertices[i].y = Mathf.PerlinNoise((vertices[i].x + tileWorldPos.x) * scale, (vertices[i].z + tileWorldPos.z) * scale);
+			vertices[i].y = Mathf.PerlinNoise((vertices[i].x + tileWorldPos.x) * scale, (vertices[i].z + tileWorldPos.z) * scale) * 10;
 		mesh.vertices = vertices;
 		mesh.RecalculateBounds();
 		mesh.RecalculateNormals();
+
+		GetComponent<MeshCollider>().sharedMesh = null;
+		GetComponent<MeshCollider>().sharedMesh = mesh;
+
+
 
 //		Terrain terrain = GetComponent<Terrain>();
 //		TerrainData tdata = terrain.terrainData;
