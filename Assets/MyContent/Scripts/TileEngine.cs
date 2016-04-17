@@ -60,15 +60,23 @@ public class TileEngine {
 		return new Vector3(x, 0, z);
 	}
 
+	public Vector2 worldPosToGridCoord(Vector3 worldPos)
+	{
+		int x = Mathf.FloorToInt((worldPos.x + m_tileWidthHalf) / m_tileWidth);
+		int z = Mathf.FloorToInt((worldPos.z + m_tileWidthHalf) / m_tileWidth);
+		return new Vector2(x, z);
+	}
+
 	public void start(Vector3 playerPos)
 	{
-		m_playerTileCoordX = Mathf.FloorToInt((playerPos.x + m_tileWidthHalf) / m_tileWidth);
-		m_playerTileCoordZ = Mathf.FloorToInt((playerPos.z + m_tileWidthHalf) / m_tileWidth);
+		Vector2 playerStartGridPos = worldPosToGridCoord(playerPos);
+		m_playerTileCoordX = (int)playerStartGridPos.x;
+		m_playerTileCoordZ = (int)playerStartGridPos.y;
 
 		for (int z = 0; z < m_matrixRowCount; ++z) {
 			for (int x = 0; x < m_matrixRowCount; ++x) {
 				Vector2 tileMatrixCoord = new Vector2(x, z);
-				Vector2 tileGridCoord = new Vector2(x - m_matrixRowCountHalf, z - m_matrixRowCountHalf);
+				Vector2 tileGridCoord = new Vector2(x + playerStartGridPos.x - m_matrixRowCountHalf, z + playerStartGridPos.y - m_matrixRowCountHalf);
 				Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
 				foreach (TileLayer tileLayer in m_tileLayerList)
 					tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
