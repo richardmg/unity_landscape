@@ -15,8 +15,7 @@ public class TileEngine {
 	int m_tileWidth;
 	float m_tileWidthHalf;
 
-	int m_playerTileCoordX;
-	int m_playerTileCoordZ;
+	Vector2 m_playerTileCoord;
 
 	int m_matrixTopIndex;
 	int m_matrixRightIndex;
@@ -69,14 +68,14 @@ public class TileEngine {
 
 	public void start(Vector3 playerPos)
 	{
-		Vector2 playerStartGridPos = worldPosToGridCoord(playerPos);
-		m_playerTileCoordX = (int)playerStartGridPos.x;
-		m_playerTileCoordZ = (int)playerStartGridPos.y;
+		m_playerTileCoord = worldPosToGridCoord(playerPos);
 
 		for (int z = 0; z < m_matrixRowCount; ++z) {
 			for (int x = 0; x < m_matrixRowCount; ++x) {
 				Vector2 tileMatrixCoord = new Vector2(x, z);
-				Vector2 tileGridCoord = new Vector2(x + playerStartGridPos.x - m_matrixRowCountHalf, z + playerStartGridPos.y - m_matrixRowCountHalf);
+				Vector2 tileGridCoord = new Vector2(
+					x + (int)m_playerTileCoord.x - m_matrixRowCountHalf,
+					z + (int)m_playerTileCoord.y - m_matrixRowCountHalf);
 				Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
 				foreach (TileLayer tileLayer in m_tileLayerList)
 					tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
@@ -86,15 +85,14 @@ public class TileEngine {
 
 	public void update(Vector3 playerPos)
 	{
-		int prevTileCoordX = m_playerTileCoordX;
-		m_playerTileCoordX = Mathf.FloorToInt((playerPos.x + m_tileWidthHalf) / m_tileWidth);
-		if (m_playerTileCoordX != prevTileCoordX)
-			updateTiles(m_playerTileCoordX, prevTileCoordX, ref m_matrixRightIndex, false);
+		Vector2 prevPlayerTileCoord = m_playerTileCoord;
+		m_playerTileCoord = worldPosToGridCoord(playerPos);
 
-		int prevTileCoordZ = m_playerTileCoordZ;
-		m_playerTileCoordZ = Mathf.FloorToInt((playerPos.z + m_tileWidthHalf) / m_tileWidth);
-		if (prevTileCoordZ != m_playerTileCoordZ)
-			updateTiles(m_playerTileCoordZ, prevTileCoordZ, ref m_matrixTopIndex, true);
+		if (m_playerTileCoord.x != prevPlayerTileCoord.x)
+			updateTiles((int)m_playerTileCoord.x, (int)prevPlayerTileCoord.x, ref m_matrixRightIndex, false);
+
+		if (m_playerTileCoord.y != prevPlayerTileCoord.y)
+			updateTiles((int)m_playerTileCoord.y, (int)prevPlayerTileCoord.y, ref m_matrixTopIndex, true);
 	}
 
 	private void updateTiles(int currentTileCoord, int prevTileCoord, ref int matrixFrontIndex, bool updateZAxis)
@@ -122,7 +120,7 @@ public class TileEngine {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixCol = (m_matrixRowCount + m_matrixRightIndex - j) % m_matrixRowCount;
 					Vector2 tileMatrixCoord = new Vector2(matrixCol, matrixRowOrColToReuse);
-					Vector2 tileGridCoord = new Vector2(m_playerTileCoordX + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
+					Vector2 tileGridCoord = new Vector2((int)m_playerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
 					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
 					foreach (TileLayer tileLayer in m_tileLayerList)
 						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
@@ -131,7 +129,7 @@ public class TileEngine {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixRow = (m_matrixRowCount + m_matrixTopIndex - j) % m_matrixRowCount;
 					Vector2 tileMatrixCoord = new Vector2(matrixRowOrColToReuse, matrixRow);
-					Vector2 tileGridCoord = new Vector2(tileCoordXorZ, m_playerTileCoordZ + m_matrixRowCountHalf - j - 1);
+					Vector2 tileGridCoord = new Vector2(tileCoordXorZ, (int)m_playerTileCoord.y + m_matrixRowCountHalf - j - 1);
 					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
 					foreach (TileLayer tileLayer in m_tileLayerList)
 						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
