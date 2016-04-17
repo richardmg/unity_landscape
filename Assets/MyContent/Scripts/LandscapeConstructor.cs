@@ -40,7 +40,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		player.transform.position = playerPos;
 
 		m_tileEngine = new TileEngine(rows, tileWidth);
-		m_tileEngine.addTileLayer(new TileGroundLayer(tile));
+		m_tileEngine.addTileLayer(new TileGroundLayerPlane());
 		m_tileEngine.start(player.transform.position);
 	}
 
@@ -51,11 +51,11 @@ public class LandscapeConstructor : MonoBehaviour {
 	}
 }
 
-public class TileGroundLayer : TileLayer
+public abstract class TileMatrix
 {
-	GameObject[,] m_tileMatrix;
+	protected GameObject[,] m_tileMatrix;
 
-	public TileGroundLayer(GameObject tilePrefab)
+	public TileMatrix(GameObject tilePrefab)
 	{
 		int count = LandscapeConstructor.instance.rows;
 		m_tileMatrix = new GameObject[count, count];
@@ -64,13 +64,20 @@ public class TileGroundLayer : TileLayer
 				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);
 		}
 
-//		float w = m_tileMatrix[0, 0].GetComponent<Renderer>().bounds.size.x;
-//		Debug.AssertFormat(w == tileEngine.tileWidth(), "TileGroundLayer: tilePrefab needs to have the same size as tileEngine.tileWidth()");
+		//		float w = m_tileMatrix[0, 0].GetComponent<Renderer>().bounds.size.x;
+		//		Debug.AssertFormat(w == tileEngine.tileWidth(), "TileGroundLayer: tilePrefab needs to have the same size as tileEngine.tileWidth()");
+	}
+}
+
+public class TileGroundLayerPlane : TileMatrix, ITileLayer 
+{
+	public TileGroundLayerPlane() : base(LandscapeConstructor.instance.tile)
+	{
 	}
 
-	public override void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos)
+	public void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos)
 	{
 		GameObject tile = m_tileMatrix[(int)tileMatrixCoord.x, (int)tileMatrixCoord.y];
-		tile.GetComponent<TileGround>().moveTile(tileGridCoord, tileWorldPos);
+		tile.GetComponent<PlaneTile>().moveTile(tileGridCoord, tileWorldPos);
 	}
 }

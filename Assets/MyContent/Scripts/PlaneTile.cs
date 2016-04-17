@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class TileGround : MonoBehaviour {
+public class PlaneTile : MonoBehaviour {
 
 	public void moveTile(Vector2 tileGridCoord, Vector3 tileWorldPos)
 	{
@@ -21,21 +21,5 @@ public class TileGround : MonoBehaviour {
 
 		GetComponent<MeshCollider>().sharedMesh = null;
 		GetComponent<MeshCollider>().sharedMesh = mesh;
-
-
-
-//		Terrain terrain = GetComponent<Terrain>();
-//		TerrainData tdata = terrain.terrainData;
-//		int w = (int)tdata.size.x;
-//		int h = (int)tdata.size.z;
-////		float[,] heights = tdata.GetHeights(0, 0, w, h);
-//		float[,] heights = new float[w, h];
-//		for (int x = 0; x < w; ++x)
-//			for (int z = 0; z < h; ++z) 
-//				heights[x, z] = Mathf.PerlinNoise(x * scale, z * scale) * 5;
-//
-//		// todo: check if GetHeights make a copy of the array, or if a copy on write happens. If so, we should
-//		// avoid creating arrays all the time....
-//		tdata.SetHeights(0, 0, heights);
 	}
 }

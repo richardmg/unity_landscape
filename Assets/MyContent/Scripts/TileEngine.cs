@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public abstract class TileLayer
+public interface ITileLayer
 {
-	public abstract void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos);
+	void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos);
 }
 
 public class TileEngine {
@@ -20,11 +20,11 @@ public class TileEngine {
 	int m_matrixTopIndex;
 	int m_matrixRightIndex;
 
-	List<TileLayer> m_tileLayerList;
+	List<ITileLayer> m_tileLayerList;
 
 	public TileEngine(int rowCount, int tileWorldWidth)
 	{
-		m_tileLayerList = new List<TileLayer>();
+		m_tileLayerList = new List<ITileLayer>();
 		m_matrixRowCount = rowCount;
 		m_matrixRowCountHalf = m_matrixRowCount / 2;
 		m_tileWidth = tileWorldWidth;
@@ -36,7 +36,7 @@ public class TileEngine {
 		Debug.AssertFormat(m_tileWidth > 0, "TileEngine: tile width must be greater than 0");
 	}
 
-	public void addTileLayer(TileLayer tileLayer)
+	public void addTileLayer(ITileLayer tileLayer)
 	{
 		m_tileLayerList.Add(tileLayer);
 	}
@@ -77,7 +77,7 @@ public class TileEngine {
 					x + (int)m_playerTileCoord.x - m_matrixRowCountHalf,
 					z + (int)m_playerTileCoord.y - m_matrixRowCountHalf);
 				Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
-				foreach (TileLayer tileLayer in m_tileLayerList)
+				foreach (ITileLayer tileLayer in m_tileLayerList)
 					tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
 			}
 		}
@@ -122,7 +122,7 @@ public class TileEngine {
 					Vector2 tileMatrixCoord = new Vector2(matrixCol, matrixRowOrColToReuse);
 					Vector2 tileGridCoord = new Vector2((int)m_playerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
 					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
-					foreach (TileLayer tileLayer in m_tileLayerList)
+					foreach (ITileLayer tileLayer in m_tileLayerList)
 						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
 				}
 			} else {
@@ -131,7 +131,7 @@ public class TileEngine {
 					Vector2 tileMatrixCoord = new Vector2(matrixRowOrColToReuse, matrixRow);
 					Vector2 tileGridCoord = new Vector2(tileCoordXorZ, (int)m_playerTileCoord.y + m_matrixRowCountHalf - j - 1);
 					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
-					foreach (TileLayer tileLayer in m_tileLayerList)
+					foreach (ITileLayer tileLayer in m_tileLayerList)
 						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
 				}
 			}
