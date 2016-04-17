@@ -12,7 +12,7 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	TileEngine m_tileEngine;
 
-	static LandscapeConstructor instance;
+	static public LandscapeConstructor instance;
 
 	public static float getGroundHeight(float x, float z)
 	{
@@ -31,7 +31,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		player.transform.position = playerPos;
 
 		m_tileEngine = new TileEngine(rows, tileWidth);
-		m_tileEngine.addTileLayer(new TileGroundLayer(tile, m_tileEngine));
+		m_tileEngine.addTileLayer(new TileGroundLayer(tile));
 		m_tileEngine.start(player.transform.position);
 	}
 
@@ -46,9 +46,9 @@ public class TileGroundLayer : TileLayer
 {
 	GameObject[,] m_tileMatrix;
 
-	public TileGroundLayer(GameObject tilePrefab, TileEngine tileEngine)
+	public TileGroundLayer(GameObject tilePrefab)
 	{
-		int count = tileEngine.rowCount();
+		int count = LandscapeConstructor.instance.rows;
 		m_tileMatrix = new GameObject[count, count];
 		for (int z = 0; z < count; ++z) {
 			for (int x = 0; x < count; ++x)
