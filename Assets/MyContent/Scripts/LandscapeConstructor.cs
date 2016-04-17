@@ -25,6 +25,11 @@ public class LandscapeConstructor : MonoBehaviour {
 		Debug.AssertFormat(!instance, "LandscapeConstructor needs to be singleton");
 		instance = this;
 
+		// Move player on top of landscape
+		Vector3 playerPos = player.transform.position;
+		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + 1;
+		player.transform.position = playerPos;
+
 		m_tileEngine = new TileEngine(rows, tileWidth);
 		m_tileEngine.addTileLayer(new TileGroundLayer(tile, m_tileEngine));
 		m_tileEngine.start(player.transform.position);
