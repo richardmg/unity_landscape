@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlaneTile : MonoBehaviour {
+public class PlaneTile : MonoBehaviour, ITile {
 
 	public void moveTile(Vector2 tileGridCoord, Vector3 tileWorldPos)
 	{
