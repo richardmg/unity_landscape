@@ -46,16 +46,6 @@ public class TileEngine {
 		m_tileLayerList.Add(tileLayer);
 	}
 
-	public int rowCount()
-	{
-		return m_matrixRowCount;
-	}
-
-	public int tileWidth()
-	{
-		return m_tileWidth;
-	}
-
 	public Vector3 gridCoordToWorldPos(Vector2 gridCoord)
 	{
 		// Return the 'bottom left' corner of the tile 
