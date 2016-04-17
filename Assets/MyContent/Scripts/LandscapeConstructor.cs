@@ -5,8 +5,14 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public int rows = 4;
 	public int tileWidth = 10;
-	public float perlinScale = 0.02f;
-	public float tileHeightScale = 20f;
+
+	public float perlinLargeScale = 0.003f;
+	public float perlinMediumScale = 0.02f;
+	public float perlinSmallScale = 0.1f;
+	public float landscapeHeightLargeScale = 40f;
+	public float landscapeHeightMediumScale = 4f;
+	public float landscapeSmallScale = 0.3f;
+
 	public GameObject tile;
 	public GameObject player;
 
@@ -16,7 +22,10 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public static float getGroundHeight(float x, float z)
 	{
-		return Mathf.PerlinNoise(x * instance.perlinScale, z * instance.perlinScale) * instance.tileHeightScale;
+		float firstOctave = Mathf.PerlinNoise(x * instance.perlinLargeScale, z * instance.perlinLargeScale) * instance.landscapeHeightLargeScale;
+		float secondOctave = Mathf.PerlinNoise(x * instance.perlinMediumScale, z * instance.perlinMediumScale) * instance.landscapeHeightMediumScale;
+		float thirdOctave = Mathf.PerlinNoise(x * instance.perlinSmallScale, z * instance.perlinSmallScale) * instance.landscapeSmallScale;
+		return firstOctave + secondOctave + thirdOctave;
 	}
 
 	// Use this for initialization
