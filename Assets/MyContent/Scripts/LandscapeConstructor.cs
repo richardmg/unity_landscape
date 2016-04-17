@@ -61,7 +61,6 @@ public class TileGroundLayer : TileLayer
 
 	public override void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos)
 	{
-		MonoBehaviour.print(tileGridCoord);
 		GameObject tile = m_tileMatrix[(int)tileMatrixCoord.x, (int)tileMatrixCoord.y];
 		tile.GetComponent<TileGround>().moveTile(tileGridCoord, tileWorldPos);
 	}
