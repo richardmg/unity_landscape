@@ -9,6 +9,7 @@ public interface ITileLayer
 
 public interface ITile
 {
+	void initTile(bool firstTile);
 	void moveTile(Vector2 tileGridCoord, Vector3 tileWorldPos);
 }
 
@@ -143,12 +144,14 @@ public class TileGroundLayer : ITileLayer
 		int count = LandscapeConstructor.instance.rows;
 		m_tileMatrix = new GameObject[count, count];
 		for (int z = 0; z < count; ++z) {
-			for (int x = 0; x < count; ++x)
+			for (int x = 0; x < count; ++x) {
 				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);
+				ITile tile = m_tileMatrix[x, z].GetComponent<ITile>();
+				Debug.AssertFormat(tile != null, "TileGroundLayer: tilePrefab needs to have a script attached that implements ITile");
+				bool firstTile = (x == 0 && z == 0);
+				tile.initTile(firstTile);
+			}
 		}
-
-		//		float w = m_tileMatrix[0, 0].GetComponent<Renderer>().bounds.size.x;
-		//		Debug.AssertFormat(w == tileEngine.tileWidth(), "TileGroundLayer: tilePrefab needs to have the same size as tileEngine.tileWidth()");
 	}
 
 	public void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos)
