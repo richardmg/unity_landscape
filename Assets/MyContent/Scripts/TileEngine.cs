@@ -9,7 +9,7 @@ public interface ITileLayer
 
 public interface ITile
 {
-	void initTile(bool firstTile);
+	void initTile(GameObject gameObject, bool firstTile);
 	void moveTile(Vector2 tileGridCoord, Vector3 tileWorldPos);
 }
 
@@ -145,11 +145,12 @@ public class TileGroundLayer : ITileLayer
 		m_tileMatrix = new GameObject[count, count];
 		for (int z = 0; z < count; ++z) {
 			for (int x = 0; x < count; ++x) {
-				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);
-				ITile tile = m_tileMatrix[x, z].GetComponent<ITile>();
+				GameObject gameObject = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);
+				m_tileMatrix[x, z] = gameObject;
+				ITile tile = gameObject.GetComponent<ITile>();
 				Debug.AssertFormat(tile != null, "TileGroundLayer: tilePrefab needs to have a script attached that implements ITile");
 				bool firstTile = (x == 0 && z == 0);
-				tile.initTile(firstTile);
+				tile.initTile(gameObject, firstTile);
 			}
 		}
 	}

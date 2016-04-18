@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlaneTile : MonoBehaviour, ITile {
 
-	public void initTile(bool firstTile)
+	public void initTile(GameObject gameObject, bool firstTile)
 	{
 	}
 
