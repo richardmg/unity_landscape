@@ -117,10 +117,16 @@ public class TileEngine {
 
 		for (int i = 0; i < nuberOfRowsToUpdate; ++i) {
 			// Get the matrix row that contains tiles that are out of sight, and move it in front of the player
-			int matrixRowOrColToReuse = (m_matrixRowCount + matrixFrontIndex + (i * -moveDirection)) % m_matrixRowCount;
-			if (moveDirection < 0) {
+			int tileTop = -1;
+			int tileBottom = -1;
+			int tileCenter = (m_matrixRowCount + matrixFrontIndex + (i * -moveDirection)) % m_matrixRowCount;
+
+			if (moveDirection > 0) {
+				tileBottom = (m_matrixRowCount + tileCenter - 1) % m_matrixRowCount;
+			} else {
 				// When moving "backwards", reuse the new bottom index instead
-				matrixRowOrColToReuse = (matrixRowOrColToReuse + 1) % m_matrixRowCount;
+				tileCenter = (tileCenter + 1) % m_matrixRowCount;
+				tileTop = (tileCenter + 1) % m_matrixRowCount;
 			}
 
 			int tileCoordXorZ = moveDirection > 0 ?
@@ -130,14 +136,26 @@ public class TileEngine {
 			if (updateZAxis) {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixCol = (m_matrixRowCount + m_matrixRightIndex - j) % m_matrixRowCount;
-					m_tileMoveDesc[j].tileMatrixCoord.Set(matrixCol, matrixRowOrColToReuse);
+
+					m_tileMoveDesc[j].tileMatrixCoord.Set(matrixCol, tileCenter);
+					m_tileMoveDesc[j].tileMatrixTopCoord.Set(tileTop != -1 ? matrixCol : -1, tileTop);
+					m_tileMoveDesc[j].tileMatrixBottomCoord.Set(tileBottom != -1 ? matrixCol : -1, tileBottom);
+					m_tileMoveDesc[j].tileMatrixLeftCoord.Set(-1, -1);
+					m_tileMoveDesc[j].tileMatrixRightCoord.Set(-1, -1);
+
 					m_tileMoveDesc[j].tileGridCoord.Set((int)m_centerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
 					gridCoordToWorldPos(ref m_tileMoveDesc[j].tileWorldPos, m_tileMoveDesc[j].tileGridCoord);
 				}
 			} else {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixRow = (m_matrixRowCount + m_matrixTopIndex - j) % m_matrixRowCount;
-					m_tileMoveDesc[j].tileMatrixCoord.Set(matrixRowOrColToReuse, matrixRow);
+
+					m_tileMoveDesc[j].tileMatrixCoord.Set(tileCenter, matrixRow);
+					m_tileMoveDesc[j].tileMatrixLeftCoord.Set(tileBottom, tileBottom != -1 ? matrixRow : -1);
+					m_tileMoveDesc[j].tileMatrixRightCoord.Set(tileTop, tileTop != -1 ? matrixRow : -1);
+					m_tileMoveDesc[j].tileMatrixTopCoord.Set(-1, -1);
+					m_tileMoveDesc[j].tileMatrixBottomCoord.Set(-1, -1);
+
 					m_tileMoveDesc[j].tileGridCoord.Set(tileCoordXorZ, (int)m_centerTileCoord.y + m_matrixRowCountHalf - j - 1);
 					gridCoordToWorldPos(ref m_tileMoveDesc[j].tileWorldPos, m_tileMoveDesc[j].tileGridCoord);
 				}
@@ -182,17 +200,24 @@ public class TileTerrainLayer : ITileLayer
 		// todo: shift matrix. Kanskje jeg kan hente ut dette fra tileEngine, slik at jeg setter
 		// opp neighbour tileMatrixCoors allerede der?
 
-		int count = LandscapeConstructor.instance.rows;
-		for (int z = 0; z < count; ++z) {
-			for (int x = 0; x < count; ++x) {
-				Terrain tile  = m_tileMatrix[x, z].GetComponent<Terrain>();
-				Terrain left  = x > 0 ? m_tileMatrix[x - 1, z].GetComponent<Terrain>() : null;
-				Terrain right = x < count - 1 ? m_tileMatrix[x + 1, z].GetComponent<Terrain>() : null;
-				Terrain top  = z < count - 1 ? m_tileMatrix[x, z + 1].GetComponent<Terrain>() : null;
-				Terrain bottom  = z > 0 ? m_tileMatrix[x, z - 1].GetComponent<Terrain>() : null;
-				tile.SetNeighbors(left, top, right, bottom);
-			}
+		if (alongZ) {
+			MonoBehaviour.print("center: " + desc[0].tileMatrixCoord);
+			MonoBehaviour.print("top: " + desc[0].tileMatrixTopCoord);
+			MonoBehaviour.print("bottom: " + desc[0].tileMatrixBottomCoord);
+			MonoBehaviour.print("--------------------");
 		}
+
+//		int count = LandscapeConstructor.instance.rows;
+//		for (int z = 0; z < count; ++z) {
+//			for (int x = 0; x < count; ++x) {
+//				Terrain tile  = m_tileMatrix[x, z].GetComponent<Terrain>();
+//				Terrain left  = x > 0 ? m_tileMatrix[x - 1, z].GetComponent<Terrain>() : null;
+//				Terrain right = x < count - 1 ? m_tileMatrix[x + 1, z].GetComponent<Terrain>() : null;
+//				Terrain top  = z < count - 1 ? m_tileMatrix[x, z + 1].GetComponent<Terrain>() : null;
+//				Terrain bottom  = z > 0 ? m_tileMatrix[x, z - 1].GetComponent<Terrain>() : null;
+//				tile.SetNeighbors(left, top, right, bottom);
+//			}
+//		}
 
 	}
 }
