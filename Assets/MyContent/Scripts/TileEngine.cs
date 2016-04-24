@@ -4,9 +4,14 @@ using System.Collections.Generic;
 
 public class TileMoveDescription
 {
-	public Vector2 tileMatrixCoord;
-	public Vector2 tileGridCoord;
-	public Vector3 tileWorldPos;
+	public Vector2 tileGridCoord = new Vector2();
+	public Vector3 tileWorldPos = new Vector3();
+
+	public Vector2 tileMatrixCoord = new Vector2();
+	public Vector2 tileMatrixTopCoord = new Vector2();
+	public Vector2 tileMatrixBottomCoord = new Vector2();
+	public Vector2 tileMatrixLeftCoord = new Vector2();
+	public Vector2 tileMatrixRightCoord = new Vector2();
 }
 
 public interface ITileLayer
@@ -57,31 +62,31 @@ public class TileEngine {
 		m_tileLayerList.Add(tileLayer);
 	}
 
-	public Vector3 gridCoordToWorldPos(Vector2 gridCoord)
+	public void gridCoordToWorldPos(ref Vector3 worldPos, Vector2 gridCoord)
 	{
 		float x = gridCoord.x * m_tileWorldWidth;
 		float z = gridCoord.y * m_tileWorldWidth;
-		return new Vector3(x, 0, z);
+		worldPos.Set(x, 0, z);
 	}
 
-	public Vector2 worldPosToGridCoord(Vector3 worldPos)
+	public void worldPosToGridCoord(ref Vector2 gridCoord, Vector3 worldPos)
 	{
 		int x = Mathf.FloorToInt(worldPos.x / m_tileWorldWidth);
 		int z = Mathf.FloorToInt(worldPos.z / m_tileWorldWidth);
-		return new Vector2(x, z);
+		gridCoord.Set(x, z);
 	}
 
 	public void start(Vector3 playerPos)
 	{
-		m_centerTileCoord = worldPosToGridCoord(playerPos + m_changeTileOffset);
+		worldPosToGridCoord(ref m_centerTileCoord, playerPos + m_changeTileOffset);
 
 		for (int z = 0; z < m_matrixRowCount; ++z) {
 			for (int x = 0; x < m_matrixRowCount; ++x) {
-				m_tileMoveDesc[x].tileMatrixCoord = new Vector2(x, z);
-				m_tileMoveDesc[x].tileGridCoord = new Vector2(
+				m_tileMoveDesc[x].tileMatrixCoord.Set(x, z);
+				m_tileMoveDesc[x].tileGridCoord.Set(
 					x + (int)m_centerTileCoord.x - m_matrixRowCountHalf,
 					z + (int)m_centerTileCoord.y - m_matrixRowCountHalf);
-				m_tileMoveDesc[x].tileWorldPos = gridCoordToWorldPos(m_tileMoveDesc[x].tileGridCoord);
+				gridCoordToWorldPos(ref m_tileMoveDesc[x].tileWorldPos, m_tileMoveDesc[x].tileGridCoord);
 
 				foreach (ITileLayer tileLayer in m_tileLayerList)
 					tileLayer.moveTiles(m_tileMoveDesc, false);
@@ -92,7 +97,7 @@ public class TileEngine {
 	public void update(Vector3 playerPos)
 	{
 		Vector2 prevCenterTileCoord = m_centerTileCoord;
-		m_centerTileCoord = worldPosToGridCoord(playerPos + m_changeTileOffset);
+		worldPosToGridCoord(ref m_centerTileCoord, playerPos + m_changeTileOffset);
 
 		if (m_centerTileCoord.x != prevCenterTileCoord.x)
 			updateTiles((int)m_centerTileCoord.x, (int)prevCenterTileCoord.x, ref m_matrixRightIndex, false);
@@ -125,16 +130,16 @@ public class TileEngine {
 			if (updateZAxis) {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixCol = (m_matrixRowCount + m_matrixRightIndex - j) % m_matrixRowCount;
-					m_tileMoveDesc[j].tileMatrixCoord = new Vector2(matrixCol, matrixRowOrColToReuse);
-					m_tileMoveDesc[j].tileGridCoord = new Vector2((int)m_centerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
-					m_tileMoveDesc[j].tileWorldPos = gridCoordToWorldPos(m_tileMoveDesc[j].tileGridCoord);
+					m_tileMoveDesc[j].tileMatrixCoord.Set(matrixCol, matrixRowOrColToReuse);
+					m_tileMoveDesc[j].tileGridCoord.Set((int)m_centerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
+					gridCoordToWorldPos(ref m_tileMoveDesc[j].tileWorldPos, m_tileMoveDesc[j].tileGridCoord);
 				}
 			} else {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixRow = (m_matrixRowCount + m_matrixTopIndex - j) % m_matrixRowCount;
-					m_tileMoveDesc[j].tileMatrixCoord = new Vector2(matrixRowOrColToReuse, matrixRow);
-					m_tileMoveDesc[j].tileGridCoord = new Vector2(tileCoordXorZ, (int)m_centerTileCoord.y + m_matrixRowCountHalf - j - 1);
-					m_tileMoveDesc[j].tileWorldPos = gridCoordToWorldPos(m_tileMoveDesc[j].tileGridCoord);
+					m_tileMoveDesc[j].tileMatrixCoord.Set(matrixRowOrColToReuse, matrixRow);
+					m_tileMoveDesc[j].tileGridCoord.Set(tileCoordXorZ, (int)m_centerTileCoord.y + m_matrixRowCountHalf - j - 1);
+					gridCoordToWorldPos(ref m_tileMoveDesc[j].tileWorldPos, m_tileMoveDesc[j].tileGridCoord);
 				}
 			}
 
