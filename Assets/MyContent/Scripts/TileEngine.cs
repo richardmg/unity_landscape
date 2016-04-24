@@ -177,17 +177,17 @@ public class TileTerrainLayer : ITileLayer
 		// todo: shift matrix. Kanskje jeg kan hente ut dette fra tileEngine, slik at jeg setter
 		// opp neighbour tileMatrixCoors allerede der?
 
-//		int count = LandscapeConstructor.instance.rows;
-//		for (int z = 0; z < count; ++z) {
-//			for (int x = 0; x < count; ++x) {
-//				Terrain tile  = m_tileMatrix[x, z].GetComponent<Terrain>();
-//				Terrain left  = x > 0 ? m_tileMatrix[x - 1, z].GetComponent<Terrain>() : null;
-//				Terrain right = x < count - 1 ? m_tileMatrix[x + 1, z].GetComponent<Terrain>() : null;
-//				Terrain top  = z < count - 1 ? m_tileMatrix[x, z + 1].GetComponent<Terrain>() : null;
-//				Terrain bottom  = z > 0 ? m_tileMatrix[x, z - 1].GetComponent<Terrain>() : null;
-//				tile.SetNeighbors(left, top, right, bottom);
-//			}
-//		}
+		int count = LandscapeConstructor.instance.rows;
+		for (int z = 0; z < count; ++z) {
+			for (int x = 0; x < count; ++x) {
+				Terrain tile  = m_tileMatrix[x, z].GetComponent<Terrain>();
+				Terrain left  = x > 0 ? m_tileMatrix[x - 1, z].GetComponent<Terrain>() : null;
+				Terrain right = x < count - 1 ? m_tileMatrix[x + 1, z].GetComponent<Terrain>() : null;
+				Terrain top  = z < count - 1 ? m_tileMatrix[x, z + 1].GetComponent<Terrain>() : null;
+				Terrain bottom  = z > 0 ? m_tileMatrix[x, z - 1].GetComponent<Terrain>() : null;
+				tile.SetNeighbors(left, top, right, bottom);
+			}
+		}
 
 	}
 }
