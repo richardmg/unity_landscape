@@ -3,6 +3,8 @@ using System.Collections;
 
 public class LandscapeTile : MonoBehaviour, ITile {
 
+	public float[,] m_heightArray;
+
 	public void initTile(GameObject gameObject, bool firstTile)
 	{
 		Terrain terrain = GetComponent<Terrain>();
@@ -18,6 +20,9 @@ public class LandscapeTile : MonoBehaviour, ITile {
 
 		terrain.terrainData = LandscapeTools.Clone(tdata);
 		gameObject.GetComponent<TerrainCollider>().terrainData = terrain.terrainData;
+
+		int res = tdata.heightmapResolution;
+		m_heightArray = new float[res, res];
 	}
 
 	public void moveTile(TileMoveDescription desc)
@@ -28,17 +33,14 @@ public class LandscapeTile : MonoBehaviour, ITile {
 		TerrainData tdata = terrain.terrainData;
 		int res = tdata.heightmapResolution;
 		Vector3 scale = tdata.heightmapScale;
-		float[,] heights = new float[res, res];
 
 		for (int x = 0; x < res; ++x) {
 			for (int z = 0; z < res; ++z) {
 				float height = LandscapeConstructor.getGroundHeight(desc.tileWorldPos.x + (x * scale.x), desc.tileWorldPos.z + (z * scale.z));
-				heights[z, x] = height / scale.y;
+				m_heightArray[z, x] = height / scale.y;
 			}
 		}
 
-		// todo: check if GetHeights make a copy of the array, or if a copy on write happens. If so, we should
-		// avoid creating arrays all the time....
-		tdata.SetHeights(0, 0, heights);
+		tdata.SetHeights(0, 0, m_heightArray);
 	}
 }

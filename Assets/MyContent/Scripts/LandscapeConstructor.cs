@@ -13,7 +13,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	public float landscapeHeightMediumScale = 4f;
 	public float landscapeSmallScale = 0.3f;
 
-	public GameObject tile;
+	public GameObject terrainTile;
 	public GameObject player;
 
 	TileEngine m_tileEngine;
@@ -40,7 +40,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		player.transform.position = playerPos;
 
 		m_tileEngine = new TileEngine(rows, tileWidth);
-		m_tileEngine.addTileLayer(new TileGroundLayer(tile));
+		m_tileEngine.addTileLayer(new TileTerrainLayer(terrainTile));
 		m_tileEngine.start(player.transform.position);
 	}
 
