@@ -7,9 +7,9 @@ public class PlaneTile : MonoBehaviour, ITile {
 	{
 	}
 
-	public void moveTile(Vector2 tileGridCoord, Vector3 tileWorldPos)
+	public void moveTile(TileMoveDescription desc)
 	{
-		transform.position = tileWorldPos;
+		transform.position = desc.tileWorldPos;
 
 		Mesh mesh = GetComponent<MeshFilter>().mesh;
 
@@ -17,7 +17,7 @@ public class PlaneTile : MonoBehaviour, ITile {
 		Vector3[] vertices = mesh.vertices;
 
 		for (int i = 0; i < vertices.Length; ++i)
-			vertices[i].y = LandscapeConstructor.getGroundHeight(tileWorldPos.x + vertices[i].x, tileWorldPos.z + vertices[i].z);
+			vertices[i].y = LandscapeConstructor.getGroundHeight(desc.tileWorldPos.x + vertices[i].x, desc.tileWorldPos.z + vertices[i].z);
 
 		mesh.vertices = vertices;
 		mesh.RecalculateBounds();

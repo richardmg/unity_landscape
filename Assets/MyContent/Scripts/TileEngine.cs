@@ -2,15 +2,22 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public class TileMoveDescription
+{
+	public Vector2 tileMatrixCoord;
+	public Vector2 tileGridCoord;
+	public Vector3 tileWorldPos;
+}
+
 public interface ITileLayer
 {
-	void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos);
+	void moveTiles(TileMoveDescription[] desc, bool alongZ);
 }
 
 public interface ITile
 {
 	void initTile(GameObject gameObject, bool firstTile);
-	void moveTile(Vector2 tileGridCoord, Vector3 tileWorldPos);
+	void moveTile(TileMoveDescription desc);
 }
 
 public class TileEngine {
@@ -18,9 +25,10 @@ public class TileEngine {
 	int m_matrixRowCount;
 	int m_matrixRowCountHalf;
 
-	int m_tileWidth;
+	int m_tileWorldWidth;
 	Vector3 m_changeTileOffset;
 	Vector2 m_centerTileCoord;
+	TileMoveDescription[] m_tileMoveDesc;
 
 	int m_matrixTopIndex;
 	int m_matrixRightIndex;
@@ -32,13 +40,16 @@ public class TileEngine {
 		m_tileLayerList = new List<ITileLayer>();
 		m_matrixRowCount = rowCount;
 		m_matrixRowCountHalf = m_matrixRowCount / 2;
-		m_tileWidth = tileWorldWidth;
-		m_changeTileOffset = new Vector3(m_tileWidth / 2, 0, m_tileWidth / 2);
+		m_tileWorldWidth = tileWorldWidth;
+		m_changeTileOffset = new Vector3(m_tileWorldWidth / 2, 0, m_tileWorldWidth / 2);
 		m_matrixTopIndex = m_matrixRowCount - 1;
 		m_matrixRightIndex = m_matrixRowCount - 1;
+		m_tileMoveDesc = new TileMoveDescription[m_matrixRowCount];
+		for (int i = 0; i < m_matrixRowCount; ++i)
+			m_tileMoveDesc[i] = new TileMoveDescription();
 
 		Debug.AssertFormat(m_matrixRowCount >= 2, "TileEngine: column count must be greater than or equal to 2");
-		Debug.AssertFormat(m_tileWidth > 0, "TileEngine: tile width must be greater than 0");
+		Debug.AssertFormat(m_tileWorldWidth > 0, "TileEngine: tile width must be greater than 0");
 	}
 
 	public void addTileLayer(ITileLayer tileLayer)
@@ -48,15 +59,15 @@ public class TileEngine {
 
 	public Vector3 gridCoordToWorldPos(Vector2 gridCoord)
 	{
-		float x = gridCoord.x * m_tileWidth;
-		float z = gridCoord.y * m_tileWidth;
+		float x = gridCoord.x * m_tileWorldWidth;
+		float z = gridCoord.y * m_tileWorldWidth;
 		return new Vector3(x, 0, z);
 	}
 
 	public Vector2 worldPosToGridCoord(Vector3 worldPos)
 	{
-		int x = Mathf.FloorToInt(worldPos.x / m_tileWidth);
-		int z = Mathf.FloorToInt(worldPos.z / m_tileWidth);
+		int x = Mathf.FloorToInt(worldPos.x / m_tileWorldWidth);
+		int z = Mathf.FloorToInt(worldPos.z / m_tileWorldWidth);
 		return new Vector2(x, z);
 	}
 
@@ -66,13 +77,14 @@ public class TileEngine {
 
 		for (int z = 0; z < m_matrixRowCount; ++z) {
 			for (int x = 0; x < m_matrixRowCount; ++x) {
-				Vector2 tileMatrixCoord = new Vector2(x, z);
-				Vector2 tileGridCoord = new Vector2(
+				m_tileMoveDesc[x].tileMatrixCoord = new Vector2(x, z);
+				m_tileMoveDesc[x].tileGridCoord = new Vector2(
 					x + (int)m_centerTileCoord.x - m_matrixRowCountHalf,
 					z + (int)m_centerTileCoord.y - m_matrixRowCountHalf);
-				Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
+				m_tileMoveDesc[x].tileWorldPos = gridCoordToWorldPos(m_tileMoveDesc[x].tileGridCoord);
+
 				foreach (ITileLayer tileLayer in m_tileLayerList)
-					tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
+					tileLayer.moveTiles(m_tileMoveDesc, false);
 			}
 		}
 	}
@@ -113,22 +125,21 @@ public class TileEngine {
 			if (updateZAxis) {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixCol = (m_matrixRowCount + m_matrixRightIndex - j) % m_matrixRowCount;
-					Vector2 tileMatrixCoord = new Vector2(matrixCol, matrixRowOrColToReuse);
-					Vector2 tileGridCoord = new Vector2((int)m_centerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
-					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
-					foreach (ITileLayer tileLayer in m_tileLayerList)
-						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
+					m_tileMoveDesc[j].tileMatrixCoord = new Vector2(matrixCol, matrixRowOrColToReuse);
+					m_tileMoveDesc[j].tileGridCoord = new Vector2((int)m_centerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
+					m_tileMoveDesc[j].tileWorldPos = gridCoordToWorldPos(m_tileMoveDesc[j].tileGridCoord);
 				}
 			} else {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
 					int matrixRow = (m_matrixRowCount + m_matrixTopIndex - j) % m_matrixRowCount;
-					Vector2 tileMatrixCoord = new Vector2(matrixRowOrColToReuse, matrixRow);
-					Vector2 tileGridCoord = new Vector2(tileCoordXorZ, (int)m_centerTileCoord.y + m_matrixRowCountHalf - j - 1);
-					Vector3 worldPos = gridCoordToWorldPos(tileGridCoord);
-					foreach (ITileLayer tileLayer in m_tileLayerList)
-						tileLayer.moveTile(tileMatrixCoord, tileGridCoord, worldPos);
+					m_tileMoveDesc[j].tileMatrixCoord = new Vector2(matrixRowOrColToReuse, matrixRow);
+					m_tileMoveDesc[j].tileGridCoord = new Vector2(tileCoordXorZ, (int)m_centerTileCoord.y + m_matrixRowCountHalf - j - 1);
+					m_tileMoveDesc[j].tileWorldPos = gridCoordToWorldPos(m_tileMoveDesc[j].tileGridCoord);
 				}
 			}
+
+			foreach (ITileLayer tileLayer in m_tileLayerList)
+				tileLayer.moveTiles(m_tileMoveDesc, updateZAxis);
 		}
 	}
 }
@@ -153,9 +164,12 @@ public class TileGroundLayer : ITileLayer
 		}
 	}
 
-	public void moveTile(Vector2 tileMatrixCoord, Vector2 tileGridCoord, Vector3 tileWorldPos)
+	public void moveTiles(TileMoveDescription[] desc, bool alongZ)
 	{
-		GameObject tile = m_tileMatrix[(int)tileMatrixCoord.x, (int)tileMatrixCoord.y];
-		tile.GetComponent<ITile>().moveTile(tileGridCoord, tileWorldPos);
+		for (int i = 0; i < desc.Length; ++i) {
+			TileMoveDescription tmd = desc[i];
+			GameObject tile = m_tileMatrix[(int)tmd.tileMatrixCoord.x, (int)tmd.tileMatrixCoord.y];
+			tile.GetComponent<ITile>().moveTile(tmd);
+		}
 	}
 }

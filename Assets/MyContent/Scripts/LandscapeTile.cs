@@ -20,9 +20,9 @@ public class LandscapeTile : MonoBehaviour, ITile {
 		gameObject.GetComponent<TerrainCollider>().terrainData = terrain.terrainData;
 	}
 
-	public void moveTile(Vector2 tileGridCoord, Vector3 tileWorldPos)
+	public void moveTile(TileMoveDescription desc)
 	{
-		transform.position = tileWorldPos;
+		transform.position = desc.tileWorldPos;
 
 		Terrain terrain = GetComponent<Terrain>();
 		TerrainData tdata = terrain.terrainData;
@@ -32,7 +32,7 @@ public class LandscapeTile : MonoBehaviour, ITile {
 
 		for (int x = 0; x < res; ++x) {
 			for (int z = 0; z < res; ++z) {
-				float height = LandscapeConstructor.getGroundHeight(tileWorldPos.x + (x * scale.x), tileWorldPos.z + (z * scale.z));
+				float height = LandscapeConstructor.getGroundHeight(desc.tileWorldPos.x + (x * scale.x), desc.tileWorldPos.z + (z * scale.z));
 				heights[z, x] = height / scale.y;
 			}
 		}
