@@ -62,18 +62,23 @@ public class TileEngine {
 		m_tileLayerList.Add(tileLayer);
 	}
 
-	public void gridCoordToWorldPos(ref Vector3 worldPos, Vector2 gridCoord)
+	void gridCoordToWorldPos(ref Vector3 worldPos, Vector2 gridCoord)
 	{
 		float x = gridCoord.x * m_tileWorldWidth;
 		float z = gridCoord.y * m_tileWorldWidth;
 		worldPos.Set(x, 0, z);
 	}
 
-	public void worldPosToGridCoord(ref Vector2 gridCoord, Vector3 worldPos)
+	void worldPosToGridCoord(ref Vector2 gridCoord, Vector3 worldPos)
 	{
 		int x = Mathf.FloorToInt(worldPos.x / m_tileWorldWidth);
 		int z = Mathf.FloorToInt(worldPos.z / m_tileWorldWidth);
 		gridCoord.Set(x, z);
+	}
+
+	int matrixPos(int top, int rows)
+	{
+		return (m_matrixRowCount + top + (rows % m_matrixRowCount)) % m_matrixRowCount;
 	}
 
 	public void start(Vector3 playerPos)
@@ -106,57 +111,70 @@ public class TileEngine {
 			updateTiles((int)m_centerTileCoord.y, (int)prevCenterTileCoord.y, ref m_matrixTopIndex, true);
 	}
 
-	private void updateTiles(int currentTileCoord, int prevTileCoord, ref int matrixFrontIndex, bool updateZAxis)
+	private void updateTiles(int currentTileCoord, int prevTileCoord, ref int matrixFrontZ, bool updateZAxis)
 	{
 		int tilesCrossed = currentTileCoord - prevTileCoord;
 		int moveDirection = tilesCrossed > 0 ? 1 : -1;
 		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossed), m_matrixRowCount);
 
 		// Update matrix pointer, which is passed as ref
-		matrixFrontIndex = (m_matrixRowCount + matrixFrontIndex + (tilesCrossed % m_matrixRowCount)) % m_matrixRowCount;
+
+		// todo: factor this out to update!!!!
+
+		matrixFrontZ = matrixPos(matrixFrontZ, tilesCrossed);
 
 		for (int i = 0; i < nuberOfRowsToUpdate; ++i) {
-			// Get the matrix row that contains tiles that are out of sight, and move it in front of the player
-			int tileTop = -1;
-			int tileBottom = -1;
-			int tileCenter = (m_matrixRowCount + matrixFrontIndex + (i * -moveDirection)) % m_matrixRowCount;
+			int matrixLoopFrontZ = matrixPos(matrixFrontZ, i * -moveDirection);
+			int matrixLoopFrontNeighbourNorthZ = -1;
+			int matrixLoopFrontNeighbourSouthZ = -1;
 
 			if (moveDirection > 0) {
-				tileBottom = (m_matrixRowCount + tileCenter - 1) % m_matrixRowCount;
+				matrixLoopFrontNeighbourSouthZ = matrixPos(matrixLoopFrontZ, -1);
 			} else {
 				// When moving "backwards", reuse the new bottom index instead
-				tileCenter = (tileCenter + 1) % m_matrixRowCount;
-				tileTop = (tileCenter + 1) % m_matrixRowCount;
+				matrixLoopFrontZ = matrixPos(matrixLoopFrontZ, 1);
+				matrixLoopFrontNeighbourNorthZ = matrixPos(matrixLoopFrontZ, matrixLoopFrontZ + 1);
 			}
 
-			int tileCoordXorZ = moveDirection > 0 ?
+			int coordCenterZ = moveDirection > 0 ?
 				currentTileCoord + m_matrixRowCountHalf - i - 1 :
 				currentTileCoord - m_matrixRowCountHalf + i;
 
 			if (updateZAxis) {
+				int matrixFrontX = (int)m_centerTileCoord.x;
+				int matrixBackX = (m_matrixRowCount + matrixFrontX - 1) % m_matrixRowCount;
+
 				for (int j = 0; j < m_matrixRowCount; ++j) {
-					int matrixCol = (m_matrixRowCount + m_matrixRightIndex - j) % m_matrixRowCount;
+					int tileMatrixX = (m_matrixRowCount + m_matrixRightIndex - j) % m_matrixRowCount;
 
-					m_tileMoveDesc[j].tileMatrixCoord.Set(matrixCol, tileCenter);
-					m_tileMoveDesc[j].tileMatrixTopCoord.Set(tileTop != -1 ? matrixCol : -1, tileTop);
-					m_tileMoveDesc[j].tileMatrixBottomCoord.Set(tileBottom != -1 ? matrixCol : -1, tileBottom);
-					m_tileMoveDesc[j].tileMatrixLeftCoord.Set(-1, -1);
-					m_tileMoveDesc[j].tileMatrixRightCoord.Set(-1, -1);
+					bool onFrontEdge = (tileMatrixX == matrixFrontX);
+					bool onBackEdge = (tileMatrixX == matrixBackX);
 
-					m_tileMoveDesc[j].tileGridCoord.Set((int)m_centerTileCoord.x + m_matrixRowCountHalf - j - 1, tileCoordXorZ);
+					int tileMatrixLeftX = onBackEdge ? -1 : (m_matrixRowCount + tileMatrixX - 1) % m_matrixRowCount;
+					int tileMatrixRightX = onFrontEdge ? -1 :(tileMatrixX + 1) % m_matrixRowCount;
+					int tileGridCoordX = (int)m_centerTileCoord.x + m_matrixRowCountHalf - j - 1;
+
+					// jeg er her, test ut att ileMatrixLeftX og tileMatrixRightX er riktig
+
+					m_tileMoveDesc[j].tileMatrixCoord.Set(tileMatrixX, matrixLoopFrontZ);
+					m_tileMoveDesc[j].tileMatrixTopCoord.Set(matrixLoopFrontNeighbourNorthZ == -1 ? -1 : tileMatrixX, matrixLoopFrontNeighbourNorthZ);
+					m_tileMoveDesc[j].tileMatrixBottomCoord.Set(matrixLoopFrontNeighbourSouthZ == -1 ? -1 : tileMatrixX, matrixLoopFrontNeighbourSouthZ);
+					m_tileMoveDesc[j].tileMatrixLeftCoord.Set(tileMatrixLeftX, matrixLoopFrontZ);
+					m_tileMoveDesc[j].tileMatrixRightCoord.Set(tileMatrixRightX, matrixLoopFrontZ);
+					m_tileMoveDesc[j].tileGridCoord.Set(tileGridCoordX, coordCenterZ);
 					gridCoordToWorldPos(ref m_tileMoveDesc[j].tileWorldPos, m_tileMoveDesc[j].tileGridCoord);
 				}
 			} else {
 				for (int j = 0; j < m_matrixRowCount; ++j) {
-					int matrixRow = (m_matrixRowCount + m_matrixTopIndex - j) % m_matrixRowCount;
+					int tileX = (m_matrixRowCount + m_matrixTopIndex - j) % m_matrixRowCount;
 
-					m_tileMoveDesc[j].tileMatrixCoord.Set(tileCenter, matrixRow);
-					m_tileMoveDesc[j].tileMatrixLeftCoord.Set(tileBottom, tileBottom != -1 ? matrixRow : -1);
-					m_tileMoveDesc[j].tileMatrixRightCoord.Set(tileTop, tileTop != -1 ? matrixRow : -1);
+					m_tileMoveDesc[j].tileMatrixCoord.Set(matrixLoopFrontZ, tileX);
+					m_tileMoveDesc[j].tileMatrixLeftCoord.Set(matrixLoopFrontNeighbourSouthZ, matrixLoopFrontNeighbourSouthZ == -1 ? -1 : tileX);
+					m_tileMoveDesc[j].tileMatrixRightCoord.Set(matrixLoopFrontNeighbourNorthZ, matrixLoopFrontNeighbourNorthZ == -1 ? -1 : tileX);
 					m_tileMoveDesc[j].tileMatrixTopCoord.Set(-1, -1);
 					m_tileMoveDesc[j].tileMatrixBottomCoord.Set(-1, -1);
 
-					m_tileMoveDesc[j].tileGridCoord.Set(tileCoordXorZ, (int)m_centerTileCoord.y + m_matrixRowCountHalf - j - 1);
+					m_tileMoveDesc[j].tileGridCoord.Set(coordCenterZ, (int)m_centerTileCoord.y + m_matrixRowCountHalf - j - 1);
 					gridCoordToWorldPos(ref m_tileMoveDesc[j].tileWorldPos, m_tileMoveDesc[j].tileGridCoord);
 				}
 			}
@@ -200,12 +218,14 @@ public class TileTerrainLayer : ITileLayer
 		// todo: shift matrix. Kanskje jeg kan hente ut dette fra tileEngine, slik at jeg setter
 		// opp neighbour tileMatrixCoors allerede der?
 
-		if (alongZ) {
-			MonoBehaviour.print("center: " + desc[0].tileMatrixCoord);
-			MonoBehaviour.print("top: " + desc[0].tileMatrixTopCoord);
-			MonoBehaviour.print("bottom: " + desc[0].tileMatrixBottomCoord);
-			MonoBehaviour.print("--------------------");
-		}
+//		if (alongZ) {
+//			MonoBehaviour.print("center: " + desc[0].tileMatrixCoord);
+//			MonoBehaviour.print("top: " + desc[0].tileMatrixTopCoord);
+//			MonoBehaviour.print("bottom: " + desc[0].tileMatrixBottomCoord);
+//			MonoBehaviour.print("left: " + desc[0].tileMatrixLeftCoord);
+//			MonoBehaviour.print("right " + desc[0].tileMatrixRightCoord);
+//			MonoBehaviour.print("--------------------");
+//		}
 
 //		int count = LandscapeConstructor.instance.rows;
 //		for (int z = 0; z < count; ++z) {
