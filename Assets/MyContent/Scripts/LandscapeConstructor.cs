@@ -4,7 +4,7 @@ using System.Collections;
 public class LandscapeConstructor : MonoBehaviour {
 
 	public int rows = 4;
-	public int tileWidth = 100;
+	public int tileWidth = 1000;
 
 	public float perlinLargeScale = 0.003f;
 	public float perlinMediumScale = 0.02f;

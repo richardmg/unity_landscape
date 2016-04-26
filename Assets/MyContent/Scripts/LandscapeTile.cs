@@ -5,12 +5,12 @@ public class LandscapeTile : MonoBehaviour, ITile {
 
 	public float[,] m_heightArray;
 
-	public void initTile(GameObject gameObject, bool firstTile)
+	public void initTile(TileDescription desc, GameObject gameObject)
 	{
 		Terrain terrain = GetComponent<Terrain>();
 		TerrainData tdata = terrain.terrainData;
 
-		if (firstTile) {
+		if (desc.gridCoord.x == 0 && desc.gridCoord.y == 0) {
 			Vector3 scale = tdata.heightmapScale;
 			float w = tdata.size.x;
 			float l = tdata.size.z;
@@ -23,11 +23,13 @@ public class LandscapeTile : MonoBehaviour, ITile {
 
 		int res = tdata.heightmapResolution;
 		m_heightArray = new float[res, res];
+
+		moveTile(desc, gameObject);
 	}
 
-	public void moveTile(TileMoveDescription desc)
+	public void moveTile(TileDescription desc, GameObject gameObject)
 	{
-		transform.position = desc.tileWorldPos;
+		transform.position = desc.worldPos;
 
 		Terrain terrain = GetComponent<Terrain>();
 		TerrainData tdata = terrain.terrainData;
@@ -36,7 +38,7 @@ public class LandscapeTile : MonoBehaviour, ITile {
 
 		for (int x = 0; x < res; ++x) {
 			for (int z = 0; z < res; ++z) {
-				float height = LandscapeConstructor.getGroundHeight(desc.tileWorldPos.x + (x * scale.x), desc.tileWorldPos.z + (z * scale.z));
+				float height = LandscapeConstructor.getGroundHeight(desc.worldPos.x + (x * scale.x), desc.worldPos.z + (z * scale.z));
 				m_heightArray[z, x] = height / scale.y;
 			}
 		}

@@ -3,13 +3,13 @@ using System.Collections;
 
 public class PlaneTile : MonoBehaviour, ITile {
 
-	public void initTile(GameObject gameObject, bool firstTile)
+	public void initTile(TileDescription desc, GameObject gameObject)
 	{
 	}
 
-	public void moveTile(TileMoveDescription desc)
+	public void moveTile(TileDescription desc, GameObject gameObject)
 	{
-		transform.position = desc.tileWorldPos;
+		transform.position = desc.worldPos;
 
 		Mesh mesh = GetComponent<MeshFilter>().mesh;
 
@@ -17,7 +17,7 @@ public class PlaneTile : MonoBehaviour, ITile {
 		Vector3[] vertices = mesh.vertices;
 
 		for (int i = 0; i < vertices.Length; ++i)
-			vertices[i].y = LandscapeConstructor.getGroundHeight(desc.tileWorldPos.x + vertices[i].x, desc.tileWorldPos.z + vertices[i].z);
+			vertices[i].y = LandscapeConstructor.getGroundHeight(desc.worldPos.x + vertices[i].x, desc.worldPos.z + vertices[i].z);
 
 		mesh.vertices = vertices;
 		mesh.RecalculateBounds();
