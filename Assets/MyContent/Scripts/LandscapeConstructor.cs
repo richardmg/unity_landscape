@@ -39,8 +39,10 @@ public class LandscapeConstructor : MonoBehaviour {
 		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + 1;
 		player.transform.position = playerPos;
 
+		Transform parent = this.transform;
+
 		m_tileEngine = new TileEngine(rows, tileWidth);
-		m_tileEngine.addTileLayer(new TileTerrainLayer(terrainTile));
+		m_tileEngine.addTileLayer(new TileTerrainLayer("Ground", terrainTile, parent));
 		m_tileEngine.start(player.transform.position);
 	}
 
@@ -48,5 +50,11 @@ public class LandscapeConstructor : MonoBehaviour {
 	void Update()
 	{
 		m_tileEngine.update(player.transform.position);
+	}
+
+	public void createInstance()
+	{
+		Start();
+		Update();
 	}
 }

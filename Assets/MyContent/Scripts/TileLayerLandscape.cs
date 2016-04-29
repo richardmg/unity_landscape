@@ -6,13 +6,18 @@ public class TileTerrainLayer : ITileLayer
 {
 	GameObject[,] m_tileMatrix;
 
-	public TileTerrainLayer(GameObject tilePrefab)
+	public TileTerrainLayer(string name, GameObject tilePrefab, Transform parentTransform)
 	{
+		Transform tilesParent = new GameObject(name).transform;
+		tilesParent.SetParent(parentTransform);
+
 		int count = LandscapeConstructor.instance.rows;
 		m_tileMatrix = new GameObject[count, count];
 		for (int z = 0; z < count; ++z) {
-			for (int x = 0; x < count; ++x)
+			for (int x = 0; x < count; ++x) {
 				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(tilePrefab, Vector3.zero, Quaternion.identity);
+				m_tileMatrix[x, z].transform.SetParent(tilesParent);
+			}
 		}
 	}
 
