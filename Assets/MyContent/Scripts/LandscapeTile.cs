@@ -14,8 +14,8 @@ public class LandscapeTile : MonoBehaviour, ITile {
 			Vector3 scale = tdata.heightmapScale;
 			float w = tdata.size.x;
 			float l = tdata.size.z;
-			Debug.AssertFormat(scale.y == LandscapeConstructor.instance.landscapeHeightLargeScale, "LandscapeTile: Landscape height needs to match global height function");
-			Debug.AssertFormat(w == l && w == (float)LandscapeConstructor.instance.tileWidth, "LandscapeTile: landscape size needs to be the same as in tileWidth");
+			Debug.AssertFormat(scale.y == LandscapeConstructor.m_instance.landscapeHeightLargeScale, "LandscapeTile: Landscape height needs to match global height function");
+			Debug.AssertFormat(w == l && w == (float)LandscapeConstructor.m_instance.tileWidth, "LandscapeTile: landscape size needs to be the same as in tileWidth");
 		}
 
 		terrain.terrainData = LandscapeTools.Clone(tdata);

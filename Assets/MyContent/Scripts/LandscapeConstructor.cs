@@ -18,43 +18,46 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	TileEngine m_tileEngine;
 
-	static public LandscapeConstructor instance;
+	static public LandscapeConstructor m_instance;
 
 	public static float getGroundHeight(float x, float z)
 	{
-		float firstOctave = Mathf.PerlinNoise(x * instance.perlinLargeScale, z * instance.perlinLargeScale) * instance.landscapeHeightLargeScale;
-		float secondOctave = Mathf.PerlinNoise(x * instance.perlinMediumScale, z * instance.perlinMediumScale) * instance.landscapeHeightMediumScale;
-		float thirdOctave = Mathf.PerlinNoise(x * instance.perlinSmallScale, z * instance.perlinSmallScale) * instance.landscapeSmallScale;
+		float firstOctave = Mathf.PerlinNoise(x * m_instance.perlinLargeScale, z * m_instance.perlinLargeScale) * m_instance.landscapeHeightLargeScale;
+		float secondOctave = Mathf.PerlinNoise(x * m_instance.perlinMediumScale, z * m_instance.perlinMediumScale) * m_instance.landscapeHeightMediumScale;
+		float thirdOctave = Mathf.PerlinNoise(x * m_instance.perlinSmallScale, z * m_instance.perlinSmallScale) * m_instance.landscapeSmallScale;
 		return firstOctave + secondOctave + thirdOctave;
+	}
+
+	public void constructLandscape()
+	{
+		if (m_instance)
+			return;
+
+		m_instance = this;
+
+		m_tileEngine = new TileEngine(rows, tileWidth);
+		m_tileEngine.addTileLayer(new TileTerrainLayer("Ground", terrainTile, transform));
+		m_tileEngine.start(player.transform.position);
+	}
+
+	public void movePlayerOnTop()
+	{
+		// Move player on top of landscape
+		Vector3 playerPos = player.transform.position;
+		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + 1;
+		player.transform.position = playerPos;
 	}
 
 	// Use this for initialization
 	void Start()
 	{
-		Debug.AssertFormat(!instance, "LandscapeConstructor needs to be singleton");
-		instance = this;
-
-		// Move player on top of landscape
-		Vector3 playerPos = player.transform.position;
-		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + 1;
-		player.transform.position = playerPos;
-
-		Transform parent = this.transform;
-
-		m_tileEngine = new TileEngine(rows, tileWidth);
-		m_tileEngine.addTileLayer(new TileTerrainLayer("Ground", terrainTile, parent));
-		m_tileEngine.start(player.transform.position);
+		constructLandscape();
+		movePlayerOnTop();
 	}
 
 	// Update is called once per frame
-	void Update()
+	public void Update()
 	{
 		m_tileEngine.update(player.transform.position);
-	}
-
-	public void createInstance()
-	{
-		Start();
-		Update();
 	}
 }
