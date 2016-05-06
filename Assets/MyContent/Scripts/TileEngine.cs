@@ -22,6 +22,10 @@ public interface ITileLayer
 {
 	void initTiles(TileDescription[] tilesToInit);
 	void moveTiles(TileDescription[] tilesToMove);
+}
+
+public interface ITileTerrainLayer : ITileLayer
+{
 	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours);
 }
 
@@ -117,7 +121,8 @@ public class TileEngine {
 
 				foreach (ITileLayer tileLayer in m_tileLayerList) {
 					tileLayer.initTiles(m_tileMoveDesc);
-					tileLayer.updateTileNeighbours(m_tileMoveDesc);
+					if (tileLayer is ITileTerrainLayer)
+						((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 				}
 			}
 		}
@@ -170,7 +175,8 @@ public class TileEngine {
 			foreach (ITileLayer tileLayer in m_tileLayerList) {
 				if (i < nuberOfColsToUpdate)
 					tileLayer.moveTiles(m_tileMoveDesc);
-				tileLayer.updateTileNeighbours(m_tileMoveDesc);
+				if (tileLayer is ITileTerrainLayer)
+					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
 		}
 	}
@@ -203,7 +209,8 @@ public class TileEngine {
 			foreach (ITileLayer tileLayer in m_tileLayerList) {
 				if (i < nuberOfRowsToUpdate)
 					tileLayer.moveTiles(m_tileMoveDesc);
-				tileLayer.updateTileNeighbours(m_tileMoveDesc);
+				if (tileLayer is ITileTerrainLayer)
+					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
 		}
 	}

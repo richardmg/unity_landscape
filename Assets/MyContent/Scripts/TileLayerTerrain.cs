@@ -2,11 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileTerrainLayer : ITileLayer 
+public class TileLayerTerrain : ITileTerrainLayer
 {
 	GameObject[,] m_tileMatrix;
 
-	public TileTerrainLayer(string name, GameObject tilePrefab, Transform parentTransform)
+	public TileLayerTerrain(string name, GameObject tilePrefab, Transform parentTransform)
 	{
 		int count = LandscapeConstructor.m_instance.rows;
 		m_tileMatrix = new GameObject[count, count];
