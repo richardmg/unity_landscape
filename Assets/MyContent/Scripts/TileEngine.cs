@@ -29,12 +29,6 @@ public interface ITileTerrainLayer : ITileLayer
 	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours);
 }
 
-public interface ITile
-{
-	void initTile(TileDescription desc, GameObject gameObject);
-	void moveTile(TileDescription desc, GameObject gameObject);
-}
-
 public class TileEngine {
 
 	int m_matrixSize;
