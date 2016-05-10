@@ -22,6 +22,14 @@ public class TileLayerTerrain : ITileTerrainLayer
 
 	public void initTileResources(int tileCount, float tileWorldSize)
 	{
+		Terrain terrain = m_prefab.GetComponent<Terrain>();
+		TerrainData tdata = terrain.terrainData;
+		Vector3 scale = tdata.heightmapScale;
+		float w = tdata.size.x;
+		float l = tdata.size.z;
+		Debug.AssertFormat(scale.y == LandscapeConstructor.m_instance.landscapeHeightLargeScale, "LandscapeTile: Landscape height needs to match global height function");
+		Debug.AssertFormat(w == l && w == tileWorldSize, "LandscapeTile: tileWorldSize needs to be the same as prefab width/height");
+
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
