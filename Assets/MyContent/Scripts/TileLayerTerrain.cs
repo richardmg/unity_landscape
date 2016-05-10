@@ -4,51 +4,30 @@ using System.Collections.Generic;
 
 public class TileLayerTerrain : ITileTerrainLayer
 {
+	GameObject m_layerRoot;
+	GameObject m_prefab;
 	GameObject[,] m_tileMatrix;
 	public float[,] m_heightArray;
 
 	public TileLayerTerrain(string name, GameObject prefab, Transform parentTransform)
 	{
-		Terrain terrain = prefab.GetComponent<Terrain>();
+		m_prefab = prefab;
+		Terrain terrain = m_prefab.GetComponent<Terrain>();
 		Debug.AssertFormat(terrain != null, this.GetType().Name + ": prefab needs to have a Terrain component");
 		int res = terrain.terrainData.heightmapResolution;
 		m_heightArray = new float[res, res];
-
-		int count = LandscapeConstructor.m_instance.rows;
-		m_tileMatrix = new GameObject[count, count];
-		Transform childRoot = parentTransform.Find(name);
-
-		// If a child with name already exists, adopt its
-		// children instead of creating new ones.
-		if (childRoot == null)
-			constructNewGameobjects(name, prefab, parentTransform);
-		else
-			adoptChildren(childRoot);
-
+		m_layerRoot = new GameObject(name);
+		m_layerRoot.transform.SetParent(parentTransform);
 	}
 
-	public void constructNewGameobjects(string name, GameObject prefab, Transform parentTransform)
+	public void initTileResources(int tileCount, float tileWorldSize)
 	{
-		Transform tilesParent = new GameObject(name).transform;
-		tilesParent.SetParent(parentTransform);
-		int count = m_tileMatrix.GetLength(0);
-
-		for (int z = 0; z < count; ++z) {
-			for (int x = 0; x < count; ++x) {
-				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity);
-				m_tileMatrix[x, z].transform.SetParent(tilesParent);
+		m_tileMatrix = new GameObject[tileCount, tileCount];
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
+				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity);
+				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform);
 			}
-		}
-	}
-
-	public void adoptChildren(Transform childrenRoot)
-	{
-		int i = 0;
-		int count = m_tileMatrix.GetLength(0);
-
-		foreach (Transform child in childrenRoot) {
-			m_tileMatrix[i % count, (int)(i / count)] = child.gameObject;
-			i++;
 		}
 	}
 

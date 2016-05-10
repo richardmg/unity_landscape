@@ -17,6 +17,10 @@ public class TileLayerGrass : ITileLayer
 		m_items = new GameObject[max_items];
 	}
 
+	public void initTileResources(int tileCount, float tileWorldSize)
+	{
+	}
+
 	public void initTiles(TileDescription[] tilesToInit)
 	{
 //		for (int i = 0; i < tilesToInit.Length; ++i) {

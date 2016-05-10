@@ -20,6 +20,7 @@ public class TileDescription
 
 public interface ITileLayer
 {
+	void initTileResources(int tileCount, float tileWorldSize);
 	void initTiles(TileDescription[] tilesToInit);
 	void moveTiles(TileDescription[] tilesToMove);
 }
@@ -31,9 +32,9 @@ public interface ITileTerrainLayer : ITileLayer
 
 public class TileEngine {
 
-	int m_matrixSize;
-	int m_matrixSizeHalf;
-	int m_worldTileWidth;
+	int m_tileCount;
+	int m_tileCountHalf;
+	float m_tileWorldSize;
 	Vector3 m_gridCenterOffset;
 	Vector2 m_gridCenter;
 	Vector2 m_matrixTopRight = new Vector2();
@@ -41,19 +42,19 @@ public class TileEngine {
 
 	List<ITileLayer> m_tileLayerList;
 
-	public TileEngine(int rowCount, int tileWorldWidth)
+	public TileEngine(int tileCount, float tileWorldSize)
 	{
 		m_tileLayerList = new List<ITileLayer>();
-		m_matrixSize = rowCount;
-		m_matrixSizeHalf = m_matrixSize / 2;
-		m_worldTileWidth = tileWorldWidth;
-		m_gridCenterOffset = new Vector3(m_worldTileWidth / 2, 0, m_worldTileWidth / 2);
-		m_tileMoveDesc = new TileDescription[m_matrixSize];
-		for (int i = 0; i < m_matrixSize; ++i)
+		m_tileCount = tileCount;
+		m_tileCountHalf = m_tileCount / 2;
+		m_tileWorldSize = tileWorldSize;
+		m_gridCenterOffset = new Vector3(m_tileWorldSize / 2, 0, m_tileWorldSize / 2);
+		m_tileMoveDesc = new TileDescription[m_tileCount];
+		for (int i = 0; i < m_tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
 
-		Debug.AssertFormat(m_matrixSize >= 2, "TileEngine: column count must be greater than or equal to 2");
-		Debug.AssertFormat(m_worldTileWidth > 0, "TileEngine: tile width must be greater than 0");
+		Debug.AssertFormat(m_tileCount >= 2, "TileEngine: column count must be greater than or equal to 2");
+		Debug.AssertFormat(m_tileWorldSize > 0, "TileEngine: tile width must be greater than 0");
 	}
 
 	public void addTileLayer(ITileLayer tileLayer)
@@ -63,21 +64,21 @@ public class TileEngine {
 
 	void setWorldPosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)
 	{
-		float x = gridCoord.x * m_worldTileWidth;
-		float z = gridCoord.y * m_worldTileWidth;
+		float x = gridCoord.x * m_tileWorldSize;
+		float z = gridCoord.y * m_tileWorldSize;
 		worldPos.Set(x, 0, z);
 	}
 
 	void setGridPosFromWorldPos(Vector3 worldPos, ref Vector2 gridCoord)
 	{
-		int x = Mathf.FloorToInt(worldPos.x / m_worldTileWidth);
-		int z = Mathf.FloorToInt(worldPos.z / m_worldTileWidth);
+		int x = Mathf.FloorToInt(worldPos.x / m_tileWorldSize);
+		int z = Mathf.FloorToInt(worldPos.z / m_tileWorldSize);
 		gridCoord.Set(x, z);
 	}
 
 	int matrixPos(int top, int rows)
 	{
-		return (m_matrixSize + top + (rows % m_matrixSize)) % m_matrixSize;
+		return (m_tileCount + top + (rows % m_tileCount)) % m_tileCount;
 	}
 
 	void setNeighbours(Vector2 pos, ref TileNeighbours result)
@@ -100,15 +101,18 @@ public class TileEngine {
 
 	public void start(Vector3 playerPos)
 	{
-		m_matrixTopRight.Set(m_matrixSize - 1, m_matrixSize - 1);
+		m_matrixTopRight.Set(m_tileCount - 1, m_tileCount - 1);
 		setGridPosFromWorldPos(playerPos + m_gridCenterOffset, ref m_gridCenter);
 
-		for (int z = 0; z < m_matrixSize; ++z) {
-			for (int x = 0; x < m_matrixSize; ++x) {
+		foreach (ITileLayer tileLayer in m_tileLayerList)
+			tileLayer.initTileResources(m_tileCount, m_tileWorldSize);
+
+		for (int z = 0; z < m_tileCount; ++z) {
+			for (int x = 0; x < m_tileCount; ++x) {
 				m_tileMoveDesc[x].matrixCoord.Set(x, z);
 				m_tileMoveDesc[x].gridCoord.Set(
-					x + (int)m_gridCenter.x - m_matrixSizeHalf,
-					z + (int)m_gridCenter.y - m_matrixSizeHalf);
+					x + (int)m_gridCenter.x - m_tileCountHalf,
+					z + (int)m_gridCenter.y - m_tileCountHalf);
 
 				setWorldPosFromGridPos(m_tileMoveDesc[x].gridCoord, ref m_tileMoveDesc[x].worldPos);
 				setNeighbours(m_tileMoveDesc[x].matrixCoord, ref m_tileMoveDesc[x].neighbours);
@@ -144,7 +148,7 @@ public class TileEngine {
 	private void updateTilesX(int tilesCrossedX)
 	{
 		int moveDirection = tilesCrossedX > 0 ? 1 : -1;
-		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedX), m_matrixSize);
+		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedX), m_tileCount);
 
 		for (int i = 0; i <= nuberOfColsToUpdate; ++i) {
 			int matrixLoopFrontX = matrixPos((int)m_matrixTopRight.x, i * -moveDirection);
@@ -152,12 +156,12 @@ public class TileEngine {
 				matrixLoopFrontX = matrixPos(matrixLoopFrontX, 1);
 
 			int coordCenterX = moveDirection > 0 ?
-				(int)m_gridCenter.x + m_matrixSizeHalf - i - 1 :
-				(int)m_gridCenter.x - m_matrixSizeHalf + i;
+				(int)m_gridCenter.x + m_tileCountHalf - i - 1 :
+				(int)m_gridCenter.x - m_tileCountHalf + i;
 
-			for (int j = 0; j < m_matrixSize; ++j) {
+			for (int j = 0; j < m_tileCount; ++j) {
 				int matrixLoopFrontZ = matrixPos((int)m_matrixTopRight.y, -j);
-				int coordCenterZ = (int)m_gridCenter.y + m_matrixSizeHalf - j - 1;
+				int coordCenterZ = (int)m_gridCenter.y + m_tileCountHalf - j - 1;
 
 				m_tileMoveDesc[j].gridCoord.Set(coordCenterX, coordCenterZ);
 				m_tileMoveDesc[j].matrixCoord.Set(matrixLoopFrontX, matrixLoopFrontZ);
@@ -178,7 +182,7 @@ public class TileEngine {
 	private void updateTilesZ(int tilesCrossedZ)
 	{
 		int moveDirection = tilesCrossedZ > 0 ? 1 : -1;
-		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedZ), m_matrixSize);
+		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedZ), m_tileCount);
 
 		for (int i = 0; i <= nuberOfRowsToUpdate; ++i) {
 			int matrixLoopFrontZ = matrixPos((int)m_matrixTopRight.y, i * -moveDirection);
@@ -186,12 +190,12 @@ public class TileEngine {
 				matrixLoopFrontZ = matrixPos(matrixLoopFrontZ, 1);
 
 			int coordCenterZ = moveDirection > 0 ?
-				(int)m_gridCenter.y + m_matrixSizeHalf - i - 1 :
-				(int)m_gridCenter.y - m_matrixSizeHalf + i;
+				(int)m_gridCenter.y + m_tileCountHalf - i - 1 :
+				(int)m_gridCenter.y - m_tileCountHalf + i;
 
-			for (int j = 0; j < m_matrixSize; ++j) {
+			for (int j = 0; j < m_tileCount; ++j) {
 				int matrixLoopFrontX = matrixPos((int)m_matrixTopRight.x, -j);
-				int coordCenterX = (int)m_gridCenter.x + m_matrixSizeHalf - j - 1;
+				int coordCenterX = (int)m_gridCenter.x + m_tileCountHalf - j - 1;
 
 				m_tileMoveDesc[j].gridCoord.Set(coordCenterX, coordCenterZ);
 				m_tileMoveDesc[j].matrixCoord.Set(matrixLoopFrontX, matrixLoopFrontZ);
