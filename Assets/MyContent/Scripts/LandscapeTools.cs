@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class LandscapeTools
 {
-	public static TerrainData createTerrainData()
+	public static TerrainData createGroundTerrainData()
 	{
 		TerrainData data = new TerrainData();
 		data.alphamapResolution = 512;
@@ -17,13 +17,14 @@ public class LandscapeTools
 
 		SplatPrototype[] splatArray = new SplatPrototype[1]; 
 		splatArray[0] = new SplatPrototype(); 
-		splatArray[0].texture = (Texture2D)Resources.Load("finaltexture");
+		splatArray[0].texture = LandscapeConstructor.m_instance.terrainTexture;
+//		splatArray[0].texture = (Texture2D)Resources.Load("finaltexture");
 		data.splatPrototypes = splatArray;  
 
 		return data;
 	}
 
-	public static TerrainData Clone(TerrainData original)
+	public static TerrainData clone(TerrainData original)
 	{
 		TerrainData dup = new TerrainData();
 
@@ -48,18 +49,11 @@ public class LandscapeTools
 		dup.wavingGrassStrength = original.wavingGrassStrength;
 		dup.wavingGrassTint = original.wavingGrassTint;
 
-//		MonoBehaviour.print(original.thickness);
-//		MonoBehaviour.print(original.heightmapResolution);
-//		MonoBehaviour.print(original.size);
-//		MonoBehaviour.print("----------------------");
-
 		dup.SetAlphamaps(0, 0, original.GetAlphamaps(0, 0, original.alphamapWidth, original.alphamapHeight));
 		dup.SetHeights(0, 0, original.GetHeights(0, 0, original.heightmapWidth, original.heightmapHeight));
 
 		for (int n = 0; n < original.detailPrototypes.Length; n++)
-		{
 			dup.SetDetailLayer(0, 0, n, original.GetDetailLayer(0, 0, original.detailWidth, original.detailHeight, n));
-		}
 
 		dup.treePrototypes = CloneTreePrototypes(dup.treePrototypes);
 		dup.treeInstances = CloneTreeInstances(original.treeInstances);

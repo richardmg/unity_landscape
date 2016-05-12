@@ -6,15 +6,15 @@ public class TileLayerTerrain : ITileTerrainLayer
 {
 	GameObject m_layerRoot;
 	GameObject[,] m_tileMatrix;
-	Texture2D m_terrainTexture;
+	TerrainData m_terrainData;
 	public float[,] m_heightArray;
 
-	public TileLayerTerrain(string name, Texture2D terrainTexture, Transform parentTransform)
+	public TileLayerTerrain(string name, TerrainData tileTerrainData, Transform parentTransform)
 	{
-		m_terrainTexture = terrainTexture;
+		m_terrainData = tileTerrainData;
 		m_layerRoot = new GameObject(name);
 		m_layerRoot.transform.SetParent(parentTransform);
-		m_heightArray = new float[33, 33];
+		m_heightArray = new float[m_terrainData.heightmapResolution, m_terrainData.heightmapResolution];
 	}
 
 	public void initTileResources(int tileCount, float tileWorldSize)
@@ -22,7 +22,7 @@ public class TileLayerTerrain : ITileTerrainLayer
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(createTerrainData());
+				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(LandscapeTools.clone(m_terrainData));
 				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform);
 			}
 		}
@@ -77,22 +77,5 @@ public class TileLayerTerrain : ITileTerrainLayer
 	Terrain getTerrainSafe(Vector2 matrixPos)
 	{
 		return (int)matrixPos.x == -1 ? null : m_tileMatrix[(int)matrixPos.x, (int)matrixPos.y].GetComponent<Terrain>();
-	}
-
-	TerrainData createTerrainData()
-	{
-		TerrainData data = new TerrainData();
-		data.alphamapResolution = 512;
-		data.baseMapResolution = 1024;
-		data.SetDetailResolution(384, 16);
-		data.heightmapResolution = 33;
-		data.size = new Vector3(1000, 200, 1000);
-
-		SplatPrototype[] splatArray = new SplatPrototype[1]; 
-		splatArray[0] = new SplatPrototype(); 
-		splatArray[0].texture = m_terrainTexture;
-		data.splatPrototypes = splatArray;  
-
-		return data;
 	}
 }

@@ -37,7 +37,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		m_instance = this;
 
 		m_tileEngine = new TileEngine(rows, tileWidth);
-		m_tileEngine.addTileLayer(new TileLayerTerrain("Ground", terrainTexture, transform));
+		m_tileEngine.addTileLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData(), transform));
 		m_tileEngine.addTileLayer(new TileLayerGrass("Grass", grassPrefab, transform));
 		m_tileEngine.start(player.transform.position);
 	}
