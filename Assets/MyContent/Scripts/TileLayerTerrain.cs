@@ -17,12 +17,13 @@ public class TileLayerTerrain : ITileTerrainLayer
 
 	public void initTileLayer(TileEngine engine)
 	{
+		int tileCount = engine.tileCount();
 		m_layerRoot.transform.SetParent(engine.parentTransform());
 		m_heightArray = new float[m_terrainData.heightmapResolution, m_terrainData.heightmapResolution];
-		m_tileMatrix = new GameObject[engine.tileCount(), engine.tileCount()];
+		m_tileMatrix = new GameObject[tileCount, tileCount];
 
-		for (int z = 0; z < m_tileMatrix.GetLength(0); ++z) {
-			for (int x = 0; x < m_tileMatrix.GetLength(1); ++x) {
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
 				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(LandscapeTools.clone(m_terrainData));
 				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform);
 			}
