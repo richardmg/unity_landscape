@@ -14,7 +14,7 @@ public class LandscapeTools
 		data.alphamapResolution = 512;
 		data.baseMapResolution = 1024;
 		data.SetDetailResolution(384, 16);
-		data.heightmapResolution = 33;
+		data.heightmapResolution = lc.groundResolution;
 
 		float tileMaxHeight = lc.tileHeightOct0 + lc.tileHeightOct1 + lc.tileHeightOct2;
 		data.size = new Vector3(lc.tileWidth, tileMaxHeight, lc.tileWidth);
