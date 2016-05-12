@@ -9,17 +9,18 @@ public class TileLayerTerrain : ITileTerrainLayer
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
 
-	public TileLayerTerrain(string name, TerrainData tileTerrainData, Transform parentTransform)
+	public TileLayerTerrain(string name, TerrainData tileTerrainData)
 	{
-		m_terrainData = tileTerrainData;
 		m_layerRoot = new GameObject(name);
-		m_layerRoot.transform.SetParent(parentTransform);
-		m_heightArray = new float[m_terrainData.heightmapResolution, m_terrainData.heightmapResolution];
+		m_terrainData = tileTerrainData;
 	}
 
-	public void initTileResources(int tileCount, float tileWorldSize)
+	public void initTileResources(int tileCount, float tileWorldSize, Transform parentTransform)
 	{
+		m_layerRoot.transform.SetParent(parentTransform);
+		m_heightArray = new float[m_terrainData.heightmapResolution, m_terrainData.heightmapResolution];
 		m_tileMatrix = new GameObject[tileCount, tileCount];
+
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(LandscapeTools.clone(m_terrainData));

@@ -9,16 +9,16 @@ public class TileLayerGrass : ITileLayer
 	GameObject[] m_items;
 	const int max_items = 100;
 
-	public TileLayerGrass(string name, GameObject prefab, Transform parentTransform)
+	public TileLayerGrass(string name, GameObject prefab)
 	{
 		m_prefab = prefab;
 		m_itemsParent = new GameObject(name);
-		m_itemsParent.transform.SetParent(parentTransform);
-		m_items = new GameObject[max_items];
 	}
 
-	public void initTileResources(int tileCount, float tileWorldSize)
+	public void initTileResources(int tileCount, float tileWorldSize, Transform parentTransform)
 	{
+		m_items = new GameObject[max_items];
+		m_itemsParent.transform.SetParent(parentTransform);
 	}
 
 	public void initTiles(TileDescription[] tilesToInit)

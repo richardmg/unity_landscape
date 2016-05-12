@@ -20,7 +20,7 @@ public class TileDescription
 
 public interface ITileLayer
 {
-	void initTileResources(int tileCount, float tileWorldSize);
+	void initTileResources(int tileCount, float tileWorldSize, Transform parentTransform);
 	void initTiles(TileDescription[] tilesToInit);
 	void moveTiles(TileDescription[] tilesToMove);
 }
@@ -39,16 +39,18 @@ public class TileEngine {
 	Vector2 m_gridCenter;
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
+	Transform m_parentTransform;
 
 	List<ITileLayer> m_tileLayerList;
 
-	public TileEngine(int tileCount, float tileWorldSize)
+	public TileEngine(int tileCount, float tileWorldSize, Transform parentTransform)
 	{
 		m_tileLayerList = new List<ITileLayer>();
 		m_tileCount = tileCount;
 		m_tileCountHalf = m_tileCount / 2;
 		m_tileWorldSize = tileWorldSize;
 		m_gridCenterOffset = new Vector3(m_tileWorldSize / 2, 0, m_tileWorldSize / 2);
+		m_parentTransform = parentTransform;
 		m_tileMoveDesc = new TileDescription[m_tileCount];
 		for (int i = 0; i < m_tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
@@ -105,7 +107,7 @@ public class TileEngine {
 		setGridPosFromWorldPos(playerPos + m_gridCenterOffset, ref m_gridCenter);
 
 		foreach (ITileLayer tileLayer in m_tileLayerList)
-			tileLayer.initTileResources(m_tileCount, m_tileWorldSize);
+			tileLayer.initTileResources(m_tileCount, m_tileWorldSize, m_parentTransform);
 
 		for (int z = 0; z < m_tileCount; ++z) {
 			for (int x = 0; x < m_tileCount; ++x) {
