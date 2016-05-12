@@ -20,8 +20,7 @@ public class TileDescription
 
 public interface ITileLayer
 {
-	void initTileResources(int tileCount, float tileWorldSize, Transform parentTransform);
-	void initTiles(TileDescription[] tilesToInit);
+	void initTileLayer(TileEngine engine);
 	void moveTiles(TileDescription[] tilesToMove);
 }
 
@@ -31,7 +30,6 @@ public interface ITileTerrainLayer : ITileLayer
 }
 
 public class TileEngine {
-
 	int m_tileCount;
 	int m_tileCountHalf;
 	float m_tileWorldSize;
@@ -58,6 +56,10 @@ public class TileEngine {
 		Debug.AssertFormat(m_tileCount >= 2, "TileEngine: column count must be greater than or equal to 2");
 		Debug.AssertFormat(m_tileWorldSize > 0, "TileEngine: tile width must be greater than 0");
 	}
+
+	public int tileCount() { return m_tileCount; }
+	public float tileWorldSize() { return m_tileWorldSize; }
+	public Transform parentTransform() { return m_parentTransform; }
 
 	public void addTileLayer(ITileLayer tileLayer)
 	{
@@ -107,7 +109,7 @@ public class TileEngine {
 		setGridPosFromWorldPos(playerPos + m_gridCenterOffset, ref m_gridCenter);
 
 		foreach (ITileLayer tileLayer in m_tileLayerList)
-			tileLayer.initTileResources(m_tileCount, m_tileWorldSize, m_parentTransform);
+			tileLayer.initTileLayer(this);
 
 		for (int z = 0; z < m_tileCount; ++z) {
 			for (int x = 0; x < m_tileCount; ++x) {
@@ -120,7 +122,7 @@ public class TileEngine {
 				setNeighbours(m_tileMoveDesc[x].matrixCoord, ref m_tileMoveDesc[x].neighbours);
 
 				foreach (ITileLayer tileLayer in m_tileLayerList) {
-					tileLayer.initTiles(m_tileMoveDesc);
+					tileLayer.moveTiles(m_tileMoveDesc);
 					if (tileLayer is ITileTerrainLayer)
 						((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 				}

@@ -15,21 +15,10 @@ public class TileLayerGrass : ITileLayer
 		m_itemsParent = new GameObject(name);
 	}
 
-	public void initTileResources(int tileCount, float tileWorldSize, Transform parentTransform)
+	public void initTileLayer(TileEngine engine)
 	{
 		m_items = new GameObject[max_items];
-		m_itemsParent.transform.SetParent(parentTransform);
-	}
-
-	public void initTiles(TileDescription[] tilesToInit)
-	{
-//		for (int i = 0; i < tilesToInit.Length; ++i) {
-//			GameObject grassObject = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity);
-//			m_items[i] = grassObject;
-//			ITile tileScript = (ITile)grassObject.GetComponent<ITile>();
-//			Debug.AssertFormat(tileScript != null, this.GetType().Name + ": prefab needs to have a script attached that implements ITile");
-//			tileScript.initTile(tilesToInit[i], grassObject);
-//		}
+		m_itemsParent.transform.SetParent(engine.parentTransform());
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
