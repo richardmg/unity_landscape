@@ -8,16 +8,20 @@ public class LandscapeTools
 {
 	public static TerrainData createGroundTerrainData()
 	{
+		LandscapeConstructor lc = LandscapeConstructor.m_instance;
+
 		TerrainData data = new TerrainData();
 		data.alphamapResolution = 512;
 		data.baseMapResolution = 1024;
 		data.SetDetailResolution(384, 16);
 		data.heightmapResolution = 33;
-		data.size = new Vector3(1000, 200, 1000);
+
+		float tileMaxHeight = lc.landscapeHeightLargeScale + lc.landscapeHeightMediumScale + lc.landscapeSmallScale;
+		data.size = new Vector3(lc.tileWidth, tileMaxHeight, lc.tileWidth);
 
 		SplatPrototype[] splatArray = new SplatPrototype[1]; 
 		splatArray[0] = new SplatPrototype(); 
-		splatArray[0].texture = LandscapeConstructor.m_instance.terrainTexture;
+		splatArray[0].texture = lc.terrainTexture;
 //		splatArray[0].texture = (Texture2D)Resources.Load("finaltexture");
 		data.splatPrototypes = splatArray;  
 
