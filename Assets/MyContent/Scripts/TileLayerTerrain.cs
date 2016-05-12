@@ -5,35 +5,24 @@ using System.Collections.Generic;
 public class TileLayerTerrain : ITileTerrainLayer
 {
 	GameObject m_layerRoot;
-	GameObject m_prefab;
 	GameObject[,] m_tileMatrix;
+	Texture2D m_terrainTexture;
 	public float[,] m_heightArray;
 
-	public TileLayerTerrain(string name, GameObject prefab, Transform parentTransform)
+	public TileLayerTerrain(string name, Texture2D terrainTexture, Transform parentTransform)
 	{
-		m_prefab = prefab;
-		Terrain terrain = m_prefab.GetComponent<Terrain>();
-		Debug.AssertFormat(terrain != null, this.GetType().Name + ": prefab needs to have a Terrain component");
-		int res = terrain.terrainData.heightmapResolution;
-		m_heightArray = new float[res, res];
+		m_terrainTexture = terrainTexture;
 		m_layerRoot = new GameObject(name);
 		m_layerRoot.transform.SetParent(parentTransform);
+		m_heightArray = new float[33, 33];
 	}
 
 	public void initTileResources(int tileCount, float tileWorldSize)
 	{
-		Terrain terrain = m_prefab.GetComponent<Terrain>();
-		TerrainData tdata = terrain.terrainData;
-		Vector3 scale = tdata.heightmapScale;
-		float w = tdata.size.x;
-		float l = tdata.size.z;
-		Debug.AssertFormat(scale.y == LandscapeConstructor.m_instance.landscapeHeightLargeScale, "LandscapeTile: Landscape height needs to match global height function");
-		Debug.AssertFormat(w == l && w == tileWorldSize, "LandscapeTile: tileWorldSize needs to be the same as prefab width/height");
-
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity);
+				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(createTerrainData());
 				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform);
 			}
 		}
@@ -41,24 +30,6 @@ public class TileLayerTerrain : ITileTerrainLayer
 
 	public void initTiles(TileDescription[] tilesToInit)
 	{
-		for (int i = 0; i < tilesToInit.Length; ++i) {
-			TileDescription desc = tilesToInit[i];
-			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			Terrain terrain = tileObject.GetComponent<Terrain>();
-			TerrainData tdata = terrain.terrainData;
-
-			if (desc.gridCoord.x == 0 && desc.gridCoord.y == 0) {
-				Vector3 scale = tdata.heightmapScale;
-				float w = tdata.size.x;
-				float l = tdata.size.z;
-				Debug.AssertFormat(scale.y == LandscapeConstructor.m_instance.landscapeHeightLargeScale, "LandscapeTile: Landscape height needs to match global height function");
-				Debug.AssertFormat(w == l && w == (float)LandscapeConstructor.m_instance.tileWidth, "LandscapeTile: landscape size needs to be the same as in tileWidth");
-			}
-
-			terrain.terrainData = LandscapeTools.Clone(tdata);
-			tileObject.GetComponent<TerrainCollider>().terrainData = terrain.terrainData;
-		}
-
 		moveTiles(tilesToInit);
 	}
 
@@ -106,5 +77,22 @@ public class TileLayerTerrain : ITileTerrainLayer
 	Terrain getTerrainSafe(Vector2 matrixPos)
 	{
 		return (int)matrixPos.x == -1 ? null : m_tileMatrix[(int)matrixPos.x, (int)matrixPos.y].GetComponent<Terrain>();
+	}
+
+	TerrainData createTerrainData()
+	{
+		TerrainData data = new TerrainData();
+		data.alphamapResolution = 512;
+		data.baseMapResolution = 1024;
+		data.SetDetailResolution(384, 16);
+		data.heightmapResolution = 33;
+		data.size = new Vector3(1000, 200, 1000);
+
+		SplatPrototype[] splatArray = new SplatPrototype[1]; 
+		splatArray[0] = new SplatPrototype(); 
+		splatArray[0].texture = m_terrainTexture;
+		data.splatPrototypes = splatArray;  
+
+		return data;
 	}
 }

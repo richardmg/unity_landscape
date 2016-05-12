@@ -13,8 +13,8 @@ public class LandscapeConstructor : MonoBehaviour {
 	public float landscapeHeightMediumScale = 4f;
 	public float landscapeSmallScale = 0.3f;
 
-	public GameObject terrainTile;
-	public GameObject grass;
+	public Texture2D terrainTexture;
+	public GameObject grassPrefab;
 	public GameObject player;
 
 	TileEngine m_tileEngine;
@@ -37,8 +37,8 @@ public class LandscapeConstructor : MonoBehaviour {
 		m_instance = this;
 
 		m_tileEngine = new TileEngine(rows, tileWidth);
-		m_tileEngine.addTileLayer(new TileLayerTerrain("Ground", terrainTile, transform));
-		m_tileEngine.addTileLayer(new TileLayerGrass("Grass", grass, transform));
+		m_tileEngine.addTileLayer(new TileLayerTerrain("Ground", terrainTexture, transform));
+		m_tileEngine.addTileLayer(new TileLayerGrass("Grass", grassPrefab, transform));
 		m_tileEngine.start(player.transform.position);
 	}
 

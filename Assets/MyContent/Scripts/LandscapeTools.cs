@@ -6,6 +6,23 @@ using UnityEngine;
 
 public class LandscapeTools
 {
+	public static TerrainData createTerrainData()
+	{
+		TerrainData data = new TerrainData();
+		data.alphamapResolution = 512;
+		data.baseMapResolution = 1024;
+		data.SetDetailResolution(384, 16);
+		data.heightmapResolution = 33;
+		data.size = new Vector3(1000, 200, 1000);
+
+		SplatPrototype[] splatArray = new SplatPrototype[1]; 
+		splatArray[0] = new SplatPrototype(); 
+		splatArray[0].texture = (Texture2D)Resources.Load("finaltexture");
+		data.splatPrototypes = splatArray;  
+
+		return data;
+	}
+
 	public static TerrainData Clone(TerrainData original)
 	{
 		TerrainData dup = new TerrainData();
@@ -13,7 +30,7 @@ public class LandscapeTools
 		dup.alphamapResolution = original.alphamapResolution;
 		dup.baseMapResolution = original.baseMapResolution;
 
-		dup.detailPrototypes = CloneDetailPrototypes(original.detailPrototypes);
+		dup.detailPrototypes = CloneDetailPrototypes(original.detailPrototypes); /// XXXX
 
 		// The resolutionPerPatch is not publicly accessible so
 		// it can not be cloned properly, thus the recommendet default
@@ -23,13 +40,18 @@ public class LandscapeTools
 		dup.heightmapResolution = original.heightmapResolution;
 		dup.size = original.size;
 
-		dup.splatPrototypes = CloneSplatPrototypes(original.splatPrototypes);
+		dup.splatPrototypes = CloneSplatPrototypes(original.splatPrototypes); /// XXX
 
 		dup.thickness = original.thickness;
 		dup.wavingGrassAmount = original.wavingGrassAmount;
 		dup.wavingGrassSpeed = original.wavingGrassSpeed;
 		dup.wavingGrassStrength = original.wavingGrassStrength;
 		dup.wavingGrassTint = original.wavingGrassTint;
+
+//		MonoBehaviour.print(original.thickness);
+//		MonoBehaviour.print(original.heightmapResolution);
+//		MonoBehaviour.print(original.size);
+//		MonoBehaviour.print("----------------------");
 
 		dup.SetAlphamaps(0, 0, original.GetAlphamaps(0, 0, original.alphamapWidth, original.alphamapHeight));
 		dup.SetHeights(0, 0, original.GetHeights(0, 0, original.heightmapWidth, original.heightmapHeight));
