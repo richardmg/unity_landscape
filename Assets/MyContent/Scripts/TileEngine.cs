@@ -61,7 +61,7 @@ public class TileEngine {
 	public float tileWorldSize() { return m_tileWorldSize; }
 	public Transform parentTransform() { return m_parentTransform; }
 
-	public void addTileLayer(ITileLayer tileLayer)
+	public void addLayer(ITileLayer tileLayer)
 	{
 		m_tileLayerList.Add(tileLayer);
 	}
