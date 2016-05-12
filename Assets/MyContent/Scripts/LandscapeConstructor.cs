@@ -4,14 +4,17 @@ using System.Collections;
 public class LandscapeConstructor : MonoBehaviour {
 
 	public int rows = 4;
-	public int tileWidth = 1000;
+	public float tileWidth = 1000;
 
-	public float perlinLargeScale = 0.003f;
-	public float perlinMediumScale = 0.02f;
-	public float perlinSmallScale = 0.1f;
-	public float landscapeHeightLargeScale = 40f;
-	public float landscapeHeightMediumScale = 4f;
-	public float landscapeSmallScale = 0.3f;
+	public float noiseScaleOct0 = 0.003f;
+	public float noiseScaleOct1 = 0.02f;
+	public float noiseScaleOct2 = 0.1f;
+
+	public float tileHeightOct0 = 200;
+	public float tileHeightOct1 = 10;
+	public float tileHeightOct2 = 1;
+
+	public int groundResolution = 33;
 
 	public Texture2D terrainTexture;
 	public GameObject grassPrefab;
@@ -20,22 +23,21 @@ public class LandscapeConstructor : MonoBehaviour {
 	TileEngine m_tileEngine;
 
 	static public LandscapeConstructor m_instance;
+	public LandscapeConstructor()
+	{
+		m_instance = this;
+	}
 
 	public static float getGroundHeight(float x, float z)
 	{
-		float firstOctave = Mathf.PerlinNoise(x * m_instance.perlinLargeScale, z * m_instance.perlinLargeScale) * m_instance.landscapeHeightLargeScale;
-		float secondOctave = Mathf.PerlinNoise(x * m_instance.perlinMediumScale, z * m_instance.perlinMediumScale) * m_instance.landscapeHeightMediumScale;
-		float thirdOctave = Mathf.PerlinNoise(x * m_instance.perlinSmallScale, z * m_instance.perlinSmallScale) * m_instance.landscapeSmallScale;
-		return firstOctave + secondOctave + thirdOctave;
+		float oct0 = Mathf.PerlinNoise(x * m_instance.noiseScaleOct0, z * m_instance.noiseScaleOct0) * m_instance.tileHeightOct0;
+		float oct1 = Mathf.PerlinNoise(x * m_instance.noiseScaleOct1, z * m_instance.noiseScaleOct1) * m_instance.tileHeightOct1;
+		float oct2 = Mathf.PerlinNoise(x * m_instance.noiseScaleOct2, z * m_instance.noiseScaleOct2) * m_instance.tileHeightOct2;
+		return oct0 + oct1 + oct2;
 	}
 
 	public void constructLandscape()
 	{
-		if (m_instance)
-			return;
-
-		m_instance = this;
-
 		m_tileEngine = new TileEngine(rows, tileWidth, transform);
 		m_tileEngine.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
 		m_tileEngine.addLayer(new TileLayerGrass("Grass", grassPrefab));
