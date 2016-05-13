@@ -6,8 +6,11 @@ public class LandscapeConstructor : MonoBehaviour {
 	public int rows = 4;
 	public float tileWidth = 1000;
 
+	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
+	[HideInInspector]
 	public float noiseScaleOct1 = 0.02f;
+	[HideInInspector]
 	public float noiseScaleOct2 = 0.1f;
 
 	public float tileHeightOct0 = 200;
