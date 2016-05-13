@@ -3,7 +3,9 @@ using System.Collections;
 
 public class LandscapeConstructor : MonoBehaviour {
 
-	public int rows = 4;
+	public int tileCountLandscape = 4;
+	public int tileCountFar = 4;
+	public int tileCountNear = 4;
 	public float tileWidthLandscape = 1000;
 	public float tileWidthFar = 100;
 	public float tileWidthNear = 10;
@@ -46,12 +48,12 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public void constructLandscape()
 	{
-		m_tileEngineLandscape = new TileEngine(rows, tileWidthLandscape, transform);
+		m_tileEngineLandscape = new TileEngine(tileCountLandscape, tileWidthLandscape, transform);
 		m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
 
-		m_tileEngineNear = new TileEngine(rows, tileWidthNear, transform);
+		m_tileEngineNear = new TileEngine(tileCountNear, tileWidthNear, transform);
 
-		m_tileEngineFar = new TileEngine(rows, tileWidthFar, transform);
+		m_tileEngineFar = new TileEngine(tileCountFar, tileWidthFar, transform);
 		m_tileEngineFar.addLayer(new TileLayerTrees("Trees", treePrefab));
 
 		m_tileEngineLandscape.start(player.transform.position);
