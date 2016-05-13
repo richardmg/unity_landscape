@@ -20,7 +20,9 @@ public class LandscapeConstructor : MonoBehaviour {
 	public GameObject grassPrefab;
 	public GameObject player;
 
-	TileEngine m_tileEngine;
+	TileEngine m_tileEngineLandscape;
+	TileEngine m_tileEngineNear;
+	TileEngine m_tileEngineFar;
 
 	static public LandscapeConstructor m_instance;
 	public LandscapeConstructor()
@@ -38,10 +40,17 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public void constructLandscape()
 	{
-		m_tileEngine = new TileEngine(rows, tileWidth, transform);
-		m_tileEngine.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
-		m_tileEngine.addLayer(new TileLayerGrass("Grass", grassPrefab));
-		m_tileEngine.start(player.transform.position);
+		m_tileEngineLandscape = new TileEngine(rows, tileWidth, transform);
+		m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
+
+		m_tileEngineNear = new TileEngine(rows, 10, transform);
+		m_tileEngineNear.addLayer(new TileLayerGrass("Grass", grassPrefab));
+
+		m_tileEngineFar = new TileEngine(rows, 100, transform);
+
+		m_tileEngineLandscape.start(player.transform.position);
+		m_tileEngineNear.start(player.transform.position);
+		m_tileEngineFar.start(player.transform.position);
 	}
 
 	public void movePlayerOnTop()
@@ -62,6 +71,8 @@ public class LandscapeConstructor : MonoBehaviour {
 	// Update is called once per frame
 	public void Update()
 	{
-		m_tileEngine.update(player.transform.position);
+		m_tileEngineLandscape.update(player.transform.position);
+		m_tileEngineNear.update(player.transform.position);
+		m_tileEngineFar.update(player.transform.position);
 	}
 }
