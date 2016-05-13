@@ -4,14 +4,9 @@ using System.Collections;
 public class LandscapeConstructor : MonoBehaviour {
 
 	public int rows = 4;
-	public float tileWidth = 1000;
-
-	[HideInInspector]
-	public float noiseScaleOct0 = 0.003f;
-	[HideInInspector]
-	public float noiseScaleOct1 = 0.02f;
-	[HideInInspector]
-	public float noiseScaleOct2 = 0.1f;
+	public float tileWidthLandscape = 1000;
+	public float tileWidthFar = 100;
+	public float tileWidthNear = 10;
 
 	public float tileHeightOct0 = 200;
 	public float tileHeightOct1 = 10;
@@ -19,9 +14,17 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public int groundResolution = 33;
 
+	public GameObject player;
 	public Texture2D terrainTexture;
 	public GameObject grassPrefab;
-	public GameObject player;
+	public GameObject treePrefab;
+
+	[HideInInspector]
+	public float noiseScaleOct0 = 0.003f;
+	[HideInInspector]
+	public float noiseScaleOct1 = 0.02f;
+	[HideInInspector]
+	public float noiseScaleOct2 = 0.1f;
 
 	TileEngine m_tileEngineLandscape;
 	TileEngine m_tileEngineNear;
@@ -43,13 +46,13 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public void constructLandscape()
 	{
-		m_tileEngineLandscape = new TileEngine(rows, tileWidth, transform);
+		m_tileEngineLandscape = new TileEngine(rows, tileWidthLandscape, transform);
 		m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
 
-		m_tileEngineNear = new TileEngine(rows, 10, transform);
-		m_tileEngineNear.addLayer(new TileLayerGrass("Grass", grassPrefab));
+		m_tileEngineNear = new TileEngine(rows, tileWidthNear, transform);
 
-		m_tileEngineFar = new TileEngine(rows, 100, transform);
+		m_tileEngineFar = new TileEngine(rows, tileWidthFar, transform);
+		m_tileEngineFar.addLayer(new TileLayerTrees("Trees", treePrefab));
 
 		m_tileEngineLandscape.start(player.transform.position);
 		m_tileEngineNear.start(player.transform.position);
