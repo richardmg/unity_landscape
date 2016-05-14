@@ -26,11 +26,18 @@
  
          vertexOutput vert(vertexInput input) 
          {
-            vertexOutput output;
+//         	#if UNITY_UV_STARTS_AT_TOP
+//        		input.vertex.y = 1 - input.vertex.y;
+//			#endif
 
-            output.pos = mul(UNITY_MATRIX_P, 
-              mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
-              - float4(input.vertex.x, input.vertex.y, 0.0, 0.0));
+            vertexOutput output;
+//            output.pos = input.vertex;
+
+            output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
+
+//            output.pos = mul(UNITY_MATRIX_P, 
+//              mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
+//              - float4(input.vertex.x, input.vertex.y, 0.0, 0.0));
  
             output.tex = input.tex;
 
