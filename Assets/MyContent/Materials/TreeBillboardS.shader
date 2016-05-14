@@ -3,6 +3,9 @@
       _MainTex ("Texture Image", 2D) = "white" {}
    }
    SubShader {
+      Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
+      Blend SrcAlpha OneMinusSrcAlpha
+
       Pass {   
          CGPROGRAM
  
@@ -36,7 +39,10 @@
  
          float4 frag(vertexOutput input) : COLOR
          {
-            return tex2D(_MainTex, float2(input.tex.xy));   
+         	float4 rgba = tex2D(_MainTex, float2(input.tex.xy));
+         	if (rgba.x == 0 && rgba.y == 0 && rgba.z == 0)
+         		rgba[3] = 0;
+            return rgba; 
          }
  
          ENDCG

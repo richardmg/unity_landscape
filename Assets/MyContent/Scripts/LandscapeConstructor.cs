@@ -3,6 +3,11 @@ using System.Collections;
 
 public class LandscapeConstructor : MonoBehaviour {
 
+	public bool flyMode = false;
+	public bool showLandscape = true;
+	public bool showFarTiles = true;
+	public bool showNearTiles = true;
+
 	public int tileCountLandscape = 4;
 	public int tileCountFar = 4;
 	public int tileCountNear = 4;
@@ -49,12 +54,17 @@ public class LandscapeConstructor : MonoBehaviour {
 	public void constructLandscape()
 	{
 		m_tileEngineLandscape = new TileEngine(tileCountLandscape, tileWidthLandscape, transform);
-		m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
-
 		m_tileEngineNear = new TileEngine(tileCountNear, tileWidthNear, transform);
-
 		m_tileEngineFar = new TileEngine(tileCountFar, tileWidthFar, transform);
-		m_tileEngineFar.addLayer(new TileLayerTrees("Trees", treePrefab));
+
+		if (showLandscape) {
+			m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
+		}
+
+
+		if (showFarTiles) {
+			m_tileEngineFar.addLayer(new TileLayerTrees("Trees", treePrefab));
+		}
 
 		m_tileEngineLandscape.start(player.transform.position);
 		m_tileEngineNear.start(player.transform.position);
@@ -69,6 +79,14 @@ public class LandscapeConstructor : MonoBehaviour {
 		player.transform.position = playerPos;
 	}
 
+	public void letPlayerFly()
+	{
+		// Move player on top of landscape
+		Vector3 playerPos = player.transform.position;
+		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + 50;
+		player.transform.position = playerPos;
+	}
+
 	// Use this for initialization
 	void Start()
 	{
@@ -79,6 +97,8 @@ public class LandscapeConstructor : MonoBehaviour {
 	// Update is called once per frame
 	public void Update()
 	{
+		if (flyMode)
+			letPlayerFly();
 		m_tileEngineLandscape.update(player.transform.position);
 		m_tileEngineNear.update(player.transform.position);
 		m_tileEngineFar.update(player.transform.position);
