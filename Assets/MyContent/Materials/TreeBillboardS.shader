@@ -1,6 +1,7 @@
 ﻿Shader "Tree billboard shader" {
    Properties {
       _MainTex ("Texture Image", 2D) = "white" {}
+      _CutOff("Cut off", Range(0,1)) = 0
    }
    SubShader {
       Tags { "RenderType" = "Transparent" "DisableBatching" = "True" }
@@ -18,7 +19,8 @@
 
          // User-specified uniforms            
          uniform sampler2D _MainTex;        
- 
+		 uniform float _CutOff; 
+
          struct vertexInput {
             float4 vertex : POSITION;
             float4 tex : TEXCOORD0;
@@ -35,7 +37,7 @@
 //            output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             output.tex = input.tex;
 
-            // Note that we use + for quad and - for cube in the calculation underneath
+            // Note that we use + for quad and - for cube in
             float scaleX = length(mul(_Object2World, float4(1.0, 0.0, 0.0, 0.0)));
             float scaleY = length(mul(_Object2World, float4(0.0, 1.0, 0.0, 0.0)));
             output.pos = mul(UNITY_MATRIX_P, 
@@ -48,8 +50,8 @@
          float4 frag(vertexOutput input) : COLOR
          {
          	float4 rgba = tex2D(_MainTex, float2(input.tex.xy));
-         	if (rgba.x == 0 && rgba.y == 0 && rgba.z == 0)
-         		rgba.a = 0;
+         	if (rgba.x <= _CutOff && rgba.y <= _CutOff && rgba.z <= _CutOff)
+         		discard;
             return rgba; 
          }
  
