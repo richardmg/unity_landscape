@@ -4,7 +4,9 @@
    }
    SubShader {
       Tags { "RenderType" = "Transparent" "Queue" = "Transparent" }
+
       Blend SrcAlpha OneMinusSrcAlpha
+      ZWrite Off
 
       Pass {
 
@@ -24,6 +26,7 @@
          };
          struct vertexOutput {
             float4 pos : SV_POSITION;
+            float depth : SV_Depth;
             float4 tex : TEXCOORD0;
          };
  
@@ -43,6 +46,7 @@
 //              - float4(input.vertex.x, input.vertex.y, 0.0, 0.0));
  
             output.tex = input.tex;
+            output.depth = 0;
 
             return output;
          }
