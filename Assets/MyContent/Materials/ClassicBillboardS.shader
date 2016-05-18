@@ -29,7 +29,6 @@
 
             float scaleX = length(mul(_Object2World, float4(1.0, 0.0, 0.0, 0.0)));
             float scaleY = length(mul(_Object2World, float4(0.0, 1.0, 0.0, 0.0)));
-
             output.pos = mul(UNITY_MATRIX_P, 
               mul(UNITY_MATRIX_MV, float4(0.0, 0.0, 0.0, 1.0))
               - float4(input.vertex.x * scaleX, input.vertex.y * scaleY, 0.0, 0.0));
