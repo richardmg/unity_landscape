@@ -7,6 +7,7 @@ public class TileLayerTrees : ITileLayer
 	GameObject m_prefab;
 	GameObject m_layerRoot;
 	GameObject[,] m_tileMatrix;
+	float m_pivotAdjustmentY = 0;
 
 	const int max_items = 100;
 
@@ -14,6 +15,9 @@ public class TileLayerTrees : ITileLayer
 	{
 		m_prefab = prefab;
 		m_layerRoot = new GameObject(name);
+		PivotAdjustment pa = m_prefab.GetComponent<PivotAdjustment>();
+		if (pa != null)
+			m_pivotAdjustmentY = pa.adjustY;
 	}
 
 	public void initTileLayer(TileEngine engine)
@@ -36,7 +40,7 @@ public class TileLayerTrees : ITileLayer
 			TileDescription desc = tilesToMove[i];
 			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			Vector3 worldPos = desc.worldPos;
-			worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z);
+			worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
 			tileObject.transform.position = worldPos;
 		}
 	}
