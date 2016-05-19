@@ -10,6 +10,12 @@
           "DisableBatching" = "True"
       }
 
+      AlphaTest Greater [_Cutoff]
+      Pass {
+          Tags {  "LightMode" = "ShadowCaster" }
+     	  SetTexture [_MainTex]
+      }
+
       Pass {
       	 Cull Off
 
@@ -57,5 +63,6 @@
  
          ENDCG
       }
+
    }
 }

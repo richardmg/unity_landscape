@@ -38,7 +38,7 @@
             output.tex = input.tex;
 
 	        float4 modelView = mul(UNITY_MATRIX_MV, float4(0,0,0,1));
-	        float4 inPos = input.position;
+	        float4 inPos = input.vertex;
 	 
 	        float2 r1 = float2(_Object2World[0][0],_Object2World[0][2]);
 	        float2 r2 = float2(_Object2World[2][0],_Object2World[2][2]);
