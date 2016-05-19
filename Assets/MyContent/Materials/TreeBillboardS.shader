@@ -1,10 +1,11 @@
 ﻿Shader "Tree billboard shader" {
    Properties {
       _MainTex ("Texture Image", 2D) = "white" {}
-      _CutOff("Cut off", Range(0,1)) = 0
+      _CutOff("Cut off", Range(0,1)) = 0.8
    }
    SubShader {
-      Tags { "RenderType" = "Transparent" "DisableBatching" = "True" }
+      Tags { "RenderType" = "Transparent" "Queue" = "Transparent" "DisableBatching" = "True" }
+//      Tags { "RenderType" = "Transparent" "Queue" = "Transparent" "DisableBatching" = "True" }
 
       Blend SrcAlpha OneMinusSrcAlpha
 
@@ -50,7 +51,7 @@
          float4 frag(vertexOutput input) : COLOR
          {
          	float4 rgba = tex2D(_MainTex, float2(input.tex.xy));
-         	if (rgba.x <= _CutOff && rgba.y <= _CutOff && rgba.z <= _CutOff)
+         	if (rgba.a < _CutOff)
          		discard;
             return rgba; 
          }

@@ -7,7 +7,7 @@
 		_Cutoff("Cutoff", Range(0,1)) = 0.5
 	}
 	SubShader {
-	    Tags { "RenderType" = "Transparent" }
+	    Tags { "RenderType" = "Transparent"}
 	    Blend SrcAlpha OneMinusSrcAlpha
 	    Cull off
 		
