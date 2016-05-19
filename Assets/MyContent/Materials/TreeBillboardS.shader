@@ -4,14 +4,14 @@
       _CutOff("Cut off", Range(0,1)) = 0.8
    }
    SubShader {
-      Tags { "RenderType" = "Transparent" "Queue" = "Transparent" "DisableBatching" = "True" }
-//      Tags { "RenderType" = "Transparent" "Queue" = "Transparent" "DisableBatching" = "True" }
-
-      Blend SrcAlpha OneMinusSrcAlpha
+      Tags {
+          "Queue" = "AlphaTest"
+          "DisableBatching" = "True"
+      }
 
       Pass {
 
-      	 Cull off
+      	 Cull Off
 
          CGPROGRAM
  
@@ -35,7 +35,7 @@
          vertexOutput vert(vertexInput input) 
          {
             vertexOutput output;
-//            output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
+            output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             output.tex = input.tex;
 
             // Note that we use + for quad and - for cube in
