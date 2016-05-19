@@ -1,16 +1,16 @@
-﻿Shader "Tree billboard shader" {
+﻿Shader "Custom/Billboard cutoff" {
    Properties {
       _MainTex ("Texture Image", 2D) = "white" {}
       _CutOff("Cut off", Range(0,1)) = 0.8
    }
    SubShader {
       Tags {
+          "RenderType" = "TreeBillboard"
           "Queue" = "AlphaTest"
           "DisableBatching" = "True"
       }
 
       Pass {
-
       	 Cull Off
 
          CGPROGRAM
@@ -35,7 +35,6 @@
          vertexOutput vert(vertexInput input) 
          {
             vertexOutput output;
-            output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             output.tex = input.tex;
 
             // Note that we use + for quad and - for cube in
