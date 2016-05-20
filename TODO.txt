@@ -1,0 +1,8 @@
+- Environment will consist of objects that are flat, but that can have several layers
+    E.g a cow would have body, legs, perhaps eyes / ears as separate layers
+- Each layer should ideally have a uniform thickness (like a card board)
+- Objects are inclined to face the camera sideways / billboarded at a distance.
+    - Static objects like trees will do this in the shader, and when billboarded, consist
+        of one layer.
+    - Dynamic objects should perhaps billboard from script, perhaps by walking in a 
+        "natural" way so they end up posing so.
