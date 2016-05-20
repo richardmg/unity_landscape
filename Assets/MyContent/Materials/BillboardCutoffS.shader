@@ -10,9 +10,11 @@
           "DisableBatching" = "True"
       }
 
-      AlphaTest Greater [_Cutoff]
       Pass {
-          Tags {  "LightMode" = "ShadowCaster" }
+          Tags { 
+              "LightMode" = "ShadowCaster"
+          }
+      	  AlphaTest Greater [_Cutoff]
      	  SetTexture [_MainTex]
       }
 
