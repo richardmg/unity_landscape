@@ -6,3 +6,18 @@
         of one layer.
     - Dynamic objects should perhaps billboard from script, perhaps by walking in a 
         "natural" way so they end up posing so.
+
+2.
+- Still flat objects, but buildt up with cubes to give some depth.
+    The player can draw new limbs and pieces in a pixel editor
+    Or perhaps you cannot draw limbs yourself, but need to harwest
+    species / plants from the world, and combine / mate them.
+    The world must then consist of a rich fauna of material.
+
+- What about billboarded pearls? They will have depth...
+
+- You somehow need to catch
+    a species before you can "mate" with it. And perhaps that you then can
+    choose how the new children should evolve.
+- Crippled versions of the species you
+    have added to world will come and haunt at night.
