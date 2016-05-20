@@ -2,6 +2,7 @@
    Properties {
       _MainTex ("Texture Image", 2D) = "white" {}
       _CutOff("Cut off", Range(0,1)) = 0.8
+      _CutOffShadow("Cut off shadow", Range(0,1)) = 0.9
    }
    SubShader {
       Tags {
@@ -14,7 +15,7 @@
           Tags { 
               "LightMode" = "ShadowCaster"
           }
-      	  AlphaTest Greater [_Cutoff]
+      	  AlphaTest Greater [_CutOffShadow]
      	  SetTexture [_MainTex]
       }
 
