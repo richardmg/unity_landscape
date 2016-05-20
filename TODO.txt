@@ -1,3 +1,4 @@
+1.
 - Environment will consist of objects that are flat, but that can have several layers
     E.g a cow would have body, legs, perhaps eyes / ears as separate layers
 - Each layer should ideally have a uniform thickness (like a card board)
@@ -14,10 +15,20 @@
     species / plants from the world, and combine / mate them.
     The world must then consist of a rich fauna of material.
 
-- What about billboarded pearls? They will have depth...
-
 - You somehow need to catch
     a species before you can "mate" with it. And perhaps that you then can
     choose how the new children should evolve.
 - Crippled versions of the species you
     have added to world will come and haunt at night.
+
+3.
+- Pearly
+- There is no game, only about creating a fantasy world
+- The user is creating everything with pearls 2D.
+- This way, the card boards get natural depth. All pearls are billboarded.
+- The pearl "D editor, you choose what kind of piece you will create (head
+  eye, leg, arm, tree, wall, flower, wing).
+- The piece 3D editor lets you assemple all pieces freely into a creature or building
+  - the species and constructions will then be added in a shared world
+  on the net for everyone to explore. Perhaps the whole land you created
+  can be instered somehow.
