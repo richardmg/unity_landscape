@@ -49,7 +49,7 @@
 	        inPos.z = 0.0;
 	        inPos.xyz += modelView.xyz;
 	
-            output.position = mul(UNITY_MATRIX_P, inPos);
+            output.pos = mul(UNITY_MATRIX_P, inPos);
 	 
             return output;
          }
