@@ -3,7 +3,7 @@ using System.Collections;
 
 public class LandscapeConstructor : MonoBehaviour {
 
-	public bool flyMode = false;
+	public float flyOffset = 0;
 	public bool showLandscape = true;
 	public bool showFarTiles = true;
 	public bool showNearTiles = true;
@@ -83,7 +83,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	{
 		// Move player on top of landscape
 		Vector3 playerPos = player.transform.position;
-		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + 50;
+		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + flyOffset;
 		player.transform.position = playerPos;
 	}
 
@@ -97,7 +97,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	// Update is called once per frame
 	public void Update()
 	{
-		if (flyMode)
+		if (flyOffset != 0)
 			letPlayerFly();
 		m_tileEngineLandscape.update(player.transform.position);
 		m_tileEngineNear.update(player.transform.position);

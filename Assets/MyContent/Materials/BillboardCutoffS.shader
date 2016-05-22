@@ -11,13 +11,13 @@
           "DisableBatching" = "True"
       }
 
-      Pass {
-          Tags { 
-              "LightMode" = "ShadowCaster"
-          }
-      	  AlphaTest Greater [_CutOffShadow]
-     	  SetTexture [_MainTex]
-      }
+//      Pass {
+//          Tags { 
+//              "LightMode" = "ShadowCaster"
+//          }
+//      	  AlphaTest Greater [_CutOffShadow]
+//     	  SetTexture [_MainTex]
+//      }
 
       Pass {
       	 Cull Off
