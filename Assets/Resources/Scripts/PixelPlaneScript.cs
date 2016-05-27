@@ -4,10 +4,27 @@ using System.Collections;
 public class PixelPlaneScript : MonoBehaviour {
 
 	void Start () {
-		Mesh mesh = createMeshCube(10, 10, 10);	
-		mesh.Optimize();
+		Mesh mesh0 = createMeshCube(10, 10, 10);	
+		Mesh mesh1 = createMeshCube(10, 10, 10);	
+
+		Matrix4x4 transform0 = new Matrix4x4();
+		transform0.SetTRS(new Vector3(-10, 10, 0), Quaternion.identity, new Vector3(1, 1, 1));
+
+		Matrix4x4 transform1 = new Matrix4x4();
+		transform1.SetTRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(1, 1, 1));
+
+		CombineInstance[] ci = new CombineInstance[2];
+		ci[0].mesh = mesh0;
+		ci[0].transform = transform0;
+		ci[1].mesh = mesh1;
+		ci[1].transform = transform1;
+
+		Mesh finalMesh = new Mesh();
+		finalMesh.CombineMeshes(ci, true, true);
+
+		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		meshFilter.mesh = mesh;
+		meshFilter.mesh = finalMesh;
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
 		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
@@ -23,9 +40,9 @@ public class PixelPlaneScript : MonoBehaviour {
 
 		Vector2[] uv = new Vector2[4];
 		uv[0].x = 0; uv[0].y = 0;
-		uv[1].x = 1; uv[1].y = 0;
+		uv[1].x = 2; uv[1].y = 0;
 		uv[2].x = 0; uv[2].y = 1;
-		uv[3].x = 1; uv[3].y = 1;
+		uv[3].x = 2; uv[3].y = 1;
 
 		int[] tri = new int[6];
 		tri[0] = 0;
