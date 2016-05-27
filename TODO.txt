@@ -36,13 +36,16 @@
 4. Flat objects with some depth (plates)
     - You are in a clearing in a forest.
     - you can take down a tree to get plates (e.g 2 per tree)
-        - a tree will only contain static plates, so you can only build static constructions with them
-            but freely draw / change the default plate drawing.
-        - animals living in the forest can also be captures, and will give more advanced plates to
-            build with (head, legs, torso, eyes etc). The further in to the forest you go, the bigger
-            or more interresting animals / plants you will find.
-        - beasts also live in the forest, but never comes out in the clearing (which grows bigger as
-            the user harwest trees).
-        - the beasts will try to catch your species and mutate with them into ugly twisted versions.
-        - an important point will be why the user should be tempted to go out into the forrest, and
-            why he would need to create species etc.
+    - a tree will only contain static plates, so you can only build static constructions with them
+        but freely draw / change the default plate drawing.
+    - animals living in the forest can also be captures, and will give more advanced plates to
+        build with (head, legs, torso, eyes etc). The further in to the forest you go, the bigger
+        or more interresting animals / plants you will find.
+    - beasts also live in the forest, but never comes out in the clearing (which grows bigger as
+        the user harwest trees). Or, they only comes out some meters out of the clearing.
+    - Make the daylight darker when entering the forrest. Creatures will have shining eyes.
+    - The more trees around the user, the darker the light. The user can create new clearings in
+        the forrest.
+    - the beasts will try to catch your species and mutate with them into ugly twisted versions.
+    - an important point will be why the user should be tempted to go out into the forrest, and
+        why he would need to create species etc.
