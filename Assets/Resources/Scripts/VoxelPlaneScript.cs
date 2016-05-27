@@ -4,11 +4,11 @@ using System.Collections;
 public class VoxelPlaneScript : MonoBehaviour {
 
 	void Start () {
-		Mesh mesh0 = createVoxelMesh(1, 10, 10, 1);	
-		Mesh mesh1 = createVoxelMesh(1, 10, 10, 1);	
+		Mesh mesh0 = createVoxelMesh(10, 1, 1, 1);	
+		Mesh mesh1 = createVoxelMesh(1, 1, 1, 1);	
 
 		Matrix4x4 transform0 = new Matrix4x4();
-		transform0.SetTRS(new Vector3(-10, 10, 0), Quaternion.identity, new Vector3(1, 1, 1));
+		transform0.SetTRS(new Vector3(0, 1, 0), Quaternion.identity, new Vector3(1, 1, 1));
 
 		Matrix4x4 transform1 = new Matrix4x4();
 		transform1.SetTRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(1, 1, 1));
@@ -54,9 +54,9 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		// Front texture coords
 		uv[0].x = 0; uv[0].y = 0;
-		uv[1].x = 2; uv[1].y = 0;
+		uv[1].x = 1; uv[1].y = 0;
 		uv[2].x = 0; uv[2].y = 1;
-		uv[3].x = 2; uv[3].y = 1;
+		uv[3].x = 1; uv[3].y = 1;
 
 		// Back texture coords
 		for (int i = 4; i < 8; ++i)
