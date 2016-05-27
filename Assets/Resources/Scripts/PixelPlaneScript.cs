@@ -5,6 +5,7 @@ public class PixelPlaneScript : MonoBehaviour {
 
 	void Start () {
 		Mesh mesh = createMeshCube(10, 10, 10);	
+		mesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
 
