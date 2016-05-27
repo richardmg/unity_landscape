@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PixelPlaneScript : MonoBehaviour {
+public class VoxelPlaneScript : MonoBehaviour {
 
 	void Start () {
-		Mesh mesh0 = createMeshCube(10, 10, 10);	
-		Mesh mesh1 = createMeshCube(10, 10, 10);	
+		Mesh mesh0 = createVoxelMesh(1, 1, 1, 1);	
+		Mesh mesh1 = createVoxelMesh(1, 1, 1, 1);	
 
 		Matrix4x4 transform0 = new Matrix4x4();
 		transform0.SetTRS(new Vector3(-10, 10, 0), Quaternion.identity, new Vector3(1, 1, 1));
@@ -30,7 +30,7 @@ public class PixelPlaneScript : MonoBehaviour {
 		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
 	}
 
-	Mesh createMeshCube(float width, float height, float depth)
+	Mesh createVoxelMesh(int voxelCount, float voxelWidth, float voxelHeight, float voxelDepth)
 	{
 		Vector3[] v = new Vector3[4];
 		v[0].x = 0; v[0].y = 0;  v[0].z = 0;
