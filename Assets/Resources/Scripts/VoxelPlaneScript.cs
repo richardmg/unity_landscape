@@ -42,8 +42,8 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		// Front vertices
 		v[0].x = 0; v[0].y = 0; v[0].z = 0;
-		v[1].x = w; v[1].y = 0; v[1].z = 0;
-		v[2].x = 0; v[2].y = h; v[2].z = 0;
+		v[1].x = 0; v[1].y = h; v[1].z = 0;
+		v[2].x = w; v[2].y = 0; v[2].z = 0;
 		v[3].x = w; v[3].y = h; v[3].z = 0;
 
 		// Back vertices
@@ -54,8 +54,8 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		// Front texture coords
 		uv[0].x = 0; uv[0].y = 0;
-		uv[1].x = 1; uv[1].y = 0;
-		uv[2].x = 0; uv[2].y = 1;
+		uv[1].x = 0; uv[1].y = 1;
+		uv[2].x = 1; uv[2].y = 0;
 		uv[3].x = 1; uv[3].y = 1;
 
 		// Back texture coords
@@ -66,9 +66,9 @@ public class VoxelPlaneScript : MonoBehaviour {
 		tri[0] = 0;
 		tri[1] = 1;
 		tri[2] = 2;
-		tri[3] = 1;
-		tri[4] = 3;
-		tri[5] = 2;
+		tri[3] = 2;
+		tri[4] = 1;
+		tri[5] = 3;
 
 		// Back triangles
 		tri[6] = 5;

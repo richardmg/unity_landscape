@@ -19,6 +19,8 @@
 //      }
 
       Pass {
+      	 Cull Back
+
          CGPROGRAM
  
          #pragma vertex vert  
