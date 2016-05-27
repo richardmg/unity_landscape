@@ -1,4 +1,4 @@
-﻿Shader "Custom/Cutoff" {
+﻿Shader "Custom/CutoffTwoSided" {
    Properties {
       _MainTex ("Texture Image", 2D) = "white" {}
       _CutOff("Cut off", Range(0,1)) = 0.8
@@ -19,6 +19,8 @@
 //      }
 
       Pass {
+      	 Cull Off
+
          CGPROGRAM
  
          #pragma vertex vert  
