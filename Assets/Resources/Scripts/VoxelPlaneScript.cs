@@ -2,26 +2,25 @@
 using System.Collections;
 
 public class VoxelPlaneScript : MonoBehaviour {
+	private float voxelWidth = 0.1f;
+	private float voxelHeight = 0.1f;
+	private float voxelDepth = 1;
+	private int textureVoxelWidth = 10;
+	private int textureVoxelHeight = 10;
 
 	void Start () {
-		Mesh mesh0 = createVoxelMesh(10, 1, 1, 1);	
-		Mesh mesh1 = createVoxelMesh(1, 1, 1, 1);	
+		CombineInstance[] ci = new CombineInstance[textureVoxelHeight];
 
-		Matrix4x4 transform0 = new Matrix4x4();
-		transform0.SetTRS(new Vector3(0, 1, 0), Quaternion.identity, new Vector3(1, 1, 1));
-
-		Matrix4x4 transform1 = new Matrix4x4();
-		transform1.SetTRS(new Vector3(0, 0, 0), Quaternion.identity, new Vector3(1, 1, 1));
-
-		CombineInstance[] ci = new CombineInstance[2];
-		ci[0].mesh = mesh0;
-		ci[0].transform = transform0;
-		ci[1].mesh = mesh1;
-		ci[1].transform = transform1;
+		for (int i = 0; i < textureVoxelHeight; ++i) {
+			Mesh mesh = createVoxelMesh(0, i, textureVoxelWidth);
+			Matrix4x4 transform = new Matrix4x4();
+			transform.SetTRS(new Vector3(0, i * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
+			ci[i].mesh = mesh;
+			ci[i].transform = transform;
+		}
 
 		Mesh finalMesh = new Mesh();
 		finalMesh.CombineMeshes(ci, true, true);
-
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
@@ -31,10 +30,14 @@ public class VoxelPlaneScript : MonoBehaviour {
 		// CHANGE MATERIAL TO NOT BE TWO-SIDED
 	}
 
-	Mesh createVoxelMesh(int voxelCount, float voxelWidth, float voxelHeight, float voxelDepth)
+	Mesh createVoxelMesh(int voxelX, int voxelY, int voxelCountX)
 	{
-		float w = voxelCount * voxelWidth;
+		float w = (voxelCountX - voxelX) * voxelWidth;
 		float h = voxelHeight;
+		float sx = (1.0f / textureVoxelWidth) * voxelX;
+		float ex = (1.0f / textureVoxelWidth) * voxelCountX;
+		float sy = (1.0f / textureVoxelHeight) * voxelY;
+		float ey = (1.0f / textureVoxelHeight) * (voxelY + 1);
 
 		Vector3[] v = new Vector3[8];
 		Vector2[] uv = new Vector2[8];
@@ -53,10 +56,10 @@ public class VoxelPlaneScript : MonoBehaviour {
 		}
 
 		// Front texture coords
-		uv[0].x = 0; uv[0].y = 0;
-		uv[1].x = 0; uv[1].y = 1;
-		uv[2].x = 1; uv[2].y = 0;
-		uv[3].x = 1; uv[3].y = 1;
+		uv[0].x = sx; uv[0].y = sy;
+		uv[1].x = sx; uv[1].y = ey;
+		uv[2].x = ex; uv[2].y = sy;
+		uv[3].x = ex; uv[3].y = ey;
 
 		// Back texture coords
 		for (int i = 4; i < 8; ++i)
