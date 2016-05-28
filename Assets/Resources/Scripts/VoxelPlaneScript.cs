@@ -2,9 +2,11 @@
 using System.Collections;
 
 public class VoxelPlaneScript : MonoBehaviour {
-	private float voxelWidth = 0.1f;
-	private float voxelHeight = 0.1f;
-	private float voxelDepth = 1;
+	public Texture2D texture;
+	public float voxelWidth = 0.1f;
+	public float voxelHeight = 0.1f;
+	public float voxelDepth = 1;
+
 	private int textureVoxelWidth = 10;
 	private int textureVoxelHeight = 10;
 
