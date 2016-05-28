@@ -29,7 +29,6 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
 		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
-		// CHANGE MATERIAL TO NOT BE TWO-SIDED
 	}
 
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
