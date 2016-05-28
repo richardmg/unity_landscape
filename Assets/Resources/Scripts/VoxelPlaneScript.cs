@@ -8,29 +8,33 @@ public class VoxelPlaneScript : MonoBehaviour {
 	public float voxelHeight = 0.1f;
 	public float voxelDepth = 0.1f;
 
-	private int textureVoxelWidth = 10;
-	private int textureVoxelHeight = 10;
+	private int cols;
+	private int rows;
 
 	const int kVoxelNotFound = -1;
 
 	void Start () {
+		cols = texture.width;
+		rows = texture.height;
+		print("c:" + cols + ", r:" + rows);
+
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
 		// Traverse each row in the texture
-		for (int y = 0; y < textureVoxelHeight; ++y) {
+		for (int y = 0; y < rows; ++y) {
 			int x2 = -1;
 
 			// Traverse each column in the texture and look for voxel strips
-			while (x2 != textureVoxelWidth) {
+			while (x2 != cols) {
 				int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
 				if (x1 == kVoxelNotFound) {
-					x2 = textureVoxelWidth;
+					x2 = cols;
 					continue;
 				}
 
 				x2 = findFirstVoxelAlphaTest(x1 + 1, y, 0);
 				if (x2 == kVoxelNotFound)
-					x2 = textureVoxelWidth;
+					x2 = cols;
 
 				Mesh mesh = createVoxelLineMesh(x1, x2, y);
 				Matrix4x4 transform = new Matrix4x4();
@@ -55,29 +59,39 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
 	{
-		float textureStepX = texture.width / textureVoxelWidth;
-		float textureStepY = texture.height / textureVoxelHeight;
-
-		for (int x = startX; x < textureVoxelWidth; ++x) {
-			// Grab center pixel in texel. This will fail for texels that are not solid
-			int tx = (int)((x * textureStepX) + (textureStepX / 2));
-			int ty = (int)((startY * textureStepY) + (textureStepY / 2));
-			Color c = texture.GetPixel(tx, ty);
-			// Either the textel is transparent, or it's not
+		for (int x = startX; x < cols; ++x) {
+			Color c = texture.GetPixel(x, startY);
 			if (Mathf.CeilToInt(c.a) == alpha)
 				return x;
 		}
 		return kVoxelNotFound;
 	}
 
+//	int findFirstVoxelCenterSampleAlphaTest(int startX, int startY, int alpha)
+//	{
+//		float textureStepX = texture.width / cols;
+//		float textureStepY = texture.height / rows;
+//
+//		for (int x = startX; x < cols; ++x) {
+//			// Grab center pixel in texel. This will fail for texels that are not solid
+//			int tx = (int)((x * textureStepX) + (textureStepX / 2));
+//			int ty = (int)((startY * textureStepY) + (textureStepY / 2));
+//			Color c = texture.GetPixel(tx, ty);
+//			// Either the textel is transparent, or it's not
+//			if (Mathf.CeilToInt(c.a) == alpha)
+//				return x;
+//		}
+//		return kVoxelNotFound;
+//	}
+
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
 	{
 		float w = (voxelX2 - voxelX1) * voxelWidth;
 		float h = voxelHeight;
-		float sx = (1.0f / textureVoxelWidth) * voxelX1;
-		float ex = (1.0f / textureVoxelWidth) * voxelX2;
-		float sy = (1.0f / textureVoxelHeight) * voxelY;
-		float ey = (1.0f / textureVoxelHeight) * (voxelY + 1);
+		float sx = (1.0f / cols) * voxelX1;
+		float ex = (1.0f / cols) * voxelX2;
+		float sy = (1.0f / rows) * voxelY;
+		float ey = (1.0f / rows) * (voxelY + 1);
 
 		Vector3[] v = new Vector3[8];
 		Vector2[] uv = new Vector2[8];
