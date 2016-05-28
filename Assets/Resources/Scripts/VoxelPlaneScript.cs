@@ -14,7 +14,14 @@ public class VoxelPlaneScript : MonoBehaviour {
 		CombineInstance[] ci = new CombineInstance[textureVoxelHeight];
 
 		for (int y = 0; y < textureVoxelHeight; ++y) {
-			Mesh mesh = createVoxelLineMesh(0, 10, y);
+			int x1 = findFirstTexelAlphaTest(0, y, 1);
+			if (x1 == -1)
+				continue;
+			int x2 = findFirstTexelAlphaTest(x1 + 1, y, 0);
+			if (x2 == -1)
+				x2 = x1 + 1;
+
+			Mesh mesh = createVoxelLineMesh(x1, x2, y);
 			Matrix4x4 transform = new Matrix4x4();
 			transform.SetTRS(new Vector3(0, y * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
 			ci[y].mesh = mesh;
@@ -29,6 +36,23 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
 		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
+	}
+
+	int findFirstTexelAlphaTest(int startX, int startY, int alpha)
+	{
+		float textureStepX = texture.width / textureVoxelWidth;
+		float textureStepY = texture.height / textureVoxelHeight;
+
+		for (int x = startX; x < textureVoxelWidth; ++x) {
+			// Grab center texel. This will fail for texels that are not solid
+			int tx = (int)((x * textureStepX) + (textureStepX / 2));
+			int ty = (int)((startY * textureStepY) + (textureStepY / 2));
+			Color c = texture.GetPixel(tx, ty);
+			// Either the textel is transparent, or it's not
+			if (Mathf.CeilToInt(c.a) == alpha)
+				return x;
+		}
+		return -1;
 	}
 
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
