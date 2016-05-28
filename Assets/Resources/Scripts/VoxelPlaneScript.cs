@@ -6,7 +6,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 	public Texture2D texture;
 	public float voxelWidth = 0.1f;
 	public float voxelHeight = 0.1f;
-	public float voxelDepth = 1;
+	public float voxelDepth = 0.1f;
 
 	private int textureVoxelWidth = 10;
 	private int textureVoxelHeight = 10;
