@@ -13,12 +13,12 @@ public class VoxelPlaneScript : MonoBehaviour {
 	void Start () {
 		CombineInstance[] ci = new CombineInstance[textureVoxelHeight];
 
-		for (int i = 0; i < textureVoxelHeight; ++i) {
-			Mesh mesh = createVoxelMesh(0, i, textureVoxelWidth);
+		for (int y = 0; y < textureVoxelHeight; ++y) {
+			Mesh mesh = createVoxelMesh(0, 4, y);
 			Matrix4x4 transform = new Matrix4x4();
-			transform.SetTRS(new Vector3(0, i * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
-			ci[i].mesh = mesh;
-			ci[i].transform = transform;
+			transform.SetTRS(new Vector3(0, y * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
+			ci[y].mesh = mesh;
+			ci[y].transform = transform;
 		}
 
 		Mesh finalMesh = new Mesh();
@@ -32,12 +32,12 @@ public class VoxelPlaneScript : MonoBehaviour {
 		// CHANGE MATERIAL TO NOT BE TWO-SIDED
 	}
 
-	Mesh createVoxelMesh(int voxelX, int voxelY, int voxelCountX)
+	Mesh createVoxelMesh(int voxelX1, int voxelX2, int voxelY)
 	{
-		float w = (voxelCountX - voxelX) * voxelWidth;
+		float w = (voxelX2 - voxelX1) * voxelWidth;
 		float h = voxelHeight;
-		float sx = (1.0f / textureVoxelWidth) * voxelX;
-		float ex = (1.0f / textureVoxelWidth) * voxelCountX;
+		float sx = (1.0f / textureVoxelWidth) * voxelX1;
+		float ex = (1.0f / textureVoxelWidth) * voxelX2;
 		float sy = (1.0f / textureVoxelHeight) * voxelY;
 		float ey = (1.0f / textureVoxelHeight) * (voxelY + 1);
 
