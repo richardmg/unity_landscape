@@ -14,7 +14,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 		CombineInstance[] ci = new CombineInstance[textureVoxelHeight];
 
 		for (int y = 0; y < textureVoxelHeight; ++y) {
-			Mesh mesh = createVoxelMesh(0, 4, y);
+			Mesh mesh = createVoxelLineMesh(0, 10, y);
 			Matrix4x4 transform = new Matrix4x4();
 			transform.SetTRS(new Vector3(0, y * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
 			ci[y].mesh = mesh;
@@ -32,7 +32,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 		// CHANGE MATERIAL TO NOT BE TWO-SIDED
 	}
 
-	Mesh createVoxelMesh(int voxelX1, int voxelX2, int voxelY)
+	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
 	{
 		float w = (voxelX2 - voxelX1) * voxelWidth;
 		float h = voxelHeight;
