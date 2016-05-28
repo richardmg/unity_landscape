@@ -16,9 +16,11 @@ public class VoxelPlaneScript : MonoBehaviour {
 	void Start () {
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
+		// Traverse each row in the texture
 		for (int y = 0; y < textureVoxelHeight; ++y) {
 			int x2 = -1;
 
+			// Traverse each column in the texture and look for voxel strips
 			while (x2 != textureVoxelWidth) {
 				int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
 				if (x1 == kVoxelNotFound) {
