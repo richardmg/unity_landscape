@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class VoxelPlaneScript : MonoBehaviour {
 	public Texture2D texture;
@@ -10,26 +11,38 @@ public class VoxelPlaneScript : MonoBehaviour {
 	private int textureVoxelWidth = 10;
 	private int textureVoxelHeight = 10;
 
+	const int kVoxelNotFound = -1;
+
 	void Start () {
-		CombineInstance[] ci = new CombineInstance[textureVoxelHeight];
+		List<CombineInstance> ciList = new List<CombineInstance>();
 
 		for (int y = 0; y < textureVoxelHeight; ++y) {
-			int x1 = findFirstTexelAlphaTest(0, y, 1);
-			if (x1 == -1)
-				continue;
-			int x2 = findFirstTexelAlphaTest(x1 + 1, y, 0);
-			if (x2 == -1)
-				x2 = x1 + 1;
+			int x2 = -1;
 
-			Mesh mesh = createVoxelLineMesh(x1, x2, y);
-			Matrix4x4 transform = new Matrix4x4();
-			transform.SetTRS(new Vector3(0, y * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
-			ci[y].mesh = mesh;
-			ci[y].transform = transform;
+			while (x2 != textureVoxelWidth) {
+				int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
+				if (x1 == kVoxelNotFound) {
+					x2 = textureVoxelWidth;
+					continue;
+				}
+
+				x2 = findFirstVoxelAlphaTest(x1 + 1, y, 0);
+				if (x2 == kVoxelNotFound)
+					x2 = textureVoxelWidth;
+
+				Mesh mesh = createVoxelLineMesh(x1, x2, y);
+				Matrix4x4 transform = new Matrix4x4();
+				transform.SetTRS(new Vector3(x1 * voxelWidth, y * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
+
+				CombineInstance ci = new CombineInstance();
+				ci.mesh = mesh;
+				ci.transform = transform;
+				ciList.Add(ci);
+			}
 		}
 
 		Mesh finalMesh = new Mesh();
-		finalMesh.CombineMeshes(ci, true, true);
+		finalMesh.CombineMeshes(ciList.ToArray(), true, true);
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
@@ -38,13 +51,13 @@ public class VoxelPlaneScript : MonoBehaviour {
 		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
 	}
 
-	int findFirstTexelAlphaTest(int startX, int startY, int alpha)
+	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
 	{
 		float textureStepX = texture.width / textureVoxelWidth;
 		float textureStepY = texture.height / textureVoxelHeight;
 
 		for (int x = startX; x < textureVoxelWidth; ++x) {
-			// Grab center texel. This will fail for texels that are not solid
+			// Grab center pixel in texel. This will fail for texels that are not solid
 			int tx = (int)((x * textureStepX) + (textureStepX / 2));
 			int ty = (int)((startY * textureStepY) + (textureStepY / 2));
 			Color c = texture.GetPixel(tx, ty);
@@ -52,7 +65,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 			if (Mathf.CeilToInt(c.a) == alpha)
 				return x;
 		}
-		return -1;
+		return kVoxelNotFound;
 	}
 
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
