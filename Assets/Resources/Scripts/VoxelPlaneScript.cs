@@ -81,7 +81,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		Vector3[] v = new Vector3[8];
 		Vector2[] uv = new Vector2[8];
-		int[] tri = new int[12];
+		int[] tri = new int[18];
 
 		// Front vertices
 		v[0].x = 0; v[0].y = 0; v[0].z = 0;
@@ -120,6 +120,14 @@ public class VoxelPlaneScript : MonoBehaviour {
 		tri[9] = 4;
 		tri[10] = 6;
 		tri[11] = 7;
+
+		// Top triangles
+		tri[12] = 1;
+		tri[13] = 5;
+		tri[14] = 3;
+		tri[15] = 3;
+		tri[16] = 5;
+		tri[17] = 7;
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = v;
