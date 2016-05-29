@@ -82,13 +82,11 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
 	{
-		float w = (voxelX2 - voxelX1);
-		float h = 1;
-		float z = 1;
-		float sx = (1.0f / cols) * voxelX1;
-		float ex = (1.0f / cols) * voxelX2;
-		float sy = (1.0f / rows) * voxelY;
-		float ey = (1.0f / rows) * voxelY;
+		float w = voxelX2 - voxelX1;
+		float uvx1 = (1.0f / cols) * voxelX1;
+		float uvx2 = (1.0f / cols) * voxelX2;
+		float uvy1 = (1.0f / rows) * voxelY;
+		float uvy2 = (1.0f / rows) * voxelY;
 
 		Vector3[] v = new Vector3[24];
 		Vector2[] uv = new Vector2[24];
@@ -96,77 +94,77 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		// Front vertices
 		v[0].x = 0; v[0].y = 0; v[0].z = 0;
-		v[1].x = 0; v[1].y = h; v[1].z = 0;
+		v[1].x = 0; v[1].y = 1; v[1].z = 0;
 		v[2].x = w; v[2].y = 0; v[2].z = 0;
-		v[3].x = w; v[3].y = h; v[3].z = 0;
+		v[3].x = w; v[3].y = 1; v[3].z = 0;
 
 		// Back vertices
-		v[4].x = 0; v[4].y = 0; v[4].z = z;
-		v[5].x = 0; v[5].y = h; v[5].z = z;
-		v[6].x = w; v[6].y = 0; v[6].z = z;
-		v[7].x = w; v[7].y = h; v[7].z = z;
+		v[4].x = 0; v[4].y = 0; v[4].z = 1;
+		v[5].x = 0; v[5].y = 1; v[5].z = 1;
+		v[6].x = w; v[6].y = 0; v[6].z = 1;
+		v[7].x = w; v[7].y = 1; v[7].z = 1;
 
 		// Top vertices
-		v[ 8].x = 0; v[ 8].y = h; v[ 8].z = 0;
-		v[ 9].x = 0; v[ 9].y = h; v[ 9].z = z;
-		v[10].x = w; v[10].y = h; v[10].z = 0;
-		v[11].x = w; v[11].y = h; v[11].z = z;
+		v[ 8].x = 0; v[ 8].y = 1; v[ 8].z = 0;
+		v[ 9].x = 0; v[ 9].y = 1; v[ 9].z = 1;
+		v[10].x = w; v[10].y = 1; v[10].z = 0;
+		v[11].x = w; v[11].y = 1; v[11].z = 1;
 
 		// Bottom vertices
 		v[12].x = 0; v[12].y = 0; v[12].z = 0;
-		v[13].x = 0; v[13].y = 0; v[13].z = z;
+		v[13].x = 0; v[13].y = 0; v[13].z = 1;
 		v[14].x = w; v[14].y = 0; v[14].z = 0;
-		v[15].x = w; v[15].y = 0; v[15].z = z;
+		v[15].x = w; v[15].y = 0; v[15].z = 1;
 
 		// Left vertices
-		v[16].x = 0; v[16].y = 0; v[16].z = z;
-		v[17].x = 0; v[17].y = h; v[17].z = z;
+		v[16].x = 0; v[16].y = 0; v[16].z = 1;
+		v[17].x = 0; v[17].y = 1; v[17].z = 1;
 		v[18].x = 0; v[18].y = 0; v[18].z = 0;
-		v[19].x = 0; v[19].y = h; v[19].z = 0;
+		v[19].x = 0; v[19].y = 1; v[19].z = 0;
 
 		// Right vertices
 		v[20].x = w; v[20].y = 0; v[20].z = 0;
-		v[21].x = w; v[21].y = h; v[21].z = 0;
-		v[22].x = w; v[22].y = 0; v[22].z = z;
-		v[23].x = w; v[23].y = h; v[23].z = z;
+		v[21].x = w; v[21].y = 1; v[21].z = 0;
+		v[22].x = w; v[22].y = 0; v[22].z = 1;
+		v[23].x = w; v[23].y = 1; v[23].z = 1;
 
 		// Front texture coords
-		uv[0].x = sx; uv[0].y = sy;
-		uv[1].x = sx; uv[1].y = ey;
-		uv[2].x = ex; uv[2].y = sy;
-		uv[3].x = ex; uv[3].y = ey;
+		uv[0].x = uvx1; uv[0].y = uvy1;
+		uv[1].x = uvx1; uv[1].y = uvy2;
+		uv[2].x = uvx2; uv[2].y = uvy1;
+		uv[3].x = uvx2; uv[3].y = uvy2;
 
 		// Back texture coords
-		uv[4].x = sx; uv[4].y = sy;
-		uv[5].x = sx; uv[5].y = ey;
-		uv[6].x = ex; uv[6].y = sy;
-		uv[7].x = ex; uv[7].y = ey;
+		uv[4].x = uvx1; uv[4].y = uvy1;
+		uv[5].x = uvx1; uv[5].y = uvy2;
+		uv[6].x = uvx2; uv[6].y = uvy1;
+		uv[7].x = uvx2; uv[7].y = uvy2;
 
 		// Top texture coords
-		uv[ 8].x = sx; uv[ 8].y = ey;
-		uv[ 9].x = sx; uv[ 9].y = ey;
-		uv[10].x = ex; uv[10].y = ey;
-		uv[11].x = ex; uv[11].y = ey;
+		uv[ 8].x = uvx1; uv[ 8].y = uvy2;
+		uv[ 9].x = uvx1; uv[ 9].y = uvy2;
+		uv[10].x = uvx2; uv[10].y = uvy2;
+		uv[11].x = uvx2; uv[11].y = uvy2;
 
 		// Bottom texture coords
-		uv[12].x = sx; uv[12].y = sy;
-		uv[13].x = sx; uv[13].y = sy;
-		uv[14].x = ex; uv[14].y = sy;
-		uv[15].x = ex; uv[15].y = sy;
+		uv[12].x = uvx1; uv[12].y = uvy1;
+		uv[13].x = uvx1; uv[13].y = uvy1;
+		uv[14].x = uvx2; uv[14].y = uvy1;
+		uv[15].x = uvx2; uv[15].y = uvy1;
 
 		// Left texture coords
 		float ex2 = (1.0f / cols) * (voxelX1 + 1);
-		uv[16].x = sx;  uv[16].y = sy;
-		uv[17].x = sx;  uv[17].y = ey;
-		uv[18].x = ex2; uv[18].y = sy;
-		uv[19].x = ex2; uv[19].y = ey;
+		uv[16].x = uvx1;  uv[16].y = uvy1;
+		uv[17].x = uvx1;  uv[17].y = uvy2;
+		uv[18].x = ex2; uv[18].y = uvy1;
+		uv[19].x = ex2; uv[19].y = uvy2;
 
 		// Right texture coords
 		ex2 = (1.0f / cols) * (voxelX2 - 1);
-		uv[20].x = ex2; uv[20].y = sy;
-		uv[21].x = ex2; uv[21].y = ey;
-		uv[22].x = ex;  uv[22].y = sy;
-		uv[23].x = ex;  uv[23].y = ey;
+		uv[20].x = ex2; uv[20].y = uvy1;
+		uv[21].x = ex2; uv[21].y = uvy2;
+		uv[22].x = uvx2;  uv[22].y = uvy1;
+		uv[23].x = uvx2;  uv[23].y = uvy2;
 
 		// Front triangles
 		tri[0] = 0;
