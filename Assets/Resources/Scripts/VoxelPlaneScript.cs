@@ -3,11 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class VoxelPlaneScript : MonoBehaviour {
-	public Material material;
-	public float voxelWidth = 0.1f;
-	public float voxelHeight = 0.1f;
-	public float voxelDepth = 0.1f;
-
 	private Texture2D texture;
 	private int cols;
 	private int rows;
@@ -41,7 +36,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 				Mesh mesh = createVoxelLineMesh(x1, x2, y);
 				Matrix4x4 transform = new Matrix4x4();
-				transform.SetTRS(new Vector3(x1 * voxelWidth, y * voxelHeight, 0), Quaternion.identity, new Vector3(1, 1, 1));
+				transform.SetTRS(new Vector3(x1, y, 0), Quaternion.identity, new Vector3(1, 1, 1));
 
 				CombineInstance ci = new CombineInstance();
 				ci.mesh = mesh;
@@ -87,9 +82,9 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
 	{
-		float w = (voxelX2 - voxelX1) * voxelWidth;
-		float h = voxelHeight;
-		float z = voxelDepth;
+		float w = (voxelX2 - voxelX1);
+		float h = 1;
+		float z = 1;
 		float sx = (1.0f / cols) * voxelX1;
 		float ex = (1.0f / cols) * voxelX2;
 		float sy = (1.0f / rows) * voxelY;
