@@ -3,17 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class VoxelPlaneScript : MonoBehaviour {
-	public Texture2D texture;
+	public Material material;
 	public float voxelWidth = 0.1f;
 	public float voxelHeight = 0.1f;
 	public float voxelDepth = 0.1f;
 
+	private Texture2D texture;
 	private int cols;
 	private int rows;
 
 	const int kVoxelNotFound = -1;
 
 	void Start () {
+		texture = (Texture2D)material.mainTexture;
+
 		cols = texture.width;
 		rows = texture.height;
 
@@ -48,12 +51,14 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		Mesh finalMesh = new Mesh();
 		finalMesh.CombineMeshes(ciList.ToArray(), true, true);
+		finalMesh.RecalculateNormals();
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
+		meshRenderer.material = material;
+//		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
@@ -91,7 +96,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 		float sx = (1.0f / cols) * voxelX1;
 		float ex = (1.0f / cols) * voxelX2;
 		float sy = (1.0f / rows) * voxelY;
-		float ey = (1.0f / rows) * (voxelY + 1);
+		float ey = (1.0f / rows) * voxelY;
 
 		Vector3[] v = new Vector3[24];
 		Vector2[] uv = new Vector2[24];
@@ -128,10 +133,10 @@ public class VoxelPlaneScript : MonoBehaviour {
 		v[19].x = 0; v[19].y = h; v[19].z = 0;
 
 		// Right vertices
-		v[20].x = w; v[20].y = 0; v[20].z = z;
-		v[21].x = w; v[21].y = h; v[21].z = z;
-		v[22].x = w; v[22].y = 0; v[22].z = 0;
-		v[23].x = w; v[23].y = h; v[23].z = 0;
+		v[20].x = w; v[20].y = 0; v[20].z = 0;
+		v[21].x = w; v[21].y = h; v[21].z = 0;
+		v[22].x = w; v[22].y = 0; v[22].z = z;
+		v[23].x = w; v[23].y = h; v[23].z = z;
 
 		// Front texture coords
 		uv[0].x = sx; uv[0].y = sy;
@@ -158,16 +163,18 @@ public class VoxelPlaneScript : MonoBehaviour {
 		uv[15].x = ex; uv[15].y = sy;
 
 		// Left texture coords
-		uv[16].x = sx; uv[16].y = sy;
-		uv[17].x = sx; uv[17].y = ey;
-		uv[18].x = sx; uv[18].y = sy;
-		uv[19].x = sx; uv[19].y = ey;
+		float ex2 = (1.0f / cols) * (voxelX1 + 1);
+		uv[16].x = sx;  uv[16].y = sy;
+		uv[17].x = sx;  uv[17].y = ey;
+		uv[18].x = ex2; uv[18].y = sy;
+		uv[19].x = ex2; uv[19].y = ey;
 
 		// Right texture coords
-		uv[20].x = ex; uv[20].y = sy;
-		uv[21].x = ex; uv[21].y = ey;
-		uv[22].x = ex; uv[22].y = sy;
-		uv[23].x = ex; uv[23].y = ey;
+		ex2 = (1.0f / cols) * (voxelX2 - 1);
+		uv[20].x = ex2; uv[20].y = sy;
+		uv[21].x = ex2; uv[21].y = ey;
+		uv[22].x = ex;  uv[22].y = sy;
+		uv[23].x = ex;  uv[23].y = ey;
 
 		// Front triangles
 		tri[0] = 0;
@@ -210,18 +217,17 @@ public class VoxelPlaneScript : MonoBehaviour {
 		tri[29] = 19;
 
 		// Right triangles
-		tri[30] = 22;
-		tri[31] = 23;
-		tri[32] = 21;
-		tri[33] = 21;
-		tri[34] = 23;
-		tri[35] = 20;
+		tri[30] = 20;
+		tri[31] = 21;
+		tri[32] = 22;
+		tri[33] = 22;
+		tri[34] = 21;
+		tri[35] = 23;
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = v;
 		mesh.uv = uv;
 		mesh.triangles = tri;
-		mesh.RecalculateNormals();
 
 		return mesh;
 	}
