@@ -15,7 +15,8 @@ public class VoxelPlaneScript : MonoBehaviour {
 	const int kVoxelNotFound = -1;
 
 	void Start () {
-		texture = (Texture2D)material.mainTexture;
+		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
+		texture = (Texture2D)meshRenderer.material.mainTexture;
 
 		cols = texture.width;
 		rows = texture.height;
@@ -55,10 +56,6 @@ public class VoxelPlaneScript : MonoBehaviour {
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
-
-		MeshRenderer meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-		meshRenderer.material = material;
-//		meshRenderer.material = (Material)Resources.Load("Materials/CutoffM");
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
