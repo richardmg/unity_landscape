@@ -91,7 +91,13 @@
        - After an organism has passed a certain amount of generations
             (inside fencing), the player will be allowed to upgrade
             them with new quads or resize / repaint a couple of existing
-            onces. The size of the quads can be of a certain (small)
+            onces / exchange existing quads to something more advanced.
+            The latter can e.g be exchange 4 genes into a leg, or 8
+            genes into a head. An organism with legs but no head will
+            move randomly without purpose. The opposite
+            will also be true; having a head but no legs will make you
+            look like a fancy flower.
+            The size of the quads can be of a certain (small)
             size each time to not change too much on the organism. After
             the change, the organism will be spread out in the world.
         - Each gene has a hand-drawn quad in addition to some characteristics.
