@@ -49,3 +49,55 @@
     - the beasts will try to catch your species and mutate with them into ugly twisted versions.
     - an important point will be why the user should be tempted to go out into the forrest, and
         why he would need to create species etc.
+
+5. New name: Biota (or Fauna, Flora)
+    - The point is to create a biota following your own imagination
+        - if you e.g create a plant or animal, it will automatically
+            be populated in you world
+        - All organisms combine and evolve on their own.
+        - Perhaps the point of the game is to create a biota that is
+            balanced somehow. And that will evolve into humanoid
+            species and animals. You start off with small species
+            like frogs and ants. Once they grow bigger on their own
+            you can also draw bigger species that you can place into
+            the world to try to affect the evolusion.
+       - You need to walk around in the landscape to find
+            interresting permutations. This is the fun part of the
+            game. A chicken with four legs etc.
+            Harwesting it will let you create a new breed of chickens
+            that has three legs, which can later turn into a "chicken"
+            with four legs, which can be seen as a dog instead etc.
+            If you find an organism that you don't want to evolve further,
+            you should terminate it. Perhaps the player can also draw
+            fences and the like to limit spreading and/or increase
+            breeding cycles.
+       - Harvested organisms can be "redrawn" by the user.
+       - Problem: Is the player or evolution responsible for inventing
+            new organisms? On the one side I want the player to have
+            full creativity when it comes to designing organisms, OTOH
+            I want the evolution to play a big role in the same process.
+       - You will need to "plant" organisms together in the landscape
+            if you expect them to breed. Here there need to be some rules
+            regarding who will breed who. Perhaps the player can
+            at any point just label an organism as a type/types. Only
+            organisms with the same type will breed.
+            The quads can be placed randomly around the center to be
+            able to crate 3D models from the combination of quads.
+            This should ensure that organisms don't end up flat.
+        - Bonus: The game is about evolution, and includes no killing.
+        - Like the idea before, you create all oranisms using quads.
+            You can perhaps only use as many quads as the organism
+            has from before, which is controlled by evolution. Some
+            quads are earmarked as legs, others as head etc. This is
+            what basically controlles what you can create at any point
+            in time during the game. When organisms breed, random
+            quads from each organism is combined into a new organism
+            of the combined types (in case of hybrid organisms).
+            The normal permutation ends up with the same amount of
+            quads that one of the organisms had from before. But also
+            sometimes more, other times less. For each quad, keep a
+            count of how many generations it has survived. A long
+            survival ratio will make it more inclined to be a part
+            of new permutations.
+
+
