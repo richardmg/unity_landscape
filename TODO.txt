@@ -82,6 +82,12 @@
        - The farmer can only have a fixed amount of fencing going at
             the same time. The longer you have been playing, perhaps
             the more fencing you will get.
+       - New type decendants will replace old ones, but at least two
+            generations will exist at the same time. If the same
+            organism is bred in two different fencing, they will
+            produce two different branches. In that case, they will
+            not replace each other, and in effect, the farmer can
+            leave one branch as-is.
        - After an organism has passed a certain amount of generations
             (inside fencing), the player will be allowed to upgrade
             them with new quads or resize / repaint a couple of existing
