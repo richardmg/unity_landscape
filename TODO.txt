@@ -101,6 +101,13 @@
             create in the forrest (but not in the clearing). So the farmer
             needs to be careful when harvesting organisms. And also
             what kind of organisms he breed.
+        - Harvested / captured organisms can be ridden and controlled
+            (in addition to put inside fencing).
+            That way you can move faster (based on the organism), and
+            also makes it meaningful to breed some attacking skills.
+        - You harvest / capture an organsim by being able to ride it.
+            And to ride it you need to run after it and jump onto it, or
+            jump from the organims you already ride.
         - Bonus: The game is about evolution, and includes no killing.
         - Like the idea before, you create all oranisms using quads (called
             genes?).
