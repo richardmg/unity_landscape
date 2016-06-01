@@ -29,6 +29,8 @@
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
+			float3 worldNormal;
+			INTERNAL_DATA
 		};
 
 		half _Glossiness;
@@ -40,7 +42,10 @@
          	if (c.a < _CutOff)
          		discard;
 			o.Albedo = c.rgb;
-			o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+
+//			if (IN.worldNormal.z == -1)
+				o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;

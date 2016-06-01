@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class VoxelVolumeScript : MonoBehaviour {
+	public float depth = 1;
+
 	private Texture2D texture;
 	private int cols;
 	private int rows;
@@ -36,7 +38,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		for (int x = 0; x < cols; ++x) {
 //			if (!hasOpaquePixelsInCol(x))
 //				continue;
-			ciList.Add(createCombineInstance(createZYQuad(x, kRightSide), new Vector3(x, 0, 0)));
+			ciList.Add(createCombineInstance(createZYQuad(x), new Vector3(0, 0, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
@@ -116,8 +118,8 @@ public class VoxelVolumeScript : MonoBehaviour {
 		float uvy1 = (1.0f / rows) * (y + 1);
 
 		v[0].x = 0;    v[0].y = side; v[0].z = 0;
-		v[1].x = 0;    v[1].y = side; v[1].z = 1;
-		v[2].x = cols; v[2].y = side; v[2].z = 1;
+		v[1].x = 0;    v[1].y = side; v[1].z = depth;
+		v[2].x = cols; v[2].y = side; v[2].z = depth;
 		v[3].x = cols; v[3].y = side; v[3].z = 0;
 
 		uv[0].x = 0; uv[0].y = uvy0;
@@ -140,17 +142,17 @@ public class VoxelVolumeScript : MonoBehaviour {
 		return mesh;
 	}
 
-	Mesh createZYQuad(int x, int side)
+	Mesh createZYQuad(int x)
 	{
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
 		int[] tri = new int[6];
 		float uvx0 = (1.0f / cols) * x;
 
-		v[0].x = side; v[0].y = 0;    v[0].z = 1;
-		v[1].x = side; v[1].y = rows; v[1].z = 1;
-		v[2].x = side; v[2].y = rows; v[2].z = 0;
-		v[3].x = side; v[3].y = 0;    v[3].z = 0;
+		v[0].x = x; v[0].y = 0;    v[0].z = 1;
+		v[1].x = x; v[1].y = rows; v[1].z = 1;
+		v[2].x = x; v[2].y = rows; v[2].z = 0;
+		v[3].x = x; v[3].y = 0;    v[3].z = 0;
 
 		uv[0].x = uvx0; uv[0].y = 0;
 		uv[1].x = uvx0; uv[1].y = 1;
