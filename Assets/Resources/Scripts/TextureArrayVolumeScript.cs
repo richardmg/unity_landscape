@@ -19,7 +19,7 @@ public class TextureArrayVolumeScript : MonoBehaviour {
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
 		for (int i = 0; i < count; ++i)
-			ciList.Add(createCombineInstance(createXYQuad(0), new Vector3(0, 0, (1.0f / count) * i)));
+			ciList.Add(createCombineInstance(createXYQuad((1.0f / count) * i), new Vector3(0, 0, 0)));
 
 		Mesh finalMesh = new Mesh();
 		finalMesh.CombineMeshes(ciList.ToArray(), true, true);
@@ -39,16 +39,16 @@ public class TextureArrayVolumeScript : MonoBehaviour {
 		return ci;
 	}
 
-	Mesh createXYQuad(int z)
+	Mesh createXYQuad(float z)
 	{
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
 		int[] tri = new int[6];
 
-		v[0].x = 0;    v[0].y = 0;    v[0].z = 0;
-		v[1].x = 0;    v[1].y = rows; v[1].z = 0;
-		v[2].x = cols; v[2].y = rows; v[2].z = 0;
-		v[3].x = cols; v[3].y = 0;    v[3].z = 0;
+		v[0].x = 0;    v[0].y = 0;    v[0].z = z;
+		v[1].x = 0;    v[1].y = rows; v[1].z = z;
+		v[2].x = cols; v[2].y = rows; v[2].z = z;
+		v[3].x = cols; v[3].y = 0;    v[3].z = z;
 
 		uv[0].x = 0; uv[0].y = 0;
 		uv[1].x = 0; uv[1].y = 1;
