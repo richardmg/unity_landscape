@@ -131,5 +131,14 @@
             survival ratio will make it more inclined to be a part
             of new permutations.
 
+        - Challenges so far:
+            - The organisms will be too flat. There should be a way
+            to give them some extension. Perhaps draw on cubes and
+            primitives instead of quads. I think the best would be
+            to use voxelplanes, but that seems to create far too
+            complex models. Can I improve this a bit?
+            - I'm currently loosing the funny aspect of having random
+            permutations occur in the world. Perhaps this can be the
+            monsters that you meet, which attack you.
 
 
