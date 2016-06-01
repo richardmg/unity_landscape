@@ -22,23 +22,21 @@ public class VoxelGrid2DScript : MonoBehaviour {
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
 		// Create front and back quad
-		int count = 50;
-		for (int i = 0; i < count; ++i)
-			ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, (1.0f / count) * i)));
-//		ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
+		ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
+		ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
 
 		// Traverse each row in the texture
 		for (int y = 0; y < rows; ++y) {
 //			if (!hasOpaquePixelsInRow(y))
 //				continue;
-//			ciList.Add(createCombineInstance(createXZQuad(y, kTopSide), new Vector3(0, y, 0)));
+			ciList.Add(createCombineInstance(createXZQuad(y, kTopSide), new Vector3(0, y, 0)));
 		}
 
 		for (int x = 0; x < cols; ++x) {
 //			if (!hasOpaquePixelsInCol(x))
 //				continue;
-//			ciList.Add(createCombineInstance(createZYQuad(x, kRightSide), new Vector3(x, 0, 0)));
+			ciList.Add(createCombineInstance(createZYQuad(x, kRightSide), new Vector3(x, 0, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
