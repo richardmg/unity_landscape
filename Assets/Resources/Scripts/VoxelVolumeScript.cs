@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class VoxelGrid2DScript : MonoBehaviour {
+public class VoxelVolumeScript : MonoBehaviour {
 	private Texture2D texture;
 	private int cols;
 	private int rows;
@@ -83,12 +83,21 @@ public class VoxelGrid2DScript : MonoBehaviour {
 		uv[2].x = 1; uv[2].y = 1;
 		uv[3].x = 1; uv[3].y = 0;
 
-		tri[0] = 0;
-		tri[1] = 1;
-		tri[2] = 3;
-		tri[3] = 3;
-		tri[4] = 1;
-		tri[5] = 2;
+		if (side == kFrontSide) {
+			tri[0] = 0;
+			tri[1] = 1;
+			tri[2] = 3;
+			tri[3] = 3;
+			tri[4] = 1;
+			tri[5] = 2;
+		} else {
+			tri[0] = 3;
+			tri[1] = 2;
+			tri[2] = 0;
+			tri[3] = 0;
+			tri[4] = 2;
+			tri[5] = 1;
+		}
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = v;
