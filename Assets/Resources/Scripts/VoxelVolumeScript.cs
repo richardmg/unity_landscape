@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class VoxelVolumeScript : MonoBehaviour {
-	public float depth = 1;
-
 	private Texture2D texture;
 	private int cols;
 	private int rows;
 
 	const int kTopSide = 1;
+	const int kBottomSide = 0;
+	const int kLeftSide = 0;
 	const int kRightSide = 1;
 	const int kFrontSide = 0;
 	const int kBackSide = 1;
@@ -24,7 +24,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
 		// Create front and back quad
-		ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
+//		ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
 		ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
 
@@ -32,13 +32,13 @@ public class VoxelVolumeScript : MonoBehaviour {
 		for (int y = 0; y < rows; ++y) {
 //			if (!hasOpaquePixelsInRow(y))
 //				continue;
-			ciList.Add(createCombineInstance(createXZQuad(y, kTopSide), new Vector3(0, y, 0)));
+			ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, y, 0)));
 		}
 
 		for (int x = 0; x < cols; ++x) {
 //			if (!hasOpaquePixelsInCol(x))
 //				continue;
-			ciList.Add(createCombineInstance(createZYQuad(x), new Vector3(0, 0, 0)));
+//			ciList.Add(createCombineInstance(createZYQuad(x), new Vector3(0, 0, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
@@ -115,11 +115,11 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv = new Vector2[4];
 		int[] tri = new int[6];
 		float uvy0 = (1.0f / rows) * y;
-		float uvy1 = (1.0f / rows) * (y + 1);
+		float uvy1 = (1.0f / rows) * y;
 
 		v[0].x = 0;    v[0].y = side; v[0].z = 0;
-		v[1].x = 0;    v[1].y = side; v[1].z = depth;
-		v[2].x = cols; v[2].y = side; v[2].z = depth;
+		v[1].x = 0;    v[1].y = side; v[1].z = 1;
+		v[2].x = cols; v[2].y = side; v[2].z = 1;
 		v[3].x = cols; v[3].y = side; v[3].z = 0;
 
 		uv[0].x = 0; uv[0].y = uvy0;
