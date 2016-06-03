@@ -45,7 +45,35 @@
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
 
-			if (IN.normal.y != 0) {
+			if (IN.normal.x != 0) {
+				// The normal points right, which means we're drawing left _and_ right 
+				if (IN.uv_MainTex.x >= _MainTex_TexelSize.x) {
+					// calculate uv for bumpmap. The texture x coords are divided by 4
+					// from the code to reduce texture bleed. So we multiply up again here.
+					float2 uv_bumpmap = IN.uv_BumpMap;
+					uv_bumpmap.x *= 4 * IN.scale.z;
+					o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
+
+					float2 uv_lineLeft = float2(IN.uv_MainTex.x - _MainTex_TexelSize.x, IN.uv_MainTex.y);
+					fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
+
+					bool leftFaceIsTransparent = c.a < 1;
+					bool rightFaceOnLineLeftIsTransparent = cLeft.a < 1;
+
+					// TODO: check from script if the following condition holds for the whole
+					// quad. If thats the case, skip creating it.
+					if (leftFaceIsTransparent == rightFaceOnLineLeftIsTransparent) {
+						o.Alpha = 0;
+		         		return;
+					}
+
+					if (leftFaceIsTransparent) {
+						// Draw right face on line left instead
+						c = cLeft;
+						o.Normal *= -1;
+					}
+				}
+			} else if (IN.normal.y != 0) {
 				// The normal points up, which means we're drawing top _and_ bottom
 				if (IN.uv_MainTex.y >= _MainTex_TexelSize.y) {
 					// calculate uv for bumpmap. The texture y coords are divided by 4

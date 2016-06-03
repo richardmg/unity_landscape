@@ -38,7 +38,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		for (int x = 0; x < cols; ++x) {
 //			if (!hasOpaquePixelsInCol(x))
 //				continue;
-//			ciList.Add(createCombineInstance(createZYQuad(x), new Vector3(0, 0, 0)));
+			ciList.Add(createCombineInstance(createZYQuad(x), new Vector3(0, 0, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
