@@ -148,7 +148,9 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
 		int[] tri = new int[6];
-		float uvx0 = (1.0f / cols) * x;
+		float delta = (1.0f / cols);
+		float uvx0 = delta * x;
+		float uvx1 = uvx0 + (delta / 4);
 
 		v[0].x = x; v[0].y = 0;    v[0].z = 1;
 		v[1].x = x; v[1].y = rows; v[1].z = 1;
@@ -157,8 +159,8 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 		uv[0].x = uvx0; uv[0].y = 0;
 		uv[1].x = uvx0; uv[1].y = 1;
-		uv[2].x = uvx0; uv[2].y = 1;
-		uv[3].x = uvx0; uv[3].y = 0;
+		uv[2].x = uvx1; uv[2].y = 1;
+		uv[3].x = uvx1; uv[3].y = 0;
 
 		tri[0] = 0;
 		tri[1] = 1;
