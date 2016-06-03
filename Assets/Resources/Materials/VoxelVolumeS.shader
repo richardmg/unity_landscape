@@ -43,11 +43,15 @@
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
 
-			o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
-
 			if (IN.normal.y != 0) {
 				// The normal points up, which means we're drawing top _and_ bottom
 				if (IN.uv_MainTex.y >= _MainTex_TexelSize.y) {
+					// calculate uv for bumpmap. The texture y coords are divided by 4
+					// from the code to reduce texture bleed. So we multiply up again here.
+					float2 uv_bumpmap = IN.uv_BumpMap;
+					uv_bumpmap.y *= 4;
+					o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
+
 					float2 uv_lineBelow = float2(IN.uv_MainTex.x, IN.uv_MainTex.y - _MainTex_TexelSize.y);
 					fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
 
@@ -67,6 +71,8 @@
 						o.Normal *= -1;
 					}
 				}
+			} else {
+				o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_MainTex));
 			}
 
 			o.Albedo = c.rgb;

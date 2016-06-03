@@ -114,8 +114,9 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
 		int[] tri = new int[6];
-		float uvy0 = (1.0f / rows) * y;
-		float uvy1 = (1.0f / rows) * y;
+		float delta = (1.0f / rows);
+		float uvy0 = delta * y;
+		float uvy1 = uvy0 + (delta / 4);
 
 		v[0].x = 0;    v[0].y = side; v[0].z = 1;
 		v[1].x = 0;    v[1].y = side; v[1].z = 0;
