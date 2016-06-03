@@ -33,6 +33,8 @@
 			float2 uv_BumpMap;
 			float3 normal;
 			float zScale;
+			bool isLastRow;
+			bool isLastCol;
 		};
 
         void vert (inout appdata_full v, out Input OUT)
@@ -40,6 +42,8 @@
 			UNITY_INITIALIZE_OUTPUT(Input, OUT);
 			OUT.normal = v.normal;
 			OUT.zScale = length(mul(_Object2World, float3(0, 0, 1)));
+			OUT.isLastRow = v.vertex.y == _MainTex_TexelSize.w;
+			OUT.isLastCol = v.vertex.x == _MainTex_TexelSize.z;
 		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
@@ -54,23 +58,27 @@
 				o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
 
 				if (IN.uv_MainTex.x >= _MainTex_TexelSize.x) {
-					float2 uv_lineLeft = float2(IN.uv_MainTex.x - _MainTex_TexelSize.x, IN.uv_MainTex.y);
-					fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
-
-					bool leftFaceIsTransparent = c.a < 1;
-					bool rightFaceOnLineLeftIsTransparent = cLeft.a < 1;
-
-					// TODO: check from script if the following condition holds for the whole
-					// quad. If thats the case, skip creating it.
-					if (leftFaceIsTransparent == rightFaceOnLineLeftIsTransparent) {
-						o.Alpha = 0;
-		         		return;
-					}
-
-					if (leftFaceIsTransparent) {
-						// Draw right face on line left instead
-						c = cLeft;
+					if (IN.isLastCol) {
 						o.Normal *= -1;
+					} else {
+						float2 uv_lineLeft = float2(IN.uv_MainTex.x - _MainTex_TexelSize.x, IN.uv_MainTex.y);
+						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
+
+						bool leftFaceIsTransparent = c.a < 1;
+						bool rightFaceOnLineLeftIsTransparent = cLeft.a < 1;
+
+						// TODO: check from script if the following condition holds for the whole
+						// quad. If thats the case, skip creating it.
+						if (leftFaceIsTransparent == rightFaceOnLineLeftIsTransparent) {
+							o.Alpha = 0;
+			         		return;
+						}
+
+						if (leftFaceIsTransparent) {
+							// Draw right face on line left instead
+							c = cLeft;
+							o.Normal *= -1;
+						}
 					}
 				}
 			} else if (IN.normal.y != 0) {
@@ -82,24 +90,27 @@
 				o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
 
 				if (IN.uv_MainTex.y >= _MainTex_TexelSize.y) {
-
-					float2 uv_lineBelow = float2(IN.uv_MainTex.x, IN.uv_MainTex.y - _MainTex_TexelSize.y);
-					fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
-
-					bool bottomFaceIsTransparent = c.a < 1;
-					bool topFaceOnLineBelowIsTransparent = cBelow.a < 1;
-
-					// TODO: check from script if the following condition holds for the whole
-					// quad. If thats the case, skip creating it.
-					if (bottomFaceIsTransparent == topFaceOnLineBelowIsTransparent) {
-						o.Alpha = 0;
-		         		return;
-					}
-
-					if (bottomFaceIsTransparent) {
-						// Draw top face on line below instead
-						c = cBelow;
+					if (IN.isLastRow) {
 						o.Normal *= -1;
+					} else {
+						float2 uv_lineBelow = float2(IN.uv_MainTex.x, IN.uv_MainTex.y - _MainTex_TexelSize.y);
+						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
+
+						bool bottomFaceIsTransparent = c.a < 1;
+						bool topFaceOnLineBelowIsTransparent = cBelow.a < 1;
+
+						// TODO: check from script if the following condition holds for the whole
+						// quad. If thats the case, skip creating it.
+						if (bottomFaceIsTransparent == topFaceOnLineBelowIsTransparent) {
+							o.Alpha = 0;
+			         		return;
+						}
+
+						if (bottomFaceIsTransparent) {
+							// Draw top face on line below instead
+							c = cBelow;
+							o.Normal *= -1;
+						}
 					}
 				}
 			} else {

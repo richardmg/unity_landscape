@@ -27,7 +27,6 @@ public class VoxelVolumeScript : MonoBehaviour {
 		ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
 		ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
-
 		// Traverse each row in the texture
 		for (int y = 0; y < rows; ++y) {
 //			if (!hasOpaquePixelsInRow(y))
@@ -38,8 +37,11 @@ public class VoxelVolumeScript : MonoBehaviour {
 		for (int x = 0; x < cols; ++x) {
 //			if (!hasOpaquePixelsInCol(x))
 //				continue;
-			ciList.Add(createCombineInstance(createZYQuad(x), new Vector3(0, 0, 0)));
+			ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(0, 0, 0)));
 		}
+
+		ciList.Add(createCombineInstance(createXZQuad(rows - 1, kTopSide), new Vector3(0, rows - 1, 0)));
+		ciList.Add(createCombineInstance(createZYQuad(cols - 1, kRightSide), new Vector3(0, 0, 0)));
 
 		Mesh finalMesh = new Mesh();
 		finalMesh.CombineMeshes(ciList.ToArray(), true, true);
@@ -143,7 +145,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		return mesh;
 	}
 
-	Mesh createZYQuad(int x)
+	Mesh createZYQuad(int x, int side)
 	{
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
@@ -152,10 +154,10 @@ public class VoxelVolumeScript : MonoBehaviour {
 		float uvx0 = delta * x;
 		float uvx1 = uvx0 + (delta / 4);
 
-		v[0].x = x; v[0].y = 0;    v[0].z = 1;
-		v[1].x = x; v[1].y = rows; v[1].z = 1;
-		v[2].x = x; v[2].y = rows; v[2].z = 0;
-		v[3].x = x; v[3].y = 0;    v[3].z = 0;
+		v[0].x = x + side; v[0].y = 0;    v[0].z = 1;
+		v[1].x = x + side; v[1].y = rows; v[1].z = 1;
+		v[2].x = x + side; v[2].y = rows; v[2].z = 0;
+		v[3].x = x + side; v[3].y = 0;    v[3].z = 0;
 
 		uv[0].x = uvx0; uv[0].y = 0;
 		uv[1].x = uvx0; uv[1].y = 1;
