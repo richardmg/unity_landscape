@@ -46,14 +46,14 @@
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
 
 			if (IN.normal.x != 0) {
-				// The normal points right, which means we're drawing left _and_ right 
-				if (IN.uv_MainTex.x >= _MainTex_TexelSize.x) {
-					// calculate uv for bumpmap. The texture x coords are divided by 4
-					// from the code to reduce texture bleed. So we multiply up again here.
-					float2 uv_bumpmap = IN.uv_BumpMap;
-					uv_bumpmap.x *= 8 * IN.zScale;
-					o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
+				// The normal points right, which means we're drawing left _and_ right.
+				// Calculate uv for bumpmap. The texture x coords are divided by 4
+				// from the code to reduce texture bleed. So we multiply up again here.
+				float2 uv_bumpmap = IN.uv_BumpMap;
+				uv_bumpmap.x *= 8 * IN.zScale;
+				o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
 
+				if (IN.uv_MainTex.x >= _MainTex_TexelSize.x) {
 					float2 uv_lineLeft = float2(IN.uv_MainTex.x - _MainTex_TexelSize.x, IN.uv_MainTex.y);
 					fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
 
@@ -75,12 +75,13 @@
 				}
 			} else if (IN.normal.y != 0) {
 				// The normal points up, which means we're drawing top _and_ bottom
+				// Calculate uv for bumpmap. The texture y coords are divided by 4
+				// from the code to reduce texture bleed. So we multiply up again here.
+				float2 uv_bumpmap = IN.uv_BumpMap;
+				uv_bumpmap.y *= 8 * IN.zScale;
+				o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
+
 				if (IN.uv_MainTex.y >= _MainTex_TexelSize.y) {
-					// calculate uv for bumpmap. The texture y coords are divided by 4
-					// from the code to reduce texture bleed. So we multiply up again here.
-					float2 uv_bumpmap = IN.uv_BumpMap;
-					uv_bumpmap.y *= 8 * IN.zScale;
-					o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
 
 					float2 uv_lineBelow = float2(IN.uv_MainTex.x, IN.uv_MainTex.y - _MainTex_TexelSize.y);
 					fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
