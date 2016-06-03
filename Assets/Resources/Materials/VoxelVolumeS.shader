@@ -31,8 +31,8 @@
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
-			float2 normal;
-			float4 zScale;
+			float3 normal;
+			float zScale;
 		};
 
         void vert (inout appdata_full v, out Input OUT)
@@ -51,7 +51,7 @@
 					// calculate uv for bumpmap. The texture x coords are divided by 4
 					// from the code to reduce texture bleed. So we multiply up again here.
 					float2 uv_bumpmap = IN.uv_BumpMap;
-					uv_bumpmap.x *= 4 * IN.zScale;
+					uv_bumpmap.x *= 8 * IN.zScale;
 					o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
 
 					float2 uv_lineLeft = float2(IN.uv_MainTex.x - _MainTex_TexelSize.x, IN.uv_MainTex.y);
