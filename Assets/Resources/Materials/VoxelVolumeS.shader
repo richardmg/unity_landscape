@@ -25,26 +25,28 @@
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
 		float4 _MainTex_TexelSize;
+		half _Glossiness;
+		half _Metallic;
 
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
-			float3 worldNormal;
-			INTERNAL_DATA
+			float2 normal;
+//			float3 worldNormal;
+//			INTERNAL_DATA
 		};
 
-		half _Glossiness;
-		half _Metallic;
-
-      	void vert (inout appdata_full v) {
-//        	v.vertex.xyz += v.normal * _Amount;
-      	}
+        void vert (inout appdata_full v, out Input OUT)
+		{
+			UNITY_INITIALIZE_OUTPUT(Input, OUT);
+			OUT.normal = v.normal;
+		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
 			bool isTransparent = c.a < 1;
 
-			if (IN.worldNormal.g == 1) {
+			if (IN.normal.y == 1) {
 				// The normal points up, which means we're drawing top _and_ bottom
 				if (IN.uv_MainTex.y >= _MainTex_TexelSize.y) {
 					float2 uv_lineBelow = float2(IN.uv_MainTex.x, IN.uv_MainTex.y - _MainTex_TexelSize.y);
@@ -70,7 +72,7 @@
 //				c = fixed4(1, 0, 0, 1);
 			}
 
-			o.Albedo = c;
+			o.Albedo = c.rgb;
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
 			o.Alpha = c.a;
