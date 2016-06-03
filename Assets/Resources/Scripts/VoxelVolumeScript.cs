@@ -24,7 +24,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
 		// Create front and back quad
-//		ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
+		ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
 		ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
 
@@ -117,10 +117,10 @@ public class VoxelVolumeScript : MonoBehaviour {
 		float uvy0 = (1.0f / rows) * y;
 		float uvy1 = (1.0f / rows) * y;
 
-		v[0].x = 0;    v[0].y = side; v[0].z = 0;
-		v[1].x = 0;    v[1].y = side; v[1].z = 1;
-		v[2].x = cols; v[2].y = side; v[2].z = 1;
-		v[3].x = cols; v[3].y = side; v[3].z = 0;
+		v[0].x = 0;    v[0].y = side; v[0].z = 1;
+		v[1].x = 0;    v[1].y = side; v[1].z = 0;
+		v[2].x = cols; v[2].y = side; v[2].z = 0;
+		v[3].x = cols; v[3].y = side; v[3].z = 1;
 
 		uv[0].x = 0; uv[0].y = uvy0;
 		uv[1].x = 0; uv[1].y = uvy1;

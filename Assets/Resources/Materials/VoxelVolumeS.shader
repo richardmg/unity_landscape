@@ -32,8 +32,6 @@
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
 			float2 normal;
-//			float3 worldNormal;
-//			INTERNAL_DATA
 		};
 
         void vert (inout appdata_full v, out Input OUT)
@@ -44,32 +42,31 @@
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			fixed4 c = tex2D (_MainTex, IN.uv_MainTex);
-			bool isTransparent = c.a < 1;
 
-			if (IN.normal.y == 1) {
+			o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+
+			if (IN.normal.y != 0) {
 				// The normal points up, which means we're drawing top _and_ bottom
 				if (IN.uv_MainTex.y >= _MainTex_TexelSize.y) {
 					float2 uv_lineBelow = float2(IN.uv_MainTex.x, IN.uv_MainTex.y - _MainTex_TexelSize.y);
 					fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
-					bool belowIsTransparent = cBelow.a < 1;
+
+					bool bottomFaceIsTransparent = c.a < 1;
+					bool topFaceOnLineBelowIsTransparent = cBelow.a < 1;
 
 					// TODO: check from script if the following condition holds for the whole
 					// quad. If thats the case, skip creating it.
-					if (isTransparent == belowIsTransparent) {
+					if (bottomFaceIsTransparent == topFaceOnLineBelowIsTransparent) {
 						o.Alpha = 0;
 		         		return;
 					}
 
-					if (isTransparent)
+					if (bottomFaceIsTransparent) {
+						// Draw top face on line below instead
 						c = cBelow;
-//					o.Normal = IN.worldNormal;
-//					o.Normal = WorldNormalVector (IN, o.Normal);
+						o.Normal *= -1;
+					}
 				}
-			} else {
-//				o.Normal = IN.worldNormal;
-//				o.Normal = WorldNormalVector (IN, o.Normal);
-//				o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
-//				c = fixed4(1, 0, 0, 1);
 			}
 
 			o.Albedo = c.rgb;
