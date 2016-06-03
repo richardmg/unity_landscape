@@ -106,6 +106,8 @@
 				o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_MainTex));
 			}
 
+			// TODO: cull away faces that points away from camera at this point
+
 			o.Albedo = c.rgb;
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
