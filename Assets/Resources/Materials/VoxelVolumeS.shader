@@ -32,12 +32,14 @@
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
 			float2 normal;
+			float4 scale;
 		};
 
         void vert (inout appdata_full v, out Input OUT)
 		{
 			UNITY_INITIALIZE_OUTPUT(Input, OUT);
 			OUT.normal = v.normal;
+			OUT.scale = mul (_Object2World, float3(1, 1, 1));
 		}
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
@@ -49,7 +51,7 @@
 					// calculate uv for bumpmap. The texture y coords are divided by 4
 					// from the code to reduce texture bleed. So we multiply up again here.
 					float2 uv_bumpmap = IN.uv_BumpMap;
-					uv_bumpmap.y *= 4;
+					uv_bumpmap.y *= 4 * IN.scale.z;
 					o.Normal = UnpackNormal (tex2D (_BumpMap, uv_bumpmap));
 
 					float2 uv_lineBelow = float2(IN.uv_MainTex.x, IN.uv_MainTex.y - _MainTex_TexelSize.y);
