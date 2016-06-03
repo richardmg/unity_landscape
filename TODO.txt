@@ -132,13 +132,18 @@
             of new permutations.
 
         - Challenges so far:
-            - The organisms will be too flat. There should be a way
-            to give them some extension. Perhaps draw on cubes and
-            primitives instead of quads. I think the best would be
-            to use voxelplanes, but that seems to create far too
-            complex models. Can I improve this a bit?
             - I'm currently loosing the funny aspect of having random
             permutations occur in the world. Perhaps this can be the
             monsters that you meet, which attack you.
+
+       - Populate the forrest with small and big creatures, from beatles
+            and flies and up. The user can either choose to put two
+            different organsims together to let them mutate, or two
+            of the the same kind to allow it to evolve (that is, the
+            player can draw new genes etc). A combination could then
+            be that you first mutate interresting organisms (a flower
+            and a turtle). Then you go searching and harwesting a
+            number of the permutations, and try to evolve / change
+            them further.
 
 
