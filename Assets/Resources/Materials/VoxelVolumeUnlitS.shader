@@ -60,18 +60,20 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float light = 0.4;
+				int texW = 32;
+				int texH = 32;
+				float lightMax = 0.5;
+				float lightDampning = 0.02;
 				fixed4 c = tex2D(_MainTex, i.uv);
 
 				if (i.normal.x != 0) {
 					// The normal points right, which means we're drawing left _and_ right.
-					int texW = 32;
 					float deltaX = 1.0f / texW;
 
 					if (i.extra.x == 0) {
-						c *= (1 - light);
+						c *= 1 + lightMax - (lightDampning * texW);
 					} else if (i.extra.x == texW) {
-						c *= (1 + light);
+						c *= 1 + lightMax;
 					} else {
 						float2 uv_lineLeft = float2(i.uv.x - deltaX, i.uv.y);
 						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
@@ -89,20 +91,19 @@
 						if (leftFaceIsTransparent) {
 							// Draw right face on line left instead
 							c = cLeft;
-							c *= (1 + light);
+							c *= 1 + lightMax - (lightDampning * (texW - i.extra.x));
 						} else {
-							c *= (1 - light);
+							c *= 1 + lightMax - (lightDampning * (texW - i.extra.x + 10));
 						}
 					}
 				} else if (i.normal.y != 0) {
 					// The normal points up, which means we're drawing top _and_ bottom
-					int texH = 32;
 					float deltaY = 1.0f / texH;
 
 					if (i.extra.y == 0) {
-						c *= (1 - light);
+						c *= 1 + lightMax - (lightDampning * texH);
 					} else if (i.extra.y == texH) {
-						c *= (1 + light);
+						c *= 1 + lightMax;
 					} else {
 						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - deltaY);
 						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
@@ -120,11 +121,14 @@
 						if (bottomFaceIsTransparent) {
 							// Draw top face on line below instead
 							c = cBelow;
-							c *= (1 + light);
+							c *= 1 + lightMax - (lightDampning * (texH - i.extra.y));
 						} else {
-							c *= (1 - light);
+							c *= 1 + lightMax - (lightDampning * (texH - i.extra.y + 10));
 						}
 					}
+				} else {
+					if (i.normal.z == 1)
+						c *= 1 + lightMax - (lightDampning * (texH + 11));
 				}
 
 				if (c.a == 0)
