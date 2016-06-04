@@ -49,7 +49,6 @@ public class VoxelVolumeScript : MonoBehaviour {
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
-		print(finalMesh.uv2.Length);
 	}
 
 	bool hasOpaquePixelsInRow(int row)
