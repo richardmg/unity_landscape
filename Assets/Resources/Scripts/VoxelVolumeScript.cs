@@ -49,6 +49,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
+		print(finalMesh.uv2.Length);
 	}
 
 	bool hasOpaquePixelsInRow(int row)
@@ -106,6 +107,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Mesh mesh = new Mesh();
 		mesh.vertices = v;
 		mesh.uv = uv;
+		mesh.uv2 = new Vector2[4];
 		mesh.triangles = tri;
 
 		return mesh;
@@ -115,10 +117,11 @@ public class VoxelVolumeScript : MonoBehaviour {
 	{
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
+		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
 		float delta = (1.0f / rows);
 		float uvy0 = delta * y;
-		float uvy1 = uvy0 + (delta / 4);
+		float uvy1 = uvy0;// + (delta / 4);
 
 		v[0].x = 0;    v[0].y = side; v[0].z = 1;
 		v[1].x = 0;    v[1].y = side; v[1].z = 0;
@@ -130,6 +133,11 @@ public class VoxelVolumeScript : MonoBehaviour {
 		uv[2].x = 1; uv[2].y = uvy1;
 		uv[3].x = 1; uv[3].y = uvy0;
 
+		uv2[0].x = 0; uv2[0].y = 0;
+		uv2[1].x = 0; uv2[1].y = 1;
+		uv2[2].x = 1; uv2[2].y = 1;
+		uv2[3].x = 1; uv2[3].y = 0;
+
 		tri[0] = 0;
 		tri[1] = 1;
 		tri[2] = 3;
@@ -140,6 +148,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Mesh mesh = new Mesh();
 		mesh.vertices = v;
 		mesh.uv = uv;
+		mesh.uv2 = uv2;
 		mesh.triangles = tri;
 
 		return mesh;
@@ -149,10 +158,11 @@ public class VoxelVolumeScript : MonoBehaviour {
 	{
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
+		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
 		float delta = (1.0f / cols);
 		float uvx0 = delta * x;
-		float uvx1 = uvx0 + (delta / 4);
+		float uvx1 = uvx0;// + (delta / 4);
 
 		v[0].x = x + side; v[0].y = 0;    v[0].z = 1;
 		v[1].x = x + side; v[1].y = rows; v[1].z = 1;
@@ -164,6 +174,11 @@ public class VoxelVolumeScript : MonoBehaviour {
 		uv[2].x = uvx1; uv[2].y = 1;
 		uv[3].x = uvx1; uv[3].y = 0;
 
+		uv2[0].x = 0; uv2[0].y = 0;
+		uv2[1].x = 0; uv2[1].y = 1;
+		uv2[2].x = 1; uv2[2].y = 1;
+		uv2[3].x = 1; uv2[3].y = 0;
+
 		tri[0] = 0;
 		tri[1] = 1;
 		tri[2] = 3;
@@ -174,6 +189,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Mesh mesh = new Mesh();
 		mesh.vertices = v;
 		mesh.uv = uv;
+		mesh.uv2 = uv2;
 		mesh.triangles = tri;
 
 		return mesh;
