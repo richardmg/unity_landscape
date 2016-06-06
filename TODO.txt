@@ -131,8 +131,24 @@
             survival ratio will make it more inclined to be a part
             of new permutations.
 
-        - Challenges so far:
-            - I'm currently loosing the funny aspect of having random
+       - Genes are implemented using voxel volumes, since it will just
+            look better and more convincing. The main body and head
+            can have a depth between 0 and e.g 10, but limbs etc can
+            only have a depth between 0 and 1.
+            This makes them easy to quickly
+            reduce quality, since then all limbs can easily be quads
+            on some distance. Worst case if fps drops, body and head
+            can be reduced to quad arrays, with one quad per depth.
+            The most advances organisms can have e.g up to 10 - 15
+            genes. The ones you start with can e.g have 2 - 4 (flowers
+            trees, etc).
+
+            All genes can be scaled both up and down (but without
+            adding more voxels). This way you can make small flowers
+            and bees etc.
+
+       - Random permutations / monsters of the organisms bred will
+            be be placed in the forrest, and are likely to attack.
             permutations occur in the world. Perhaps this can be the
             monsters that you meet, which attack you.
 
