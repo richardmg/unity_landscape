@@ -26,8 +26,6 @@ public class VoxelVolumeScript : MonoBehaviour {
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
-		cols = subImageWidth;
-		rows = texture.height;
 		uvStartX = (atlasIndex * subImageWidth) % texture.width;
 		uvStartY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
@@ -40,20 +38,20 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 		if (addVolume) {
 			// Traverse each row in the texture
-			for (int y = 0; y < rows; ++y) {
+			for (int y = 0; y < subImageHeight; ++y) {
 				if (trimVolume && !hasHorisontalEdgesInRow(y))
 					continue;
 				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, y, 0)));
 			}
 
-			for (int x = 0; x < cols; ++x) {
+			for (int x = 0; x < subImageWidth; ++x) {
 				if (trimVolume && !hasVerticalEdgesInCol(x))
 					continue;
 				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(0, 0, 0)));
 			}
 
-			ciList.Add(createCombineInstance(createXZQuad(rows - 1, kTopSide), new Vector3(0, rows - 1, 0)));
-			ciList.Add(createCombineInstance(createZYQuad(cols - 1, kRightSide), new Vector3(0, 0, 0)));
+			ciList.Add(createCombineInstance(createXZQuad(subImageHeight - 1, kTopSide), new Vector3(0, subImageHeight - 1, 0)));
+			ciList.Add(createCombineInstance(createZYQuad(subImageWidth - 1, kRightSide), new Vector3(0, 0, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
@@ -94,16 +92,20 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector3[] v = new Vector3[4];
 		Vector2[] uv = new Vector2[4];
 		int[] tri = new int[6];
+		float uvx1 = uvStartX;
+		float uvx2 = uvx1 + subImageWidth;
+		float uvy1 = uvStartY;
+		float uvy2 = uvy1 + subImageHeight;
 
-		v[0].x = 0;    v[0].y = 0;    v[0].z = side;
-		v[1].x = 0;    v[1].y = rows; v[1].z = side;
-		v[2].x = cols; v[2].y = rows; v[2].z = side;
-		v[3].x = cols; v[3].y = 0;    v[3].z = side;
+		v[0].x = 0; v[0].y = 0; v[0].z = side;
+		v[1].x = 0; v[1].y = 1; v[1].z = side;
+		v[2].x = 1; v[2].y = 1; v[2].z = side;
+		v[3].x = 1; v[3].y = 0; v[3].z = side;
 
-		uv[0].x = 0; uv[0].y = 0;
-		uv[1].x = 0; uv[1].y = 1;
-		uv[2].x = 1; uv[2].y = 1;
-		uv[3].x = 1; uv[3].y = 0;
+		uv[0].x = uvx1; uv[0].y = uvy1;
+		uv[1].x = uvx1; uv[1].y = uvy2;
+		uv[2].x = uvx2; uv[2].y = uvy2;
+		uv[3].x = uvx2; uv[3].y = uvy1;
 
 		if (side == kFrontSide) {
 			tri[0] = 0;
@@ -136,14 +138,16 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv = new Vector2[4];
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
-		float delta = (1.0f / rows);
+		float delta = (1.0f / subImageHeight);
 		float uvy0 = delta * y;
 		float uvy1 = uvy0;// + (delta / 4);
+		int x = subImageWidth;
 
-		v[0].x = 0;    v[0].y = side; v[0].z = 1;
-		v[1].x = 0;    v[1].y = side; v[1].z = 0;
-		v[2].x = cols; v[2].y = side; v[2].z = 0;
-		v[3].x = cols; v[3].y = side; v[3].z = 1;
+
+		v[0].x = 0; v[0].y = side; v[0].z = 1;
+		v[1].x = 0; v[1].y = side; v[1].z = 0;
+		v[2].x = x; v[2].y = side; v[2].z = 0;
+		v[3].x = x; v[3].y = side; v[3].z = 1;
 
 		uv[0].x = 0; uv[0].y = uvy0;
 		uv[1].x = 0; uv[1].y = uvy1;
@@ -177,14 +181,15 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv = new Vector2[4];
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
-		float delta = (1.0f / cols);
+		float delta = (1.0f / subImageWidth);
 		float uvx0 = delta * x;
 		float uvx1 = uvx0;// + (delta / 4);
+		int y = subImageHeight;
 
-		v[0].x = x + side; v[0].y = 0;    v[0].z = 1;
-		v[1].x = x + side; v[1].y = rows; v[1].z = 1;
-		v[2].x = x + side; v[2].y = rows; v[2].z = 0;
-		v[3].x = x + side; v[3].y = 0;    v[3].z = 0;
+		v[0].x = x + side; v[0].y = 0; v[0].z = 1;
+		v[1].x = x + side; v[1].y = y; v[1].z = 1;
+		v[2].x = x + side; v[2].y = y; v[2].z = 0;
+		v[3].x = x + side; v[3].y = 0; v[3].z = 0;
 
 		uv[0].x = uvx0; uv[0].y = 0;
 		uv[1].x = uvx0; uv[1].y = 1;
