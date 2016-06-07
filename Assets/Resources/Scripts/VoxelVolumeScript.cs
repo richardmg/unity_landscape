@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class VoxelVolumeScript : MonoBehaviour {
+	public int atlasIndex = 0;
 	public bool addFront = true;
 	public bool addBack = true;
 	public bool addVolume = true;
