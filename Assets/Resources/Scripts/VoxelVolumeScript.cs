@@ -3,6 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class VoxelVolumeScript : MonoBehaviour {
+	public bool addFront = true;
+	public bool addBack = true;
+	public bool addVolume = true;
+	public bool trimVolume = false;
+
 	private Texture2D texture;
 	private int cols;
 	private int rows;
@@ -23,25 +28,28 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
-		// Create front and back quad
-		ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
-		ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
+		if (addFront)
+			ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
+		if (addBack)
+			ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
-		// Traverse each row in the texture
-		for (int y = 0; y < rows; ++y) {
-//			if (!hasOpaquePixelsInRow(y))
-//				continue;
-			ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, y, 0)));
+		if (addVolume) {
+			// Traverse each row in the texture
+			for (int y = 0; y < rows; ++y) {
+				if (trimVolume && !hasHorisontalEdgesInRow(y))
+					continue;
+				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, y, 0)));
+			}
+
+			for (int x = 0; x < cols; ++x) {
+				if (trimVolume && !hasVerticalEdgesInCol(x))
+					continue;
+				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(0, 0, 0)));
+			}
+
+			ciList.Add(createCombineInstance(createXZQuad(rows - 1, kTopSide), new Vector3(0, rows - 1, 0)));
+			ciList.Add(createCombineInstance(createZYQuad(cols - 1, kRightSide), new Vector3(0, 0, 0)));
 		}
-
-		for (int x = 0; x < cols; ++x) {
-//			if (!hasOpaquePixelsInCol(x))
-//				continue;
-			ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(0, 0, 0)));
-		}
-
-		ciList.Add(createCombineInstance(createXZQuad(rows - 1, kTopSide), new Vector3(0, rows - 1, 0)));
-		ciList.Add(createCombineInstance(createZYQuad(cols - 1, kRightSide), new Vector3(0, 0, 0)));
 
 		Mesh finalMesh = new Mesh();
 		finalMesh.CombineMeshes(ciList.ToArray(), true, true);
@@ -51,14 +59,19 @@ public class VoxelVolumeScript : MonoBehaviour {
 		meshFilter.mesh = finalMesh;
 	}
 
-	bool hasOpaquePixelsInRow(int row)
+	bool hasHorisontalEdgesInRow(int row)
 	{
-		for (int x = 0; x < cols; ++x) {
-			Color c = texture.GetPixel(x, row);
-			if (c.a != 0)
-				return true;
-		}
-		return false;
+//		for (int x = 0; x < cols; ++x) {
+//			Color c = texture.GetPixel(x, row);
+//			if (c.a != 0)
+//				return true;
+//		}
+		return true;
+	}
+
+	bool hasVerticalEdgesInCol(int col)
+	{
+		return true;
 	}
 
 	CombineInstance createCombineInstance(Mesh mesh, Vector3 pos)
