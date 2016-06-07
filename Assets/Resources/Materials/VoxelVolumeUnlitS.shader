@@ -39,6 +39,7 @@
 				float3 extra : COLOR0; // x: left or right edge, y: top or bottom edge, z: z scale
 			};
 
+
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			
@@ -48,9 +49,9 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.normal = v.normal;
+			const int texW = 16;
+			const int texH = 8;
 
-				int texW = 32;
-				int texH = 32;
 				o.extra.x = v.vertex.x;
 				o.extra.y = v.vertex.y;
 				o.extra.z = length(mul(_Object2World, float3(0, 0, 1)));
@@ -60,14 +61,14 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				int texW = 32;
-				int texH = 32;
 				float lightMax = 0.5;
 				float lightDampning = 0.02;
 				fixed4 c = tex2D(_MainTex, i.uv);
+			const int texW = 16;
+			const int texH = 8;
 
 				if (i.normal.x != 0) {
-					// The normal points right, which means we're drawing left _and_ right.
+					// Columns
 					float deltaX = 1.0f / texW;
 
 					if (i.extra.x == 0) {
@@ -81,8 +82,6 @@
 						bool leftFaceIsTransparent = c.a < 1;
 						bool rightFaceOnLineLeftIsTransparent = cLeft.a < 1;
 
-						// TODO: check from script if the following condition holds for the whole
-						// quad. If thats the case, skip creating it.
 						if (leftFaceIsTransparent == rightFaceOnLineLeftIsTransparent) {
 							discard;
 			         		return c;
@@ -97,7 +96,7 @@
 						}
 					}
 				} else if (i.normal.y != 0) {
-					// The normal points up, which means we're drawing top _and_ bottom
+					// Rows
 					float deltaY = 1.0f / texH;
 
 					if (i.extra.y == 0) {
@@ -111,8 +110,6 @@
 						bool bottomFaceIsTransparent = c.a < 1;
 						bool topFaceOnLineBelowIsTransparent = cBelow.a < 1;
 
-						// TODO: check from script if the following condition holds for the whole
-						// quad. If thats the case, skip creating it.
 						if (bottomFaceIsTransparent == topFaceOnLineBelowIsTransparent) {
 							discard;
 			         		return c;
@@ -127,6 +124,7 @@
 						}
 					}
 				} else {
+					// Front and back
 					if (i.normal.z == 1)
 						c *= 1 + lightMax - (lightDampning * (texH + 11));
 				}
