@@ -139,20 +139,20 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
 		float delta = (1.0f / subImageHeight);
-		float uvy0 = delta * y;
-		float uvy1 = uvy0;// + (delta / 4);
+		float uvx1 = uvStartX;
+		float uvx2 = uvx1 + subImageWidth;
+		float uvy = uvStartY + (delta * y);
 		int x = subImageWidth;
-
 
 		v[0].x = 0; v[0].y = side; v[0].z = 1;
 		v[1].x = 0; v[1].y = side; v[1].z = 0;
 		v[2].x = x; v[2].y = side; v[2].z = 0;
 		v[3].x = x; v[3].y = side; v[3].z = 1;
 
-		uv[0].x = 0; uv[0].y = uvy0;
-		uv[1].x = 0; uv[1].y = uvy1;
-		uv[2].x = 1; uv[2].y = uvy1;
-		uv[3].x = 1; uv[3].y = uvy0;
+		uv[0].x = uvx1; uv[0].y = uvy;
+		uv[1].x = uvx1; uv[1].y = uvy;
+		uv[2].x = uvx2; uv[2].y = uvy;
+		uv[3].x = uvx2; uv[3].y = uvy;
 
 		uv2[0].x = 0; uv2[0].y = 0;
 		uv2[1].x = 0; uv2[1].y = 1;
@@ -182,8 +182,9 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
 		float delta = (1.0f / subImageWidth);
-		float uvx0 = delta * x;
-		float uvx1 = uvx0;// + (delta / 4);
+		float uvx = uvStartX + (delta * x);
+		float uvy1 = uvStartY;
+		float uvy2 = uvy1 + subImageHeight;
 		int y = subImageHeight;
 
 		v[0].x = x + side; v[0].y = 0; v[0].z = 1;
@@ -191,10 +192,10 @@ public class VoxelVolumeScript : MonoBehaviour {
 		v[2].x = x + side; v[2].y = y; v[2].z = 0;
 		v[3].x = x + side; v[3].y = 0; v[3].z = 0;
 
-		uv[0].x = uvx0; uv[0].y = 0;
-		uv[1].x = uvx0; uv[1].y = 1;
-		uv[2].x = uvx1; uv[2].y = 1;
-		uv[3].x = uvx1; uv[3].y = 0;
+		uv[0].x = uvx; uv[0].y = uvy1;
+		uv[1].x = uvx; uv[1].y = uvy2;
+		uv[2].x = uvx; uv[2].y = uvy2;
+		uv[3].x = uvx; uv[3].y = uvy1;
 
 		uv2[0].x = 0; uv2[0].y = 0;
 		uv2[1].x = 0; uv2[1].y = 1;
