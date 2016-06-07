@@ -3,6 +3,8 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_Width ("Texture width", Int) = 16
+		_Height ("Texture width", Int) = 8
 	}
 	SubShader
 	{
@@ -40,6 +42,8 @@
 			};
 
 
+			int _Width;
+			int _Height;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			
@@ -49,8 +53,6 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.normal = v.normal;
-			const int texW = 16;
-			const int texH = 8;
 
 				o.extra.x = v.vertex.x;
 				o.extra.y = v.vertex.y;
@@ -64,16 +66,14 @@
 				float lightMax = 0.5;
 				float lightDampning = 0.02;
 				fixed4 c = tex2D(_MainTex, i.uv);
-			const int texW = 16;
-			const int texH = 8;
 
 				if (i.normal.x != 0) {
 					// Columns
-					float deltaX = 1.0f / texW;
+					float deltaX = 1.0f / _Width;
 
 					if (i.extra.x == 0) {
-						c *= 1 + lightMax - (lightDampning * texW);
-					} else if (i.extra.x == texW) {
+						c *= 1 + lightMax - (lightDampning * _Width);
+					} else if (i.extra.x == _Width) {
 						c *= 1 + lightMax;
 					} else {
 						float2 uv_lineLeft = float2(i.uv.x - deltaX, i.uv.y);
@@ -90,18 +90,18 @@
 						if (leftFaceIsTransparent) {
 							// Draw right face on line left instead
 							c = cLeft;
-							c *= 1 + lightMax - (lightDampning * (texW - i.extra.x));
+							c *= 1 + lightMax - (lightDampning * (_Width - i.extra.x));
 						} else {
-							c *= 1 + lightMax - (lightDampning * (texW - i.extra.x + 10));
+							c *= 1 + lightMax - (lightDampning * (_Width - i.extra.x + 10));
 						}
 					}
 				} else if (i.normal.y != 0) {
 					// Rows
-					float deltaY = 1.0f / texH;
+					float deltaY = 1.0f / _Height;
 
 					if (i.extra.y == 0) {
-						c *= 1 + lightMax - (lightDampning * texH);
-					} else if (i.extra.y == texH) {
+						c *= 1 + lightMax - (lightDampning * _Height);
+					} else if (i.extra.y == _Height) {
 						c *= 1 + lightMax;
 					} else {
 						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - deltaY);
@@ -118,15 +118,15 @@
 						if (bottomFaceIsTransparent) {
 							// Draw top face on line below instead
 							c = cBelow;
-							c *= 1 + lightMax - (lightDampning * (texH - i.extra.y));
+							c *= 1 + lightMax - (lightDampning * (_Height - i.extra.y));
 						} else {
-							c *= 1 + lightMax - (lightDampning * (texH - i.extra.y + 10));
+							c *= 1 + lightMax - (lightDampning * (_Height - i.extra.y + 10));
 						}
 					}
 				} else {
 					// Front and back
 					if (i.normal.z == 1)
-						c *= 1 + lightMax - (lightDampning * (texH + 11));
+						c *= 1 + lightMax - (lightDampning * (_Height + 11));
 				}
 
 				if (c.a == 0)
