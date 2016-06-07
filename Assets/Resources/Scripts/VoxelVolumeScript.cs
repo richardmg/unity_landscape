@@ -4,14 +4,16 @@ using System.Collections.Generic;
 
 public class VoxelVolumeScript : MonoBehaviour {
 	public int atlasIndex = 0;
+	public int subImageWidth = 16;
+	public int subImageHeight = 8;
 	public bool addFront = true;
 	public bool addBack = true;
 	public bool addVolume = true;
 	public bool trimVolume = false;
 
 	private Texture2D texture;
-	private int cols;
-	private int rows;
+	private float uvStartX;
+	private float uvStartY;
 
 	const int kTopSide = 1;
 	const int kBottomSide = 0;
@@ -24,8 +26,10 @@ public class VoxelVolumeScript : MonoBehaviour {
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
-		cols = texture.width;
+		cols = subImageWidth;
 		rows = texture.height;
+		uvStartX = (atlasIndex * subImageWidth) % texture.width;
+		uvStartY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
 		List<CombineInstance> ciList = new List<CombineInstance>();
 
