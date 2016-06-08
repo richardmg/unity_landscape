@@ -137,6 +137,7 @@
 					}
 				} else {
 					// Front and back
+					// NB: This part is normally drawn by CutOffS instead
 					if (i.normal.z == 1)
 						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 				}
