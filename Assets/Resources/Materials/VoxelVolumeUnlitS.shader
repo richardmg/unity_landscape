@@ -69,19 +69,21 @@
 			{
 				float lightMax = 0.5;
 				float lightDampning = 0.02;
+				float uvOnePixelX = (1.0 / _TextureWidth);
+				float uvOnePixelY = (1.0 / _TextureHeight);
 				fixed4 c = tex2D(_MainTex, i.uv);
 
 				if (i.normal.x != 0) {
-					// Columns
+					// Columns (left to right)
 					if (i.extra.x == 0) {
-						// Top edge
+						// Left edge
 //						c *= 1 + lightMax - (lightDampning * _SubImageWidth);
 					} else if (i.extra.x == _SubImageWidth) {
-						// Bottom edge
+						// Right edge
 //						c *= 1 + lightMax;
 					} else {
 						// Center edges
-						float2 uv_lineLeft = float2(i.uv.x - (1.0 / _TextureWidth), i.uv.y);
+						float2 uv_lineLeft = float2(i.uv.x - uvOnePixelX, i.uv.y);
 						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
 
 						bool leftFaceIsTransparent = c.a < 1;
@@ -101,16 +103,16 @@
 						}
 					}
 				} else if (i.normal.y != 0) {
-					// Rows
+					// Rows (bottom to top)
 					if (i.extra.y == 0) {
-						// Left edge
+						// Bottom edge
 //						c *= 1 + lightMax - (lightDampning * _SubImageHeight);
 					} else if (i.extra.y == _SubImageHeight) {
-						// Right edge
+						// Top edge
 //						c *= 1 + lightMax;
 					} else {
 						// Center edges
-						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - (1.0 / _TextureHeight));
+						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - uvOnePixelY);
 						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
 
 						bool bottomFaceIsTransparent = c.a < 1;
@@ -137,8 +139,8 @@
 
 				if (c.a < 0.5)
 					discard;
-				if (c.a != 1)
-					c = fixed4(1, 0, 0, 1);
+//				if (c.a != 1)
+//					c = fixed4(1, 0, 0, 1);
 
 				return c;
 			}
