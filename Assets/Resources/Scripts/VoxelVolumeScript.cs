@@ -36,8 +36,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
 		uvStartX = (float)((atlasIndex * subImageWidth) % texture.width) / texture.width;
-		uvStartY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-		print(uvStartX);
+		uvStartY = (float)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
 		uvx1 = uvStartX;
 		uvy1 = 1 - ((float)subImageHeight / texture.height);

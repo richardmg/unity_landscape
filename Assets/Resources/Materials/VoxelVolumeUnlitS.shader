@@ -74,10 +74,13 @@
 				if (i.normal.x != 0) {
 					// Columns
 					if (i.extra.x == 0) {
-						c *= 1 + lightMax - (lightDampning * _SubImageWidth);
+						// Top edge
+//						c *= 1 + lightMax - (lightDampning * _SubImageWidth);
 					} else if (i.extra.x == _SubImageWidth) {
-						c *= 1 + lightMax;
+						// Bottom edge
+//						c *= 1 + lightMax;
 					} else {
+						// Center edges
 						float2 uv_lineLeft = float2(i.uv.x - (1.0 / _TextureWidth), i.uv.y);
 						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
 
@@ -92,18 +95,21 @@
 						if (leftFaceIsTransparent) {
 							// Draw right face on line left instead
 							c = cLeft;
-							c *= 1 + lightMax - (lightDampning * (_SubImageWidth - i.extra.x));
+//							c *= 1 + lightMax - (lightDampning * (_SubImageWidth - i.extra.x));
 						} else {
-							c *= 1 + lightMax - (lightDampning * (_SubImageWidth - i.extra.x + 10));
+//							c *= 1 + lightMax - (lightDampning * (_SubImageWidth - i.extra.x + 10));
 						}
 					}
 				} else if (i.normal.y != 0) {
 					// Rows
 					if (i.extra.y == 0) {
-						c *= 1 + lightMax - (lightDampning * _SubImageHeight);
+						// Left edge
+//						c *= 1 + lightMax - (lightDampning * _SubImageHeight);
 					} else if (i.extra.y == _SubImageHeight) {
-						c *= 1 + lightMax;
+						// Right edge
+//						c *= 1 + lightMax;
 					} else {
+						// Center edges
 						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - (1.0 / _TextureHeight));
 						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
 
@@ -118,19 +124,21 @@
 						if (bottomFaceIsTransparent) {
 							// Draw top face on line below instead
 							c = cBelow;
-							c *= 1 + lightMax - (lightDampning * (_SubImageHeight - i.extra.y));
+//							c *= 1 + lightMax - (lightDampning * (_SubImageHeight - i.extra.y));
 						} else {
-							c *= 1 + lightMax - (lightDampning * (_SubImageHeight - i.extra.y + 10));
+//							c *= 1 + lightMax - (lightDampning * (_SubImageHeight - i.extra.y + 10));
 						}
 					}
 				} else {
 					// Front and back
-					if (i.normal.z == 1)
-						c *= 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
+//					if (i.normal.z == 1)
+//						c *= 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 				}
 
-				if (c.a == 0)
+				if (c.a < 0.5)
 					discard;
+				if (c.a != 1)
+					c = fixed4(1, 0, 0, 1);
 
 				return c;
 			}
