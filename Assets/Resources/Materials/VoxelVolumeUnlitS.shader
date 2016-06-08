@@ -46,7 +46,6 @@
 				float3 extra : COLOR0; // x: left or right edge, y: top or bottom edge, z: z scale
 			};
 
-
 			int _TextureWidth;
 			int _TextureHeight;
 			int _SubImageWidth;

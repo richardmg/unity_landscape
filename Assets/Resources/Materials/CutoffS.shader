@@ -32,25 +32,25 @@
 
          struct vertexInput {
             float4 vertex : POSITION;
-            float4 tex : TEXCOORD0;
+            float4 uv : TEXCOORD0;
          };
 
          struct vertexOutput {
             float4 pos : SV_POSITION;
-            float4 tex : TEXCOORD0;
+            float2 uv : TEXCOORD0;
          };
  
          vertexOutput vert(vertexInput input) 
          {
             vertexOutput output;
-            output.tex = input.tex;
+            output.uv = input.uv;
             output.pos = mul(UNITY_MATRIX_MVP, input.vertex);
             return output;
          }
  
          float4 frag(vertexOutput input) : COLOR
          {
-         	float4 rgba = tex2D(_MainTex, float2(input.tex.xy));
+			float4 rgba = tex2D(_MainTex, input.uv);
          	if (rgba.a < _CutOff)
          		discard;
             return rgba; 
