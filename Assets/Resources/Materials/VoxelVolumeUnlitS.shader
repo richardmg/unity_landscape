@@ -3,6 +3,8 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_TextureWidth ("Texture width", Int) = 64
+		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
 	}
@@ -42,6 +44,8 @@
 			};
 
 
+			int _TextureWidth;
+			int _TextureHeight;
 			int _SubImageWidth;
 			int _SubImageHeight;
 			sampler2D _MainTex;
@@ -69,14 +73,12 @@
 
 				if (i.normal.x != 0) {
 					// Columns
-					float deltaX = 1.0f / _SubImageWidth;
-
 					if (i.extra.x == 0) {
 						c *= 1 + lightMax - (lightDampning * _SubImageWidth);
 					} else if (i.extra.x == _SubImageWidth) {
 						c *= 1 + lightMax;
 					} else {
-						float2 uv_lineLeft = float2(i.uv.x - deltaX, i.uv.y);
+						float2 uv_lineLeft = float2(i.uv.x - (1.0 / _TextureWidth), i.uv.y);
 						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
 
 						bool leftFaceIsTransparent = c.a < 1;
@@ -97,14 +99,12 @@
 					}
 				} else if (i.normal.y != 0) {
 					// Rows
-					float deltaY = 1.0f / _SubImageHeight;
-
 					if (i.extra.y == 0) {
 						c *= 1 + lightMax - (lightDampning * _SubImageHeight);
 					} else if (i.extra.y == _SubImageHeight) {
 						c *= 1 + lightMax;
 					} else {
-						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - deltaY);
+						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - (1.0 / _TextureHeight));
 						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
 
 						bool bottomFaceIsTransparent = c.a < 1;
