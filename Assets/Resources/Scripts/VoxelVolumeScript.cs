@@ -11,18 +11,14 @@ public class VoxelVolumeScript : MonoBehaviour {
 	public bool addVolume = true;
 	public bool trimVolume = false;
 
-	private Texture2D texture;
-	public int textureWidth;
-	public int textureHeight;
+	Texture2D texture;
 
-	private float uvStartX;
-	private float uvStartY;
 	float uvx1;
 	float uvx2;
 	float uvy1;
 	float uvy2;
-	float uvDeltaX;
-	float uvDeltaY;
+	float uvOnePixelX;
+	float uvOnePixelY;
 
 	const int kTopSide = 1;
 	const int kBottomSide = 0;
@@ -32,21 +28,22 @@ public class VoxelVolumeScript : MonoBehaviour {
 	const int kBackSide = 1;
 
 	void Start () {
+		List<CombineInstance> ciList = new List<CombineInstance>();
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
-		uvStartX = (float)((atlasIndex * subImageWidth) % texture.width) / texture.width;
-		uvStartY = (float)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		// Caluclate uv coords based on atlasIndex
+		int startPixelX = (atlasIndex * subImageWidth) % texture.width;
+		int startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		uvOnePixelX = 1.0f / texture.width;
+		uvOnePixelY = 1.0f / texture.height;
 
-		uvx1 = uvStartX;
-		uvy1 = 1 - ((float)subImageHeight / texture.height);
-		uvx2 = uvx1 + ((float)subImageWidth / texture.width);
-		uvy2 = uvy1 + ((float)subImageHeight / texture.height);
-		uvDeltaX = 1.0f / texture.width;
-		uvDeltaY = 1.0f / texture.height;
+		uvx1 = (float)startPixelX / texture.width;
+		uvx2 = uvx1 + (subImageWidth * uvOnePixelX);
+		uvy1 = 1 - ((float)(startPixelY + subImageHeight) / texture.height);
+		uvy2 = uvy1 + (subImageHeight * uvOnePixelY);
 
-		List<CombineInstance> ciList = new List<CombineInstance>();
-
+		// Create mesh parts
 		if (addFront)
 			ciList.Add(createCombineInstance(createXYQuad(0, kFrontSide), new Vector3(0, 0, 0)));
 		if (addBack)
@@ -156,7 +153,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv = new Vector2[4];
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
-		float uvy = uvy1 + (y * uvDeltaY);
+		float uvy = uvy1 + (y * uvOnePixelY);
 		int x = subImageWidth;
 
 		v[0].x = 0; v[0].y = side; v[0].z = 1;
@@ -196,7 +193,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv = new Vector2[4];
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
-		float uvx = uvx1 + (x * uvDeltaX);
+		float uvx = uvx1 + (x * uvOnePixelX);
 		int y = subImageHeight;
 
 		v[0].x = x + side; v[0].y = 0; v[0].z = 1;
