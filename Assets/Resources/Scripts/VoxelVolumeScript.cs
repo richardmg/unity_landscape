@@ -43,7 +43,8 @@ public class VoxelVolumeScript : MonoBehaviour {
 		uvx1 = (float)startPixelX / texture.width;
 		uvx2 = uvx1 + (subImageWidth * uvOnePixelX / textureBleedScale);
 		uvy1 = 1 - ((float)(startPixelY + subImageHeight) / texture.height);
-		uvy2 = uvy1 + (subImageHeight * uvOnePixelY / textureBleedScale);
+		uvy2 = 1;// - ((float)(startPixelY + subImageHeight) / texture.height);
+//		uvy2 = uvy1 + (subImageHeight * uvOnePixelY / textureBleedScale);
 
 		// Create mesh parts
 		if (addFront)
@@ -52,7 +53,8 @@ public class VoxelVolumeScript : MonoBehaviour {
 			ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
 		float xOffset = (float)(subImageWidth  * textureBleedScale) / (float)(subImageWidth);
-		float yOffset = (float)(subImageHeight * textureBleedScale) / (float)(subImageHeight);
+		float yOffset = (float)(subImageHeight) / (float)(subImageHeight);
+//		yOffset -= 1 / 100.0f;
 
 		int x, y;
 		if (addVolume) {
