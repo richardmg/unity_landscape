@@ -1,8 +1,6 @@
 ﻿Shader "Custom/VoxelFront" {
    Properties {
       _MainTex ("Texture Image", 2D) = "white" {}
-      _CutOff("Cut off", Range(0,1)) = 0.8
-//      _CutOffShadow("Cut off shadow", Range(0,1)) = 0.9
    }
    SubShader {
       Tags {
@@ -22,13 +20,14 @@
       	 Cull Back
 
          CGPROGRAM
- 
+
+         #define DEBUG_TEXTURE_ATLAS
+
          #pragma vertex vert  
          #pragma fragment frag 
 
          // User-specified uniforms            
          uniform sampler2D _MainTex;        
-		 uniform float _CutOff; 
 
          struct vertexInput {
             float4 vertex : POSITION;
@@ -53,10 +52,17 @@
  
          float4 frag(vertexOutput input) : COLOR
          {
-			float4 rgba = tex2D(_MainTex, input.uv);
-         	if (rgba.a < _CutOff)
+			float4 c = tex2D(_MainTex, input.uv);
+
+#ifdef DEBUG_TEXTURE_ATLAS
+			if (c.a != 1 && c.a != 0)
+				c = fixed4(1, 0, 0, 1);
+#endif
+
+         	if (c.a < 1)
          		discard;
-            return rgba; 
+
+            return c; 
          }
  
          ENDCG
