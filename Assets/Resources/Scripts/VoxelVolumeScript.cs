@@ -10,7 +10,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 	public bool addBack = true;
 	public bool addVolume = true;
 	public bool trimVolume = false;
-	public float textureBleedCorrection = 0.16f;
+	public float textureBleedScale = 1.001f;
 
 	Texture2D texture;
 
@@ -41,9 +41,9 @@ public class VoxelVolumeScript : MonoBehaviour {
 		uvOnePixelY = 1.0f / texture.height;
 
 		uvx1 = (float)startPixelX / texture.width;
-		uvx2 = uvx1 + (subImageWidth * uvOnePixelX) - (uvOnePixelX * textureBleedCorrection);
+		uvx2 = uvx1 + (subImageWidth * uvOnePixelX / textureBleedScale);
 		uvy1 = 1 - ((float)(startPixelY + subImageHeight) / texture.height);
-		uvy2 = uvy1 + (subImageHeight * uvOnePixelY) - (uvOnePixelY * textureBleedCorrection);
+		uvy2 = uvy1 + (subImageHeight * uvOnePixelY / textureBleedScale);
 
 		// Create mesh parts
 		if (addFront)
@@ -51,27 +51,27 @@ public class VoxelVolumeScript : MonoBehaviour {
 		if (addBack)
 			ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
-		float xOffset = 1 - (float)(subImageWidth  - textureBleedCorrection) / (float)(subImageWidth);
-		float yOffset = 1 - (float)(subImageHeight - textureBleedCorrection) / (float)(subImageHeight);
+		float xOffset = (float)(subImageWidth  * textureBleedScale) / (float)(subImageWidth);
+		float yOffset = (float)(subImageHeight * textureBleedScale) / (float)(subImageHeight);
 
 		int x, y;
 		if (addVolume) {
 			for (x = 0; x < subImageWidth; ++x) {
 				if (trimVolume && !hasVerticalEdgesInCol(x))
 					continue;
-				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(x + (x * xOffset), 0, 0)));
+				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(x * xOffset, 0, 0)));
 			}
 
 			for (y = 0; y < subImageHeight; ++y) {
 				if (trimVolume && !hasHorisontalEdgesInRow(y))
 					continue;
-				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, y + (y * yOffset), 0)));
+				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, y * yOffset, 0)));
 			}
 
 			x = (subImageWidth - 1);
 			y = (subImageHeight - 1);
-			ciList.Add(createCombineInstance(createZYQuad(subImageWidth - 1, kRightSide), new Vector3(x + (x * xOffset) - textureBleedCorrection, 0, 0)));
-			ciList.Add(createCombineInstance(createXZQuad(subImageHeight - 1, kTopSide), new Vector3(0, y + (y * yOffset) - textureBleedCorrection, 0)));
+			ciList.Add(createCombineInstance(createZYQuad(subImageWidth - 1, kRightSide), new Vector3(x * xOffset, 0, 0)));
+			ciList.Add(createCombineInstance(createXZQuad(subImageHeight - 1, kTopSide), new Vector3(0, y * yOffset, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
