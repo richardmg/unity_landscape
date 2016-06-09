@@ -53,12 +53,6 @@
  
          float4 frag(vertexOutput input) : COLOR
          {
-         	float uvOneLineX = (1.0f/64.0f) / 2;
-         	float uvOneLineY = (1.0f/64.0f) / 2;
-			if (input.uv2.x >= 1 - uvOneLineX)
-				input.uv.x -= uvOneLineX;
-			if (input.uv2.y > 1 - uvOneLineY)
-				input.uv.y -= uvOneLineY;
 			float4 rgba = tex2D(_MainTex, input.uv);
          	if (rgba.a < _CutOff)
          		discard;

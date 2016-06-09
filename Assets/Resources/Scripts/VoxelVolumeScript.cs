@@ -13,12 +13,14 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 	Texture2D texture;
 
+	float uvOnePixelX;
+	float uvOnePixelY;
+	float bleedCorrection = 1.0f / 10.0f;
+
 	float uvx1;
 	float uvx2;
 	float uvy1;
 	float uvy2;
-	float uvOnePixelX;
-	float uvOnePixelY;
 
 	const int kTopSide = 1;
 	const int kBottomSide = 0;
@@ -39,9 +41,9 @@ public class VoxelVolumeScript : MonoBehaviour {
 		uvOnePixelY = 1.0f / texture.height;
 
 		uvx1 = (float)startPixelX / texture.width;
-		uvx2 = uvx1 + (subImageWidth * uvOnePixelX);
+		uvx2 = uvx1 + (subImageWidth * uvOnePixelX) - (uvOnePixelX * bleedCorrection);
 		uvy1 = 1 - ((float)(startPixelY + subImageHeight) / texture.height);
-		uvy2 = uvy1 + (subImageHeight * uvOnePixelY);
+		uvy2 = uvy1 + (subImageHeight * uvOnePixelY) - (uvOnePixelY * bleedCorrection);
 
 		// Create mesh parts
 		if (addFront)
@@ -54,17 +56,18 @@ public class VoxelVolumeScript : MonoBehaviour {
 			for (int y = 0; y < subImageHeight; ++y) {
 				if (trimVolume && !hasHorisontalEdgesInRow(y))
 					continue;
-				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, y, 0)));
+				float yOffset = y + (y * (bleedCorrection / subImageHeight));
+				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, yOffset, 0)));
 			}
 
 			for (int x = 0; x < subImageWidth; ++x) {
 				if (trimVolume && !hasVerticalEdgesInCol(x))
 					continue;
-				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(0, 0, 0)));
+//				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(0, 0, 0)));
 			}
 
-			ciList.Add(createCombineInstance(createXZQuad(subImageHeight - 1, kTopSide), new Vector3(0, subImageHeight - 1, 0)));
-			ciList.Add(createCombineInstance(createZYQuad(subImageWidth - 1, kRightSide), new Vector3(0, 0, 0)));
+//			ciList.Add(createCombineInstance(createXZQuad(subImageHeight - 1, kTopSide), new Vector3(0, subImageHeight - 1, 0)));
+//			ciList.Add(createCombineInstance(createZYQuad(subImageWidth - 1, kRightSide), new Vector3(0, 0, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
@@ -154,7 +157,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
 		float uvy = uvy1 + (y * uvOnePixelY);
-		int x = subImageWidth;
+		float x = subImageWidth;
 
 		v[0].x = 0; v[0].y = side; v[0].z = 1;
 		v[1].x = 0; v[1].y = side; v[1].z = 0;
@@ -194,7 +197,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv2 = new Vector2[4];
 		int[] tri = new int[6];
 		float uvx = uvx1 + (x * uvOnePixelX);
-		int y = subImageHeight;
+		float y = subImageHeight;
 
 		v[0].x = x + side; v[0].y = 0; v[0].z = 1;
 		v[1].x = x + side; v[1].y = y; v[1].z = 1;
