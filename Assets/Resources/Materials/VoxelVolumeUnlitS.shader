@@ -24,7 +24,7 @@
 			CGPROGRAM
 
 			#define USE_LIGHT
-			#define DEBUG_TEXTURE_ATLAS
+//			#define DEBUG_TEXTURE_ATLAS
 
 			#pragma vertex vert
 			#pragma fragment frag
@@ -54,7 +54,7 @@
 			int _SubImageHeight;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -77,7 +77,6 @@
 				float light = 1;
 				float uvOnePixelX = (1.0 / _TextureWidth);
 				float uvOnePixelY = (1.0 / _TextureHeight);
-				float bleedCorrection = 1.0f / 10.0f;
 				fixed4 c = tex2D(_MainTex, i.uv);
 
 				if (i.normal.x != 0) {
@@ -85,7 +84,7 @@
 					if (i.extra.x == 0) {
 						// Left edge
 						light = 1 + lightMax - (lightDampning * _SubImageWidth);
-					} else if (i.extra.x >= _SubImageWidth - (bleedCorrection / _SubImageWidth)) {
+					} else if (i.extra.x > _SubImageWidth - 0.5) {
 						// Right edge
 						light = 1 + lightMax;
 					} else {
@@ -114,7 +113,7 @@
 					if (i.extra.y == 0) {
 						// Bottom edge
 						light = 1 + lightMax - (lightDampning * _SubImageHeight);
-					} else if (i.extra.y >= _SubImageHeight - (bleedCorrection / _SubImageHeight)) {
+					} else if (i.extra.y > _SubImageHeight - 0.5) {
 						// Top edge
 						light = 1 + lightMax;
 					} else {
