@@ -36,11 +36,13 @@
 				float4 vertex : POSITION;
 				float4 normal : NORMAL;
 				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
 			};
 
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
+				float2 uv2 : TEXCOORD1;
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
 				float3 extra : COLOR0; // x: left or right edge, y: top or bottom edge, z: z scale
@@ -58,6 +60,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+				o.uv2 = TRANSFORM_TEX(v.uv, _MainTex); 
 				o.normal = v.normal;
 
 				o.extra.x = v.vertex.x;
@@ -74,6 +77,7 @@
 				float light = 1;
 				float uvOnePixelX = (1.0 / _TextureWidth);
 				float uvOnePixelY = (1.0 / _TextureHeight);
+				float bleedCorrection = 1.0f / 10.0f;
 				fixed4 c = tex2D(_MainTex, i.uv);
 
 				if (i.normal.x != 0) {
@@ -81,7 +85,7 @@
 					if (i.extra.x == 0) {
 						// Left edge
 						light = 1 + lightMax - (lightDampning * _SubImageWidth);
-					} else if (i.extra.x == _SubImageWidth) {
+					} else if (i.extra.x >= _SubImageWidth - (bleedCorrection / _SubImageWidth)) {
 						// Right edge
 						light = 1 + lightMax;
 					} else {
@@ -110,7 +114,7 @@
 					if (i.extra.y == 0) {
 						// Bottom edge
 						light = 1 + lightMax - (lightDampning * _SubImageHeight);
-					} else if (i.extra.y == _SubImageHeight) {
+					} else if (i.extra.y >= _SubImageHeight - (bleedCorrection / _SubImageHeight)) {
 						// Top edge
 						light = 1 + lightMax;
 					} else {

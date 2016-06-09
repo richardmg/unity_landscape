@@ -51,23 +51,26 @@ public class VoxelVolumeScript : MonoBehaviour {
 		if (addBack)
 			ciList.Add(createCombineInstance(createXYQuad(1, kBackSide), new Vector3(0, 0, 0)));
 
+		float xOffset, yOffset;
 		if (addVolume) {
-			// Traverse each row in the texture
-			for (int y = 0; y < subImageHeight; ++y) {
-				if (trimVolume && !hasHorisontalEdgesInRow(y))
-					continue;
-				float yOffset = y + (y * (bleedCorrection / subImageHeight));
-				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, yOffset, 0)));
-			}
-
 			for (int x = 0; x < subImageWidth; ++x) {
 				if (trimVolume && !hasVerticalEdgesInCol(x))
 					continue;
-//				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(0, 0, 0)));
+				xOffset = x + (x * (bleedCorrection / subImageWidth));
+				ciList.Add(createCombineInstance(createZYQuad(x, kLeftSide), new Vector3(xOffset, 0, 0)));
 			}
 
-//			ciList.Add(createCombineInstance(createXZQuad(subImageHeight - 1, kTopSide), new Vector3(0, subImageHeight - 1, 0)));
-//			ciList.Add(createCombineInstance(createZYQuad(subImageWidth - 1, kRightSide), new Vector3(0, 0, 0)));
+			for (int y = 0; y < subImageHeight; ++y) {
+				if (trimVolume && !hasHorisontalEdgesInRow(y))
+					continue;
+				yOffset = y + (y * (bleedCorrection / subImageHeight));
+				ciList.Add(createCombineInstance(createXZQuad(y, kBottomSide), new Vector3(0, yOffset, 0)));
+			}
+
+			xOffset = (subImageWidth - 1) - (bleedCorrection / subImageWidth);
+			yOffset = (subImageHeight - 1) + ((subImageHeight - 1) * (bleedCorrection / subImageHeight));
+			ciList.Add(createCombineInstance(createZYQuad(subImageWidth - 1, kRightSide), new Vector3(xOffset, 0, 0)));
+			ciList.Add(createCombineInstance(createXZQuad(subImageHeight - 1, kTopSide), new Vector3(0, yOffset, 0)));
 		}
 
 		Mesh finalMesh = new Mesh();
@@ -199,10 +202,10 @@ public class VoxelVolumeScript : MonoBehaviour {
 		float uvx = uvx1 + (x * uvOnePixelX);
 		float y = subImageHeight;
 
-		v[0].x = x + side; v[0].y = 0; v[0].z = 1;
-		v[1].x = x + side; v[1].y = y; v[1].z = 1;
-		v[2].x = x + side; v[2].y = y; v[2].z = 0;
-		v[3].x = x + side; v[3].y = 0; v[3].z = 0;
+		v[0].x = side; v[0].y = 0; v[0].z = 1;
+		v[1].x = side; v[1].y = y; v[1].z = 1;
+		v[2].x = side; v[2].y = y; v[2].z = 0;
+		v[3].x = side; v[3].y = 0; v[3].z = 0;
 
 		uv[0].x = uvx; uv[0].y = uvy1;
 		uv[1].x = uvx; uv[1].y = uvy2;
