@@ -62,7 +62,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.uv2 = TRANSFORM_TEX(v.uv, _MainTex); 
+				o.uv2 = TRANSFORM_TEX(v.uv2, _MainTex); 
 				o.normal = v.normal;
 
 				float3 worldPos = mul(_Object2World, v.vertex).xyz;
@@ -113,10 +113,12 @@
 				float uvOnePixelY = (1.0 / _TextureHeight);
 
 				// Always use uv coord at start of texel to avoid center lines
-				float pixelX = floor(i.uv.x * _TextureWidth);
-				float pixelY = floor(i.uv.y * _TextureHeight);
-				float2 uv = float2(pixelX / _TextureWidth, pixelY / _TextureWidth);
+				float pixelXF = i.uv.x * _TextureWidth;
+				float pixelYF = i.uv.y * _TextureHeight;
+				float pixelX = floor(pixelXF);
+				float pixelY = floor(pixelYF);
 
+				float2 uv = float2(pixelX / _TextureWidth, pixelY / _TextureWidth);
 				fixed4 c = tex2D(_MainTex, uv);
 
 				if (i.normal.x != 0) {
@@ -203,6 +205,26 @@
 					// NB: This part might be drawn by other materials instead
 					if (i.normal.z == 1)
 						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
+
+					// Overdraw to avoid seams
+					if (c.a == 0) {
+						float seam = 0.005f;
+						if (frac(pixelXF) < seam) {
+							uv = float2((pixelX - 1) / _TextureWidth, pixelY / _TextureWidth);
+							c = tex2D(_MainTex, uv);
+						} else if (frac(pixelXF) > 1 - seam) {
+							uv = float2((pixelX + 1) / _TextureWidth, pixelY / _TextureWidth);
+							c = tex2D(_MainTex, uv);
+						}
+						else if (frac(pixelYF) < seam) {
+							uv = float2(pixelX / _TextureWidth, (pixelY - 1) / _TextureWidth);
+							c = tex2D(_MainTex, uv);
+						} else if (frac(pixelYF) > 1 - seam) {
+							uv = float2(pixelX / _TextureWidth, (pixelY + 1) / _TextureWidth);
+							c = tex2D(_MainTex, uv);
+						}
+					}
+
 				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
