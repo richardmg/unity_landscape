@@ -24,7 +24,7 @@
 			CGPROGRAM
 
 			#define USE_LIGHT
-//			#define DEBUG_TEXTURE_ATLAS
+			#define DEBUG_TEXTURE_ATLAS
 
 			#pragma vertex vert
 			#pragma fragment frag
@@ -45,7 +45,7 @@
 				float2 uv2 : TEXCOORD1;
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
-				float3 extra : COLOR0; // x: left or right edge, y: top or bottom edge, z: z scale
+				float3 extra : COLOR1; // x: left or right edge, y: top or bottom edge, z: z scale
 			};
 
 			int _TextureWidth;
@@ -75,9 +75,16 @@
 				float lightMax = 0.5;
 				float lightDampning = 0.02;
 				float light = 1;
+
 				float uvOnePixelX = (1.0 / _TextureWidth);
 				float uvOnePixelY = (1.0 / _TextureHeight);
-				fixed4 c = tex2D(_MainTex, i.uv);
+
+				// Always use uv coord at start of texel to avoid center lines
+				float pixelX = floor(i.uv.x * _TextureWidth);
+				float pixelY = floor(i.uv.y * _TextureHeight);
+				float2 uv = float2(pixelX / _TextureWidth, pixelY / _TextureWidth);
+
+				fixed4 c = tex2D(_MainTex, uv);
 
 				if (i.normal.x != 0) {
 					// Columns (left to right)
@@ -89,7 +96,7 @@
 						light = 1 + lightMax;
 					} else {
 						// Center edges
-						float2 uv_lineLeft = float2(i.uv.x - uvOnePixelX, i.uv.y);
+						float2 uv_lineLeft = float2(uv.x - uvOnePixelX, uv.y);
 						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
 
 						bool leftFaceIsTransparent = c.a == 0;
@@ -118,7 +125,7 @@
 						light = 1 + lightMax;
 					} else {
 						// Center edges
-						float2 uv_lineBelow = float2(i.uv.x, i.uv.y - uvOnePixelY);
+						float2 uv_lineBelow = float2(uv.x, uv.y - uvOnePixelY);
 						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
 
 						bool bottomFaceIsTransparent = c.a == 0;
@@ -144,13 +151,13 @@
 						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 				}
 
-				if (c.a < 0.5)
-					discard;
-
 #ifdef DEBUG_TEXTURE_ATLAS
 				if (c.a != 1 && c.a != 0)
 					c = fixed4(1, 0, 0, 1);
 #endif
+
+				if (c.r == 0 && c.g == 0 && c.b == 0 && c.a == 0)
+					discard;
 
 #ifdef USE_LIGHT
 				c *= light;

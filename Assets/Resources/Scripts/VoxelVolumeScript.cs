@@ -35,15 +35,20 @@ public class VoxelVolumeScript : MonoBehaviour {
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
 		// Caluclate uv coords based on atlasIndex
-		int startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		int startPixelY = 0;//(int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		float startPixelX = (atlasIndex * subImageWidth) % texture.width;
+		float startPixelY = 0;//(int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		float endPixelX = startPixelX + subImageWidth;
+		float endPixelY = startPixelY - subImageHeight;
+
 		uvOnePixelX = 1.0f / texture.width;
 		uvOnePixelY = 1.0f / texture.height;
 
 		textureBleedScale = 1.0f;
 
 		uvx1 = (float)startPixelX / texture.width;
-		uvx2 = uvx1 + (subImageWidth * uvOnePixelX / textureBleedScale);
+		uvx2 = (float)endPixelX / texture.width;
+
+//		uvx2 = uvx1 + (subImageWidth * uvOnePixelX / textureBleedScale);
 		uvy1 = 1 - ((float)(startPixelY + subImageHeight) / texture.height);
 		uvy2 = uvy1 + (subImageHeight * uvOnePixelY / textureBleedScale);
 
