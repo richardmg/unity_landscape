@@ -68,8 +68,14 @@
 				float3 worldPos = mul(_Object2World, v.vertex).xyz;
 				float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
                 float3 worldNormal = UnityObjectToWorldNormal(v.normal);
-
                 float isBackFace = dot(worldNormal, worldViewDir) > 0 ? 0 : 1; 
+
+				if (isBackFace && o.normal.x == 0 && o.normal.y == 0) {
+					// We have a front or back face. Create
+					// degenerate triangle to cull it away
+					o.vertex = 0;
+				}
+
 				float zScale = length(mul(_Object2World, float3(0, 0, 1)));
 
 				o.extra.x = v.vertex.x;
@@ -179,12 +185,7 @@
 					}
 				} else {
 					// Front and back
-					// NB: This part is normally drawn by CutOffS instead
-					if (i.extra.w) {
-						// Backface culling
-						discard;
-						return c;
-					}
+					// NB: This part might be drawn by other materials instead
 					if (i.normal.z == 1)
 						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 				}
@@ -194,7 +195,7 @@
 					c = fixed4(1, 0, 0, 1);
 #endif
 
-				if (c.r == 0 && c.g == 0 && c.b == 0 && c.a == 0) {
+				if (c.a == 0) {
 					// Discard transparent fragments
 					discard;
 				}
