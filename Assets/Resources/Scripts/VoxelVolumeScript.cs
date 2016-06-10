@@ -36,15 +36,16 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 		// Caluclate uv coords based on atlasIndex
 		int startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		int startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		int startPixelY = 0;//(int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 		uvOnePixelX = 1.0f / texture.width;
 		uvOnePixelY = 1.0f / texture.height;
+
+		textureBleedScale = 1.0f;
 
 		uvx1 = (float)startPixelX / texture.width;
 		uvx2 = uvx1 + (subImageWidth * uvOnePixelX / textureBleedScale);
 		uvy1 = 1 - ((float)(startPixelY + subImageHeight) / texture.height);
-		uvy2 = 1;// - ((float)(startPixelY + subImageHeight) / texture.height);
-//		uvy2 = uvy1 + (subImageHeight * uvOnePixelY / textureBleedScale);
+		uvy2 = uvy1 + (subImageHeight * uvOnePixelY / textureBleedScale);
 
 		// Create mesh parts
 		if (addFront)
@@ -54,7 +55,6 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 		float xOffset = (float)(subImageWidth  * textureBleedScale) / (float)(subImageWidth);
 		float yOffset = (float)(subImageHeight) / (float)(subImageHeight);
-//		yOffset -= 1 / 100.0f;
 
 		int x, y;
 		if (addVolume) {
