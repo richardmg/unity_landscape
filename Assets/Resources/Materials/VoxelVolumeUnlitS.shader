@@ -20,6 +20,7 @@
 		Pass
 		{
       	 	Cull Off
+      	 	ZTest Less
 
 			CGPROGRAM
 
@@ -45,7 +46,8 @@
 				float2 uv2 : TEXCOORD1;
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
-				float3 extra : COLOR1; // x: left or right edge, y: top or bottom edge, z: z scale
+			 	// x: left or right edge, y: top or bottom edge, z: z scale, w: isBackFace
+				float4 extra : COLOR1;
 			};
 
 			int _TextureWidth;
@@ -63,9 +65,19 @@
 				o.uv2 = TRANSFORM_TEX(v.uv, _MainTex); 
 				o.normal = v.normal;
 
+				float3 worldPos = mul(_Object2World, v.vertex).xyz;
+				float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
+                float3 worldNormal = UnityObjectToWorldNormal(v.normal);
+
+                float isBackFace = dot(worldNormal, worldViewDir) > 0 ? 0 : 1; 
+				float zScale = length(mul(_Object2World, float3(0, 0, 1)));
+
 				o.extra.x = v.vertex.x;
 				o.extra.y = v.vertex.y;
-				o.extra.z = length(mul(_Object2World, float3(0, 0, 1)));
+				o.extra.z = zScale;
+				o.extra.w = isBackFace;
+
+//				o.lightDir = ObjSpaceLightDir( v.vertex );
 
 				return o;
 			}
@@ -109,9 +121,19 @@
 
 						if (leftFaceIsTransparent) {
 							// Draw right face on line left instead
+							if (!i.extra.w) {
+								// Backface culling
+								discard;
+								return c;
+							}
 							c = cLeft;
 							light = 1 + lightMax - (lightDampning * (_SubImageWidth - i.extra.x));
 						} else {
+							if (i.extra.w) {
+								// Backface culling
+								discard;
+								return c;
+							}
 							light = 1 + lightMax - (lightDampning * (_SubImageWidth - i.extra.x + 10));
 						}
 					}
@@ -138,15 +160,31 @@
 
 						if (bottomFaceIsTransparent) {
 							// Draw top face on line below instead
+							if (!i.extra.w) {
+								// Backface culling
+								discard;
+								return c;
+							}
+//							i.normal *= -1;
 							c = cBelow;
 							light = 1 + lightMax - (lightDampning * (_SubImageHeight - i.extra.y));
 						} else {
+							if (i.extra.w) {
+								// Backface culling
+								discard;
+								return c;
+							}
 							light = 1 + lightMax - (lightDampning * (_SubImageHeight - i.extra.y + 10));
 						}
 					}
 				} else {
 					// Front and back
 					// NB: This part is normally drawn by CutOffS instead
+					if (i.extra.w) {
+						// Backface culling
+						discard;
+						return c;
+					}
 					if (i.normal.z == 1)
 						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 				}
@@ -156,11 +194,14 @@
 					c = fixed4(1, 0, 0, 1);
 #endif
 
-				if (c.r == 0 && c.g == 0 && c.b == 0 && c.a == 0)
+				if (c.r == 0 && c.g == 0 && c.b == 0 && c.a == 0) {
+					// Discard transparent fragments
 					discard;
+				}
 
 #ifdef USE_LIGHT
 				c *= light;
+//				c = DiffuseLight( i.lightDir, normal, c, LIGHT_ATTENUATION(i) );
 #endif
 				return c;
 			}

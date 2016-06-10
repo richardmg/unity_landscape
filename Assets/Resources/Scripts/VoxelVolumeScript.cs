@@ -38,7 +38,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 		float startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		float startPixelY = 0;//(int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 		float endPixelX = startPixelX + subImageWidth;
-		float endPixelY = startPixelY - subImageHeight;
+//		float endPixelY = startPixelY - subImageHeight;
 
 		uvOnePixelX = 1.0f / texture.width;
 		uvOnePixelY = 1.0f / texture.height;
