@@ -70,10 +70,25 @@
                 float3 worldNormal = UnityObjectToWorldNormal(v.normal);
                 float isBackFace = dot(worldNormal, worldViewDir) > 0 ? 0 : 1; 
 
-				if (isBackFace && o.normal.x == 0 && o.normal.y == 0) {
-					// We have a front or back face. Create
-					// degenerate triangle to cull it away
-					o.vertex = 0;
+				if (isBackFace) {
+					float vx = v.vertex.x;
+					float vy = v.vertex.y;
+                	float nx = v.normal.x;
+                	float ny = v.normal.y;
+
+					if (nx == 0 && ny == 0) {
+						// We have a front or back face. Create
+						// degenerate triangle to cull it away
+						o.vertex = 0;
+					} else if (nx != 0) {
+						// Left or righ edge
+					 	if (vx == 0 || vx == _SubImageWidth)
+							o.vertex = 0;
+					} else if (ny != 0) {
+						// Left or right edge
+					 	if (vy == 0 || vy == _SubImageHeight)
+							o.vertex = 0;
+					}
 				}
 
 				float zScale = length(mul(_Object2World, float3(0, 0, 1)));

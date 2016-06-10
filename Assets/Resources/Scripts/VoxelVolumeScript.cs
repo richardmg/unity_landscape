@@ -170,10 +170,17 @@ public class VoxelVolumeScript : MonoBehaviour {
 		float uvy = uvy1 + (y * uvOnePixelY);
 		float x = subImageWidth;
 
-		v[0].x = 0; v[0].y = side; v[0].z = 1;
-		v[1].x = 0; v[1].y = side; v[1].z = 0;
-		v[2].x = x; v[2].y = side; v[2].z = 0;
-		v[3].x = x; v[3].y = side; v[3].z = 1;
+		if (side == kBottomSide) {
+			v[0].x = 0; v[0].y = side; v[0].z = 1;
+			v[1].x = 0; v[1].y = side; v[1].z = 0;
+			v[2].x = x; v[2].y = side; v[2].z = 0;
+			v[3].x = x; v[3].y = side; v[3].z = 1;
+		} else {
+			v[0].x = 0; v[0].y = side; v[0].z = 0;
+			v[1].x = 0; v[1].y = side; v[1].z = 1;
+			v[2].x = x; v[2].y = side; v[2].z = 1;
+			v[3].x = x; v[3].y = side; v[3].z = 0;
+		}
 
 		uv[0].x = uvx1; uv[0].y = uvy;
 		uv[1].x = uvx1; uv[1].y = uvy;
@@ -210,10 +217,17 @@ public class VoxelVolumeScript : MonoBehaviour {
 		float uvx = uvx1 + (x * uvOnePixelX);
 		float y = subImageHeight;
 
-		v[0].x = side; v[0].y = 0; v[0].z = 1;
-		v[1].x = side; v[1].y = y; v[1].z = 1;
-		v[2].x = side; v[2].y = y; v[2].z = 0;
-		v[3].x = side; v[3].y = 0; v[3].z = 0;
+		if (side == kLeftSide) {
+			v[0].x = side; v[0].y = 0; v[0].z = 1;
+			v[1].x = side; v[1].y = y; v[1].z = 1;
+			v[2].x = side; v[2].y = y; v[2].z = 0;
+			v[3].x = side; v[3].y = 0; v[3].z = 0;
+		} else {
+			v[0].x = side; v[0].y = 0; v[0].z = 0;
+			v[1].x = side; v[1].y = y; v[1].z = 0;
+			v[2].x = side; v[2].y = y; v[2].z = 1;
+			v[3].x = side; v[3].y = 0; v[3].z = 1;
+		}
 
 		uv[0].x = uvx; uv[0].y = uvy1;
 		uv[1].x = uvx; uv[1].y = uvy2;
