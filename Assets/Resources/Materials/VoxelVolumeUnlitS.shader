@@ -45,6 +45,7 @@
 				float2 uv : TEXCOORD0;
 				float2 uv2 : TEXCOORD1;
 				float4 vertex : SV_POSITION;
+				float4 objectVertex : COLOR2;
 				float3 normal : NORMAL;
 			 	// x: left or right edge, y: top or bottom edge, z: z scale, w: isBackFace
 				float4 extra : COLOR1;
@@ -61,6 +62,7 @@
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.objectVertex = v.vertex;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.uv2 = TRANSFORM_TEX(v.uv2, _MainTex); 
 				o.normal = v.normal;
@@ -117,6 +119,10 @@
 				float pixelYF = i.uv.y * _TextureHeight;
 				float pixelX = floor(pixelXF);
 				float pixelY = floor(pixelYF);
+				float uvPixelXF = frac(pixelXF);
+				float uvPixelYF = frac(pixelYF);
+				float subImagePixelXF = i.objectVertex.x;
+				float subImagePixelYF = i.objectVertex.y;
 
 				float2 uv = float2(pixelX / _TextureWidth, pixelY / _TextureWidth);
 				fixed4 c = tex2D(_MainTex, uv);
@@ -207,8 +213,16 @@
 						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 
 					// Overdraw to avoid seams
+					float seam = 0.005f;
+
+					if (subImagePixelXF < 0.02) {
+						uv.x = (subImagePixelXF + (uvOnePixelX / 2));
+						c = tex2D(_MainTex, uv);
+//						return c;
+						return fixed4(pixelXF,0,0,1);
+					}
+
 					if (c.a == 0) {
-						float seam = 0.005f;
 						if (frac(pixelXF) < seam) {
 							uv = float2((pixelX - 1) / _TextureWidth, pixelY / _TextureWidth);
 							c = tex2D(_MainTex, uv);
@@ -216,7 +230,9 @@
 							uv = float2((pixelX + 1) / _TextureWidth, pixelY / _TextureWidth);
 							c = tex2D(_MainTex, uv);
 						}
-						else if (frac(pixelYF) < seam) {
+					}
+					if (c.a == 0) {
+						if (frac(pixelYF) < seam) {
 							uv = float2(pixelX / _TextureWidth, (pixelY - 1) / _TextureWidth);
 							c = tex2D(_MainTex, uv);
 						} else if (frac(pixelYF) > 1 - seam) {
@@ -232,10 +248,10 @@
 					c = fixed4(1, 0, 0, 1);
 #endif
 
-				if (c.a == 0) {
-					// Discard transparent fragments
-					discard;
-				}
+//				if (c.a == 0) {
+//					// Discard transparent fragments
+//					discard;
+//				}
 
 #ifdef USE_LIGHT
 				c *= light;
