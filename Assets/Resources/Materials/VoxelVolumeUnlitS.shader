@@ -211,11 +211,11 @@
 					float seam = 0.005f;
 					float oneMinusSeam = 1 - 0.005f;
 
-//					if (subImagePixelX < 0.02) {
-//						c = tex2D(_MainTex, float2((atlasPixelX + (uvOnePixelX / 2)), uv.y));
-//						return c;
-////						return fixed4(atlasPixelX,0,0,1);
-//					}
+					if (subImagePixelX < 0.02) {
+						c = tex2D(_MainTex, float2((i.uv.x + uvOnePixelX / 4), uv.y));
+						return c;
+//						return fixed4(atlasPixelX,0,0,1);
+					}
 
 					if (c.a == 0 && (voxelPixelX < seam || voxelPixelY < seam || voxelPixelX > oneMinusSeam || voxelPixelY > oneMinusSeam)) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
