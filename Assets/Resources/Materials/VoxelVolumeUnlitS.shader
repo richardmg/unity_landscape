@@ -37,13 +37,11 @@
 				float4 vertex : POSITION;
 				float4 normal : NORMAL;
 				float2 uv : TEXCOORD0;
-				float2 uv2 : TEXCOORD1;
 			};
 
 			struct v2f
 			{
 				float2 uv : TEXCOORD0;
-				float2 uv2 : TEXCOORD1;
 				float4 vertex : SV_POSITION;
 				float4 objectVertex : COLOR2;
 				float3 normal : NORMAL;
@@ -64,7 +62,6 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.objectVertex = v.vertex;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-				o.uv2 = TRANSFORM_TEX(v.uv2, _MainTex); 
 				o.normal = v.normal;
 
 				float3 worldPos = mul(_Object2World, v.vertex).xyz;
