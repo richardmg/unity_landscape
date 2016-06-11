@@ -43,7 +43,7 @@
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
-				float4 objectVertex : COLOR2;
+				float4 objectVertex : POSITION2;
 				float3 normal : NORMAL;
 			 	// x: left or right edge, y: top or bottom edge, z: z scale, w: isBackFace
 				float4 extra : COLOR1;
@@ -112,16 +112,15 @@
 				float uvOnePixelY = (1.0 / _TextureHeight);
 
 				// Always use uv coord at start of texel to avoid center lines
-				float pixelXF = i.uv.x * _TextureWidth;
-				float pixelYF = i.uv.y * _TextureHeight;
-				float pixelX = floor(pixelXF);
-				float pixelY = floor(pixelYF);
-				float uvPixelXF = frac(pixelXF);
-				float uvPixelYF = frac(pixelYF);
-				float subImagePixelXF = i.objectVertex.x;
-				float subImagePixelYF = i.objectVertex.y;
+				// NB: OpenGL has XY at lower left, which will be reflected in the vars
+				float atlasPixelX = i.uv.x * _TextureWidth;
+				float atlasPixelY = i.uv.y * _TextureHeight;
+				float uvPixelX = frac(atlasPixelX);
+				float uvPixelY = frac(atlasPixelY);
+				float subImagePixelX = i.objectVertex.x;
+				float subImagePixelY = i.objectVertex.y;
 
-				float2 uv = float2(pixelX / _TextureWidth, pixelY / _TextureWidth);
+				float2 uv = float2(floor(atlasPixelX) / _TextureWidth, floor(atlasPixelY) / _TextureWidth);
 				fixed4 c = tex2D(_MainTex, uv);
 
 				if (i.normal.x != 0) {
@@ -211,33 +210,57 @@
 
 					// Overdraw to avoid seams
 					float seam = 0.005f;
+					float oneMinusSeam = 1 - 0.005f;
 
-					if (subImagePixelXF < 0.02) {
-						uv.x = (subImagePixelXF + (uvOnePixelX / 2));
-						c = tex2D(_MainTex, uv);
-//						return c;
-						return fixed4(pixelXF,0,0,1);
-					}
+//					if (subImagePixelX < 0.02) {
+//						uv.x = (subImagePixelX + (uvOnePixelX / 2));
+//						c = tex2D(_MainTex, uv);
+////						return c;
+////						return fixed4(atlasPixelX,0,0,1);
+//					}
 
-					if (c.a == 0) {
-						if (frac(pixelXF) < seam) {
-							uv = float2((pixelX - 1) / _TextureWidth, pixelY / _TextureWidth);
-							c = tex2D(_MainTex, uv);
-						} else if (frac(pixelXF) > 1 - seam) {
-							uv = float2((pixelX + 1) / _TextureWidth, pixelY / _TextureWidth);
-							c = tex2D(_MainTex, uv);
+					if (c.a == 0 && (uvPixelX < seam || uvPixelY < seam || uvPixelX > oneMinusSeam || uvPixelY > oneMinusSeam)) {
+						// For transparent voxels, vi create a padding
+						// border with colors of adjacent voxels to hide seams
+						if (uvPixelX < seam) {
+							// Left line
+							c = tex2D(_MainTex, float2(uv.x - uvOnePixelX, uv.y));
+						} else if (uvPixelX > oneMinusSeam) {
+							// Right line
+							c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y));
+						}
+
+						if (c.a == 0) {
+							if (uvPixelY < seam) {
+								// Bottom line (OpenGL has Y inverted!)
+								c = tex2D(_MainTex, float2(uv.x, uv.y - uvOnePixelY));
+							} else if (uvPixelY > oneMinusSeam) {
+								// Top line
+								c = tex2D(_MainTex, float2(uv.x, uv.y + uvOnePixelY));
+							}
+						}
+
+						if (c.a == 0) {
+							// Check corners
+							if (uvPixelX < seam) {
+								if (uvPixelY < seam) {
+									// Bottom left (OpenGL has Y inverted!)
+									c = tex2D(_MainTex, float2(uv.x - uvOnePixelX, uv.y - uvOnePixelY));
+								} else if (uvPixelY > oneMinusSeam) {
+									// Bottom right
+									c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y - uvOnePixelY));
+								}
+							} else if (uvPixelX > oneMinusSeam) {
+								if (uvPixelY < seam) {
+									// Bottom right (OpenGL has Y inverted!)
+									c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y - uvOnePixelY));
+								} else if (uvPixelY > oneMinusSeam) {
+									// Top right
+									c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y + uvOnePixelY));
+								}
+							}
 						}
 					}
-					if (c.a == 0) {
-						if (frac(pixelYF) < seam) {
-							uv = float2(pixelX / _TextureWidth, (pixelY - 1) / _TextureWidth);
-							c = tex2D(_MainTex, uv);
-						} else if (frac(pixelYF) > 1 - seam) {
-							uv = float2(pixelX / _TextureWidth, (pixelY + 1) / _TextureWidth);
-							c = tex2D(_MainTex, uv);
-						}
-					}
-
 				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
@@ -245,10 +268,10 @@
 					c = fixed4(1, 0, 0, 1);
 #endif
 
-//				if (c.a == 0) {
-//					// Discard transparent fragments
-//					discard;
-//				}
+				if (c.a == 0) {
+					// Discard transparent fragments
+					discard;
+				}
 
 #ifdef USE_LIGHT
 				c *= light;
