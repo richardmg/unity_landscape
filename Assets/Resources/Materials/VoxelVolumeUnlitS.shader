@@ -108,15 +108,15 @@
 				float lightDampning = 0.02;
 				float light = 1;
 
+				// NB: OpenGL has XY at lower left, which will be reflected in the vars
 				float uvOnePixelX = (1.0 / _TextureWidth);
 				float uvOnePixelY = (1.0 / _TextureHeight);
-
-				// Always use uv coord at start of texel to avoid center lines
-				// NB: OpenGL has XY at lower left, which will be reflected in the vars
 				float2 atlasPixel = float2(i.uv.x * _TextureWidth, i.uv.y * _TextureHeight);
 				float2 subImagePixel = i.objectVertex;
 				float2 uvInsideVoxel = float2(frac(atlasPixel.x), frac(atlasPixel.y));
 				float2 uvAtlasVoxelCenter = float2((floor(atlasPixel.x) + 0.5f) / _TextureWidth, (floor(atlasPixel.y) + 0.5f) / _TextureWidth);
+				float2 atlasIndex = float2(floor(atlasPixel.x / _SubImageWidth), floor(atlasPixel.y / _SubImageHeight));
+				float2 atlasSubImageBottomLeft = float2(atlasIndex.x * _SubImageWidth, atlasIndex.y * _SubImageHeight);
 
 				fixed4 c = tex2D(_MainTex, uvAtlasVoxelCenter);
 
@@ -208,11 +208,11 @@
 					float oneMinusSeam = 1 - 0.005f;
 
 					if (subImagePixel.x < 0.1) {
-						c = tex2D(_MainTex, float2((i.uv.x + uvOnePixelX / 4), uvAtlasVoxelCenter.y));
-						c = fixed4(1,1,1,1);
+//						c = tex2D(_MainTex, float2((i.uv.x + uvOnePixelX / 4), uvAtlasVoxelCenter.y));
+//						c = tex2D(_MainTex, float2((atlasSubImageOrigo.x + 1) * uvOnePixelX, (atlasSubImageOrigo.y + 1) * uvOnePixelY));
+//						c = fixed4(1,1,1,1);
 					} else if (subImagePixel.x > _SubImageWidth - 1) {
-						c = fixed4(1,0,0,1);
-//						c = tex2D(_MainTex, float2((i.uv.x - uvOnePixelX / 4), uvAtlasVoxelCenter.y));
+						c = tex2D(_MainTex, float2((atlasSubImageBottomLeft.x + 15) * uvOnePixelX, (atlasSubImageBottomLeft.y + 0) * uvOnePixelY));
 					}
 
 					if (c.a == 0 && (uvInsideVoxel.x < seam || uvInsideVoxel.y < seam || uvInsideVoxel.x > oneMinusSeam || uvInsideVoxel.y > oneMinusSeam)) {
