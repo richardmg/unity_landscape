@@ -115,8 +115,8 @@
 				// NB: OpenGL has XY at lower left, which will be reflected in the vars
 				float atlasPixelX = i.uv.x * _TextureWidth;
 				float atlasPixelY = i.uv.y * _TextureHeight;
-				float uvPixelX = frac(atlasPixelX);
-				float uvPixelY = frac(atlasPixelY);
+				float voxelPixelX = frac(atlasPixelX);
+				float voxelPixelY = frac(atlasPixelY);
 				float subImagePixelX = i.objectVertex.x;
 				float subImagePixelY = i.objectVertex.y;
 
@@ -208,33 +208,30 @@
 					if (i.normal.z == 1)
 						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 
-					// Overdraw to avoid seams
 					float seam = 0.005f;
 					float oneMinusSeam = 1 - 0.005f;
 
 //					if (subImagePixelX < 0.02) {
-//						uv.x = (subImagePixelX + (uvOnePixelX / 2));
-//						c = tex2D(_MainTex, uv);
-////						return c;
+//						c = tex2D(_MainTex, float2((atlasPixelX + (uvOnePixelX / 2)), uv.y));
+//						return c;
 ////						return fixed4(atlasPixelX,0,0,1);
 //					}
 
-					if (c.a == 0 && (uvPixelX < seam || uvPixelY < seam || uvPixelX > oneMinusSeam || uvPixelY > oneMinusSeam)) {
-						// For transparent voxels, vi create a padding
-						// border with colors of adjacent voxels to hide seams
-						if (uvPixelX < seam) {
+					if (c.a == 0 && (voxelPixelX < seam || voxelPixelY < seam || voxelPixelX > oneMinusSeam || voxelPixelY > oneMinusSeam)) {
+						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
+						if (voxelPixelX < seam) {
 							// Left line
 							c = tex2D(_MainTex, float2(uv.x - uvOnePixelX, uv.y));
-						} else if (uvPixelX > oneMinusSeam) {
+						} else if (voxelPixelX > oneMinusSeam) {
 							// Right line
 							c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y));
 						}
 
 						if (c.a == 0) {
-							if (uvPixelY < seam) {
+							if (voxelPixelY < seam) {
 								// Bottom line (OpenGL has Y inverted!)
 								c = tex2D(_MainTex, float2(uv.x, uv.y - uvOnePixelY));
-							} else if (uvPixelY > oneMinusSeam) {
+							} else if (voxelPixelY > oneMinusSeam) {
 								// Top line
 								c = tex2D(_MainTex, float2(uv.x, uv.y + uvOnePixelY));
 							}
@@ -242,19 +239,19 @@
 
 						if (c.a == 0) {
 							// Check corners
-							if (uvPixelX < seam) {
-								if (uvPixelY < seam) {
+							if (voxelPixelX < seam) {
+								if (voxelPixelY < seam) {
 									// Bottom left (OpenGL has Y inverted!)
 									c = tex2D(_MainTex, float2(uv.x - uvOnePixelX, uv.y - uvOnePixelY));
-								} else if (uvPixelY > oneMinusSeam) {
+								} else if (voxelPixelY > oneMinusSeam) {
 									// Bottom right
 									c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y - uvOnePixelY));
 								}
-							} else if (uvPixelX > oneMinusSeam) {
-								if (uvPixelY < seam) {
+							} else if (voxelPixelX > oneMinusSeam) {
+								if (voxelPixelY < seam) {
 									// Bottom right (OpenGL has Y inverted!)
 									c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y - uvOnePixelY));
-								} else if (uvPixelY > oneMinusSeam) {
+								} else if (voxelPixelY > oneMinusSeam) {
 									// Top right
 									c = tex2D(_MainTex, float2(uv.x + uvOnePixelX, uv.y + uvOnePixelY));
 								}
