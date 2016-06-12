@@ -218,7 +218,7 @@
 //						if (i.extra.x < -0.5 && i.extra.x > -1)
 //							return fixed4(1,0,0,1);
 
-					float seam = 0.005f;
+					float seam = 0.05f;
 					float oneMinusSeam = 1 - seam;
 
 					if (c.a == 0
@@ -245,19 +245,19 @@
 
 						if (c.a == 0) {
 							// Check corners
-							if (uvInsideVoxel.x < seam) {
-								if (uvInsideVoxel.y < seam) {
+							if (uvInsideVoxel.x < seam && floor(subImagePixel.x) > 0) {
+								if (uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0) {
 									// Bottom left (OpenGL has Y inverted!)
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
-								} else if (uvInsideVoxel.y > oneMinusSeam) {
+								} else if (uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1) {
 									// Top left
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
 								}
-							} else if (uvInsideVoxel.x > oneMinusSeam) {
-								if (uvInsideVoxel.y < seam) {
+							} else if (uvInsideVoxel.x > oneMinusSeam && subImagePixel.x < subImageSize.x - 1) {
+								if (uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0) {
 									// Bottom right (OpenGL has Y inverted!)
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
-								} else if (uvInsideVoxel.y > oneMinusSeam) {
+								} else if (uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1) {
 									// Top right
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
 								}
