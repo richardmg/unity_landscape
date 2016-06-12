@@ -113,13 +113,13 @@
 				// We can get requests for pixels outside the vertices. But this will cause seams to
 				// show when using texture atlas. So we ensure that we always sample from within the subimage.
 				if (i.objVertex.x < -0.5f)
-					atlasPixel.x += 1;
+					atlasPixel.x = floor(atlasPixel.x + 1);
 				else if (i.objVertex.x > _SubImageWidth - 0.5f)
-					atlasPixel.x -= 1;
+					atlasPixel.x = floor(atlasPixel.x - 1) + 0.999999; // OBS 
 				if (i.objVertex.y < -0.5f)
-					atlasPixel.y += 1;
+					atlasPixel.y = floor(atlasPixel.y + 1);
 				else if (i.objVertex.y > _SubImageHeight - 0.5f)
-					atlasPixel.y -= 1;
+					atlasPixel.y = floor(atlasPixel.y - 1) + 0.999999;
 
 				float2 subImagePixel = atlasPixel % subImageSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
@@ -219,26 +219,25 @@
 //							return fixed4(1,0,0,1);
 
 					float seam = 0.005f;
-					float oneMinusSeam = 1 - 0.005f;
+					float oneMinusSeam = 1 - seam;
 
 					if (c.a == 0
-						&& subImagePixel.x > 0 && subImagePixel.y > 0
-						&& subImagePixel.x < subImageSize.x - 1 && subImagePixel.y < subImageSize.y - 1
 						&& (uvInsideVoxel.x < seam || uvInsideVoxel.y < seam || uvInsideVoxel.x > oneMinusSeam || uvInsideVoxel.y > oneMinusSeam)) {
+
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
-						if (uvInsideVoxel.x < seam) {
+						if (uvInsideVoxel.x < seam && floor(subImagePixel.x) > 0) {
 							// Left line
 							c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y));
-						} else if (uvInsideVoxel.x > oneMinusSeam) {
+						} else if (uvInsideVoxel.x > oneMinusSeam && subImagePixel.x < subImageSize.x - 1) {
 							// Right line
 							c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y));
 						}
 
 						if (c.a == 0) {
-							if (uvInsideVoxel.y < seam) {
+							if (uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0) {
 								// Bottom line (OpenGL has Y inverted!)
 								c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
-							} else if (uvInsideVoxel.y > oneMinusSeam) {
+							} else if (uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1) {
 								// Top line
 								c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
 							}
