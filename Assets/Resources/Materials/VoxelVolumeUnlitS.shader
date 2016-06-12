@@ -218,49 +218,39 @@
 //						if (i.extra.x < -0.5 && i.extra.x > -1)
 //							return fixed4(1,0,0,1);
 
-					float seam = 0.05f;
-					float oneMinusSeam = 1 - seam;
-
-					if (c.a == 0
-						&& (uvInsideVoxel.x < seam || uvInsideVoxel.y < seam || uvInsideVoxel.x > oneMinusSeam || uvInsideVoxel.y > oneMinusSeam)) {
-
+					if (c.a == 0) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
-						if (uvInsideVoxel.x < seam && floor(subImagePixel.x) > 0) {
-							// Left line
+						float seam = 0.05f;
+						float oneMinusSeam = 1 - seam;
+						bool leftEdge = uvInsideVoxel.x < seam && floor(subImagePixel.x) > 0;
+						bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixel.x < subImageSize.x - 1;
+						bool topEdge = uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1;
+						bool bottomEdge = uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0;
+
+						if (leftEdge)
 							c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y));
-						} else if (uvInsideVoxel.x > oneMinusSeam && subImagePixel.x < subImageSize.x - 1) {
-							// Right line
+						else if (rightEdge)
 							c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y));
-						}
 
 						if (c.a == 0) {
-							if (uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0) {
-								// Bottom line (OpenGL has Y inverted!)
+							if (bottomEdge)
 								c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
-							} else if (uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1) {
-								// Top line
+							else if (topEdge)
 								c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
-							}
 						}
 
 						if (c.a == 0) {
 							// Check corners
-							if (uvInsideVoxel.x < seam && floor(subImagePixel.x) > 0) {
-								if (uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0) {
-									// Bottom left (OpenGL has Y inverted!)
+							if (leftEdge) {
+								if (bottomEdge)
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
-								} else if (uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1) {
-									// Top left
+								else if (topEdge)
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
-								}
-							} else if (uvInsideVoxel.x > oneMinusSeam && subImagePixel.x < subImageSize.x - 1) {
-								if (uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0) {
-									// Bottom right (OpenGL has Y inverted!)
+							} else if (rightEdge) {
+								if (bottomEdge)
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
-								} else if (uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1) {
-									// Top right
+								else if (topEdge)
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
-								}
 							}
 						}
 					}
