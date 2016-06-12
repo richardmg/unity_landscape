@@ -118,7 +118,7 @@
 					atlasPixel.x -= 1;
 				if (i.objVertex.y < -0.5f)
 					atlasPixel.y += 1;
-				else if (i.objVertex.y > _SubImageWidth - 0.5f)
+				else if (i.objVertex.y > _SubImageHeight - 0.5f)
 					atlasPixel.y -= 1;
 
 				float2 subImagePixel = atlasPixel % subImageSize;
