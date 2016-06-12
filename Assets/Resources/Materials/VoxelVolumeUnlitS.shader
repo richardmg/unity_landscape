@@ -218,7 +218,7 @@
 //						if (i.extra.x < -0.5 && i.extra.x > -1)
 //							return fixed4(1,0,0,1);
 
-					float seam = 0.005f;
+					float seam = 0.01f;
 					float oneMinusSeam = 1 - seam;
 
 					if (c.a == 0
