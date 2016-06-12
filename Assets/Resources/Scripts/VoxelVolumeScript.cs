@@ -36,7 +36,7 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 		// Caluclate uv coords based on atlasIndex
 		float startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		float startPixelY = 0;//(int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		float startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 		float endPixelX = startPixelX + subImageWidth;
 //		float endPixelY = startPixelY - subImageHeight;
 
@@ -47,8 +47,6 @@ public class VoxelVolumeScript : MonoBehaviour {
 
 		uvx1 = (float)startPixelX / texture.width;
 		uvx2 = (float)endPixelX / texture.width;
-
-//		uvx2 = uvx1 + (subImageWidth * uvOnePixelX / textureBleedScale);
 		uvy1 = 1 - ((float)(startPixelY + subImageHeight) / texture.height);
 		uvy2 = uvy1 + (subImageHeight * uvOnePixelY / textureBleedScale);
 

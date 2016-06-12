@@ -110,18 +110,16 @@
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
 
 				float2 atlasPixel = i.uv * textureSize;
-				if (i.normal.z != 0) {
-					// We can get requests for pixels outside the vertices. But this will cause seams to
-					// show when using texture atlas. So we ensure that we always sample from within the subimage.
-					if (i.objVertex.x < -0.5f)
-						atlasPixel.x += 1;
-					else if (i.objVertex.x > _SubImageWidth - 0.5f)
-						atlasPixel.x -= 1;
-					if (i.objVertex.y < -0.5f)
-						atlasPixel.y += 1;
-					else if (i.objVertex.y > _SubImageWidth - 0.5f)
-						atlasPixel.y -= 1;
-				}
+				// We can get requests for pixels outside the vertices. But this will cause seams to
+				// show when using texture atlas. So we ensure that we always sample from within the subimage.
+				if (i.objVertex.x < -0.5f)
+					atlasPixel.x += 1;
+				else if (i.objVertex.x > _SubImageWidth - 0.5f)
+					atlasPixel.x -= 1;
+				if (i.objVertex.y < -0.5f)
+					atlasPixel.y += 1;
+				else if (i.objVertex.y > _SubImageWidth - 0.5f)
+					atlasPixel.y -= 1;
 
 				float2 subImagePixel = atlasPixel % subImageSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
