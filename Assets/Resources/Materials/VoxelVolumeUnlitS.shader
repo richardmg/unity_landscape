@@ -135,14 +135,15 @@
 
 				if (i.normal.x != 0) {
 					// Columns (left to right)
-					if (subImagePixelInt.x == 0) {
-						// Left edge
+					bool firstColumn = i.objVertex.x < 0;
+					bool lastColumn = i.objVertex.x > _SubImageWidth - 1;
+
+					if (firstColumn) {
 						light = 1 + lightMax - (lightDampning * _SubImageWidth);
-					} else if (subImagePixelInt.x == subImageSize.x - 1) {
-						// Right edge
+					} else if (lastColumn) {
 						light = 1 + lightMax;
 					} else {
-						// Center edges
+						// Center columns
 						float2 uv_lineLeft = float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y);
 						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
 
@@ -174,14 +175,15 @@
 					}
 				} else if (i.normal.y != 0) {
 					// Rows (bottom to top)
-					if (subImagePixelInt.y == 0) {
-						// Bottom edge
+					bool firstRow = i.objVertex.y < 0;
+					bool lastRow = i.objVertex.y > _SubImageHeight - 1;
+
+					if (firstRow) {
 						light = 1 + lightMax - (lightDampning * _SubImageHeight);
-					} else if (subImagePixelInt.y == subImageSize.y - 1) {
-						// Top edge
+					} else if (lastRow) {
 						light = 1 + lightMax;
 					} else {
-						// Center edges
+						// Center rows
 						float2 uv_lineBelow = float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y);
 						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
 
