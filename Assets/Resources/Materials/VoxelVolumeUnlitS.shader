@@ -250,13 +250,13 @@
 									// Bottom left (OpenGL has Y inverted!)
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
 								} else if (uvInsideVoxel.y > oneMinusSeam) {
-									// Bottom right
-									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
+									// Top left
+									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
 								}
 							} else if (uvInsideVoxel.x > oneMinusSeam) {
 								if (uvInsideVoxel.y < seam) {
 									// Bottom right (OpenGL has Y inverted!)
-									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
+									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
 								} else if (uvInsideVoxel.y > oneMinusSeam) {
 									// Top right
 									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
