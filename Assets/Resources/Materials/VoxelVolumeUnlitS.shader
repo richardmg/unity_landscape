@@ -131,7 +131,7 @@
 				float2 uvInsideVoxel = frac(atlasPixel);
 				float2 uvAtlasVoxelCenter = (atlasPixelInt + 0.5) * uvOnePixel;
 
-				fixed4 c = tex2D(_MainTex, uvAtlasVoxelCenter);
+				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter, 0, 0));
 
 				if (i.normal.x != 0) {
 					// Columns (left to right)
@@ -144,8 +144,8 @@
 						light = 1 + lightMax;
 					} else {
 						// Center columns
-						float2 uv_lineLeft = float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y);
-						fixed4 cLeft = tex2D (_MainTex, uv_lineLeft);
+						float4 uv_lineLeft = float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0);
+						fixed4 cLeft = tex2Dlod(_MainTex, uv_lineLeft);
 
 						bool leftFaceIsTransparent = c.a == 0;
 						bool rightFaceOnLineLeftIsTransparent = cLeft.a == 0;
@@ -184,8 +184,8 @@
 						light = 1 + lightMax;
 					} else {
 						// Center rows
-						float2 uv_lineBelow = float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y);
-						fixed4 cBelow = tex2D (_MainTex, uv_lineBelow);
+						float4 uv_lineBelow = float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0);
+						fixed4 cBelow = tex2Dlod(_MainTex, uv_lineBelow);
 
 						bool bottomFaceIsTransparent = c.a == 0;
 						bool topFaceOnLineBelowIsTransparent = cBelow.a == 0;
@@ -224,7 +224,7 @@
 
 					if (c.a == 0) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
-						float seam = 0.01f;
+						float seam = 0.005f;
 						float oneMinusSeam = 1 - seam;
 						bool leftEdge = uvInsideVoxel.x < seam && subImagePixelInt.x > 0;
 						bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixelInt.x < subImageSize.x - 1;
@@ -232,29 +232,29 @@
 						bool bottomEdge = uvInsideVoxel.y < seam && subImagePixelInt.y > 0;
 
 						if (leftEdge)
-							c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y));
+							c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
 						else if (rightEdge)
-							c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y));
+							c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
 
 						if (c.a == 0) {
 							if (bottomEdge)
-								c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
+								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
 							else if (topEdge)
-								c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
+								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
 						}
 
 						if (c.a == 0) {
 							// Check corners
 							if (leftEdge) {
 								if (bottomEdge)
-									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
+									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
 								else if (topEdge)
-									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
+									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
 							} else if (rightEdge) {
 								if (bottomEdge)
-									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y));
+									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
 								else if (topEdge)
-									c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y));
+									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
 							}
 						}
 					}
