@@ -43,6 +43,7 @@
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
+				float4 objVertex : POSITION1;
 				float3 normal : NORMAL;
 				float4 extra : COLOR1;
 			};
@@ -57,6 +58,7 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
+				o.objVertex = v.vertex;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.normal = v.normal;
@@ -88,11 +90,8 @@
 				}
 
 				float zScale = length(mul(_Object2World, float3(0, 0, 1)));
-
-				o.extra.x = v.vertex.x;
-				o.extra.y = v.vertex.y;
-				o.extra.z = zScale;
-				o.extra.w = isBackFace;
+				o.extra.x = zScale;
+				o.extra.y = isBackFace;
 
 //				o.lightDir = ObjSpaceLightDir( v.vertex );
 
@@ -106,18 +105,23 @@
 				float lightDampning = 0.02;
 				float light = 1;
 
-				float2 vertex = float2(i.extra.x, i.extra.y);
+				fixed4 red = fixed4(1, 0, 0, 1);
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
-				float2 atlasPixel = i.uv * textureSize;
 
-//				if (i.normal.z != 0) {
-//					// We can get requests for pixels outside the vertices. But this will cause seams to
-//					// show when using texture atlas. So we ensure that we always sample from within the subimage.
-//					atlasPixel.x += (vertex.x < -0.5f) ? 1 : (vertex.x > _SubImageWidth - 0.5f) ? -1 : 0;
-//				} else {
-//					atlasPixel.y += (vertex.y < -0.5f) ? 1 : (vertex.x > 0.5f) ? -1 : 0;
-//				}
+				float2 atlasPixel = i.uv * textureSize;
+				if (i.normal.z != 0) {
+					// We can get requests for pixels outside the vertices. But this will cause seams to
+					// show when using texture atlas. So we ensure that we always sample from within the subimage.
+					if (i.objVertex.x < -0.5f)
+						atlasPixel.x += 1;
+					else if (i.objVertex.x > _SubImageWidth - 0.5f)
+						atlasPixel.x -= 1;
+					if (i.objVertex.y < -0.5f)
+						atlasPixel.y += 1;
+					else if (i.objVertex.y > _SubImageWidth - 0.5f)
+						atlasPixel.y -= 1;
+				}
 
 				float2 subImagePixel = atlasPixel % subImageSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
@@ -131,10 +135,10 @@
 
 				if (i.normal.x != 0) {
 					// Columns (left to right)
-					if (vertex.x < 0) {
+					if (i.objVertex.x < 0) {
 						// Left edge
 						light = 1 + lightMax - (lightDampning * _SubImageWidth);
-					} else if (vertex.x > _SubImageWidth - 1) {
+					} else if (i.objVertex.x > _SubImageWidth - 1) {
 						// Right edge
 						light = 1 + lightMax;
 					} else {
@@ -152,28 +156,28 @@
 
 						if (leftFaceIsTransparent) {
 							// Draw right face on line left instead
-							if (!i.extra.w) {
+							if (!i.extra.y) {
 								// Backface culling
 								discard;
 								return c;
 							}
 							c = cLeft;
-							light = 1 + lightMax - (lightDampning * (_SubImageWidth - vertex.x));
+							light = 1 + lightMax - (lightDampning * (_SubImageWidth - i.objVertex));
 						} else {
-							if (i.extra.w) {
+							if (i.extra.y) {
 								// Backface culling
 								discard;
 								return c;
 							}
-							light = 1 + lightMax - (lightDampning * (_SubImageWidth - vertex.x + 10));
+							light = 1 + lightMax - (lightDampning * (_SubImageWidth - i.objVertex + 10));
 						}
 					}
 				} else if (i.normal.y != 0) {
 					// Rows (bottom to top)
-					if (vertex.y < 0) {
+					if (i.objVertex.y < 0) {
 						// Bottom edge
 						light = 1 + lightMax - (lightDampning * _SubImageHeight);
-					} else if (vertex.y > _SubImageHeight - 1) {
+					} else if (i.objVertex.y > _SubImageHeight - 1) {
 						// Top edge
 						light = 1 + lightMax;
 					} else {
@@ -191,21 +195,21 @@
 
 						if (bottomFaceIsTransparent) {
 							// Draw top face on line below instead
-							if (!i.extra.w) {
+							if (!i.extra.y) {
 								// Backface culling
 								discard;
 								return c;
 							}
 //							i.normal *= -1;
 							c = cBelow;
-							light = 1 + lightMax - (lightDampning * (_SubImageHeight - vertex.y));
+							light = 1 + lightMax - (lightDampning * (_SubImageHeight - i.objVertex));
 						} else {
-							if (i.extra.w) {
+							if (i.extra.y) {
 								// Backface culling
 								discard;
 								return c;
 							}
-							light = 1 + lightMax - (lightDampning * (_SubImageHeight - vertex.y + 10));
+							light = 1 + lightMax - (lightDampning * (_SubImageHeight - i.objVertex + 10));
 						}
 					}
 				} else {
@@ -213,20 +217,20 @@
 //					if (i.normal.z == 1)
 //						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 
-						if (i.extra.x < -0.5 && i.extra.x > -1)
-							return fixed4(1,0,0,1);
+//						if (i.extra.x < -0.5 && i.extra.x > -1)
+//							return fixed4(1,0,0,1);
 
 /*
 					float seam = 0.005f;
 					float oneMinusSeam = 1 - 0.005f;
 
-					if (subImagePixel.x < 0.1) {
-//						c = tex2D(_MainTex, float2((i.uv.x + uvOnePixel.x / 4), uvAtlasVoxelCenter.y));
-//						c = tex2D(_MainTex, float2((atlasSubImageOrigo.x + 1) * uvOnePixel.x, (atlasSubImageOrigo.y + 1) * uvOnePixel.y));
-//						c = fixed4(1,1,1,1);
-					} else if (subImagePixel.x > _SubImageWidth - 1) {
-						c = tex2D(_MainTex, float2((atlasSubImageBottomLeft.x + 15) * uvOnePixel.x, (atlasSubImageBottomLeft.y + 0) * uvOnePixel.y));
-					}
+//					if (subImagePixel.x < 0.1) {
+////						c = tex2D(_MainTex, float2((i.uv.x + uvOnePixel.x / 4), uvAtlasVoxelCenter.y));
+////						c = tex2D(_MainTex, float2((atlasSubImageOrigo.x + 1) * uvOnePixel.x, (atlasSubImageOrigo.y + 1) * uvOnePixel.y));
+////						c = fixed4(1,1,1,1);
+//					} else if (subImagePixel.x > _SubImageWidth - 1) {
+//						c = tex2D(_MainTex, float2((atlasSubImageBottomLeft.x + 15) * uvOnePixel.x, (atlasSubImageBottomLeft.y + 0) * uvOnePixel.y));
+//					}
 
 					if (c.a == 0 && (uvInsideVoxel.x < seam || uvInsideVoxel.y < seam || uvInsideVoxel.x > oneMinusSeam || uvInsideVoxel.y > oneMinusSeam)) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
