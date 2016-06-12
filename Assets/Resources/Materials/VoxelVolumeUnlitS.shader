@@ -114,12 +114,12 @@
 				// show when using texture atlas. So we ensure that we always sample from within the subimage.
 				if (i.objVertex.x < -0.5f)
 					atlasPixel.x = floor(atlasPixel.x + 1);
-				else if (i.objVertex.x > _SubImageWidth - 0.5f)
-					atlasPixel.x = floor(atlasPixel.x - 1) + 0.999999; // OBS 
+				else if (i.objVertex.x > subImageSize.x - 0.5f)
+					atlasPixel.x = floor(atlasPixel.x - 1) + 0.99999; // OBS 
 				if (i.objVertex.y < -0.5f)
 					atlasPixel.y = floor(atlasPixel.y + 1);
-				else if (i.objVertex.y > _SubImageHeight - 0.5f)
-					atlasPixel.y = floor(atlasPixel.y - 1) + 0.999999;
+				else if (i.objVertex.y > subImageSize.y - 0.5f)
+					atlasPixel.y = floor(atlasPixel.y - 1) + 0.99999;
 
 				float2 subImagePixel = atlasPixel % subImageSize;
 				float2 atlasPixelInt = floor(atlasPixel);
