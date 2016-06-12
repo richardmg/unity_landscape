@@ -122,21 +122,23 @@
 					atlasPixel.y = floor(atlasPixel.y - 1) + 0.999999;
 
 				float2 subImagePixel = atlasPixel % subImageSize;
+				float2 atlasPixelInt = floor(atlasPixel);
+				float2 subImagePixelInt = floor(subImagePixel);
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
 				float2 atlasSubImageBottomLeft = atlasIndex * subImageSize;
 
 				float2 uvOnePixel = 1.0f / textureSize;
 				float2 uvInsideVoxel = frac(atlasPixel);
-				float2 uvAtlasVoxelCenter = (floor(atlasPixel) + 0.5) * uvOnePixel;
+				float2 uvAtlasVoxelCenter = (atlasPixelInt + 0.5) * uvOnePixel;
 
 				fixed4 c = tex2D(_MainTex, uvAtlasVoxelCenter);
 
 				if (i.normal.x != 0) {
 					// Columns (left to right)
-					if (i.objVertex.x < 0) {
+					if (subImagePixelInt.x == 0) {
 						// Left edge
 						light = 1 + lightMax - (lightDampning * _SubImageWidth);
-					} else if (i.objVertex.x > _SubImageWidth - 1) {
+					} else if (subImagePixelInt.x == subImageSize.x - 1) {
 						// Right edge
 						light = 1 + lightMax;
 					} else {
@@ -172,10 +174,10 @@
 					}
 				} else if (i.normal.y != 0) {
 					// Rows (bottom to top)
-					if (i.objVertex.y < 0) {
+					if (subImagePixelInt.y == 0) {
 						// Bottom edge
 						light = 1 + lightMax - (lightDampning * _SubImageHeight);
-					} else if (i.objVertex.y > _SubImageHeight - 1) {
+					} else if (subImagePixelInt.y == subImageSize.y - 1) {
 						// Top edge
 						light = 1 + lightMax;
 					} else {
@@ -222,10 +224,10 @@
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
 						float seam = 0.05f;
 						float oneMinusSeam = 1 - seam;
-						bool leftEdge = uvInsideVoxel.x < seam && floor(subImagePixel.x) > 0;
-						bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixel.x < subImageSize.x - 1;
-						bool topEdge = uvInsideVoxel.y > oneMinusSeam && subImagePixel.y < subImageSize.y - 1;
-						bool bottomEdge = uvInsideVoxel.y < seam && floor(subImagePixel.y) > 0;
+						bool leftEdge = uvInsideVoxel.x < seam && subImagePixelInt.x > 0;
+						bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixelInt.x < subImageSize.x - 1;
+						bool topEdge = uvInsideVoxel.y > oneMinusSeam && subImagePixelInt.y < subImageSize.y - 1;
+						bool bottomEdge = uvInsideVoxel.y < seam && subImagePixelInt.y > 0;
 
 						if (leftEdge)
 							c = tex2D(_MainTex, float2(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y));
