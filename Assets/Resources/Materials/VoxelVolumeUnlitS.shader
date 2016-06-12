@@ -43,9 +43,7 @@
 			{
 				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
-				float4 objectVertex : POSITION2;
 				float3 normal : NORMAL;
-			 	// x: left or right edge, y: top or bottom edge, z: z scale, w: isBackFace
 				float4 extra : COLOR1;
 			};
 
@@ -60,7 +58,6 @@
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.objectVertex = v.vertex;
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 				o.normal = v.normal;
 
@@ -104,19 +101,33 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				// NB: OpenGL has XY at lower left, which will be reflected in the vars
 				float lightMax = 0.5;
 				float lightDampning = 0.02;
 				float light = 1;
 
-				// NB: OpenGL has XY at lower left, which will be reflected in the vars
+				float2 vertex = float2(i.extra.x, i.extra.y);
+				float2 textureSize = float2(_TextureWidth, _TextureHeight);
+				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
+				float2 atlasPixel = i.uv * textureSize;
+
+				if (i.normal.z != 0) {
+					// We can get requests for pixels outside the vertices. But this will cause seams to
+					// show when using texture atlas. So we ensure that we always sample from within the subimage.
+					atlasPixel.x += (vertex.x < -0.5f) ? 1 : (vertex.x > _SubImageWidth - 0.5f) ? -1 : 0;
+				} else {
+					atlasPixel.y += (vertex.y < -0.5f) ? 1 : (vertex.x > 0.5f) ? -1 : 0;
+				}
+
+				float2 subImagePixel = atlasPixel % textureSize;
+				float2 atlasIndex = floor(atlasPixel / textureSize);
+				float2 atlasSubImageBottomLeft = atlasIndex * subImageSize;
+
 				float uvOnePixelX = (1.0 / _TextureWidth);
 				float uvOnePixelY = (1.0 / _TextureHeight);
-				float2 atlasPixel = float2(i.uv.x * _TextureWidth, i.uv.y * _TextureHeight);
-				float2 subImagePixel = i.objectVertex;
-				float2 uvInsideVoxel = float2(frac(atlasPixel.x), frac(atlasPixel.y));
-				float2 uvAtlasVoxelCenter = float2((floor(atlasPixel.x) + 0.5f) / _TextureWidth, (floor(atlasPixel.y) + 0.5f) / _TextureWidth);
-				float2 atlasIndex = float2(floor(atlasPixel.x / _SubImageWidth), floor(atlasPixel.y / _SubImageHeight));
-				float2 atlasSubImageBottomLeft = float2(atlasIndex.x * _SubImageWidth, atlasIndex.y * _SubImageHeight);
+				float uvOnePixel = 1.0f / textureSize;
+				float2 uvInsideVoxel = frac(atlasPixel);
+				float2 uvAtlasVoxelCenter = (atlasPixel + 0.5) * uvOnePixel;
 
 				fixed4 c = tex2D(_MainTex, uvAtlasVoxelCenter);
 
@@ -203,6 +214,9 @@
 					// Front and back
 //					if (i.normal.z == 1)
 //						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
+
+						if (i.extra.x < -0.5 && i.extra.x > -1)
+							return fixed4(1,0,0,1);
 
 /*
 					float seam = 0.005f;
