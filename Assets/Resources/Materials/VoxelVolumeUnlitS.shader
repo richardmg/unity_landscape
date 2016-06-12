@@ -221,7 +221,10 @@
 					float seam = 0.005f;
 					float oneMinusSeam = 1 - 0.005f;
 
-					if (c.a == 0 && (uvInsideVoxel.x < seam || uvInsideVoxel.y < seam || uvInsideVoxel.x > oneMinusSeam || uvInsideVoxel.y > oneMinusSeam)) {
+					if (c.a == 0
+						&& subImagePixel.x > 0 && subImagePixel.y > 0
+						&& subImagePixel.x < subImageSize.x - 1 && subImagePixel.y < subImageSize.y - 1
+						&& (uvInsideVoxel.x < seam || uvInsideVoxel.y < seam || uvInsideVoxel.x > oneMinusSeam || uvInsideVoxel.y > oneMinusSeam)) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
 						if (uvInsideVoxel.x < seam) {
 							// Left line
