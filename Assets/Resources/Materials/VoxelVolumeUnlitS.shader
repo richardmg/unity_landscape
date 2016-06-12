@@ -122,10 +122,10 @@
 
 				if (i.normal.x != 0) {
 					// Columns (left to right)
-					if (i.extra.x == 0) {
+					if (i.extra.x < 0) {
 						// Left edge
 						light = 1 + lightMax - (lightDampning * _SubImageWidth);
-					} else if (i.extra.x > _SubImageWidth - 0.5) {
+					} else if (i.extra.x > _SubImageWidth - 1) {
 						// Right edge
 						light = 1 + lightMax;
 					} else {
@@ -161,10 +161,10 @@
 					}
 				} else if (i.normal.y != 0) {
 					// Rows (bottom to top)
-					if (i.extra.y == 0) {
+					if (i.extra.y < 0) {
 						// Bottom edge
 						light = 1 + lightMax - (lightDampning * _SubImageHeight);
-					} else if (i.extra.y > _SubImageHeight - 0.5) {
+					} else if (i.extra.y > _SubImageHeight - 1) {
 						// Top edge
 						light = 1 + lightMax;
 					} else {
@@ -204,6 +204,7 @@
 //					if (i.normal.z == 1)
 //						light = 1 + lightMax - (lightDampning * (_SubImageHeight + 11));
 
+/*
 					float seam = 0.005f;
 					float oneMinusSeam = 1 - 0.005f;
 
@@ -256,6 +257,7 @@
 							}
 						}
 					}
+					*/
 				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
