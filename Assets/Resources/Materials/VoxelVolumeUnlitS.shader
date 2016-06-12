@@ -218,17 +218,8 @@
 //						if (i.extra.x < -0.5 && i.extra.x > -1)
 //							return fixed4(1,0,0,1);
 
-/*
 					float seam = 0.005f;
 					float oneMinusSeam = 1 - 0.005f;
-
-//					if (subImagePixel.x < 0.1) {
-////						c = tex2D(_MainTex, float2((i.uv.x + uvOnePixel.x / 4), uvAtlasVoxelCenter.y));
-////						c = tex2D(_MainTex, float2((atlasSubImageOrigo.x + 1) * uvOnePixel.x, (atlasSubImageOrigo.y + 1) * uvOnePixel.y));
-////						c = fixed4(1,1,1,1);
-//					} else if (subImagePixel.x > _SubImageWidth - 1) {
-//						c = tex2D(_MainTex, float2((atlasSubImageBottomLeft.x + 15) * uvOnePixel.x, (atlasSubImageBottomLeft.y + 0) * uvOnePixel.y));
-//					}
 
 					if (c.a == 0 && (uvInsideVoxel.x < seam || uvInsideVoxel.y < seam || uvInsideVoxel.x > oneMinusSeam || uvInsideVoxel.y > oneMinusSeam)) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
@@ -270,7 +261,7 @@
 								}
 							}
 						}
-					*/
+					}
 				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
