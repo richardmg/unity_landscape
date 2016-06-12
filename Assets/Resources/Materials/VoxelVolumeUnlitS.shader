@@ -224,7 +224,7 @@
 
 					if (c.a == 0) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
-						float seam = 0.05f;
+						float seam = 0.01f;
 						float oneMinusSeam = 1 - seam;
 						bool leftEdge = uvInsideVoxel.x < seam && subImagePixelInt.x > 0;
 						bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixelInt.x < subImageSize.x - 1;
