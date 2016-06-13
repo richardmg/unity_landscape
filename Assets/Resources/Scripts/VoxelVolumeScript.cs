@@ -118,10 +118,11 @@ public class VoxelVolumeScript : MonoBehaviour {
 		Vector2[] uv = new Vector2[4];
 		int[] tri = new int[6];
 
-		v[0].x = -0.5f; v[0].y = -0.5f;	v[0].z = side - 0.5f;
-		v[1].x = -0.5f; v[1].y = subImageHeight - 0.5f;	v[1].z = side - 0.5f;
-		v[2].x = subImageWidth - 0.5f; v[2].y = subImageHeight - 0.5f; v[2].z = side - 0.5f;
-		v[3].x = subImageWidth - 0.5f; v[3].y = -0.5f; v[3].z = side - 0.5f;
+		float s = side == kFrontSide ? 0.48f : (1 - 0.48f);
+		v[0].x = -0.5f; v[0].y = -0.5f;	v[0].z = side - s;
+		v[1].x = -0.5f; v[1].y = subImageHeight - 0.5f;	v[1].z = side - s;
+		v[2].x = subImageWidth - 0.5f; v[2].y = subImageHeight - 0.5f; v[2].z = side - s;
+		v[3].x = subImageWidth - 0.5f; v[3].y = -0.5f; v[3].z = side - s;
 
 		uv[0].x = uvx1; uv[0].y = uvy1;
 		uv[1].x = uvx1; uv[1].y = uvy2;

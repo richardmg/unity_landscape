@@ -21,6 +21,7 @@
 		{
       	 	Cull Off
       	 	ZTest Less
+      	 	Offset -1, -1
 
 			CGPROGRAM
 
@@ -67,6 +68,8 @@
 				float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
                 float3 worldNormal = UnityObjectToWorldNormal(v.normal);
                 float isBackFace = dot(worldNormal, worldViewDir) > 0 ? 0 : 1; 
+
+                isBackFace = false;
 
 				if (isBackFace) {
 					float vx = v.vertex.x;
@@ -157,19 +160,19 @@
 
 						if (leftFaceIsTransparent) {
 							// Draw right face on line left instead
-							if (!i.extra.y) {
-								// Backface culling
-								discard;
-								return c;
-							}
+//							if (!i.extra.y) {
+//								// Backface culling
+//								discard;
+//								return c;
+//							}
 							c = cLeft;
 							light = 1 + lightMax - (lightDampning * (_SubImageWidth - i.objVertex));
 						} else {
-							if (i.extra.y) {
-								// Backface culling
-								discard;
-								return c;
-							}
+//							if (i.extra.y) {
+//								// Backface culling
+//								discard;
+//								return c;
+//							}
 							light = 1 + lightMax - (lightDampning * (_SubImageWidth - i.objVertex + 10));
 						}
 					}
@@ -197,20 +200,20 @@
 
 						if (bottomFaceIsTransparent) {
 							// Draw top face on line below instead
-							if (!i.extra.y) {
-								// Backface culling
-								discard;
-								return c;
-							}
+//							if (!i.extra.y) {
+//								// Backface culling
+//								discard;
+//								return c;
+//							}
 //							i.normal *= -1;
 							c = cBelow;
 							light = 1 + lightMax - (lightDampning * (_SubImageHeight - i.objVertex));
 						} else {
-							if (i.extra.y) {
-								// Backface culling
-								discard;
-								return c;
-							}
+//							if (i.extra.y) {
+//								// Backface culling
+//								discard;
+//								return c;
+//							}
 							light = 1 + lightMax - (lightDampning * (_SubImageHeight - i.objVertex + 10));
 						}
 					}
@@ -222,7 +225,9 @@
 //						if (i.extra.x < -0.5 && i.extra.x > -1)
 //							return fixed4(1,0,0,1);
 
-					if (c.a == 0) {
+				}
+
+					if (false && c.a == 0) {
 						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
 						float seam = 0.005f;
 						float oneMinusSeam = 1 - seam;
@@ -258,7 +263,6 @@
 							}
 						}
 					}
-				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
 				if (c.a != 1 && c.a != 0)
