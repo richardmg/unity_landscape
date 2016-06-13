@@ -64,6 +64,8 @@ public class VoxelPlaneScript : MonoBehaviour {
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
+
+		print("Vertex count for mesh at index " + atlasIndex + " (" + gameObject.name + "): " + finalMesh.vertices.Length);
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
