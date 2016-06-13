@@ -79,14 +79,14 @@
 				float2 atlasPixel = i.uv * textureSize;
 				// We can get requests for pixels outside the vertices. But this will cause seams to
 				// show when using texture atlas. So we ensure that we always sample from within the subimage.
-//				if (i.objVertex.x < -0.5f)
-//					atlasPixel.x = floor(atlasPixel.x + 1);
-//				else if (i.objVertex.x > subImageSize.x - 0.5f)
-//					atlasPixel.x = floor(atlasPixel.x - 1) + 0.99999; // OBS 
-//				if (i.objVertex.y < -0.5f)
-//					atlasPixel.y = floor(atlasPixel.y + 1);
-//				else if (i.objVertex.y > subImageSize.y - 0.5f)
-//					atlasPixel.y = floor(atlasPixel.y - 1) + 0.99999;
+				if (i.objVertex.x < -0.5f)
+					atlasPixel.x = floor(atlasPixel.x + 1);
+				else if (i.objVertex.x > subImageSize.x - 0.5f)
+					atlasPixel.x = floor(atlasPixel.x - 1) + 0.99999; // OBS 
+				if (i.objVertex.y < -0.5f)
+					atlasPixel.y = floor(atlasPixel.y + 1);
+				else if (i.objVertex.y > subImageSize.y - 0.5f)
+					atlasPixel.y = floor(atlasPixel.y - 1) + 0.99999;
 
 				float2 subImagePixel = atlasPixel % subImageSize;
 				float2 atlasPixelInt = floor(atlasPixel);
@@ -140,30 +140,6 @@
 				if (i.normal.x != 0) {
 				} else if (i.normal.y != 0) {
 				} else {
-
-//					if (c.a != 0) {
-//						float seam = 0.01f;
-//						float oneMinusSeam = 1 - seam;
-//						bool leftEdge = uvInsideVoxel.x < seam && subImagePixelInt.x > 0;
-//						bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixelInt.x < subImageSize.x - 1;
-//						bool topEdge = uvInsideVoxel.y > oneMinusSeam && subImagePixelInt.y < subImageSize.y - 1;
-//						bool bottomEdge = uvInsideVoxel.y < seam && subImagePixelInt.y > 0;
-//						fixed4 adjacentC = c;
-//
-//						if (leftEdge)
-//							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
-//						if (rightEdge && adjacentC.a != 0)
-//							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
-//						if (topEdge && adjacentC.a != 0)
-//							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
-//						if (bottomEdge && adjacentC.a != 0)
-//							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
-//
-//						if (adjacentC.a == 0) {
-//							discard;
-//							return c;
-//						}
-//					}
 				}
 
 #ifdef DEBUG_TEXTURE_ATLAS

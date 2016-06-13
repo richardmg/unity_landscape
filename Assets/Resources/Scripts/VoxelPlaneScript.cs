@@ -10,7 +10,6 @@ public class VoxelPlaneScript : MonoBehaviour {
 	public bool addBack = true;
 	public bool addVolume = true;
 	public bool trimVolume = false;
-	public float textureBleedScale = 1.001f;
 
 	Texture2D texture;
 	Vector2 uvSubImageBottomLeft;
@@ -101,25 +100,24 @@ public class VoxelPlaneScript : MonoBehaviour {
 		float uvx2 = uvSubImageBottomLeft.x + (voxelX2 * uvOnePixel.x);
 		float uvy = uvSubImageBottomLeft.y + (voxelY * uvOnePixel.y);
 
-		print(uvx1 + ", " + uvx2);
-
 		Vector3[] v = new Vector3[8];
 		Vector2[] uv = new Vector2[8];
 		int[] tri = new int[36];
+		float half = 0.5f;
 
 		// TODO: add half-pixel correction!!!!
 
 		// Front vertices
-		v[0].x = 0; v[0].y = 0; v[0].z = 0;
-		v[1].x = 0; v[1].y = 1; v[1].z = 0;
-		v[2].x = w; v[2].y = 0; v[2].z = 0;
-		v[3].x = w; v[3].y = 1; v[3].z = 0;
+		v[0].x = -half; v[0].y = -half; v[0].z = -half;
+		v[1].x = -half; v[1].y = half; v[1].z = -half;
+		v[2].x = w - half; v[2].y = -half; v[2].z = -half;
+		v[3].x = w - half; v[3].y = half; v[3].z = -half;
 
 		// Back vertices
-		v[4].x = 0; v[4].y = 0; v[4].z = 1;
-		v[5].x = 0; v[5].y = 1; v[5].z = 1;
-		v[6].x = w; v[6].y = 0; v[6].z = 1;
-		v[7].x = w; v[7].y = 1; v[7].z = 1;
+		v[4].x = -half; v[4].y = -half; v[4].z = half;
+		v[5].x = -half; v[5].y = half; v[5].z = half;
+		v[6].x = w - half; v[6].y = -half; v[6].z = half;
+		v[7].x = w - half; v[7].y = half; v[7].z = half;
 
 		// Front texture coords
 		uv[0].x = uvx1; uv[0].y = uvy;
