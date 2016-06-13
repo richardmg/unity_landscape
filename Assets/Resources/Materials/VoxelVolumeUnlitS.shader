@@ -12,7 +12,7 @@
 	{
 		Tags {
 			"RenderType"="Opaque"
-			"Queue" = "AlphaTest"
+			"Queue" = "Transparent"
 		}
 
 		LOD 100
@@ -21,7 +21,7 @@
 		{
       	 	Cull Off
       	 	ZTest Less
-      	 	Offset -1, -1
+//      	 	Offset -10, -10
 
 			CGPROGRAM
 
@@ -225,44 +225,30 @@
 //						if (i.extra.x < -0.5 && i.extra.x > -1)
 //							return fixed4(1,0,0,1);
 
-				}
-
-					if (false && c.a == 0) {
-						// For transparent voxels, vi create a padding edge with colors of adjacent voxels to hide seams
-						float seam = 0.005f;
+					if (c.a != 0) {
+						float seam = 0.01f;
 						float oneMinusSeam = 1 - seam;
 						bool leftEdge = uvInsideVoxel.x < seam && subImagePixelInt.x > 0;
 						bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixelInt.x < subImageSize.x - 1;
 						bool topEdge = uvInsideVoxel.y > oneMinusSeam && subImagePixelInt.y < subImageSize.y - 1;
 						bool bottomEdge = uvInsideVoxel.y < seam && subImagePixelInt.y > 0;
+						fixed4 adjacentC = c;
 
 						if (leftEdge)
-							c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
-						else if (rightEdge)
-							c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
+							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
+						if (rightEdge && adjacentC.a != 0)
+							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
+						if (topEdge && adjacentC.a != 0)
+							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
+						if (bottomEdge && adjacentC.a != 0)
+							adjacentC = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
 
-						if (c.a == 0) {
-							if (bottomEdge)
-								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
-							else if (topEdge)
-								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
-						}
-
-						if (c.a == 0) {
-							// Check corners
-							if (leftEdge) {
-								if (bottomEdge)
-									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
-								else if (topEdge)
-									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
-							} else if (rightEdge) {
-								if (bottomEdge)
-									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
-								else if (topEdge)
-									c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
-							}
+						if (adjacentC.a == 0) {
+							discard;
+							return c;
 						}
 					}
+				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
 				if (c.a != 1 && c.a != 0)
