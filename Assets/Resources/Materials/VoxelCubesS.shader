@@ -155,7 +155,7 @@
 				} else if (bottomSide){
 					light = 0.7;
 				} else if (topSide){
-					light = 1.3;
+					light *= 0.9 + lightDelta.x + lightDelta.y;
 				} else if (leftSide){
 					light = 0.7;
 				} else if (rightSide){
