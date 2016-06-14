@@ -67,9 +67,9 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// NB: OpenGL has XY at lower left, which will be reflected in the vars
-				float lightMax = 0.5;
-				float lightDampning = 0.02;
-				float light = 1;
+				float lightAmbient = 1.0;
+				float lightRange = 0.5;
+				float light = lightAmbient;
 
 				fixed4 red = fixed4(1, 0, 0, 1);
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
@@ -145,18 +145,21 @@
 					}
 				}
 
+				float2 lightPos = subImagePixel / subImageSize;
+				float2 lightDelta = lightPos * lightRange;
+
 				if (frontSide) {
-					light *= 1.3;
+					light *= 1 + lightDelta.x + lightDelta.y;
 				} else if (backSide) {
-					light *= 0.7;
+					light = 0.7;
 				} else if (bottomSide){
-					light *= 0.7;
+					light = 0.7;
 				} else if (topSide){
-					light *= 1.3;
+					light = 1.3;
 				} else if (leftSide){
-					light *= 0.7;
+					light = 0.7;
 				} else if (rightSide){
-					light *= 1.3;
+					light = 1.3;
 				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
