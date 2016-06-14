@@ -78,7 +78,8 @@
 
 				float2 atlasPixel = i.uv * textureSize;
 				// We can get requests for pixels outside the vertices. But this will cause seams to
-				// show when using texture atlas. So we ensure that we always sample from within the subimage.
+				// show when sampling from a texture atlas. So ensure that we always sample from
+				// within the subimage.
 				if (i.objVertex.x < -0.5f)
 					atlasPixel.x = floor(atlasPixel.x - i.objVertex.x + 0.4f);
 				else if (i.objVertex.x > subImageSize.x - 0.6f)
@@ -101,6 +102,8 @@
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter, 0, 0));
 
 				if (c.a == 0) {
+					// Always sample opaque pixels. Transparent pixels are not converted to voxels, but
+					// will still bleed in from the edges when drawing opaque voxels unless we do this clamping.
 					float seam = 0.5f;
 					float oneMinusSeam = 1 - seam;
 					bool leftEdge = uvInsideVoxel.x < seam && subImagePixelInt.x > 0;
@@ -135,7 +138,6 @@
 						}
 					}
 				}
-
 
 				if (i.normal.x != 0) {
 				} else if (i.normal.y != 0) {
