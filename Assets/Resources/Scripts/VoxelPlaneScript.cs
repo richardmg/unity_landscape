@@ -31,6 +31,8 @@ public class VoxelPlaneScript : MonoBehaviour {
 		uvSubImageBottomLeft = new Vector2((float)startPixelX / texture.width, ((float)startPixelY / texture.height));
 		uvOnePixel = new Vector2(1.0f / texture.width, 1.0f / texture.height);
 
+		print(uvSubImageBottomLeft.x + ", " + uvSubImageBottomLeft.y);
+
 		// Traverse each row in the texture
 		for (int y = 0; y < subImageHeight; ++y) {
 			int x2 = -1;
@@ -79,9 +81,9 @@ public class VoxelPlaneScript : MonoBehaviour {
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
 	{
 		float w = voxelX2 - voxelX1;
-		float uvx1 = uvSubImageBottomLeft.x + ((voxelX1 + (voxelX1 == 0 ? 0.5f : voxelX1 == subImageWidth - 1 ? -0.5f : 0)) * uvOnePixel.x);
-		float uvx2 = uvSubImageBottomLeft.x + ((voxelX2 + (voxelX2 == 0 ? 0.5f : voxelX2 == subImageWidth - 1 ? -0.5f : 0)) * uvOnePixel.x);
-		float uvy = uvSubImageBottomLeft.y + ((voxelY + (voxelY == 0 ? 0.5f : voxelY == subImageHeight - 1 ? -0.5f : 0)) * uvOnePixel.y);
+		float uvx1 = uvSubImageBottomLeft.x + (voxelX1 * uvOnePixel.x);
+		float uvx2 = uvSubImageBottomLeft.x + (voxelX2 * uvOnePixel.x);
+		float uvy = uvSubImageBottomLeft.y + (voxelY * uvOnePixel.y);
 
 		Vector3[] v = new Vector3[8];
 		Vector3[] n = new Vector3[8];
@@ -102,16 +104,16 @@ public class VoxelPlaneScript : MonoBehaviour {
 		v[7].x = w - half; v[7].y = half; v[7].z = half;
 
 		// Front normals
-		n[0].x = -1; n[0].y = -1; n[0].z = -1;
-		n[1].x = -1; n[1].y = 1; n[1].z = -1;
-		n[2].x = 1; n[2].y = -1; n[2].z = -1;
-		n[3].x = 1; n[3].y = 1; n[3].z = -1;
+		n[0].x = -1 - uvSubImageBottomLeft.x; n[0].y = -1 - uvSubImageBottomLeft.y; n[0].z = -1;
+		n[1].x = -1 - uvSubImageBottomLeft.x; n[1].y = 1 + uvSubImageBottomLeft.y; n[1].z = -1;
+		n[2].x = 1 + uvSubImageBottomLeft.x; n[2].y = -1 - uvSubImageBottomLeft.y; n[2].z = -1;
+		n[3].x = 1 + uvSubImageBottomLeft.x; n[3].y = 1 + uvSubImageBottomLeft.y; n[3].z = -1;
 
 		// Back normals
-		n[4].x = -1; n[4].y = -1; n[4].z = 1;
-		n[5].x = -1; n[5].y = 1; n[5].z = 1;
-		n[6].x = 1; n[6].y = -1; n[6].z = 1;
-		n[7].x = 1; n[7].y = 1; n[7].z = 1;
+		n[4].x = -1 - uvSubImageBottomLeft.x; n[4].y = -1 - uvSubImageBottomLeft.y; n[4].z = 1;
+		n[5].x = -1 - uvSubImageBottomLeft.x; n[5].y = 1 + uvSubImageBottomLeft.y; n[5].z = 1;
+		n[6].x = 1 + uvSubImageBottomLeft.x; n[6].y = -1 - uvSubImageBottomLeft.y; n[6].z = 1;
+		n[7].x = 1 + uvSubImageBottomLeft.x; n[7].y = 1 + uvSubImageBottomLeft.y; n[7].z = 1;
 
 		// Front texture coords
 		uv[0].x = uvx1; uv[0].y = uvy;
