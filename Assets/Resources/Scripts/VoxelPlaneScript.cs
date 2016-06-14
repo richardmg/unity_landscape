@@ -78,23 +78,6 @@ public class VoxelPlaneScript : MonoBehaviour {
 		return kVoxelNotFound;
 	}
 
-//	int findFirstVoxelCenterSampleAlphaTest(int startX, int startY, int alpha)
-//	{
-//		float textureStepX = texture.width / cols;
-//		float textureStepY = texture.height / rows;
-//
-//		for (int x = startX; x < cols; ++x) {
-//			// Grab center pixel in texel. This will fail for texels that are not solid
-//			int tx = (int)((x * textureStepX) + (textureStepX / 2));
-//			int ty = (int)((startY * textureStepY) + (textureStepY / 2));
-//			Color c = texture.GetPixel(tx, ty);
-//			// Either the textel is transparent, or it's not
-//			if (Mathf.CeilToInt(c.a) == alpha)
-//				return x;
-//		}
-//		return kVoxelNotFound;
-//	}
-
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
 	{
 		float w = voxelX2 - voxelX1;
