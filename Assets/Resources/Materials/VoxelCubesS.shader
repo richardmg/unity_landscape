@@ -21,9 +21,6 @@
 
 			CGPROGRAM
 
-			#define USE_LIGHT
-			#define DEBUG_TEXTURE_ATLAS
-
 			#pragma vertex vert
 			#pragma fragment frag
 
@@ -75,7 +72,9 @@
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
 
-				float2 atlasPixel = i.uv * textureSize;
+				float2 atlasIndex = floor((i.uv * textureSize) / subImageSize);
+				float2 atlasPixel = (atlasIndex * subImageSize) + i.objVertex + 0.5;
+
 				// We can get requests for pixels outside the vertices. But this will cause seams to
 				// show when sampling from a texture atlas. So ensure that we always sample from
 				// within the subimage.
@@ -91,7 +90,6 @@
 				float2 subImagePixel = atlasPixel % subImageSize;
 				float2 atlasPixelInt = floor(atlasPixel);
 				float2 subImagePixelInt = floor(subImagePixel);
-				float2 atlasIndex = floor(atlasPixel / subImageSize);
 				float2 atlasSubImageBottomLeft = atlasIndex * subImageSize;
 
 				float2 uvOnePixel = 1.0f / textureSize;
@@ -162,15 +160,8 @@
 					light = 1.3;
 				}
 
-#ifdef DEBUG_TEXTURE_ATLAS
-				if (c.a != 1 && c.a != 0)
-					c = red;
-#endif
-
-#ifdef USE_LIGHT
 				c *= light;
-//				c = DiffuseLight( i.lightDir, normal, c, LIGHT_ATTENUATION(i) );
-#endif
+
 				return c;
 			}
 			ENDCG
