@@ -79,13 +79,15 @@
 				// show when sampling from a texture atlas. So ensure that we always sample from
 				// within the subimage.
 				if (i.objVertex.x < -0.5f)
-					atlasPixel.x = floor(atlasPixel.x - i.objVertex.x + 0.4f);
-				else if (i.objVertex.x > subImageSize.x - 0.6f)
-					atlasPixel.x = atlasPixel.x - (i.objVertex.x - (subImageSize.x - 0.6f));
+					atlasPixel.x += 1;
+				else if (i.objVertex.x >= subImageSize.x - 0.5f)
+//					atlasPixel.x -= 1;
+					if (floor(atlasPixel).x < 40)
+						return red;
 				if (i.objVertex.y < -0.5f)
-					atlasPixel.y = floor(atlasPixel.y - i.objVertex.y + 0.4f);
-				else if (i.objVertex.y > subImageSize.y - 0.6f)
-					atlasPixel.y = atlasPixel.y - (i.objVertex.y - (subImageSize.y - 0.6f));
+					atlasPixel.y += 1;
+				else if (i.objVertex.y >= subImageSize.y - 0.5f)
+					atlasPixel.y -= 1;
 
 				float2 subImagePixel = atlasPixel % subImageSize;
 				float2 atlasPixelInt = floor(atlasPixel);

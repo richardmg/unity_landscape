@@ -79,9 +79,9 @@ public class VoxelPlaneScript : MonoBehaviour {
 	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
 	{
 		float w = voxelX2 - voxelX1;
-		float uvx1 = uvSubImageBottomLeft.x + (voxelX1 * uvOnePixel.x);
-		float uvx2 = uvSubImageBottomLeft.x + (voxelX2 * uvOnePixel.x);
-		float uvy = uvSubImageBottomLeft.y + (voxelY * uvOnePixel.y);
+		float uvx1 = uvSubImageBottomLeft.x + ((voxelX1 + (voxelX1 == 0 ? 0.5f : voxelX1 == subImageWidth - 1 ? -0.5f : 0)) * uvOnePixel.x);
+		float uvx2 = uvSubImageBottomLeft.x + ((voxelX2 + (voxelX2 == 0 ? 0.5f : voxelX2 == subImageWidth - 1 ? -0.5f : 0)) * uvOnePixel.x);
+		float uvy = uvSubImageBottomLeft.y + ((voxelY + (voxelY == 0 ? 0.5f : voxelY == subImageHeight - 1 ? -0.5f : 0)) * uvOnePixel.y);
 
 		Vector3[] v = new Vector3[8];
 		Vector3[] n = new Vector3[8];
