@@ -60,8 +60,6 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		Mesh finalMesh = new Mesh();
 		finalMesh.CombineMeshes(ciList.ToArray(), true, true);
-		finalMesh.RecalculateNormals();
-		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
 
@@ -86,11 +84,10 @@ public class VoxelPlaneScript : MonoBehaviour {
 		float uvy = uvSubImageBottomLeft.y + (voxelY * uvOnePixel.y);
 
 		Vector3[] v = new Vector3[8];
+		Vector3[] n = new Vector3[8];
 		Vector2[] uv = new Vector2[8];
 		int[] tri = new int[36];
 		float half = 0.5f;
-
-		// TODO: add half-pixel correction!!!!
 
 		// Front vertices
 		v[0].x = -half; v[0].y = -half; v[0].z = -half;
@@ -103,6 +100,18 @@ public class VoxelPlaneScript : MonoBehaviour {
 		v[5].x = -half; v[5].y = half; v[5].z = half;
 		v[6].x = w - half; v[6].y = -half; v[6].z = half;
 		v[7].x = w - half; v[7].y = half; v[7].z = half;
+
+		// Front normals
+		n[0].x = -1; n[0].y = -1; n[0].z = -1;
+		n[1].x = -1; n[1].y = 1; n[1].z = -1;
+		n[2].x = 1; n[2].y = -1; n[2].z = -1;
+		n[3].x = 1; n[3].y = 1; n[3].z = -1;
+
+		// Back normals
+		n[4].x = -1; n[4].y = -1; n[4].z = 1;
+		n[5].x = -1; n[5].y = 1; n[5].z = 1;
+		n[6].x = 1; n[6].y = -1; n[6].z = 1;
+		n[7].x = 1; n[7].y = 1; n[7].z = 1;
 
 		// Front texture coords
 		uv[0].x = uvx1; uv[0].y = uvy;
@@ -166,6 +175,7 @@ public class VoxelPlaneScript : MonoBehaviour {
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = v;
+		mesh.normals = n;
 		mesh.uv = uv;
 		mesh.triangles = tri;
 

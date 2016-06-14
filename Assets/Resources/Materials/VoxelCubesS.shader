@@ -98,6 +98,13 @@
 				float2 uvInsideVoxel = frac(atlasPixel);
 				float2 uvAtlasVoxelCenter = (atlasPixelInt + 0.5) * uvOnePixel;
 
+				bool frontSide = (i.normal.z == -1);
+				bool backSide = (i.normal.z == 1);
+				bool bottomSide = (i.normal.y == -1);
+				bool topSide = (i.normal.y == 1);
+				bool leftSide = (i.normal.x == -1);
+				bool rightSide = (i.normal.x == 1);
+
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter, 0, 0));
 
 				if (c.a == 0) {
@@ -138,9 +145,18 @@
 					}
 				}
 
-				if (i.normal.x != 0) {
-				} else if (i.normal.y != 0) {
-				} else {
+				if (frontSide) {
+					light *= 1.3;
+				} else if (backSide) {
+					light *= 0.7;
+				} else if (bottomSide){
+					light *= 0.7;
+				} else if (topSide){
+					light *= 1.3;
+				} else if (leftSide){
+					light *= 0.7;
+				} else if (rightSide){
+					light *= 1.3;
 				}
 
 #ifdef DEBUG_TEXTURE_ATLAS
