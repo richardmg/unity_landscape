@@ -143,15 +143,15 @@
 				if (frontSide) {
 					light *= 1 + lightDelta.x + lightDelta.y;
 				} else if (backSide) {
-					light = 0.7;
+					light *= 0.5 + lightDelta.x / 3 + lightDelta.y / 3;
 				} else if (bottomSide){
-					light = 0.7;
+					light *= 0.5 + lightDelta.x / 3 + lightDelta.y / 3;
 				} else if (topSide){
 					light *= 0.9 + lightDelta.x + lightDelta.y;
 				} else if (leftSide){
-					light = 0.7;
+					light *= 0.5 + lightDelta.x / 3 + lightDelta.y / 3;
 				} else if (rightSide){
-					light = 1.3;
+					light *= 0.9 + lightDelta.x + lightDelta.y;
 				}
 
 				c *= light;
