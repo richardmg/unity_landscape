@@ -58,9 +58,8 @@
 				o.objVertex = v.vertex;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
-
-				float zScale = length(mul(_Object2World, float3(0, 0, 1)));
-				o.extra.x = zScale;
+				o.normal = v.normal;
+				o.extra.x = length(mul(_Object2World, float3(0, 0, 1))); // z scale
 
 				return o;
 			}
