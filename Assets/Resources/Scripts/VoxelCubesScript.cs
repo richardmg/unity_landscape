@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class VoxelPlaneScript : MonoBehaviour {
+public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public int subImageWidth = 16;
 	public int subImageHeight = 8;
