@@ -42,7 +42,7 @@
 				float4 vertex : SV_POSITION;
 				float4 objVertex : POSITION1;
 				float3 normal : NORMAL;
-				float4 extra : COLOR1;
+				float3 extra : COLOR1;
 			};
 
 			int _TextureWidth;
@@ -66,7 +66,8 @@
 				o.normal = v.normal - float3(uvSubImageBottomLeft, 0);
 				float xScale = length(mul(_Object2World, float3(1, 0, 0))); 
 				float zScale = length(mul(_Object2World, float3(0, 0, 1))); 
-				o.extra = float4(abs(uvSubImageBottomLeft), zScale, xScale);
+				float voxelCountZ = zScale / xScale;
+				o.extra = float3(abs(uvSubImageBottomLeft), voxelCountZ);
 
 				return o;
 			}
@@ -94,6 +95,9 @@
 				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
 				float2 atlasPixelInt = floor(atlasPixel);
 				float2 subImagePixelInt = floor(subImagePixel);
+
+				float voxelCountZ = i.extra.z;
+				float voxelPosZ = (i.objVertex.z + 0.5) * voxelCountZ;
 
 				float2 uvAtlasVoxelCenter = (atlasPixelInt + 0.5) * uvOnePixel;
 
@@ -144,19 +148,11 @@
 					}
 				}
 
-				float voxelDepthZ = i.extra.z / i.extra.w;
-//				if (floor(voxelDepthZ) == 6) return red;
-
-				float voxelPosZ = (i.objVertex.z + 0.5) * voxelDepthZ;
-
-//				if (i.objVertex.z < 0) return red;
-//				if (floor(voxelPosZ) == 2) return red;
 
 				float3 lightPos;
 				lightPos.x = (_PixelateVoxelX == 1 ? subImagePixelInt.x : subImagePixel.x) / subImageSize.x;
 				lightPos.y = (_PixelateVoxelY == 1 ? subImagePixelInt.y : subImagePixel.y) / subImageSize.y;
-				lightPos.z = (_PixelateVoxelZ == 1 ? floor(voxelPosZ) : voxelPosZ) / voxelDepthZ;
-//				lightPos.z = voxelCountZ / i.objVertex.z;
+				lightPos.z = (_PixelateVoxelZ == 1 ? floor(voxelPosZ) : voxelPosZ) / voxelCountZ;
 
 				float3 lightDelta = lightPos * lightRange;
 
