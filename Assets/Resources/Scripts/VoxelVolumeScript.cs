@@ -85,6 +85,8 @@ public class VoxelVolumeScript : MonoBehaviour {
 		finalMesh.Optimize();
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = finalMesh;
+
+		print("VoxelVolume: vertex count for " + gameObject.name + ": " + finalMesh.vertices.Length);
 	}
 
 	bool hasHorisontalEdgesInRow(int row)
