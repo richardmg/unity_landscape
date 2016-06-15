@@ -7,6 +7,9 @@
 		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
+		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 0
+		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
+		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
 	}
 	SubShader
 	{
@@ -39,13 +42,16 @@
 				float4 vertex : SV_POSITION;
 				float4 objVertex : POSITION1;
 				float3 normal : NORMAL;
-				float3 extra : COLOR1;
+				float4 extra : COLOR1;
 			};
 
 			int _TextureWidth;
 			int _TextureHeight;
 			int _SubImageWidth;
 			int _SubImageHeight;
+			float _PixelateVoxelX;
+			float _PixelateVoxelY;
+			float _PixelateVoxelZ;
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
@@ -58,8 +64,9 @@
 
 				float2 uvSubImageBottomLeft = v.normal - float2(v.normal.x > 0 ? 1 : -1, v.normal.y > 0 ? 1 : -1);
 				o.normal = v.normal - float3(uvSubImageBottomLeft, 0);
+				float xScale = length(mul(_Object2World, float3(1, 0, 0))); 
 				float zScale = length(mul(_Object2World, float3(0, 0, 1))); 
-				o.extra = float3(abs(uvSubImageBottomLeft), zScale);
+				o.extra = float4(abs(uvSubImageBottomLeft), zScale, xScale);
 
 				return o;
 			}
@@ -67,8 +74,8 @@
 			fixed4 frag (v2f i) : SV_Target
 			{
 				// NB: OpenGL has XY at lower left, which will be reflected in the vars
-				float lightAmbient = 1.0;
-				float lightRange = 0.5;
+				float lightAmbient = 1.1;
+				float lightRange = 0.3;
 				float light = lightAmbient;
 
 				fixed4 red = fixed4(1, 0, 0, 1);
@@ -137,21 +144,34 @@
 					}
 				}
 
-				float2 lightPos = subImagePixel / subImageSize;
-				float2 lightDelta = lightPos * lightRange;
+				float voxelDepthZ = i.extra.z / i.extra.w;
+//				if (floor(voxelDepthZ) == 6) return red;
+
+				float voxelPosZ = (i.objVertex.z + 0.5) * voxelDepthZ;
+
+//				if (i.objVertex.z < 0) return red;
+//				if (floor(voxelPosZ) == 2) return red;
+
+				float3 lightPos;
+				lightPos.x = (_PixelateVoxelX == 1 ? subImagePixelInt.x : subImagePixel.x) / subImageSize.x;
+				lightPos.y = (_PixelateVoxelY == 1 ? subImagePixelInt.y : subImagePixel.y) / subImageSize.y;
+				lightPos.z = (_PixelateVoxelZ == 1 ? floor(voxelPosZ) : voxelPosZ) / voxelDepthZ;
+//				lightPos.z = voxelCountZ / i.objVertex.z;
+
+				float3 lightDelta = lightPos * lightRange;
 
 				if (frontSide) {
 					light *= 1 + lightDelta.x + lightDelta.y;
 				} else if (backSide) {
 					light *= 0.5 + lightDelta.x / 3 + lightDelta.y / 3;
 				} else if (bottomSide){
-					light *= 0.5 + lightDelta.x / 3 + lightDelta.y / 3;
+					light *= 0.5 + lightDelta.x / 3 - lightDelta.z / 3;
 				} else if (topSide){
-					light *= 0.9 + lightDelta.x + lightDelta.y;
+					light *= 0.9 + lightDelta.x - lightDelta.z;
 				} else if (leftSide){
-					light *= 0.5 + lightDelta.x / 3 + lightDelta.y / 3;
+					light *= 0.5 + lightDelta.y / 3 - lightDelta.z / 3;
 				} else if (rightSide){
-					light *= 0.9 + lightDelta.x + lightDelta.y;
+					light *= 0.9 + lightDelta.y - lightDelta.z;
 				}
 
 				c *= light;
