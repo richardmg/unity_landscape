@@ -31,8 +31,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		uvSubImageBottomLeft = new Vector2((float)startPixelX / texture.width, ((float)startPixelY / texture.height));
 		uvOnePixel = new Vector2(1.0f / texture.width, 1.0f / texture.height);
 
-		print(uvSubImageBottomLeft.x + ", " + uvSubImageBottomLeft.y);
-
 		// Traverse each row in the texture
 		for (int y = 0; y < subImageHeight; ++y) {
 			int x2 = -1;

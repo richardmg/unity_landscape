@@ -74,18 +74,12 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				// NB: OpenGL has XY at lower left, which will be reflected in the vars
-				float lightAmbient = 1.1;
-				float lightRange = 0.3;
-				float light = lightAmbient;
-
 				fixed4 red = fixed4(1, 0, 0, 1);
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
 
 				float2 uvOnePixel = 1.0f / textureSize;
 				float2 uvSubImageSize = subImageSize * uvOnePixel;
-
 				float2 uvSubImageBottomLeft = float2(i.extra.x, i.extra.y);
 				float2 uvAtlasClamped = clamp(i.uv, uvSubImageBottomLeft, uvSubImageBottomLeft + uvSubImageSize - (uvOnePixel / 2));
 
@@ -98,6 +92,7 @@
 
 				float voxelCountZ = i.extra.z;
 				float voxelPosZ = (i.objVertex.z + 0.5) * voxelCountZ;
+				float uvInsideVoxelZ = frac(voxelPosZ);
 
 				float2 uvAtlasVoxelCenter = (atlasPixelInt + 0.5) * uvOnePixel;
 
@@ -107,6 +102,9 @@
 				bool topSide = (i.normal.y == 1);
 				bool leftSide = (i.normal.x == -1);
 				bool rightSide = (i.normal.x == 1);
+
+				////////////////////////////////////////////////////////
+				// Get current voxel color
 
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter, 0, 0));
 
@@ -148,8 +146,13 @@
 					}
 				}
 
+				////////////////////////////////////////////////////////
+				// Calculate lights
 
 				float3 lightPos;
+				float lightRange = 0.3;
+				float light = 1.1; // (ambient base)
+
 				lightPos.x = (_PixelateVoxelX == 1 ? subImagePixelInt.x : subImagePixel.x) / subImageSize.x;
 				lightPos.y = (_PixelateVoxelY == 1 ? subImagePixelInt.y : subImagePixel.y) / subImageSize.y;
 				lightPos.z = (_PixelateVoxelZ == 1 ? floor(voxelPosZ) : voxelPosZ) / voxelCountZ;
@@ -171,6 +174,8 @@
 				}
 
 				c *= light;
+
+				////////////////////////////////////////////////////////
 
 				return c;
 			}
