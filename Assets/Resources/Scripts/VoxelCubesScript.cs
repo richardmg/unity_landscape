@@ -17,10 +17,18 @@ public class VoxelCubesScript : MonoBehaviour {
 	int startPixelX;
 	int startPixelY;
 
+	static int[] indices = new int[8];
+	static Vector3 vec = new Vector3();
+	static Vector3 nor = new Vector3();
+
+	List<Vector3> vertices = new List<Vector3>(); 
+	List<Vector3> normals = new List<Vector3>(); 
+	List<Vector2> uvs = new List<Vector2>(); 
+	List<int> tri = new List<int>(); 
+
 	const int kVoxelNotFound = -1;
 
 	void Start () {
-		List<CombineInstance> ciList = new List<CombineInstance>();
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
@@ -47,23 +55,20 @@ public class VoxelCubesScript : MonoBehaviour {
 				if (x2 == kVoxelNotFound)
 					x2 = subImageWidth;
 
-				Mesh mesh = createVoxelLineMesh(x1, x2, y);
-				Matrix4x4 transform = new Matrix4x4();
-				transform.SetTRS(new Vector3(x1, y, 0), Quaternion.identity, new Vector3(1, 1, 1));
-
-				CombineInstance ci = new CombineInstance();
-				ci.mesh = mesh;
-				ci.transform = transform;
-				ciList.Add(ci);
+				createVoxelLineMesh(x1, x2, y, y + 1);
 			}
 		}
 
-		Mesh finalMesh = new Mesh();
-		finalMesh.CombineMeshes(ciList.ToArray(), true, true);
-		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		meshFilter.mesh = finalMesh;
+		Mesh mesh = new Mesh();
+		mesh.vertices = vertices.ToArray();
+		mesh.normals = normals.ToArray();
+		mesh.uv = uvs.ToArray();
+		mesh.triangles = tri.ToArray();
 
-		print("VoxelCubes: vertex count for " + gameObject.name + ": " + finalMesh.vertices.Length);
+		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		meshFilter.mesh = mesh;
+
+		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
@@ -76,109 +81,84 @@ public class VoxelCubesScript : MonoBehaviour {
 		return kVoxelNotFound;
 	}
 
-	Mesh createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY)
+	int getVertexIndex(Vector3 v, Vector3 n)
 	{
-		float w = voxelX2 - voxelX1;
-		float uvx1 = uvSubImageBottomLeft.x + (voxelX1 * uvOnePixel.x);
-		float uvx2 = uvSubImageBottomLeft.x + (voxelX2 * uvOnePixel.x);
-		float uvy = uvSubImageBottomLeft.y + (voxelY * uvOnePixel.y);
+		vertices.Add(new Vector3(v.x, v.y, v.z));
+		normals.Add(new Vector3(n.x, n.y, n.z));
+		uvs.Add(new Vector2(uvSubImageBottomLeft.x + (v.x * uvOnePixel.x), uvSubImageBottomLeft.y + (v.y * uvOnePixel.y)));
 
-		Vector3[] v = new Vector3[8];
-		Vector3[] n = new Vector3[8];
-		Vector2[] uv = new Vector2[8];
-		int[] tri = new int[36];
-		float half = 0.5f;
+		return vertices.Count - 1;
+	}
 
-		// Front vertices
-		v[0].x = -half; v[0].y = -half; v[0].z = -half;
-		v[1].x = -half; v[1].y = half; v[1].z = -half;
-		v[2].x = w - half; v[2].y = -half; v[2].z = -half;
-		v[3].x = w - half; v[3].y = half; v[3].z = -half;
+	void createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY1, int voxelY2)
+	{
+		for (int side = 0; side <= 4; side += 4) {
+			float offset = side / 4;
+			float normalZ = -1 + (side / 2);
 
-		// Back vertices
-		v[4].x = -half; v[4].y = -half; v[4].z = half;
-		v[5].x = -half; v[5].y = half; v[5].z = half;
-		v[6].x = w - half; v[6].y = -half; v[6].z = half;
-		v[7].x = w - half; v[7].y = half; v[7].z = half;
+			vec.Set(voxelX1, voxelY1, offset);
+			nor.Set(-1 - uvSubImageBottomLeft.x, -1 - uvSubImageBottomLeft.y, normalZ);
+			indices[0 + side] = getVertexIndex(vec, nor);
 
-		// Front normals
-		n[0].x = -1 - uvSubImageBottomLeft.x; n[0].y = -1 - uvSubImageBottomLeft.y; n[0].z = -1;
-		n[1].x = -1 - uvSubImageBottomLeft.x; n[1].y = 1 + uvSubImageBottomLeft.y; n[1].z = -1;
-		n[2].x = 1 + uvSubImageBottomLeft.x; n[2].y = -1 - uvSubImageBottomLeft.y; n[2].z = -1;
-		n[3].x = 1 + uvSubImageBottomLeft.x; n[3].y = 1 + uvSubImageBottomLeft.y; n[3].z = -1;
+			vec.Set(voxelX1, voxelY2, offset);
+			nor.Set(-1 - uvSubImageBottomLeft.x, 1 + uvSubImageBottomLeft.y, normalZ);
+			indices[1 + side] = getVertexIndex(vec, nor);
 
-		// Back normals
-		n[4].x = -1 - uvSubImageBottomLeft.x; n[4].y = -1 - uvSubImageBottomLeft.y; n[4].z = 1;
-		n[5].x = -1 - uvSubImageBottomLeft.x; n[5].y = 1 + uvSubImageBottomLeft.y; n[5].z = 1;
-		n[6].x = 1 + uvSubImageBottomLeft.x; n[6].y = -1 - uvSubImageBottomLeft.y; n[6].z = 1;
-		n[7].x = 1 + uvSubImageBottomLeft.x; n[7].y = 1 + uvSubImageBottomLeft.y; n[7].z = 1;
+			vec.Set(voxelX2, voxelY1, offset);
+			nor.Set(1 + uvSubImageBottomLeft.x, -1 - uvSubImageBottomLeft.y, normalZ);
+			indices[2 + side] = getVertexIndex(vec, nor);
 
-		// Front texture coords
-		uv[0].x = uvx1; uv[0].y = uvy;
-		uv[1].x = uvx1; uv[1].y = uvy;
-		uv[2].x = uvx2; uv[2].y = uvy;
-		uv[3].x = uvx2; uv[3].y = uvy;
-
-		// Back texture coords
-		uv[4].x = uvx1; uv[4].y = uvy;
-		uv[5].x = uvx1; uv[5].y = uvy;
-		uv[6].x = uvx2; uv[6].y = uvy;
-		uv[7].x = uvx2; uv[7].y = uvy;
+			vec.Set(voxelX2, voxelY2, offset);
+			nor.Set(1 + uvSubImageBottomLeft.x, 1 + uvSubImageBottomLeft.y, normalZ);
+			indices[3 + side] = getVertexIndex(vec, nor);
+		}
 
 		// Front triangles
-		tri[0] = 0;
-		tri[1] = 1;
-		tri[2] = 2;
-		tri[3] = 2;
-		tri[4] = 1;
-		tri[5] = 3;
+		tri.Add(indices[0]);
+		tri.Add(indices[1]);
+		tri.Add(indices[2]);
+		tri.Add(indices[2]);
+		tri.Add(indices[1]);
+		tri.Add(indices[3]);
 
 		// Back triangles
-		tri[6] = 6;
-		tri[7] = 7;
-		tri[8] = 4;
-		tri[9] = 4;
-		tri[10] = 7;
-		tri[11] = 5;
+		tri.Add(indices[6]);
+		tri.Add(indices[7]);
+		tri.Add(indices[4]);
+		tri.Add(indices[4]);
+		tri.Add(indices[7]);
+		tri.Add(indices[5]);
 
 		// Top triangles
-		tri[12] = 1;
-		tri[13] = 5;
-		tri[14] = 3;
-		tri[15] = 3;
-		tri[16] = 5;
-		tri[17] = 7;
+		tri.Add(indices[1]);
+		tri.Add(indices[5]);
+		tri.Add(indices[3]);
+		tri.Add(indices[3]);
+		tri.Add(indices[5]);
+		tri.Add(indices[7]);
 
 		// Bottom triangles
-		tri[18] = 4;
-		tri[19] = 0;
-		tri[20] = 6;
-		tri[21] = 6;
-		tri[22] = 0;
-		tri[23] = 2;
+		tri.Add(indices[4]);
+		tri.Add(indices[0]);
+		tri.Add(indices[6]);
+		tri.Add(indices[6]);
+		tri.Add(indices[0]);
+		tri.Add(indices[2]);
 
 		// Left triangles
-		tri[24] = 4;
-		tri[25] = 5;
-		tri[26] = 0;
-		tri[27] = 0;
-		tri[28] = 5;
-		tri[29] = 1;
+		tri.Add(indices[4]);
+		tri.Add(indices[5]);
+		tri.Add(indices[0]);
+		tri.Add(indices[0]);
+		tri.Add(indices[5]);
+		tri.Add(indices[1]);
 
 		// Right triangles
-		tri[30] = 2;
-		tri[31] = 3;
-		tri[32] = 6;
-		tri[33] = 6;
-		tri[34] = 3;
-		tri[35] = 7;
-
-		Mesh mesh = new Mesh();
-		mesh.vertices = v;
-		mesh.normals = n;
-		mesh.uv = uv;
-		mesh.triangles = tri;
-
-		return mesh;
+		tri.Add(indices[2]);
+		tri.Add(indices[3]);
+		tri.Add(indices[6]);
+		tri.Add(indices[6]);
+		tri.Add(indices[3]);
+		tri.Add(indices[7]);
 	}
 }

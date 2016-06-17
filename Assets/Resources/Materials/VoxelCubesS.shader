@@ -85,16 +85,16 @@
 
 				float2 atlasPixel = uvAtlasClamped * textureSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
-				float2 uvInsideVoxel = frac(i.objVertex + 0.5);
+				float2 uvInsideVoxel = frac(i.objVertex);
 				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
 				float2 atlasPixelInt = floor(atlasPixel);
 				float2 subImagePixelInt = floor(subImagePixel);
 
 				float voxelCountZ = i.extra.z;
-				float voxelPosZ = (i.objVertex.z + 0.5) * voxelCountZ;
+				float voxelPosZ = (i.objVertex.z) * voxelCountZ;
 				float uvInsideVoxelZ = frac(voxelPosZ);
 
-				float2 uvAtlasVoxelCenter = (atlasPixelInt + 0.5) * uvOnePixel;
+				float2 uvAtlasVoxelCenter = atlasPixelInt * uvOnePixel;
 
 				bool frontSide = (i.normal.z == -1);
 				bool backSide = (i.normal.z == 1);
