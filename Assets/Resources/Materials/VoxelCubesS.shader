@@ -98,10 +98,12 @@
 
 				bool frontSide = (i.normal.z == -1);
 				bool backSide = (i.normal.z == 1);
-				bool bottomSide = (i.normal.y == -1);
-				bool topSide = (i.normal.y == 1);
 				bool leftSide = (i.normal.x == -1);
 				bool rightSide = (i.normal.x == 1);
+				// Since cubes (containing one or more voxels) on top of each other share vertices along the y-axis, the normals
+				// will be wrong for the top-most cube. So we need to be a bit clever when calculating those sides.
+				bool topSide = (i.normal.y == 1) && !(leftSide || rightSide || frontSide ||backSide);
+				bool bottomSide = !(topSide || leftSide || rightSide || frontSide || backSide);
 
 				////////////////////////////////////////////////////////
 				// Get current voxel color

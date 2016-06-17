@@ -88,6 +88,12 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	int getVertexIndex(Vector3 v, Vector3 n)
 	{
+		// Check if the vertex can be shared with one already created. Note that this causes the normal to
+		// be wrong for the cube on top, but that is corrected in the shader.
+		int index = vertices.FindIndex(v2 => v2 == v);
+		if (index != -1)
+			return index;
+
 		vertices.Add(new Vector3(v.x, v.y, v.z));
 		normals.Add(new Vector3(n.x, n.y, n.z));
 		uvs.Add(new Vector2(uvSubImageBottomLeft.x + (v.x * uvOnePixel.x), uvSubImageBottomLeft.y + (v.y * uvOnePixel.y)));
