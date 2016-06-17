@@ -21,14 +21,19 @@ public class VoxelCubesScript : MonoBehaviour {
 	static Vector3 vec = new Vector3();
 	static Vector3 nor = new Vector3();
 
-	List<Vector3> vertices = new List<Vector3>(); 
-	List<Vector3> normals = new List<Vector3>(); 
-	List<Vector2> uvs = new List<Vector2>(); 
-	List<int> tri = new List<int>(); 
+	static List<Vector3> vertices = new List<Vector3>(); 
+	static List<Vector3> normals = new List<Vector3>(); 
+	static List<Vector2> uvs = new List<Vector2>(); 
+	static List<int> tri = new List<int>(); 
 
 	const int kVoxelNotFound = -1;
 
 	void Start () {
+		vertices.Clear();
+		normals.Clear();
+		uvs.Clear();
+		tri.Clear();
+
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
