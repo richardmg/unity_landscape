@@ -13,7 +13,6 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	Texture2D texture;
 	Vector2 uvSubImageBottomLeft;
-	Vector2 uvOnePixel;
 	int startPixelX;
 	int startPixelY;
 
@@ -23,7 +22,6 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	static List<Vector3> vertices = new List<Vector3>(); 
 	static List<Vector3> normals = new List<Vector3>(); 
-	static List<Vector2> uvs = new List<Vector2>(); 
 	static List<int> tri = new List<int>(); 
 
 	const int kVoxelNotFound = -1;
@@ -31,18 +29,18 @@ public class VoxelCubesScript : MonoBehaviour {
 	void Start () {
 		vertices.Clear();
 		normals.Clear();
-		uvs.Clear();
 		tri.Clear();
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.material.mainTexture;
 
-		// Caluclate uv coords based on atlasIndex
+		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
+		// vertices, since those can be calculated directly (and more precisely) in the shader
+		// based on the local position of the vertices themselves. But we piggyback the uv sub image
+		// origo onto the normals to give the shader at start offset.
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-
 		uvSubImageBottomLeft = new Vector2((float)startPixelX / texture.width, ((float)startPixelY / texture.height));
-		uvOnePixel = new Vector2(1.0f / texture.width, 1.0f / texture.height);
 
 		// Traverse each row in the texture
 		for (int y = 0; y < subImageHeight; ++y) {
@@ -67,7 +65,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		Mesh mesh = new Mesh();
 		mesh.vertices = vertices.ToArray();
 		mesh.normals = normals.ToArray();
-		mesh.uv = uvs.ToArray();
 		mesh.triangles = tri.ToArray();
 
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
@@ -96,7 +93,6 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		vertices.Add(new Vector3(v.x, v.y, v.z));
 		normals.Add(new Vector3(n.x, n.y, n.z));
-		uvs.Add(new Vector2(uvSubImageBottomLeft.x + (v.x * uvOnePixel.x), uvSubImageBottomLeft.y + (v.y * uvOnePixel.y)));
 
 		return vertices.Count - 1;
 	}

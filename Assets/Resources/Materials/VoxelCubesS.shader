@@ -33,12 +33,10 @@
 			{
 				float4 vertex : POSITION;
 				float4 normal : NORMAL;
-				float2 uv : TEXCOORD0;
 			};
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
 				float4 vertex : SV_POSITION;
 				float4 objVertex : POSITION1;
 				float3 normal : NORMAL;
@@ -60,7 +58,6 @@
 				v2f o;
 				o.objVertex = v.vertex;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
 				float2 uvSubImageBottomLeft = v.normal - float2(v.normal.x > 0 ? 1 : -1, v.normal.y > 0 ? 1 : -1);
 				o.normal = v.normal - float3(uvSubImageBottomLeft, 0);
@@ -81,9 +78,9 @@
 				float2 uvOnePixel = 1.0f / textureSize;
 				float2 uvSubImageSize = subImageSize * uvOnePixel;
 				float2 uvSubImageBottomLeft = float2(i.extra.x, i.extra.y);
-				float2 uvAtlasClamped = clamp(i.uv, uvSubImageBottomLeft, uvSubImageBottomLeft + uvSubImageSize - (uvOnePixel / 2));
+				float2 uvAtlas = uvSubImageBottomLeft + clamp((i.objVertex.xy * uvOnePixel), 0, uvSubImageSize - (uvOnePixel / 2));
 
-				float2 atlasPixel = uvAtlasClamped * textureSize;
+				float2 atlasPixel = uvAtlas * textureSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
 				float2 uvInsideVoxel = frac(i.objVertex);
 				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
