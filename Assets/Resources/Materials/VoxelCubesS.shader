@@ -32,15 +32,16 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float4 normal : NORMAL;
+				float2 uvSubImageBottomLeft : TEXCOORD0;
+				float2 unbatchedGeometry : TEXCOORD1;
 			};
 
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-				float4 objVertex : POSITION1;
+				float3 objVertex : POSITION1;
 				float3 normal : NORMAL;
-				float3 extra : COLOR1;
+				float4 extra : COLOR1;
 			};
 
 			int _TextureWidth;
@@ -56,15 +57,33 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.objVertex = v.vertex;
+				o.objVertex = float3(floor(v.unbatchedGeometry), 0);
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 
-				float2 uvSubImageBottomLeft = v.normal - float2(v.normal.x > 0 ? 1 : -1, v.normal.y > 0 ? 1 : -1);
-				o.normal = v.normal - float3(uvSubImageBottomLeft, 0);
+				int normalCode = int(v.unbatchedGeometry.x * 10) - int(floor(v.unbatchedGeometry.x) * 10);
+
+				if (normalCode == 1)
+					o.normal = float3(-1, -1, -1);
+				else if (normalCode == 2)
+					o.normal = float3(-1, 1, -1);
+				else if (normalCode == 3)
+					o.normal = float3(1, -1, -1);
+				else if (normalCode == 4)
+					o.normal = float3(1, 1, -1);
+				else if (normalCode == 5)
+					o.normal = float3(-1, -1, 1);
+				else if (normalCode == 6)
+					o.normal = float3(-1, 1, 1);
+				else if (normalCode == 7)
+					o.normal = float3(1, -1, 1);
+				else if (normalCode == 8)
+					o.normal = float3(1, 1, 1);
+
+				// HMMM SCALE VIL VEL OGSÅ BLI HELT FEIL NÅ....
 				float xScale = length(mul(_Object2World, float3(1, 0, 0))); 
 				float zScale = length(mul(_Object2World, float3(0, 0, 1))); 
 				float voxelCountZ = zScale / xScale;
-				o.extra = float3(abs(uvSubImageBottomLeft), voxelCountZ);
+				o.extra = float4(v.uvSubImageBottomLeft, voxelCountZ, 0);
 
 				return o;
 			}

@@ -12,27 +12,30 @@ public class VoxelCubesScript : MonoBehaviour {
 	public bool trimVolume = false;
 
 	Texture2D texture;
-	Vector2 uvSubImageBottomLeft;
 	int startPixelX;
 	int startPixelY;
 
 	static int[] indices = new int[8];
 	static Vector3 vec = new Vector3();
-	static Vector3 nor = new Vector3();
-
 	static List<Vector3> vertices = new List<Vector3>(); 
-	static List<Vector3> normals = new List<Vector3>(); 
+	static List<float> normalCodes = new List<float>(); 
 	static List<int> tri = new List<int>(); 
 
 	const int kVoxelNotFound = -1;
+	const int kBackSide = 4;
+
+	const float kBottomLeft = 0.1f;
+	const float kTopLeft = 0.2f;
+	const float kBottomRight = 0.3f;
+	const float kTopRight = 0.4f;
 
 	void Start () {
 		vertices.Clear();
-		normals.Clear();
+		normalCodes.Clear();
 		tri.Clear();
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
-		texture = (Texture2D)meshRenderer.material.mainTexture;
+		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
 
 		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
 		// vertices, since those can be calculated directly (and more precisely) in the shader
@@ -40,7 +43,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		// origo onto the normals to give the shader at start offset.
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-		uvSubImageBottomLeft = new Vector2((float)startPixelX / texture.width, ((float)startPixelY / texture.height));
+		Vector2 uvSubImageBottomLeft = new Vector2((float)startPixelX / texture.width, ((float)startPixelY / texture.height));
 
 		// Traverse each row in the texture
 		for (int y = 0; y < subImageHeight; ++y) {
@@ -64,8 +67,24 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = vertices.ToArray();
-		mesh.normals = normals.ToArray();
 		mesh.triangles = tri.ToArray();
+
+		// When using object batching, local vertices and normals will be translated on the CPU before
+		// passed down to the GPU. We therefore loose the original values in the shader, which we need.
+		// Instead we pass this information on the side covered as uv coords.
+		// We therefore redefine uv to be vertex.x + normalCode. 
+		int vertexCount = mesh.vertices.Length;
+		Vector2[] uvSubImageBottomLeftArray = new Vector2[vertexCount];
+		Vector2[] unbatchedGeometry = new Vector2[vertexCount];
+
+		for (int i = 0; i < vertexCount; ++i) {
+			Vector3 v = mesh.vertices[i];
+			uvSubImageBottomLeftArray[i] = uvSubImageBottomLeft;
+			unbatchedGeometry[i] = new Vector2(v.x + normalCodes[i], v.y);
+		}
+
+		mesh.uv = uvSubImageBottomLeftArray;
+		mesh.uv2 = unbatchedGeometry;
 
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
@@ -83,7 +102,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return kVoxelNotFound;
 	}
 
-	int getVertexIndex(Vector3 v, Vector3 n)
+	int getVertexIndex(Vector3 v, float normalCode)
 	{
 		// Check if the vertex can be shared with one already created. Note that this causes the normal to
 		// be wrong for the cube on top, but that is corrected in the shader.
@@ -92,32 +111,28 @@ public class VoxelCubesScript : MonoBehaviour {
 			return index;
 
 		vertices.Add(new Vector3(v.x, v.y, v.z));
-		normals.Add(new Vector3(n.x, n.y, n.z));
+		normalCodes.Add(normalCode);
 
 		return vertices.Count - 1;
 	}
 
 	void createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY1, int voxelY2)
 	{
-		for (int side = 0; side <= 4; side += 4) {
-			float offset = side / 4;
-			float normalZ = -1 + (side / 2);
+		for (int i = 0; i <= 1; ++i) {
+			int indexBase = i * 4;
+			float normalCodeSide = i * (kBackSide / 10.0f);
 
-			vec.Set(voxelX1, voxelY1, offset);
-			nor.Set(-1 - uvSubImageBottomLeft.x, -1 - uvSubImageBottomLeft.y, normalZ);
-			indices[0 + side] = getVertexIndex(vec, nor);
+			vec.Set(voxelX1, voxelY1, i);
+			indices[0 + indexBase] = getVertexIndex(vec, kBottomLeft + normalCodeSide);
 
-			vec.Set(voxelX1, voxelY2, offset);
-			nor.Set(-1 - uvSubImageBottomLeft.x, 1 + uvSubImageBottomLeft.y, normalZ);
-			indices[1 + side] = getVertexIndex(vec, nor);
+			vec.Set(voxelX1, voxelY2, i);
+			indices[1 + indexBase] = getVertexIndex(vec, kTopLeft + normalCodeSide);
 
-			vec.Set(voxelX2, voxelY1, offset);
-			nor.Set(1 + uvSubImageBottomLeft.x, -1 - uvSubImageBottomLeft.y, normalZ);
-			indices[2 + side] = getVertexIndex(vec, nor);
+			vec.Set(voxelX2, voxelY1, i);
+			indices[2 + indexBase] = getVertexIndex(vec, kBottomRight + normalCodeSide);
 
-			vec.Set(voxelX2, voxelY2, offset);
-			nor.Set(1 + uvSubImageBottomLeft.x, 1 + uvSubImageBottomLeft.y, normalZ);
-			indices[3 + side] = getVertexIndex(vec, nor);
+			vec.Set(voxelX2, voxelY2, i);
+			indices[3 + indexBase] = getVertexIndex(vec, kTopRight + normalCodeSide);
 		}
 
 		// Front triangles
