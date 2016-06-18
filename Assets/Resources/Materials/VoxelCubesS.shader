@@ -57,10 +57,10 @@
 			v2f vert (appdata v)
 			{
 				v2f o;
-				o.objVertex = float3(floor(v.unbatchedGeometry), 0);
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				int normalCode = int(v.unbatchedGeometry.x * 10) - int(floor(v.unbatchedGeometry.x) * 10);
+				int voxelDepth = int(v.unbatchedGeometry.y * 100) - int(floor(v.unbatchedGeometry.y) * 100);
 
 				if (normalCode == 1)
 					o.normal = float3(-1, -1, -1);
@@ -79,11 +79,8 @@
 				else if (normalCode == 8)
 					o.normal = float3(1, 1, 1);
 
-				// HMMM SCALE VIL VEL OGSÅ BLI HELT FEIL NÅ....
-				float xScale = length(mul(_Object2World, float3(1, 0, 0))); 
-				float zScale = length(mul(_Object2World, float3(0, 0, 1))); 
-				float voxelCountZ = zScale / xScale;
-				o.extra = float4(v.uvSubImageBottomLeft, voxelCountZ, 0);
+				o.objVertex = float3(floor(v.unbatchedGeometry), o.normal.z == -1 ? 0 : voxelDepth);
+				o.extra = float4(v.uvSubImageBottomLeft, voxelDepth, 0);
 
 				return o;
 			}
@@ -106,10 +103,9 @@
 				float2 atlasPixelInt = floor(atlasPixel);
 				float2 subImagePixelInt = floor(subImagePixel);
 
-				float voxelCountZ = i.extra.z;
-				float voxelPosZ = (i.objVertex.z) * voxelCountZ;
+				float voxelDepth = i.extra.z;
+				float voxelPosZ = i.objVertex.z;
 				float uvInsideVoxelZ = frac(voxelPosZ);
-
 				float2 uvAtlasVoxelCenter = atlasPixelInt * uvOnePixel;
 
 				bool frontSide = (i.normal.z == -1);
@@ -173,7 +169,7 @@
 
 				lightPos.x = (_PixelateVoxelX == 1 ? subImagePixelInt.x : subImagePixel.x) / subImageSize.x;
 				lightPos.y = (_PixelateVoxelY == 1 ? subImagePixelInt.y : subImagePixel.y) / subImageSize.y;
-				lightPos.z = (_PixelateVoxelZ == 1 ? floor(voxelPosZ) : voxelPosZ) / voxelCountZ;
+				lightPos.z = (_PixelateVoxelZ == 1 ? floor(voxelPosZ) : voxelPosZ) / voxelDepth;
 
 				float3 lightDelta = lightPos * lightRange;
 

@@ -6,6 +6,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public int subImageWidth = 16;
 	public int subImageHeight = 8;
+	public int voxelDepth = 4;
 	public bool addFront = true;
 	public bool addBack = true;
 	public bool addVolume = true;
@@ -80,7 +81,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		for (int i = 0; i < vertexCount; ++i) {
 			Vector3 v = mesh.vertices[i];
 			uvSubImageBottomLeftArray[i] = uvSubImageBottomLeft;
-			unbatchedGeometry[i] = new Vector2(v.x + normalCodes[i], v.y);
+			unbatchedGeometry[i] = new Vector2(v.x + normalCodes[i], v.y + (voxelDepth / 100.0f));
 		}
 
 		mesh.uv = uvSubImageBottomLeftArray;
@@ -122,16 +123,16 @@ public class VoxelCubesScript : MonoBehaviour {
 			int indexBase = i * 4;
 			float normalCodeSide = i * (kBackSide / 10.0f);
 
-			vec.Set(voxelX1, voxelY1, i);
+			vec.Set(voxelX1, voxelY1, i * voxelDepth);
 			indices[0 + indexBase] = getVertexIndex(vec, kBottomLeft + normalCodeSide);
 
-			vec.Set(voxelX1, voxelY2, i);
+			vec.Set(voxelX1, voxelY2, i * voxelDepth);
 			indices[1 + indexBase] = getVertexIndex(vec, kTopLeft + normalCodeSide);
 
-			vec.Set(voxelX2, voxelY1, i);
+			vec.Set(voxelX2, voxelY1, i * voxelDepth);
 			indices[2 + indexBase] = getVertexIndex(vec, kBottomRight + normalCodeSide);
 
-			vec.Set(voxelX2, voxelY2, i);
+			vec.Set(voxelX2, voxelY2, i * voxelDepth);
 			indices[3 + indexBase] = getVertexIndex(vec, kTopRight + normalCodeSide);
 		}
 
