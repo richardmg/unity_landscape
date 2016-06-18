@@ -23,6 +23,8 @@
 		{
 
 			CGPROGRAM
+// Upgrade NOTE: excluded shader from DX11 and Xbox360 because it uses wrong array syntax (type[size] name)
+#pragma exclude_renderers d3d11 xbox360
 
 			#pragma vertex vert
 			#pragma fragment frag
@@ -54,31 +56,24 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
+			static float3 normalForCode[8] = {
+				float3(-1, -1, -1),
+				float3(-1, 1, -1),
+				float3(1, -1, -1),
+				float3(1, 1, -1),
+				float3(-1, -1, 1),
+				float3(-1, 1, 1),
+				float3(1, -1, 1),
+				float3(1, 1, 1)
+ 			};
+
 			v2f vert (appdata v)
 			{
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-
-				int normalCode = int(v.unbatchedGeometry.x * 10) - int(floor(v.unbatchedGeometry.x) * 10);
+				int normalCode = int(v.unbatchedGeometry.x * 10) - int(floor(v.unbatchedGeometry.x) * 10) - 1;
 				int voxelDepth = int(v.unbatchedGeometry.y * 100) - int(floor(v.unbatchedGeometry.y) * 100);
-
-				if (normalCode == 1)
-					o.normal = float3(-1, -1, -1);
-				else if (normalCode == 2)
-					o.normal = float3(-1, 1, -1);
-				else if (normalCode == 3)
-					o.normal = float3(1, -1, -1);
-				else if (normalCode == 4)
-					o.normal = float3(1, 1, -1);
-				else if (normalCode == 5)
-					o.normal = float3(-1, -1, 1);
-				else if (normalCode == 6)
-					o.normal = float3(-1, 1, 1);
-				else if (normalCode == 7)
-					o.normal = float3(1, -1, 1);
-				else if (normalCode == 8)
-					o.normal = float3(1, 1, 1);
-
+				o.normal = normalForCode[normalCode];
 				o.objVertex = float3(floor(v.unbatchedGeometry), o.normal.z == -1 ? 0 : voxelDepth);
 				o.extra = float4(v.uvSubImageBottomLeft, voxelDepth, 0);
 
