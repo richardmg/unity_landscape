@@ -131,10 +131,10 @@
 					// will still bleed in from the edges when drawing opaque voxels unless we do this clamping.
 					float seam = 0.5f;
 					float oneMinusSeam = 1 - seam;
-					bool leftEdge = uvInsideVoxel.x < seam && subImagePixelInt.x > 0;
-					bool rightEdge = uvInsideVoxel.x > oneMinusSeam && subImagePixelInt.x < subImageSize.x - 1;
-					bool topEdge = uvInsideVoxel.y > oneMinusSeam && subImagePixelInt.y < subImageSize.y - 1;
-					bool bottomEdge = uvInsideVoxel.y < seam && subImagePixelInt.y > 0;
+					bool leftEdge = uvInsideVoxel.x < seam;
+					bool rightEdge = uvInsideVoxel.x > oneMinusSeam;
+					bool topEdge = uvInsideVoxel.y > oneMinusSeam;
+					bool bottomEdge = uvInsideVoxel.y < seam;
 
 					if (leftEdge)
 						c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
