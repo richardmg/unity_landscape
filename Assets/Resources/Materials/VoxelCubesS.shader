@@ -56,6 +56,8 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
+			static fixed4 red = fixed4(1, 0, 0, 1);
+
 			static float3 normalForCode[8] = {
 				float3(-1, -1, -1),
 				float3(-1, 1, -1),
@@ -82,7 +84,6 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				fixed4 red = fixed4(1, 0, 0, 1);
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
 
