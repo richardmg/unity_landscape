@@ -71,22 +71,19 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		// When using object batching, local vertices and normals will be translated on the CPU before
 		// passed down to the GPU. We therefore loose the original values in the shader, which we need.
-		// We therefore encode this information covered as uv coords, using the integer space for vertex
-		// position, and the digit space for normals.
+		// We therefore encode this information covered as vertex color.
 		int vertexCount = mesh.vertices.Length;
 		Vector2[] uvSubImageBottomLeftArray = new Vector2[vertexCount];
-		Vector2[] unbatchedGeometry = new Vector2[vertexCount];
+		Color[] unbatchedGeometry = new Color[vertexCount];
 
 		for (int i = 0; i < vertexCount; ++i) {
 			Vector3 v = mesh.vertices[i];
 			uvSubImageBottomLeftArray[i] = uvSubImageBottomLeft;
-			float normalCodeAsDigits = normalCodes[i] / 10.0f;
-			float voxelDepthAsDigits = voxelDepth / 100.0f;
-			unbatchedGeometry[i] = new Vector2(v.x + normalCodeAsDigits, v.y + voxelDepthAsDigits);
+			unbatchedGeometry[i] = new Color(v.x, v.y, normalCodes[i], voxelDepth);
 		}
 
 		mesh.uv = uvSubImageBottomLeftArray;
-		mesh.uv2 = unbatchedGeometry;
+		mesh.colors = unbatchedGeometry;
 
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
@@ -121,20 +118,19 @@ public class VoxelCubesScript : MonoBehaviour {
 	void createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY1, int voxelY2)
 	{
 		for (int i = 0; i <= 1; ++i) {
-			int indexBase = i * 4;
-			int normalCodeSide = i * kBackSide;
+			int side = i * kBackSide;
 
 			vec.Set(voxelX1, voxelY1, i * voxelDepth);
-			indices[0 + indexBase] = getVertexIndex(vec, kBottomLeft + normalCodeSide);
+			indices[0 + side] = getVertexIndex(vec, kBottomLeft + side);
 
 			vec.Set(voxelX1, voxelY2, i * voxelDepth);
-			indices[1 + indexBase] = getVertexIndex(vec, kTopLeft + normalCodeSide);
+			indices[1 + side] = getVertexIndex(vec, kTopLeft + side);
 
 			vec.Set(voxelX2, voxelY1, i * voxelDepth);
-			indices[2 + indexBase] = getVertexIndex(vec, kBottomRight + normalCodeSide);
+			indices[2 + side] = getVertexIndex(vec, kBottomRight + side);
 
 			vec.Set(voxelX2, voxelY2, i * voxelDepth);
-			indices[3 + indexBase] = getVertexIndex(vec, kTopRight + normalCodeSide);
+			indices[3 + side] = getVertexIndex(vec, kTopRight + side);
 		}
 
 		// Front triangles

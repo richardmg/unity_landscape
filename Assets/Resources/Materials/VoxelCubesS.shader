@@ -35,7 +35,7 @@
 			{
 				float4 vertex : POSITION;
 				float2 uvSubImageBottomLeft : TEXCOORD0;
-				float2 unbatchedGeometry : TEXCOORD1;
+				float4 unbatchedGeometry : COLOR;
 			};
 
 			struct v2f
@@ -69,13 +69,13 @@
 
 			v2f vert (appdata v)
 			{
-				int normalCode = int(v.unbatchedGeometry.x * 10) - int(floor(v.unbatchedGeometry.x) * 10);
-				int voxelDepth = int(v.unbatchedGeometry.y * 100) - int(floor(v.unbatchedGeometry.y) * 100);
+				int normalCode = v.unbatchedGeometry.b;
+				int voxelDepth = v.unbatchedGeometry.a;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = normalForCode[normalCode];
-				o.objVertex = float3(floor(v.unbatchedGeometry), o.normal.z == -1 ? 0 : voxelDepth);
+				o.objVertex = float3(v.unbatchedGeometry.rg, o.normal.z == -1 ? 0 : voxelDepth);
 				o.extra = float4(v.uvSubImageBottomLeft, voxelDepth, 0);
 				return o;
 			}
