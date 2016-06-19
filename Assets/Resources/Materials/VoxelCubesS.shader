@@ -41,7 +41,7 @@
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-				float3 objVertex : POSITION1;
+				float3 objVertex : COLOR;
 				float3 normal : NORMAL;
 				float4 extra : COLOR1;
 			};
@@ -84,25 +84,6 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float2 textureSize = float2(_TextureWidth, _TextureHeight);
-				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
-
-				float2 uvOnePixel = 1.0f / textureSize;
-				float2 uvSubImageSize = subImageSize * uvOnePixel;
-				float2 uvSubImageBottomLeft = float2(i.extra.x, i.extra.y);
-				float2 uvAtlas = uvSubImageBottomLeft + clamp((i.objVertex.xy * uvOnePixel), 0, uvSubImageSize - (uvOnePixel / 2));
-
-				float2 atlasPixel = uvAtlas * textureSize;
-				float2 atlasIndex = floor(atlasPixel / subImageSize);
-				float2 uvInsideVoxel = frac(i.objVertex);
-				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
-				float2 atlasPixelInt = floor(atlasPixel);
-				float2 subImagePixelInt = floor(subImagePixel);
-
-				float voxelDepth = i.extra.z;
-				float voxelPosZ = i.objVertex.z;
-				float uvInsideVoxelZ = frac(voxelPosZ);
-				float2 uvAtlasVoxelCenter = atlasPixelInt * uvOnePixel;
 
 				bool frontSide = (i.normal.z == -1);
 				bool backSide = (i.normal.z == 1);
@@ -112,6 +93,32 @@
 				// will be wrong for the top-most cube. So we need to be a bit clever when calculating those sides.
 				bool topSide = (i.normal.y == 1) && !(leftSide || rightSide || frontSide ||backSide);
 				bool bottomSide = !(topSide || leftSide || rightSide || frontSide || backSide);
+
+				float2 textureSize = float2(_TextureWidth, _TextureHeight);
+				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
+
+				float2 uvOnePixel = 1.0f / textureSize;
+				float2 uvHalfPixel = uvOnePixel / 2;
+				float2 uvSubImageSize = subImageSize * uvOnePixel;
+				float2 uvSubImageBottomLeft = float2(i.extra.x, i.extra.y);
+				float2 uvInsideVoxel = frac(i.objVertex);
+				float2 uvAtlas = uvSubImageBottomLeft + clamp((i.objVertex.xy * uvOnePixel), 0, uvSubImageSize - uvHalfPixel);
+
+				if (rightSide)
+					uvAtlas.x -= uvHalfPixel;
+				else if (topSide)
+					uvAtlas.y -= uvHalfPixel;
+
+				float2 atlasPixel = uvAtlas * textureSize;
+				float2 atlasIndex = floor(atlasPixel / subImageSize);
+				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
+				float2 atlasPixelInt = floor(atlasPixel);
+				float2 subImagePixelInt = floor(subImagePixel);
+
+				float voxelDepth = i.extra.z;
+				float voxelPosZ = i.objVertex.z;
+				float uvInsideVoxelZ = frac(voxelPosZ);
+				float2 uvAtlasVoxelCenter = atlasPixelInt * uvOnePixel;
 
 				////////////////////////////////////////////////////////
 				// Get current voxel color
