@@ -104,11 +104,12 @@
 				float2 uvInsideVoxel = frac(i.objVertex);
 				float2 uvAtlas = uvSubImageBottomLeft + clamp((i.objVertex.xy * uvOnePixel), 0, uvSubImageSize - uvHalfPixel);
 
+				// Reduce the number of transparent pixels sampled
 				if (rightSide)
 					uvAtlas.x -= uvHalfPixel;
 				else if (topSide)
 					uvAtlas.y -= uvHalfPixel;
-
+				
 				float2 atlasPixel = uvAtlas * textureSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
 				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
