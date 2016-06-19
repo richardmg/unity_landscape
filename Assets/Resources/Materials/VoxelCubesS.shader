@@ -71,8 +71,8 @@
 
 			v2f vert (appdata v)
 			{
-				int normalCode = v.unbatchedGeometry.b;
-				int voxelDepth = v.unbatchedGeometry.a;
+				int normalCode = (int)v.unbatchedGeometry.b;
+				float voxelDepth = v.unbatchedGeometry.a;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);

@@ -6,7 +6,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public int subImageWidth = 16;
 	public int subImageHeight = 8;
-	public int voxelDepth = 4;
+	public float voxelDepth = 4;
 	public bool addFront = true;
 	public bool addBack = true;
 	public bool addVolume = true;
