@@ -115,45 +115,30 @@ public class VoxelCubesScript : MonoBehaviour {
 	}
 
 
+	bool writeIndex(int index, int voxelX, int voxelY, float voxelDepth, int normalCode)
+	{
+		vec.Set(voxelX, voxelY, voxelDepth);
+		int i = vertices.FindIndex(v2 => v2 == vec);
+		indices[index] = getVertexIndex(vec, normalCode, i);
+		return i != -1;
+	}
+
 	void createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY1, int voxelY2)
 	{
-		vec.Set(voxelX1, voxelY1, 0);
-		int i0 = vertices.FindIndex(v2 => v2 == vec);
-		indices[0] = getVertexIndex(vec, kBottomLeft, i0);
+		bool reuse0 = writeIndex(0, voxelX1, voxelY1, 0, kBottomLeft);
+		writeIndex(1, voxelX1, voxelY2, 0, kTopLeft);
+		bool reuse2 = writeIndex(2, voxelX2, voxelY1, 0, kBottomRight);
+		writeIndex(3, voxelX2, voxelY2, 0, kTopRight);
+		bool reuse4 = writeIndex(4, voxelX1, voxelY1, voxelDepth, kBottomLeft + kBackSide);
+		writeIndex(5, voxelX1, voxelY2, voxelDepth, kTopLeft + kBackSide);
+		bool reuse6 = writeIndex(6, voxelX2, voxelY1, voxelDepth, kBottomRight + kBackSide);
+		writeIndex(7, voxelX2, voxelY2, voxelDepth, kTopRight + kBackSide);
 
-		vec.Set(voxelX1, voxelY2, 0);
-		int i1 = vertices.FindIndex(v2 => v2 == vec);
-		indices[1] = getVertexIndex(vec, kTopLeft, i1);
-
-		vec.Set(voxelX2, voxelY1, 0);
-		int i2 = vertices.FindIndex(v2 => v2 == vec);
-		indices[2] = getVertexIndex(vec, kBottomRight, i2);
-
-		vec.Set(voxelX2, voxelY2, 0);
-		int i3 = vertices.FindIndex(v2 => v2 == vec);
-		indices[3] = getVertexIndex(vec, kTopRight, i3);
-
-		vec.Set(voxelX1, voxelY1, voxelDepth);
-		int i4 = vertices.FindIndex(v2 => v2 == vec);
-		indices[4] = getVertexIndex(vec, kBottomLeft + kBackSide, i4);
-
-		vec.Set(voxelX1, voxelY2, voxelDepth);
-		int i5 = vertices.FindIndex(v2 => v2 == vec);
-		indices[5] = getVertexIndex(vec, kTopLeft + kBackSide, i5);
-
-		vec.Set(voxelX2, voxelY1, voxelDepth);
-		int i6 = vertices.FindIndex(v2 => v2 == vec);
-		indices[6] = getVertexIndex(vec, kBottomRight + kBackSide, i6);
-
-		vec.Set(voxelX2, voxelY2, voxelDepth);
-		int i7 = vertices.FindIndex(v2 => v2 == vec);
-		indices[7] = getVertexIndex(vec, kTopRight + kBackSide, i7);
-
-		if (i0 != -1 && i2 != -1 && i4 != -1 && i6 != -1) {
+		if (reuse0 && reuse2 && reuse4 && reuse6) {
 			// All nodes as shared. Flip nodes on one side to mark that this is
 			// bottom of the cube. For the cubes below, no top face will be visible.
-			normalCodes[i0] = kBottomLeft;
-			normalCodes[i4] = kBottomLeft + kBackSide;
+			normalCodes[indices[0]] = kBottomLeft;
+			normalCodes[indices[4]] = kBottomLeft + kBackSide;
 		}
 
 		// Front triangles
