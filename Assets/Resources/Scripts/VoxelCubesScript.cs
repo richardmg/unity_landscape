@@ -19,16 +19,15 @@ public class VoxelCubesScript : MonoBehaviour {
 	static int[] indices = new int[8];
 	static Vector3 vec = new Vector3();
 	static List<Vector3> vertices = new List<Vector3>(); 
-	static List<float> normalCodes = new List<float>(); 
+	static List<int> normalCodes = new List<int>(); 
 	static List<int> tri = new List<int>(); 
 
 	const int kVoxelNotFound = -1;
+	const int kBottomLeft = 0;
+	const int kTopLeft = 1;
+	const int kBottomRight = 2;
+	const int kTopRight = 3;
 	const int kBackSide = 4;
-
-	const float kBottomLeft = 0.1f;
-	const float kTopLeft = 0.2f;
-	const float kBottomRight = 0.3f;
-	const float kTopRight = 0.4f;
 
 	void Start () {
 		vertices.Clear();
@@ -72,8 +71,8 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		// When using object batching, local vertices and normals will be translated on the CPU before
 		// passed down to the GPU. We therefore loose the original values in the shader, which we need.
-		// Instead we pass this information on the side covered as uv coords.
-		// We therefore redefine uv to be vertex.x + normalCode. 
+		// We therefore encode this information covered as uv coords, using the integer space for vertex
+		// position, and the digit space for normals.
 		int vertexCount = mesh.vertices.Length;
 		Vector2[] uvSubImageBottomLeftArray = new Vector2[vertexCount];
 		Vector2[] unbatchedGeometry = new Vector2[vertexCount];
@@ -81,7 +80,9 @@ public class VoxelCubesScript : MonoBehaviour {
 		for (int i = 0; i < vertexCount; ++i) {
 			Vector3 v = mesh.vertices[i];
 			uvSubImageBottomLeftArray[i] = uvSubImageBottomLeft;
-			unbatchedGeometry[i] = new Vector2(v.x + normalCodes[i], v.y + (voxelDepth / 100.0f));
+			float normalCodeAsDigits = normalCodes[i] / 10.0f;
+			float voxelDepthAsDigits = voxelDepth / 100.0f;
+			unbatchedGeometry[i] = new Vector2(v.x + normalCodeAsDigits, v.y + voxelDepthAsDigits);
 		}
 
 		mesh.uv = uvSubImageBottomLeftArray;
@@ -103,7 +104,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return kVoxelNotFound;
 	}
 
-	int getVertexIndex(Vector3 v, float normalCode)
+	int getVertexIndex(Vector3 v, int normalCode)
 	{
 		// Check if the vertex can be shared with one already created. Note that this causes the normal to
 		// be wrong for the cube on top, but that is corrected in the shader.
@@ -121,7 +122,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	{
 		for (int i = 0; i <= 1; ++i) {
 			int indexBase = i * 4;
-			float normalCodeSide = i * (kBackSide / 10.0f);
+			int normalCodeSide = i * kBackSide;
 
 			vec.Set(voxelX1, voxelY1, i * voxelDepth);
 			indices[0 + indexBase] = getVertexIndex(vec, kBottomLeft + normalCodeSide);

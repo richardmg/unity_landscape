@@ -69,7 +69,7 @@
 
 			v2f vert (appdata v)
 			{
-				int normalCode = int(v.unbatchedGeometry.x * 10) - int(floor(v.unbatchedGeometry.x) * 10) - 1;
+				int normalCode = int(v.unbatchedGeometry.x * 10) - int(floor(v.unbatchedGeometry.x) * 10);
 				int voxelDepth = int(v.unbatchedGeometry.y * 100) - int(floor(v.unbatchedGeometry.y) * 100);
 
 				v2f o;
