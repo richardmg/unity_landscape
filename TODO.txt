@@ -163,18 +163,10 @@
             them further.
 
         - Technical:
-            Use two groups of objects for dynamic mesh:
-                Group 1: draws volume, culling off. Only
-                    for near objects.
-                Group 2: draws front and back quad, with culling.
-                    I will do this for all objects that are within
-                    view range.
-                    By doing so we can simplyfy that shader a
-                    lot. Also investigate if i can add a 1024x1024
-                    texture to the shader material that describes
-                    an index to the texture atlas for each object.
-                    Then I can perhaps get away with one draw call
-                    for all objects. This can be in conflict with
-                    unitys object culling algorithm, which can
-                    drags down performance.
-
+            - Collapse two adjacent cubes along y-axis in a single object into one.
+            - In each cube, for each vertex on either bottom left or top right, add
+                a color number telling in which direction opaque pixels can be found in
+                all directions around the cube. A color value should be either -1 or 1.
+                Other "unused" vertices uses the number 0. When a triangle is interpolated, only
+                the dominant corner will be used, and I should be able to read out if a
+                color value is above or below 0.
