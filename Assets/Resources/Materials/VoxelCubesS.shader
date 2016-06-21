@@ -35,6 +35,7 @@
 			{
 				float4 vertex : POSITION;
 				float2 uvSubImageBottomLeft : TEXCOORD0;
+				float2 uvCubeRectEncoded : TEXCOORD1;
 				float4 unbatchedGeometry : COLOR;
 			};
 
@@ -43,7 +44,8 @@
 				float4 vertex : SV_POSITION;
 				float3 objVertex : COLOR;
 				float3 normal : NORMAL;
-				float4 extra : COLOR1;
+				float4 uvCubeRect : COLOR1;
+				float4 extra : COLOR2;
 			};
 
 			int _TextureWidth;
@@ -78,6 +80,7 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = normalForCode[normalCode];
 				o.objVertex = float3(v.unbatchedGeometry.rg, (o.normal.z - 1) * voxelDepth / -2);
+				o.uvCubeRect = float4(floor(v.uvCubeRectEncoded) / float2(_TextureWidth, _TextureHeight), frac(v.uvCubeRectEncoded));
 				o.extra = float4(v.uvSubImageBottomLeft, voxelDepth, 0);
 				return o;
 			}
@@ -109,6 +112,8 @@
 				float2 uvTopAndRightSideAdjustment = uvHalfPixel * float2(int(rightSide), int(topSide));
 				float2 uvAtlas = uvSubImageBottomLeft + uvInsideSubImageClamped - uvTopAndRightSideAdjustment;
 
+				uvAtlas = clamp(uvAtlas, i.uvCubeRect.xy, i.uvCubeRect.zw);
+
 				float2 atlasPixel = uvAtlas * textureSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
 				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
@@ -124,44 +129,6 @@
 				// Get current voxel color
 
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter, 0, 0));
-
-				if (c.a == 0) {
-					// Always sample opaque pixels. Transparent pixels are not converted to voxels, but
-					// will still bleed in from the edges when drawing opaque voxels unless we do this clamping.
-					float seam = 0.5f;
-					float oneMinusSeam = 1 - seam;
-					bool leftEdge = uvInsideVoxel.x < seam;
-					bool rightEdge = uvInsideVoxel.x > oneMinusSeam;
-					bool topEdge = uvInsideVoxel.y > oneMinusSeam;
-					bool bottomEdge = uvInsideVoxel.y < seam;
-
-					if (leftEdge)
-						c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
-					else if (rightEdge)
-						c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y, 0, 0));
-
-					if (c.a == 0) {
-						if (bottomEdge)
-							c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
-						else if (topEdge)
-							c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
-					}
-
-					if (c.a == 0) {
-						// Check corners
-						if (leftEdge) {
-							if (bottomEdge)
-								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
-							else if (topEdge)
-								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x - uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
-						} else if (rightEdge) {
-							if (bottomEdge)
-								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y - uvOnePixel.y, 0, 0));
-							else if (topEdge)
-								c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter.x + uvOnePixel.x, uvAtlasVoxelCenter.y + uvOnePixel.y, 0, 0));
-						}
-					}
-				}
 
 				////////////////////////////////////////////////////////
 				// Calculate lights
