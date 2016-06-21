@@ -84,15 +84,18 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				// Since adjacent cubes share vertices, the normals will sometimes end up wrong for one of the
-				// cubes along the y-axis. So we need to check for topSide and bottomSide a bit differently
-				// (which is also why we cannot calculate this directly in the vertex shader).
-				bool frontSide = int((i.normal.z - 1) / -2);
-				bool backSide = int((i.normal.z + 1) / 2);
-				bool leftSide = int((i.normal.x - 1) / -2);
-				bool rightSide = int((i.normal.x + 1) / 2);
-				bool topSide = int((i.normal.y + 1) / 2) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
-				bool bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
+				// Since we only use eight vertices per cube, the result will be that normals at the edges
+				// (which reflect the uninterpolated state of the vertex), will report that the pixel belongs
+				// to two different sides (even three in the corners). To avoid egde seams, we need to do some
+				// extra checking to ensure that the sides ends up exclusive. This still results in some minor
+				// drawing artifacts when a cube is seen from e.g back-left, since then the front side will bleed
+				// through on the edges. This can probably be fixed by including view direction into the mix.
+ 				int frontSide = int((i.normal.z - 1) / -2);
+				int backSide = int((i.normal.z + 1) / 2);
+				int leftSide = int(!frontSide) * int(!backSide) * int((i.normal.x - 1) / -2);
+				int rightSide = int(!frontSide) * int(!backSide) * int((i.normal.x + 1) / 2);
+				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
+				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
@@ -164,30 +167,22 @@
 				// Calculate lights
 
 				float3 lightPos;
-				float lightRange = 0.3;
-				float light = 1.1; // (ambient base)
+				lightPos.x = ((_PixelateVoxelX * subImagePixelInt.x) + (!_PixelateVoxelX * subImagePixel.x)) / subImageSize.x;
+				lightPos.y = ((_PixelateVoxelY * subImagePixelInt.y) + (!_PixelateVoxelY * subImagePixel.y)) / subImageSize.y;
+				lightPos.z = 1 - (((_PixelateVoxelZ * int(voxelPosZ)) + (!_PixelateVoxelZ * voxelPosZ)) / voxelDepth);
 
-				lightPos.x = (_PixelateVoxelX == 1 ? subImagePixelInt.x : subImagePixel.x) / subImageSize.x;
-				lightPos.y = (_PixelateVoxelY == 1 ? subImagePixelInt.y : subImagePixel.y) / subImageSize.y;
-				lightPos.z = (_PixelateVoxelZ == 1 ? floor(voxelPosZ) : voxelPosZ) / voxelDepth;
-
+				float lightRange = 0.4;
 				float3 lightDelta = lightPos * lightRange;
 
-				if (frontSide) {
-					light *= 1 + lightDelta.x + lightDelta.y;
-				} else if (backSide) {
-					light *= 0.5 + lightDelta.x / 3 + lightDelta.y / 3;
-				} else if (bottomSide){
-					light *= 0.5 + lightDelta.x / 3 - lightDelta.z / 3;
-				} else if (topSide){
-					light *= 0.9 + lightDelta.x - lightDelta.z;
-				} else if (leftSide){
-					light *= 0.5 + lightDelta.y / 3 - lightDelta.z / 3;
-				} else if (rightSide){
-					light *= 0.9 + lightDelta.y - lightDelta.z;
-				}
+				float light = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
+						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
+						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
+						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
+						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
+						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z))
+						;
 
-				c *= light;
+				c *= 0.7 + light;
 
 				////////////////////////////////////////////////////////
 
