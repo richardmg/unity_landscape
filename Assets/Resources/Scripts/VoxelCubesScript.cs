@@ -20,7 +20,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	static int[] indices = new int[8];
 	static Vector3 vec = new Vector3();
 	static List<Vector3> verticeList = new List<Vector3>(); 
-	static List<Vector2> uvCubeRectEncodedList = new List<Vector2>(); 
+	static List<Vector2> uvAtlasLineRectEncodedList = new List<Vector2>(); 
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
 
@@ -33,7 +33,7 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void Start () {
 		verticeList.Clear();
-		uvCubeRectEncodedList.Clear();
+		uvAtlasLineRectEncodedList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
 
@@ -46,7 +46,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		// origo onto the normals to give the shader at start offset.
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-		Vector2 uvSubImageBottomLeft = new Vector2((float)startPixelX / texture.width, ((float)startPixelY / texture.height));
 
 		// Traverse each row in the texture
 		for (int y = 0; y < subImageHeight; ++y) {
@@ -76,17 +75,16 @@ public class VoxelCubesScript : MonoBehaviour {
 		// passed down to the GPU. We therefore loose the original values in the shader, which we need.
 		// We therefore encode this information covered as vertex color.
 		int vertexCount = mesh.vertices.Length;
-		Vector2[] uvSubImageBottomLeftArray = new Vector2[vertexCount];
 		Color[] unbatchedGeometry = new Color[vertexCount];
 
 		for (int i = 0; i < vertexCount; ++i) {
 			Vector3 v = mesh.vertices[i];
-			uvSubImageBottomLeftArray[i] = uvSubImageBottomLeft;
-			unbatchedGeometry[i] = new Color(v.x, v.y, normalCodeList[i], voxelDepth);
+			float uvCubeVertexX = (startPixelX + v.x) / texture.width;
+			float uvCubeVertexY = (startPixelY + v.y) / texture.height;
+			unbatchedGeometry[i] = new Color(uvCubeVertexX, uvCubeVertexY, normalCodeList[i], voxelDepth);
 		}
 
-		mesh.uv = uvSubImageBottomLeftArray;
-		mesh.uv2 = uvCubeRectEncodedList.ToArray();
+		mesh.uv = uvAtlasLineRectEncodedList.ToArray();
 		mesh.colors = unbatchedGeometry;
 
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
@@ -114,7 +112,7 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		verticeList.Add(new Vector3(v.x, v.y, v.z));
 		normalCodeList.Add(normalCode);
-		uvCubeRectEncodedList.Add(uvRect);
+		uvAtlasLineRectEncodedList.Add(uvRect);
 
 		return verticeList.Count - 1;
 	}
@@ -131,27 +129,28 @@ public class VoxelCubesScript : MonoBehaviour {
 	{
 		float voxelZ1 = 0;
 		float voxelZ2 = voxelDepth;
-		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
-			voxelX1 += cascade;
-			voxelX2 -= cascade;
-			voxelZ1 += cascade;
-			voxelZ2 -= cascade;
-		}
+//		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
+//			voxelX1 += cascade;
+//			voxelX2 -= cascade;
+//			voxelZ1 += cascade;
+//			voxelZ2 -= cascade;
+//		}
 
-		int cubeRectX1 = (int)(startPixelX + voxelX1);
-		int cubeRectY1 = (int)(startPixelY + voxelY1);
-		float cubeRectX2 = (float)(startPixelX + voxelX2 - 0.5) / texture.width; 
-		float cubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
-		Vector2 uvCubeRectEncoded = new Vector2(cubeRectX1 + cubeRectX2, cubeRectY1 + cubeRectY2);
+		int atlasLineRectX1 = (int)(startPixelX + voxelX1);
+		int atlasLineRectY1 = (int)(startPixelY + voxelY1);
+		float atlasLineRectX2 = (float)(startPixelX + voxelX2 - 0.5) / texture.width; 
+		float atlasLineRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
+		Vector2 uvAtlasLineRectEncoded = new Vector2(atlasLineRectX1 + atlasLineRectX2, atlasLineRectY1 + atlasLineRectY2);
+		print(uvAtlasLineRectEncoded.x);
 
-		bool reuse0 = writeIndex(0, voxelX1, voxelY1, voxelZ1, uvCubeRectEncoded, kBottomLeft);
-		writeIndex(1, voxelX1, voxelY2, voxelZ1, uvCubeRectEncoded, kTopLeft);
-		bool reuse2 = writeIndex(2, voxelX2, voxelY1, voxelZ1, uvCubeRectEncoded, kBottomRight);
-		writeIndex(3, voxelX2, voxelY2, voxelZ1, uvCubeRectEncoded, kTopRight);
-		bool reuse4 = writeIndex(4, voxelX1, voxelY1, voxelZ2, uvCubeRectEncoded, kBottomLeft + kBackSide);
-		writeIndex(5, voxelX1, voxelY2, voxelZ2, uvCubeRectEncoded, kTopLeft + kBackSide);
-		bool reuse6 = writeIndex(6, voxelX2, voxelY1, voxelZ2, uvCubeRectEncoded, kBottomRight + kBackSide);
-		writeIndex(7, voxelX2, voxelY2, voxelZ2, uvCubeRectEncoded, kTopRight + kBackSide);
+		bool reuse0 = writeIndex(0, voxelX1, voxelY1, voxelZ1, uvAtlasLineRectEncoded, kBottomLeft);
+		writeIndex(1, voxelX1, voxelY2, voxelZ1, uvAtlasLineRectEncoded, kTopLeft);
+		bool reuse2 = writeIndex(2, voxelX2, voxelY1, voxelZ1, uvAtlasLineRectEncoded, kBottomRight);
+		writeIndex(3, voxelX2, voxelY2, voxelZ1, uvAtlasLineRectEncoded, kTopRight);
+		bool reuse4 = writeIndex(4, voxelX1, voxelY1, voxelZ2, uvAtlasLineRectEncoded, kBottomLeft + kBackSide);
+		writeIndex(5, voxelX1, voxelY2, voxelZ2, uvAtlasLineRectEncoded, kTopLeft + kBackSide);
+		bool reuse6 = writeIndex(6, voxelX2, voxelY1, voxelZ2, uvAtlasLineRectEncoded, kBottomRight + kBackSide);
+		writeIndex(7, voxelX2, voxelY2, voxelZ2, uvAtlasLineRectEncoded, kTopRight + kBackSide);
 
 		if (reuse0 && reuse2 && reuse4 && reuse6) {
 			// All nodes as shared. Flip nodes on one side to mark that this is

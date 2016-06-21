@@ -34,17 +34,16 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
-				float2 uvSubImageBottomLeft : TEXCOORD0;
-				float2 uvCubeRectEncoded : TEXCOORD1;
+				float2 uvAtlasCubeRectEncoded : TEXCOORD0;
 				float4 unbatchedGeometry : COLOR;
 			};
 
 			struct v2f
 			{
 				float4 vertex : SV_POSITION;
-				float3 objVertex : COLOR;
 				float3 normal : NORMAL;
-				float4 uvCubeRect : COLOR1;
+				float3 uvAtlas : POSITION2;
+				float4 uvAtlasCubeRect : COLOR1;
 				float4 extra : COLOR2;
 			};
 
@@ -73,15 +72,19 @@
 
 			v2f vert (appdata v)
 			{
-				int normalCode = (int)v.unbatchedGeometry.b;
+				float3 normal = normalForCode[(int)v.unbatchedGeometry.b];
 				float voxelDepth = v.unbatchedGeometry.a;
+				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / float2(_TextureWidth, _TextureHeight);
+				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded);
+				float2 uvAtlas = v.unbatchedGeometry.xy;
+				float uvCubeZ = (normal.z + 1) * voxelDepth / 2;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.normal = normalForCode[normalCode];
-				o.objVertex = float3(v.unbatchedGeometry.rg, (o.normal.z - 1) * voxelDepth / -2);
-				o.uvCubeRect = float4(floor(v.uvCubeRectEncoded) / float2(_TextureWidth, _TextureHeight), frac(v.uvCubeRectEncoded));
-				o.extra = float4(v.uvSubImageBottomLeft, voxelDepth, 0);
+				o.normal = normal;
+				o.uvAtlas = float3(uvAtlas, uvCubeZ);
+				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
+				o.extra = float4(0, 0, voxelDepth, 0);
 				return o;
 			}
 			
@@ -90,7 +93,7 @@
 				// Since we only use eight vertices per cube, the result will be that normals at the edges
 				// (which reflect the uninterpolated state of the vertex), will report that the pixel belongs
 				// to two different sides (even three in the corners). To avoid egde seams, we need to do some
-				// extra checking to ensure that the sides ends up exclusive. This still results in some minor
+				// extra checking to ensure that the sides end up exclusive. This still results in some minor
 				// drawing artifacts when a cube is seen from e.g back-left, since then the front side will bleed
 				// through on the edges. This can probably be fixed by including view direction into the mix.
  				int frontSide = int((i.normal.z - 1) / -2);
@@ -101,55 +104,38 @@
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
-				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
+				float2 uvAtlasOnePixel = 1.0f / textureSize;
+				float2 uvAtlasClamped = clamp(i.uvAtlas.xy, i.uvAtlasCubeRect.xy, i.uvAtlasCubeRect.zw);
 
-				float2 uvOnePixel = 1.0f / textureSize;
-				float2 uvHalfPixel = uvOnePixel / 2;
-				float2 uvSubImageSize = subImageSize * uvOnePixel;
-				float2 uvSubImageBottomLeft = float2(i.extra.x, i.extra.y);
-				float2 uvInsideVoxel = frac(i.objVertex);
-				float2 uvInsideSubImageClamped = clamp((i.objVertex.xy * uvOnePixel), 0, uvSubImageSize - uvHalfPixel);
-				float2 uvTopAndRightSideAdjustment = uvHalfPixel * float2(int(rightSide), int(topSide));
-				float2 uvAtlas = uvSubImageBottomLeft + uvInsideSubImageClamped - uvTopAndRightSideAdjustment;
+				float3 uvVoxel = float3(frac((i.uvAtlas.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(i.uvAtlas.z));
 
-				uvAtlas = clamp(uvAtlas, i.uvCubeRect.xy, i.uvCubeRect.zw);
+				float2 uvAtlasSubImageSize = float2(_SubImageWidth, _SubImageHeight) / textureSize;
+				float2 subImageIndex = floor(uvAtlasClamped / uvAtlasSubImageSize);
+				float2 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
+				float2 uvSubImage = (i.uvAtlas.xy - uvSubImageBottomLeft) / uvAtlasSubImageSize;
 
-				float2 atlasPixel = uvAtlas * textureSize;
-				float2 atlasIndex = floor(atlasPixel / subImageSize);
-				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
-				float2 atlasPixelInt = floor(atlasPixel);
-				float2 subImagePixelInt = floor(subImagePixel);
-
-				float voxelDepth = i.extra.z;
-				float voxelPosZ = i.objVertex.z;
-				float uvInsideVoxelZ = frac(voxelPosZ);
-				float2 uvAtlasVoxelCenter = atlasPixelInt * uvOnePixel;
-
-				////////////////////////////////////////////////////////
-				// Get current voxel color
-
-				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasVoxelCenter, 0, 0));
+				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped, 0, 0));
 
 				////////////////////////////////////////////////////////
 				// Calculate lights
 
-				float3 lightPos;
-				lightPos.x = ((_PixelateVoxelX * subImagePixelInt.x) + (!_PixelateVoxelX * subImagePixel.x)) / subImageSize.x;
-				lightPos.y = ((_PixelateVoxelY * subImagePixelInt.y) + (!_PixelateVoxelY * subImagePixel.y)) / subImageSize.y;
-				lightPos.z = 1 - (((_PixelateVoxelZ * int(voxelPosZ)) + (!_PixelateVoxelZ * voxelPosZ)) / voxelDepth);
-
-				float lightRange = 0.4;
-				float3 lightDelta = lightPos * lightRange;
-
-				float light = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
-						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
-						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
-						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
-						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
-						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z))
-						;
-
-				c *= 0.7 + light;
+//				float3 lightPos;
+//				lightPos.x = ((_PixelateVoxelX * uvSubImageBottomLeft.x) + (!_PixelateVoxelX * uvSubImageBottomLeft.x)) / uvAtlasSubImageSize.x;
+//				lightPos.y = ((_PixelateVoxelY * uvSubImageBottomLeft.y) + (!_PixelateVoxelY * uvSubImageBottomLeft.y)) / uvAtlasSubImageSize.y;
+//				lightPos.z = 1 - (((_PixelateVoxelZ * int(voxelPosZ)) + (!_PixelateVoxelZ * voxelPosZ)) / voxelDepth);
+//
+//				float lightRange = 0.4;
+//				float3 lightDelta = lightPos * lightRange;
+//
+//				float light = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
+//						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
+//						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
+//						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
+//						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
+//						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z))
+//						;
+//
+//				c *= 0.7 + light;
 
 				////////////////////////////////////////////////////////
 
