@@ -84,7 +84,6 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-
 				bool frontSide = (i.normal.z == -1);
 				bool backSide = (i.normal.z == 1);
 				bool leftSide = (i.normal.x == -1);
@@ -102,14 +101,10 @@
 				float2 uvSubImageSize = subImageSize * uvOnePixel;
 				float2 uvSubImageBottomLeft = float2(i.extra.x, i.extra.y);
 				float2 uvInsideVoxel = frac(i.objVertex);
-				float2 uvAtlas = uvSubImageBottomLeft + clamp((i.objVertex.xy * uvOnePixel), 0, uvSubImageSize - uvHalfPixel);
+				float2 uvInsideSubImageClamped = clamp((i.objVertex.xy * uvOnePixel), 0, uvSubImageSize - uvHalfPixel);
+				float2 uvTopAndRightSideAdjustment = uvHalfPixel * float2(int(rightSide), int(topSide));
+				float2 uvAtlas = uvSubImageBottomLeft + uvInsideSubImageClamped - uvTopAndRightSideAdjustment;
 
-				// Reduce the number of transparent pixels sampled
-				if (rightSide)
-					uvAtlas.x -= uvHalfPixel;
-				else if (topSide)
-					uvAtlas.y -= uvHalfPixel;
-				
 				float2 atlasPixel = uvAtlas * textureSize;
 				float2 atlasIndex = floor(atlasPixel / subImageSize);
 				float2 subImagePixel = floor(atlasPixel % subImageSize) + uvInsideVoxel;
