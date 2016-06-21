@@ -11,6 +11,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	public bool addBack = true;
 	public bool addVolume = true;
 	public bool trimVolume = false;
+	public float cascade = 0.0f;
 
 	Texture2D texture;
 	int startPixelX;
@@ -115,7 +116,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	}
 
 
-	bool writeIndex(int index, int voxelX, int voxelY, float voxelDepth, int normalCode)
+	bool writeIndex(int index, float voxelX, float voxelY, float voxelDepth, int normalCode)
 	{
 		vec.Set(voxelX, voxelY, voxelDepth);
 		int i = vertices.FindIndex(v2 => v2 == vec);
@@ -123,16 +124,25 @@ public class VoxelCubesScript : MonoBehaviour {
 		return i != -1;
 	}
 
-	void createVoxelLineMesh(int voxelX1, int voxelX2, int voxelY1, int voxelY2)
+	void createVoxelLineMesh(float voxelX1, float voxelX2, float voxelY1, float voxelY2)
 	{
-		bool reuse0 = writeIndex(0, voxelX1, voxelY1, 0, kBottomLeft);
-		writeIndex(1, voxelX1, voxelY2, 0, kTopLeft);
-		bool reuse2 = writeIndex(2, voxelX2, voxelY1, 0, kBottomRight);
-		writeIndex(3, voxelX2, voxelY2, 0, kTopRight);
-		bool reuse4 = writeIndex(4, voxelX1, voxelY1, voxelDepth, kBottomLeft + kBackSide);
-		writeIndex(5, voxelX1, voxelY2, voxelDepth, kTopLeft + kBackSide);
-		bool reuse6 = writeIndex(6, voxelX2, voxelY1, voxelDepth, kBottomRight + kBackSide);
-		writeIndex(7, voxelX2, voxelY2, voxelDepth, kTopRight + kBackSide);
+		float voxelZ1 = 0;
+		float voxelZ2 = voxelDepth;
+		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
+			voxelX1 += cascade;
+			voxelX2 -= cascade;
+			voxelZ1 += cascade;
+			voxelZ2 -= cascade;
+		}
+
+		bool reuse0 = writeIndex(0, voxelX1, voxelY1, voxelZ1, kBottomLeft);
+		writeIndex(1, voxelX1, voxelY2, voxelZ1, kTopLeft);
+		bool reuse2 = writeIndex(2, voxelX2, voxelY1, voxelZ1, kBottomRight);
+		writeIndex(3, voxelX2, voxelY2, voxelZ1, kTopRight);
+		bool reuse4 = writeIndex(4, voxelX1, voxelY1, voxelZ2, kBottomLeft + kBackSide);
+		writeIndex(5, voxelX1, voxelY2, voxelZ2, kTopLeft + kBackSide);
+		bool reuse6 = writeIndex(6, voxelX2, voxelY1, voxelZ2, kBottomRight + kBackSide);
+		writeIndex(7, voxelX2, voxelY2, voxelZ2, kTopRight + kBackSide);
 
 		if (reuse0 && reuse2 && reuse4 && reuse6) {
 			// All nodes as shared. Flip nodes on one side to mark that this is
