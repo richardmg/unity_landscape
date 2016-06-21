@@ -84,14 +84,15 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				bool frontSide = (i.normal.z == -1);
-				bool backSide = (i.normal.z == 1);
-				bool leftSide = (i.normal.x == -1);
-				bool rightSide = (i.normal.x == 1);
-				// Since cubes (containing one or more voxels) on top of each other share vertices along the y-axis, the normals
-				// will be wrong for the top-most cube. So we need to be a bit clever when calculating those sides.
-				bool topSide = (i.normal.y == 1) && !(leftSide || rightSide || frontSide ||backSide);
-				bool bottomSide = !(topSide || leftSide || rightSide || frontSide || backSide);
+				// Since adjacent cubes share vertices, the normals will sometimes end up wrong for one of the
+				// cubes along the y-axis. So we need to check for topSide and bottomSide a bit differently
+				// (which is also why we cannot calculate this directly in the vertex shader).
+				bool frontSide = int((i.normal.z - 1) / -2);
+				bool backSide = int((i.normal.z + 1) / 2);
+				bool leftSide = int((i.normal.x - 1) / -2);
+				bool rightSide = int((i.normal.x + 1) / 2);
+				bool topSide = int((i.normal.y + 1) / 2) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
+				bool bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
