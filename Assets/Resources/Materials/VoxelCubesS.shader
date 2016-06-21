@@ -77,7 +77,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = normalForCode[normalCode];
-				o.objVertex = float3(v.unbatchedGeometry.rg, o.normal.z == -1 ? 0 : voxelDepth);
+				o.objVertex = float3(v.unbatchedGeometry.rg, (o.normal.z - 1) * voxelDepth / -2);
 				o.extra = float4(v.uvSubImageBottomLeft, voxelDepth, 0);
 				return o;
 			}
