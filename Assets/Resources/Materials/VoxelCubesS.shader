@@ -74,10 +74,11 @@
 			{
 				float3 normal = normalForCode[(int)v.unbatchedGeometry.b];
 				float voxelDepth = v.unbatchedGeometry.a;
-				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / float2(_TextureWidth, _TextureHeight);
-				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded);
+				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
+				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
+				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
 				float2 uvAtlas = v.unbatchedGeometry.xy;
-				float uvCubeZ = (normal.z + 1) * voxelDepth / 2;
+				float uvCubeZ = (normal.z + 1) / 2;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
@@ -105,37 +106,41 @@
 
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvAtlasOnePixel = 1.0f / textureSize;
-				float2 uvAtlasClamped = clamp(i.uvAtlas.xy, i.uvAtlasCubeRect.xy, i.uvAtlasCubeRect.zw);
-
-				float3 uvVoxel = float3(frac((i.uvAtlas.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(i.uvAtlas.z));
-
-				float2 uvAtlasSubImageSize = float2(_SubImageWidth, _SubImageHeight) / textureSize;
-				float2 subImageIndex = floor(uvAtlasClamped / uvAtlasSubImageSize);
-				float2 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
-				float2 uvSubImage = (i.uvAtlas.xy - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float4 clampRect = i.uvAtlasCubeRect - float4(0, 0, uvAtlasOnePixel / 2);
+				float2 uvAtlasClamped = clamp(i.uvAtlas.xy, clampRect.xy, clampRect.zw);
+				float3 uvVoxel = float3(frac((i.uvAtlas.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(i.uvAtlas.z * i.extra.z));
 
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped, 0, 0));
 
 				////////////////////////////////////////////////////////
 				// Calculate lights
 
-//				float3 lightPos;
-//				lightPos.x = ((_PixelateVoxelX * uvSubImageBottomLeft.x) + (!_PixelateVoxelX * uvSubImageBottomLeft.x)) / uvAtlasSubImageSize.x;
-//				lightPos.y = ((_PixelateVoxelY * uvSubImageBottomLeft.y) + (!_PixelateVoxelY * uvSubImageBottomLeft.y)) / uvAtlasSubImageSize.y;
-//				lightPos.z = 1 - (((_PixelateVoxelZ * int(voxelPosZ)) + (!_PixelateVoxelZ * voxelPosZ)) / voxelDepth);
-//
-//				float lightRange = 0.4;
-//				float3 lightDelta = lightPos * lightRange;
-//
-//				float light = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
-//						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
-//						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
-//						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
-//						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
-//						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z))
-//						;
-//
-//				c *= 0.7 + light;
+				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
+				float2 uvAtlasSubImageSize = subImageSize / textureSize;
+				float2 uvSubImageOnePixel = 1 / subImageSize;
+				float2 subImageIndex = floor(uvAtlasClamped / uvAtlasSubImageSize);
+				float2 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
+				float2 uvSubImage = (i.uvAtlas.xy - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float2 uvSubImageFlat = floor(uvSubImage / uvSubImageOnePixel) * uvSubImageOnePixel;
+				float uvAtlasZFlat = floor(i.uvAtlas.z * i.extra.z) / i.extra.z;
+
+				float3 lightPos;
+				lightPos.x = ((_PixelateVoxelX * uvSubImageFlat.x) + (!_PixelateVoxelX * uvSubImage.x));
+				lightPos.y = ((_PixelateVoxelY * uvSubImageFlat.y) + (!_PixelateVoxelY * uvSubImage.y));
+				lightPos.z = ((_PixelateVoxelZ * uvAtlasZFlat) + (!_PixelateVoxelZ * i.uvAtlas.z)) ;
+
+				float lightRange = 0.4;
+				float3 lightDelta = lightPos * lightRange;
+
+				float light = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
+						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
+						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
+						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
+						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
+						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z))
+						;
+
+				c *= 0.7 + light;
 
 				////////////////////////////////////////////////////////
 
