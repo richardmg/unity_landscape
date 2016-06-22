@@ -129,12 +129,12 @@ public class VoxelCubesScript : MonoBehaviour {
 	{
 		float voxelZ1 = 0;
 		float voxelZ2 = voxelDepth;
-//		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
-//			voxelX1 += cascade;
-//			voxelX2 -= cascade;
-//			voxelZ1 += cascade;
-//			voxelZ2 -= cascade;
-//		}
+		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
+			voxelX1 += cascade;
+			voxelX2 -= cascade;
+			voxelZ1 += cascade;
+			voxelZ2 -= cascade;
+		}
 
 		int atlasLineRectX1 = (int)(startPixelX + voxelX1);
 		int atlasLineRectY1 = (int)(startPixelY + voxelY1);
