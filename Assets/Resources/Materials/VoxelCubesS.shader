@@ -35,7 +35,7 @@
 			{
 				float4 vertex : POSITION;
 				float2 uvAtlasCubeRectEncoded : TEXCOORD0;
-				float4 unbatchedGeometry : COLOR;
+				float4 cubeDesc : COLOR;
 			};
 
 			struct v2f
@@ -72,12 +72,12 @@
 
 			v2f vert (appdata v)
 			{
-				float3 normal = normalForCode[(int)v.unbatchedGeometry.b];
-				float voxelDepth = v.unbatchedGeometry.a;
+				float3 normal = normalForCode[(int)v.cubeDesc.b];
+				float voxelDepth = v.cubeDesc.a;
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
 				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
-				float2 uvAtlas = v.unbatchedGeometry.xy;
+				float2 uvAtlas = v.cubeDesc.xy;
 				float uvCubeZ = (normal.z + 1) / 2;
 
 				v2f o;
