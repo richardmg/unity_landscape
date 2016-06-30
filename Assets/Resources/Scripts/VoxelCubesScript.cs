@@ -141,7 +141,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		float atlasLineRectX2 = (float)(startPixelX + voxelX2 - 0.5) / texture.width; 
 		float atlasLineRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
 		Vector2 uvAtlasLineRectEncoded = new Vector2(atlasLineRectX1 + atlasLineRectX2, atlasLineRectY1 + atlasLineRectY2);
-		print(uvAtlasLineRectEncoded.x);
 
 		bool reuse0 = writeIndex(0, voxelX1, voxelY1, voxelZ1, uvAtlasLineRectEncoded, kBottomLeft);
 		writeIndex(1, voxelX1, voxelY2, voxelZ1, uvAtlasLineRectEncoded, kTopLeft);
