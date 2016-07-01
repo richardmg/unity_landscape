@@ -97,6 +97,22 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
+				////////////////////////////////////////////////////////
+				// Fetch main atlas color
+
+				float2 textureSize = float2(_TextureWidth, _TextureHeight);
+				float2 uvAtlasOnePixel = 1.0f / textureSize;
+				float4 clampRect = i.uvAtlasCubeRect - float4(0, 0, uvAtlasOnePixel / 2);
+				float2 uvAtlasClamped = clamp(i.uvAtlas.xy, clampRect.xy, clampRect.zw);
+				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped, 0, 0));
+
+				////////////////////////////////////////////////////////
+				// Fetch detail image
+				float3 uvVoxel = float3(frac((i.uvAtlas.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(i.uvAtlas.z * i.extra.z));
+
+				////////////////////////////////////////////////////////
+				// Apply lightning
+
 				// Since we only use eight vertices per cube, the result will be that normals at the edges
 				// (which reflect the uninterpolated state of the vertex), will report that the pixel belongs
 				// to two different sides (even three in the corners). To avoid egde seams, we need to do some
@@ -110,23 +126,12 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float2 textureSize = float2(_TextureWidth, _TextureHeight);
-				float2 uvAtlasOnePixel = 1.0f / textureSize;
-				float4 clampRect = i.uvAtlasCubeRect - float4(0, 0, uvAtlasOnePixel / 2);
-				float2 uvAtlasClamped = clamp(i.uvAtlas.xy, clampRect.xy, clampRect.zw);
-				float3 uvVoxel = float3(frac((i.uvAtlas.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(i.uvAtlas.z * i.extra.z));
-
-				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped, 0, 0));
-
-				////////////////////////////////////////////////////////
-				// Calculate lights
-
 				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
 				float2 uvAtlasSubImageSize = subImageSize / textureSize;
 				float2 uvSubImageOnePixel = 1 / subImageSize;
 				float2 subImageIndex = floor(uvAtlasClamped / uvAtlasSubImageSize);
 				float2 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
-				float2 uvSubImage = (i.uvAtlas.xy - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float2 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
 				float2 uvSubImageFlat = floor(uvSubImage / uvSubImageOnePixel) * uvSubImageOnePixel;
 				float uvAtlasZFlat = floor(i.uvAtlas.z * i.extra.z) / i.extra.z;
 
@@ -147,6 +152,21 @@
 						+ (rightSide	* (sunSideGradient.y + sunSideGradient.z));
 
 				c *= _AmbientLight + directionalLight;
+
+				////////////////////////////////////////////////////////
+				// Apply alternate voxel color
+
+				float3 voxelPosSubImage = float3(uvSubImage * subImageSize, i.uvAtlas.z * i.extra.z);
+				float3 voxelPosSubImageClamped = clamp(voxelPosSubImage, 0.0, float3(subImageSize - 1.0, i.extra.z - 1.0));
+				int3 alt = int3(voxelPosSubImageClamped % 2);
+
+//				if (alternateX) return red;
+//				if (alt.x && alt.y) return red;
+//				if (!alt.x && !alt.y) return red;
+				if (alt.z) return red;
+//				if (alternateZ) return red;
+//				c += voxelPosSubImage.x % 2 * 0.2;
+//				c += (voxelPosSubImage.z - 1) % 2 * 0.2;
 
 				////////////////////////////////////////////////////////
 
