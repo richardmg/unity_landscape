@@ -51,6 +51,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
+			static float _ClampOffset = 0.0001;
 			static fixed4 red = fixed4(1, 0, 0, 1);
 
 			struct appdata
@@ -102,13 +103,13 @@
 
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvAtlasOnePixel = 1.0f / textureSize;
-				float4 clampRect = i.uvAtlasCubeRect - float4(0, 0, uvAtlasOnePixel / 2);
-				float2 uvAtlasClamped = clamp(i.uvAtlas.xy, clampRect.xy, clampRect.zw);
-				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped, 0, 0));
+				float4 clampRect = i.uvAtlasCubeRect - float4(0, 0, _ClampOffset, _ClampOffset);
+				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset)));
+				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
 				////////////////////////////////////////////////////////
 				// Fetch detail image
-				float3 uvVoxel = float3(frac((i.uvAtlas.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(i.uvAtlas.z * i.extra.z));
+				float3 uvVoxel = float3(frac((uvAtlasClamped.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(uvAtlasClamped.z * i.extra.z));
 
 				////////////////////////////////////////////////////////
 				// Apply lightning
@@ -156,14 +157,14 @@
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
 
-				float3 voxelPosSubImage = float3(uvSubImage * subImageSize, i.uvAtlas.z * i.extra.z);
-				float3 voxelPosSubImageClamped = clamp(voxelPosSubImage, 0.0, float3(subImageSize - 1.0, i.extra.z - 1.0));
-				int3 alt = int3(voxelPosSubImageClamped % 2);
+//				float3 voxelPosSubImage = float3(uvSubImage * subImageSize, uvZClamped * i.extra.z);
+//				float3 voxelPosSubImageClamped = clamp(voxelPosSubImage, 0.0, float3(subImageSize - 1.0, i.extra.z - 1.0));
+//				int3 alt = int3(voxelPosSubImage % 2);
 
 //				if (alternateX) return red;
 //				if (alt.x && alt.y) return red;
 //				if (!alt.x && !alt.y) return red;
-				if (alt.z) return red;
+//				if (alt.y) return red;
 //				if (alternateZ) return red;
 //				c += voxelPosSubImage.x % 2 * 0.2;
 //				c += (voxelPosSubImage.z - 1) % 2 * 0.2;
