@@ -72,20 +72,16 @@
 
 			v2f vert (appdata v)
 			{
-				float3 normal = normalForCode[(int)v.cubeDesc.b];
-				float voxelDepth = v.cubeDesc.a;
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
 				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
-				float2 uvAtlas = v.cubeDesc.xy;
-				float uvCubeZ = (normal.z + 1) / 2;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.normal = normal;
-				o.uvAtlas = float3(uvAtlas, uvCubeZ);
+				o.normal = normalForCode[(int)v.cubeDesc.b];
+				o.uvAtlas = float3(v.cubeDesc.xy, (o.normal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
-				o.extra = float4(0, 0, voxelDepth, 0);
+				o.extra = float4(0, 0, v.cubeDesc.a, 0);
 				return o;
 			}
 			
@@ -127,7 +123,7 @@
 				float3 lightPos;
 				lightPos.x = ((_PixelateVoxelX * uvSubImageFlat.x) + (!_PixelateVoxelX * uvSubImage.x));
 				lightPos.y = ((_PixelateVoxelY * uvSubImageFlat.y) + (!_PixelateVoxelY * uvSubImage.y));
-				lightPos.z = ((_PixelateVoxelZ * uvAtlasZFlat) + (!_PixelateVoxelZ * i.uvAtlas.z)) ;
+				lightPos.z = ((_PixelateVoxelZ * uvAtlasZFlat) + (!_PixelateVoxelZ * i.uvAtlas.z));
 
 				float lightRange = 0.4;
 				float3 lightDelta = lightPos * lightRange;
@@ -137,8 +133,7 @@
 						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
 						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
 						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
-						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z))
-						;
+						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z));
 
 				c *= 0.7 + light;
 
