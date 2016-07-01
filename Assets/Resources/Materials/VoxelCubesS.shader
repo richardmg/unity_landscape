@@ -101,8 +101,8 @@
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 
-				float2 textureSize = float2(_TextureWidth, _TextureHeight);
-				float2 uvAtlasOnePixel = 1.0f / textureSize;
+				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
+				float3 uvAtlasOnePixel = 1.0f / textureSize;
 				float4 clampRect = i.uvAtlasCubeRect - float4(0, 0, _ClampOffset, _ClampOffset);
 				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset)));
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
@@ -127,19 +127,16 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
-				float2 uvAtlasSubImageSize = subImageSize / textureSize;
-				float2 uvSubImageOnePixel = 1 / subImageSize;
-				float2 subImageIndex = floor(uvAtlasClamped / uvAtlasSubImageSize);
-				float2 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
-				float2 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-				float2 uvSubImageFlat = floor(uvSubImage / uvSubImageOnePixel) * uvSubImageOnePixel;
-				float uvAtlasZFlat = floor(i.uvAtlas.z * i.extra.z) / i.extra.z;
+				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
+				float3 uvAtlasSubImageSize = subImageSize / textureSize;
+				float3 uvSubImageOnePixel = 1 / subImageSize;
+				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
+				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
+				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float3 uvSubImageFlat = floor(uvSubImage / uvSubImageOnePixel) * uvSubImageOnePixel;
 
-				float3 lightPos;
-				lightPos.x = ((_PixelateVoxelX * uvSubImageFlat.x) + (!_PixelateVoxelX * uvSubImage.x));
-				lightPos.y = ((_PixelateVoxelY * uvSubImageFlat.y) + (!_PixelateVoxelY * uvSubImage.y));
-				lightPos.z = ((_PixelateVoxelZ * uvAtlasZFlat) + (!_PixelateVoxelZ * i.uvAtlas.z));
+				float3 pixelate = float3(_PixelateVoxelX, _PixelateVoxelY, _PixelateVoxelZ);
+				float3 lightPos = (pixelate * uvSubImageFlat) + (!pixelate * uvSubImage);
 
 				float3 sunSideGradient = _DirectionalLight * (_LightAtt + (lightPos * (1 - _LightAtt)));
 				float3 shadeSideGradient = sunSideGradient * _LightShade;
