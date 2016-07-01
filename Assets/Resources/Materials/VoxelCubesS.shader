@@ -11,7 +11,9 @@
 		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
 		_AmbientLight ("Light ambient", Range(0, 2)) = 0.7
-		_LightAttenuation ("Light attenuation", Range(0, 2)) = 0.4
+		_DirectionalLight ("Light directional", Range(0, 1)) = 0.4
+		_LightAtt ("Light attenuation", Range(0, 1)) = 0.5
+		_LightShade ("Light shade", Range(0, 1)) = 0.2
 	}
 	SubShader
 	{
@@ -42,7 +44,9 @@
 			float _PixelateVoxelY;
 			float _PixelateVoxelZ;
 			float _AmbientLight;
-			float _LightAttenuation;
+			float _DirectionalLight;
+			float _LightAtt;
+			float _LightShade;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -131,14 +135,16 @@
 				lightPos.y = ((_PixelateVoxelY * uvSubImageFlat.y) + (!_PixelateVoxelY * uvSubImage.y));
 				lightPos.z = ((_PixelateVoxelZ * uvAtlasZFlat) + (!_PixelateVoxelZ * i.uvAtlas.z));
 
-				float3 lightDelta = lightPos * _LightAttenuation;
+				float3 sunSideGradient = _DirectionalLight * (_LightAtt + (lightPos * (1 - _LightAtt)));
+				float3 shadeSideGradient = sunSideGradient * _LightShade;
 
-				float directionalLight = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
-						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
-						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
-						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
-						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
-						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z));
+				float directionalLight =
+						+ (bottomSide	* (shadeSideGradient.x + shadeSideGradient.y))
+						+ (leftSide		* (shadeSideGradient.y + shadeSideGradient.z))
+						+ (frontSide	* (shadeSideGradient.x + shadeSideGradient.y))
+						+ (backSide		* (sunSideGradient.x + sunSideGradient.y))
+						+ (topSide		* (sunSideGradient.x + sunSideGradient.z))
+						+ (rightSide	* (sunSideGradient.y + sunSideGradient.z));
 
 				c *= _AmbientLight + directionalLight;
 
