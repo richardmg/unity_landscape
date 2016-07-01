@@ -110,9 +110,14 @@
 				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset)));
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
-				////////////////////////////////////////////////////////
-				// Fetch detail image
-				float3 uvVoxel = float3(frac((uvAtlasClamped.xy - i.uvAtlasCubeRect.xy) * textureSize), frac(uvAtlasClamped.z * i.extra.z));
+				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
+				float3 uvAtlasSubImageSize = subImageSize / textureSize;
+				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
+				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
+
+				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float3 voxel = uvSubImage * subImageSize;
+				float3 uvVoxel = frac(voxel);
 
 				////////////////////////////////////////////////////////
 				// Apply lightning
@@ -130,14 +135,6 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
-				float3 uvAtlasSubImageSize = subImageSize / textureSize;
-				float3 uvSubImageOnePixel = 1 / subImageSize;
-				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
-				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
-				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-				float3 uvSubImageFlat = floor(uvSubImage / uvSubImageOnePixel) * uvSubImageOnePixel;
-
 				float3 sunSideGradient = _DirectionalLight * (_LightAtt + (uvSubImage * (1 - _LightAtt)));
 				float3 shadeSideGradient = sunSideGradient * _LightShade;
 
@@ -154,10 +151,8 @@
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
 
-				float3 voxelPosSubImage = uvSubImage * subImageSize;
-				float3 pixelate = float3(_PixelateVoxelX, _PixelateVoxelY, _PixelateVoxelZ);
-				int3 voxelPos = int3(voxelPosSubImage * pixelate);
-				c *= 1 + (((voxelPos.x + voxelPos.y + voxelPos.z) % 2) * _PixelateStrength);
+				int3 voxelate = int3(voxel * float3(_PixelateVoxelX, _PixelateVoxelY, _PixelateVoxelZ));
+				c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _PixelateStrength);
 
 				////////////////////////////////////////////////////////
 
