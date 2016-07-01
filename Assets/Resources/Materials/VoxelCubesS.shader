@@ -7,6 +7,7 @@
 		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
+		_PixelateStrength ("Pixelate strength", Range(0, 0.1)) = 0.05
 		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 0
 		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
@@ -43,6 +44,8 @@
 			float _PixelateVoxelX;
 			float _PixelateVoxelY;
 			float _PixelateVoxelZ;
+			float _PixelateStrength;
+
 			float _AmbientLight;
 			float _DirectionalLight;
 			float _LightAtt;
@@ -135,10 +138,7 @@
 				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
 				float3 uvSubImageFlat = floor(uvSubImage / uvSubImageOnePixel) * uvSubImageOnePixel;
 
-				float3 pixelate = float3(_PixelateVoxelX, _PixelateVoxelY, _PixelateVoxelZ);
-				float3 lightPos = (pixelate * uvSubImageFlat) + (!pixelate * uvSubImage);
-
-				float3 sunSideGradient = _DirectionalLight * (_LightAtt + (lightPos * (1 - _LightAtt)));
+				float3 sunSideGradient = _DirectionalLight * (_LightAtt + (uvSubImage * (1 - _LightAtt)));
 				float3 shadeSideGradient = sunSideGradient * _LightShade;
 
 				float directionalLight =
@@ -154,17 +154,10 @@
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
 
-//				float3 voxelPosSubImage = float3(uvSubImage * subImageSize, uvZClamped * i.extra.z);
-//				float3 voxelPosSubImageClamped = clamp(voxelPosSubImage, 0.0, float3(subImageSize - 1.0, i.extra.z - 1.0));
-//				int3 alt = int3(voxelPosSubImage % 2);
-
-//				if (alternateX) return red;
-//				if (alt.x && alt.y) return red;
-//				if (!alt.x && !alt.y) return red;
-//				if (alt.y) return red;
-//				if (alternateZ) return red;
-//				c += voxelPosSubImage.x % 2 * 0.2;
-//				c += (voxelPosSubImage.z - 1) % 2 * 0.2;
+				float3 voxelPosSubImage = uvSubImage * subImageSize;
+				float3 pixelate = float3(_PixelateVoxelX, _PixelateVoxelY, _PixelateVoxelZ);
+				int3 voxelPos = int3(voxelPosSubImage * pixelate);
+				c *= 1 + (((voxelPos.x + voxelPos.y + voxelPos.z) % 2) * _PixelateStrength);
 
 				////////////////////////////////////////////////////////
 
