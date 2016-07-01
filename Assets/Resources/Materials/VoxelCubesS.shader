@@ -35,6 +35,7 @@
 			#pragma fragment frag
 
 			#include "UnityCG.cginc"
+			#define M_PI 3.1415926535897932384626433832795
 
 			int _TextureWidth;
 			int _TextureHeight;
@@ -84,16 +85,22 @@
 				float3(1, 1, 1)
  			};
 
+ 			inline float radBetween(float3 v1, float3 v2)
+ 			{
+     			return acos(dot(v1, v2) / (length(v1) * length(v2)));
+ 			}
+
 			v2f vert (appdata v)
 			{
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
 				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
+				float3 objNormal = normalForCode[(int)v.cubeDesc.b];
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.normal = normalForCode[(int)v.cubeDesc.b];
-				o.uvAtlas = float3(v.cubeDesc.xy, (o.normal.z + 1) / 2);
+				o.normal = mul(_Object2World, objNormal);
+				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
 				o.extra = float4(0, 0, v.cubeDesc.a, 0);
 				return o;
@@ -122,31 +129,9 @@
 				////////////////////////////////////////////////////////
 				// Apply lightning and gradient
 
-				// Since we only use eight vertices per cube, the result will be that normals at the edges
-				// (which reflect the uninterpolated state of the vertex), will report that the pixel belongs
-				// to two different sides (even three in the corners). To avoid egde seams, we need to do some
-				// extra checking to ensure that the sides end up exclusive. This still results in some minor
-				// drawing artifacts when a cube is seen from e.g back-left, since then the front side will bleed
-				// through on the edges. This can probably be fixed by including view direction into the mix.
- 				int frontSide = int((i.normal.z - 1) / -2);
-				int backSide = int((i.normal.z + 1) / 2);
-				int leftSide = int(!frontSide) * int(!backSide) * int((i.normal.x - 1) / -2);
-				int rightSide = int(!frontSide) * int(!backSide) * int((i.normal.x + 1) / 2);
-				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
-				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
-
-				float3 sunSideGradient = _DirectionalLight * (_LightAtt + (uvSubImage * (1 - _LightAtt)));
-				float3 shadeSideGradient = sunSideGradient * _LightShade;
-
-				float gradient =
-						+ (bottomSide	* (shadeSideGradient.z))
-						+ (leftSide		* (shadeSideGradient.y))
-						+ (frontSide	* (shadeSideGradient.y))
-						+ (backSide		* (sunSideGradient.y))
-						+ (topSide		* (sunSideGradient.z))
-						+ (rightSide	* (sunSideGradient.y));
-
-				c *= _AmbientLight + gradient;
+				float rad = radBetween(i.normal, float3(0, 1, 0));
+				float sun = _DirectionalLight * (1 - (rad / M_PI));
+				c *= _AmbientLight + sun;
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
