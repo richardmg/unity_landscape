@@ -142,11 +142,11 @@
 				float3 shadeSideGradient = sunSideGradient * _LightShade;
 
 				float directionalLight =
-						+ (bottomSide	* (shadeSideGradient.x + shadeSideGradient.y))
+						+ (bottomSide	* (0.5 +  + shadeSideGradient.y))
 						+ (leftSide		* (shadeSideGradient.y + shadeSideGradient.z))
-						+ (frontSide	* (shadeSideGradient.x + shadeSideGradient.y))
-						+ (backSide		* (sunSideGradient.x + sunSideGradient.y))
-						+ (topSide		* (sunSideGradient.x + sunSideGradient.z))
+						+ (frontSide	* (0.5 +  + shadeSideGradient.y))
+						+ (backSide		* (0.5 + sunSideGradient.y))
+						+ (topSide		* (0.5 +  + sunSideGradient.z))
 						+ (rightSide	* (sunSideGradient.y + sunSideGradient.z));
 
 				c *= _AmbientLight + directionalLight;
