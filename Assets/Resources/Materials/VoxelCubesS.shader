@@ -11,10 +11,10 @@
 		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 0
 		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
-		_AmbientLight ("Light ambient", Range(0, 2)) = 0.7
-		_DirectionalLight ("Light directional", Range(0, 1)) = 0.4
-		_LightAtt ("Light attenuation", Range(0, 1)) = 0.5
-		_LightShade ("Light shade", Range(0, 1)) = 0.2
+		_AmbientLight ("Light ambient", Range(0, 2)) = 0.6
+		_DirectionalLight ("Light directional", Range(0, 3)) = 0.33
+		_LightAtt ("Light attenuation", Range(0, 1)) = 0
+		_LightShade ("Light shade", Range(0, 1)) = 0.07
 	}
 	SubShader
 	{
@@ -120,7 +120,7 @@
 				float3 uvVoxel = frac(voxel);
 
 				////////////////////////////////////////////////////////
-				// Apply lightning
+				// Apply lightning and gradient
 
 				// Since we only use eight vertices per cube, the result will be that normals at the edges
 				// (which reflect the uninterpolated state of the vertex), will report that the pixel belongs
@@ -138,15 +138,15 @@
 				float3 sunSideGradient = _DirectionalLight * (_LightAtt + (uvSubImage * (1 - _LightAtt)));
 				float3 shadeSideGradient = sunSideGradient * _LightShade;
 
-				float directionalLight =
-						+ (bottomSide	* (0.5 +  + shadeSideGradient.y))
-						+ (leftSide		* (shadeSideGradient.y + shadeSideGradient.z))
-						+ (frontSide	* (0.5 +  + shadeSideGradient.y))
-						+ (backSide		* (0.5 + sunSideGradient.y))
-						+ (topSide		* (0.5 +  + sunSideGradient.z))
-						+ (rightSide	* (sunSideGradient.y + sunSideGradient.z));
+				float gradient =
+						+ (bottomSide	* (shadeSideGradient.z))
+						+ (leftSide		* (shadeSideGradient.y))
+						+ (frontSide	* (shadeSideGradient.y))
+						+ (backSide		* (sunSideGradient.y))
+						+ (topSide		* (sunSideGradient.z))
+						+ (rightSide	* (sunSideGradient.y));
 
-				c *= _AmbientLight + directionalLight;
+				c *= _AmbientLight + gradient;
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
