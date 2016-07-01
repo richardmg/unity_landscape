@@ -10,8 +10,8 @@
 		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 0
 		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
-		_AmbientLight ("Ambient Light", Range(0, 2)) = 0.7
-		_LightFallOff ("Light fall off", Range(0, 2)) = 0.4
+		_AmbientLight ("Light ambient", Range(0, 2)) = 0.7
+		_LightAttenuation ("Light attenuation", Range(0, 2)) = 0.4
 	}
 	SubShader
 	{
@@ -42,7 +42,7 @@
 			float _PixelateVoxelY;
 			float _PixelateVoxelZ;
 			float _AmbientLight;
-			float _LightFallOff;
+			float _LightAttenuation;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -131,7 +131,7 @@
 				lightPos.y = ((_PixelateVoxelY * uvSubImageFlat.y) + (!_PixelateVoxelY * uvSubImage.y));
 				lightPos.z = ((_PixelateVoxelZ * uvAtlasZFlat) + (!_PixelateVoxelZ * i.uvAtlas.z));
 
-				float3 lightDelta = lightPos * _LightFallOff;
+				float3 lightDelta = lightPos * _LightAttenuation;
 
 				float directionalLight = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
 						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
