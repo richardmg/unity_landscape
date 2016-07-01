@@ -10,6 +10,8 @@
 		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 0
 		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
+		_AmbientLight ("Ambient Light", Range(0, 2)) = 0.7
+		_LightFallOff ("Light fall off", Range(0, 2)) = 0.4
 	}
 	SubShader
 	{
@@ -31,6 +33,22 @@
 
 			#include "UnityCG.cginc"
 
+			int _TextureWidth;
+			int _TextureHeight;
+			int _SubImageWidth;
+			int _SubImageHeight;
+
+			float _PixelateVoxelX;
+			float _PixelateVoxelY;
+			float _PixelateVoxelZ;
+			float _AmbientLight;
+			float _LightFallOff;
+
+			sampler2D _MainTex;
+			float4 _MainTex_ST;
+
+			static fixed4 red = fixed4(1, 0, 0, 1);
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -46,18 +64,6 @@
 				float4 uvAtlasCubeRect : COLOR1;
 				float4 extra : COLOR2;
 			};
-
-			int _TextureWidth;
-			int _TextureHeight;
-			int _SubImageWidth;
-			int _SubImageHeight;
-			float _PixelateVoxelX;
-			float _PixelateVoxelY;
-			float _PixelateVoxelZ;
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
-
-			static fixed4 red = fixed4(1, 0, 0, 1);
 
 			static float3 normalForCode[8] = {
 				float3(-1, -1, -1),
@@ -125,17 +131,16 @@
 				lightPos.y = ((_PixelateVoxelY * uvSubImageFlat.y) + (!_PixelateVoxelY * uvSubImage.y));
 				lightPos.z = ((_PixelateVoxelZ * uvAtlasZFlat) + (!_PixelateVoxelZ * i.uvAtlas.z));
 
-				float lightRange = 0.4;
-				float3 lightDelta = lightPos * lightRange;
+				float3 lightDelta = lightPos * _LightFallOff;
 
-				float light = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
+				float directionalLight = (backSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
 						+ (bottomSide * (0.1 + lightDelta.x / 2 + lightDelta.y / 2))
 						+ (leftSide * (0.1 + lightDelta.y / 2 - lightDelta.z / 2))
 						+ (frontSide * (0.4 + lightDelta.x + lightDelta.y))
 						+ (topSide * (0.4 + lightDelta.x - lightDelta.z))
 						+ (rightSide * (0.4 + lightDelta.y - lightDelta.z));
 
-				c *= 0.7 + light;
+				c *= _AmbientLight + directionalLight;
 
 				////////////////////////////////////////////////////////
 
