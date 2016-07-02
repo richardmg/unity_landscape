@@ -56,6 +56,7 @@
 
 			static float _ClampOffset = 0.0001;
 			static fixed4 red = fixed4(1, 0, 0, 1);
+			static float3 _Sun = normalize(float3(1, 1, 0.5));
 
 			struct appdata
 			{
@@ -138,10 +139,9 @@
 				float3 correctedNormal = i.normal * float3(1, (bottomSide || topSide), 1);
 				correctedNormal = normalize(mul(_Object2World, correctedNormal));
 
-				float rad = radBetween(correctedNormal, float3(0, 1, 0));
-				float sun = _DirectionalLight * (1 - (rad / M_PI));
-				sun = min(sun, _DirectionalLight * _Specular);
-				c *= max(_AmbientLight, sun);
+				float rad = radBetween(correctedNormal, _Sun);
+				float sunLight = min(_DirectionalLight * (1 - (rad / M_PI)), _DirectionalLight * _Specular);
+				c *= max(_AmbientLight, sunLight);
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
