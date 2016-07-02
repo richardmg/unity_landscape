@@ -137,17 +137,10 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float3 flatNormal =
-					  (bottomSide * i.normal)
-					+ (leftSide	  * float3(-1, 0, 0))
-					+ (frontSide  * float3(0, 0, -1))
-					+ (backSide	  * float3(0, 0, 1))
-					+ (topSide	  * i.normal)
-					+ (rightSide  * float3(1, 0, 0));
+				float3 correctedNormal = i.normal * float3(1, (bottomSide || topSide), 1);
+				correctedNormal = normalize(mul(_Object2World, correctedNormal));
 
-				flatNormal = normalize(mul(_Object2World, flatNormal));
-
-				float rad = radBetween(flatNormal, float3(0, 1, 0));
+				float rad = radBetween(correctedNormal, float3(0, 1, 0));
 				float sun = _DirectionalLight * (1 - (rad / M_PI));
 				c *= max(_AmbientLight, sun);
 
