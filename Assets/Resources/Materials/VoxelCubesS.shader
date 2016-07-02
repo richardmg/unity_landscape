@@ -20,6 +20,7 @@
 	{
 		Tags {
 			"RenderType"="Opaque"
+          	"DisableBatching" = "True"
 		}
 
 		LOD 100
@@ -99,7 +100,8 @@
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.normal = mul(_Object2World, objNormal);
+//				o.normal = objNormal;//mul(UNITY_MATRIX_MVP, objNormal);
+				o.normal = mul(UNITY_MATRIX_MVP, objNormal);
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
 				o.extra = float4(0, 0, v.cubeDesc.a, 0);
@@ -127,9 +129,17 @@
 				float3 uvVoxel = frac(voxel);
 
 				////////////////////////////////////////////////////////
-				// Apply lightning and gradient
+				// Apply lightning
+
+ 				int frontSide = int((i.normal.z - 1) / -2);
+				int backSide = int((i.normal.z + 1) / 2);
+				int leftSide = int(!frontSide) * int(!backSide) * int((i.normal.x - 1) / -2);
+				int rightSide = int(!frontSide) * int(!backSide) * int((i.normal.x + 1) / 2);
+				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
+				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				float rad = radBetween(i.normal, float3(0, 1, 0));
+//				rad = (rad < 2.5 * M_PI/3) ? 0 : 1;
 				float sun = _DirectionalLight * (1 - (rad / M_PI));
 				c *= _AmbientLight + sun;
 
