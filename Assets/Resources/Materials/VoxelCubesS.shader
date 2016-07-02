@@ -138,11 +138,11 @@
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				float3 flatNormal =
-					  (bottomSide * float3(0, -1, 0))
+					  (bottomSide * i.normal)
 					+ (leftSide	  * float3(-1, 0, 0))
 					+ (frontSide  * float3(0, 0, -1))
 					+ (backSide	  * float3(0, 0, 1))
-					+ (topSide	  * float3(0, 1, 0))
+					+ (topSide	  * i.normal)
 					+ (rightSide  * float3(1, 0, 0));
 
 				flatNormal = normalize(mul(_Object2World, flatNormal));
