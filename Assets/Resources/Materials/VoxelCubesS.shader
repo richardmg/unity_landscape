@@ -100,8 +100,7 @@
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-//				o.normal = objNormal;//mul(UNITY_MATRIX_MVP, objNormal);
-				o.normal = mul(UNITY_MATRIX_MVP, objNormal);
+				o.normal = objNormal;
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
 				o.extra = float4(0, 0, v.cubeDesc.a, 0);
@@ -138,10 +137,19 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float rad = radBetween(i.normal, float3(0, 1, 0));
-//				rad = (rad < 2.5 * M_PI/3) ? 0 : 1;
+				float3 flatNormal =
+					  (bottomSide * float3(0, -1, 0))
+					+ (leftSide	  * float3(-1, 0, 0))
+					+ (frontSide  * float3(0, 0, -1))
+					+ (backSide	  * float3(0, 0, 1))
+					+ (topSide	  * float3(0, 1, 0))
+					+ (rightSide  * float3(1, 0, 0));
+
+				flatNormal = normalize(mul(_Object2World, flatNormal));
+
+				float rad = radBetween(flatNormal, float3(0, 1, 0));
 				float sun = _DirectionalLight * (1 - (rad / M_PI));
-				c *= _AmbientLight + sun;
+				c *= max(_AmbientLight, sun);
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
