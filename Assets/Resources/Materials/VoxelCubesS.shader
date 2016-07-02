@@ -13,8 +13,6 @@
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
 		_AmbientLight ("Light ambient", Range(0, 2)) = 0.6
 		_DirectionalLight ("Light directional", Range(0, 3)) = 0.33
-		_LightAtt ("Light attenuation", Range(0, 1)) = 0
-		_LightShade ("Light shade", Range(0, 1)) = 0.07
 	}
 	SubShader
 	{
@@ -50,8 +48,6 @@
 
 			float _AmbientLight;
 			float _DirectionalLight;
-			float _LightAtt;
-			float _LightShade;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
