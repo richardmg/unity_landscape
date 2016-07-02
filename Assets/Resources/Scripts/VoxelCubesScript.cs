@@ -24,6 +24,17 @@ public class VoxelCubesScript : MonoBehaviour {
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
 
+	static Vector3[] normalForCode = {
+		new Vector3(-1, -1, -1),
+		new Vector3(-1, 1, -1),
+		new Vector3(1, -1, -1),
+		new Vector3(1, 1, -1),
+		new Vector3(-1, -1, 1),
+		new Vector3(-1, 1, 1),
+		new Vector3(1, -1, 1),
+		new Vector3(1, 1, 1)
+	};
+
 	const int kVoxelNotFound = -1;
 	const int kBottomLeft = 0;
 	const int kTopLeft = 1;
@@ -75,16 +86,19 @@ public class VoxelCubesScript : MonoBehaviour {
 		// We therefore encode this information covered as vertex color.
 		int vertexCount = mesh.vertices.Length;
 		Color[] cubeDesc = new Color[vertexCount];
+		Vector3[] normals = new Vector3[vertexCount];
 
 		for (int i = 0; i < vertexCount; ++i) {
 			Vector3 v = mesh.vertices[i];
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
+			normals[i] = normalForCode[normalCodeList[i]];
 		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
 		mesh.colors = cubeDesc;
+		mesh.normals = normals;
 
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;

@@ -19,7 +19,7 @@
 	{
 		Tags {
 			"RenderType"="Opaque"
-          	"DisableBatching" = "True"
+//          	"DisableBatching" = "True"
 		}
 
 		LOD 100
@@ -61,6 +61,7 @@
 			struct appdata
 			{
 				float4 vertex : POSITION;
+				float3 normal : NORMAL;
 				float2 uvAtlasCubeRectEncoded : TEXCOORD0;
 				float4 cubeDesc : COLOR;
 			};
@@ -69,6 +70,7 @@
 			{
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
+				float3 objNormal : NORMAL1;
 				float3 uvAtlas : POSITION2;
 				float4 uvAtlasCubeRect : COLOR1;
 				float4 extra : COLOR2;
@@ -99,7 +101,8 @@
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.normal = objNormal;
+				o.normal = v.normal;
+				o.objNormal = objNormal;
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
 				o.extra = float4(0, 0, v.cubeDesc.a, 0);
@@ -129,11 +132,11 @@
 				////////////////////////////////////////////////////////
 				// Apply lightning
 
- 				int frontSide = int((i.normal.z - 1) / -2);
-				int backSide = int((i.normal.z + 1) / 2);
-				int leftSide = int(!frontSide) * int(!backSide) * int((i.normal.x - 1) / -2);
-				int rightSide = int(!frontSide) * int(!backSide) * int((i.normal.x + 1) / 2);
-				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
+ 				int frontSide = int((i.objNormal.z - 1) / -2);
+				int backSide = int((i.objNormal.z + 1) / 2);
+				int leftSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x - 1) / -2);
+				int rightSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x + 1) / 2);
+				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				float3 correctedNormal = i.normal * float3(1, (bottomSide | topSide), 1);
