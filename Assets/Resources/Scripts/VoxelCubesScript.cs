@@ -42,8 +42,7 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
 		// verticeList, since those can be calculated directly (and more precisely) in the shader
-		// based on the local position of the verticeList themselves. But we piggyback the uv sub image
-		// origo onto the normals to give the shader at start offset.
+		// based on the local position of the vertices themselves.
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
@@ -71,7 +70,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		mesh.vertices = verticeList.ToArray();
 		mesh.triangles = tri.ToArray();
 
-		// When using object batching, local verticeList and normals will be translated on the CPU before
+		// When using object batching, local vertices and normals will be translated on the CPU before
 		// passed down to the GPU. We therefore loose the original values in the shader, which we need.
 		// We therefore encode this information covered as vertex color.
 		int vertexCount = mesh.vertices.Length;
