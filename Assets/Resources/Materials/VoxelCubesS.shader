@@ -136,7 +136,7 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.normal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float3 correctedNormal = i.normal * float3(1, (bottomSide || topSide), 1);
+				float3 correctedNormal = i.normal * float3(1, (bottomSide | topSide), 1);
 				correctedNormal = normalize(mul(_Object2World, correctedNormal));
 
 				float rad = radBetween(correctedNormal, _Sun);
