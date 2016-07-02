@@ -12,7 +12,8 @@
 		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
 		_AmbientLight ("Light ambient", Range(0, 2)) = 0.6
-		_DirectionalLight ("Light directional", Range(0, 3)) = 0.33
+		_DirectionalLight ("Light directional", Range(0, 3)) = 1.5
+		_Specular ("Light specular", Range(0, 3)) = 0.8
 	}
 	SubShader
 	{
@@ -48,6 +49,7 @@
 
 			float _AmbientLight;
 			float _DirectionalLight;
+			float _Specular;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -138,6 +140,7 @@
 
 				float rad = radBetween(correctedNormal, float3(0, 1, 0));
 				float sun = _DirectionalLight * (1 - (rad / M_PI));
+				sun = min(sun, _DirectionalLight * _Specular);
 				c *= max(_AmbientLight, sun);
 
 				////////////////////////////////////////////////////////
