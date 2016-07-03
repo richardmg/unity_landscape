@@ -93,7 +93,18 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
-			normals[i] = normalForCode[normalCodeList[i]];
+
+			int code = normalCodeList[i];
+			if (code == kBottomLeft)
+				code = kTopLeft;
+			else if (code == kBottomRight)
+				code = kTopRight;
+			else if (code == kBottomLeft + kBackSide)
+				code = kTopRight + kBackSide;
+			else if (code == kBottomRight + kBackSide)
+				code = kTopRight + kBackSide;
+			
+			normals[i] = normalForCode[code];
 		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();

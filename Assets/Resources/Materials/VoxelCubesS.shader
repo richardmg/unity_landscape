@@ -138,7 +138,7 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-//				float3 normalOffset = i.normal - i.objNormal;
+				float3 normalOffset = i.normal - i.objNormal;
 
 				// i.normal of i.objNormal skal være like ved null rotasjon??
 
@@ -157,7 +157,13 @@
 //				float3 correctedNormal = i.normal * float3(1, 1, 1);
 //				correctedNormal = normalize(mul(_Object2World, correctedNormal));
 
-				float sunLight = _DirectionalLight * max(0, dot(i.normal, _SunWorldPos));
+				float sunDist = dot(i.normal, _SunWorldPos);
+//				sunDist *= 1 - ((frontSide | backSide | leftSide | rightSide) * 0.9);
+
+				if (frontSide)
+					sunDist = sunDist > -0.5 ? 0.5 : 0;
+
+				float sunLight = _DirectionalLight * max(0, sunDist);
 				c *= _AmbientLight + sunLight;
 
 				////////////////////////////////////////////////////////
