@@ -140,7 +140,9 @@
 				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
 				float ambientLight = _AmbientLight;
 				sunLight += topSide * _TopLight;
+				sunLight += rightSide * (_TopLight + 0.05);
 				ambientLight += topSide * _TopLight;
+				ambientLight += rightSide * (_TopLight + 0.05);
 				c *= max(ambientLight, sunLight);
 
 				////////////////////////////////////////////////////////
