@@ -24,15 +24,16 @@ public class VoxelCubesScript : MonoBehaviour {
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
 
+	static float n = 0.01f;
 	static Vector3[] normalForCode = {
-		new Vector3(-1, -1, -1),
-		new Vector3(-1, 1, -1),
-		new Vector3(1, -1, -1),
-		new Vector3(1, 1, -1),
-		new Vector3(-1, -1, 1),
-		new Vector3(-1, 1, 1),
-		new Vector3(1, -1, 1),
-		new Vector3(1, 1, 1)
+		new Vector3(-1, -n, -1).normalized,
+		new Vector3(-1, n, -1).normalized,
+		new Vector3(1, -n, -1).normalized,
+		new Vector3(1, n, -1).normalized,
+		new Vector3(-1, -n, 1).normalized,
+		new Vector3(-1, n, 1).normalized,
+		new Vector3(1, -n, 1).normalized,
+		new Vector3(1, n, 1).normalized
 	};
 
 	const int kVoxelNotFound = -1;
@@ -93,19 +94,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
-
-			int code = normalCodeList[i];
-			if (code == kBottomLeft)
-				code = kTopLeft;
-			else if (code == kBottomRight)
-				code = kTopRight;
-			else if (code == kBottomLeft + kBackSide)
-				code = kTopRight + kBackSide;
-			else if (code == kBottomRight + kBackSide)
-				code = kTopRight + kBackSide;
-			
-			normals[i] = normalForCode[code];
-		}
+			normals[i] = normalForCode[normalCodeList[i]];		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
 		mesh.colors = cubeDesc;

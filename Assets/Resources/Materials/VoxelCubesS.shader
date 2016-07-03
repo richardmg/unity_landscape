@@ -138,32 +138,9 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float3 normalOffset = i.normal - i.objNormal;
-
-				// i.normal of i.objNormal skal være like ved null rotasjon??
-
-//				if (i.objNormal.y < 0.9)
-//					 return red;
-//				if (i.normal.y < 0.9)
-//					 return red;
-
-//				if (normalOffset.y < 0)
-////					 if (normalOffset.y < 0.2)
-//					 	return red;
-
-//				float3 normalizedSun = _Sun;//normalize(_Sun - normalOffset);
-
-//				float3 correctedNormal = i.normal;// * float3(1, (bottomSide | topSide), 1);
-//				float3 correctedNormal = i.normal * float3(1, 1, 1);
-//				correctedNormal = normalize(mul(_Object2World, correctedNormal));
-
-				float sunDist = dot(i.normal, _SunWorldPos);
-//				sunDist *= 1 - ((frontSide | backSide | leftSide | rightSide) * 0.9);
-
-				if (frontSide)
-					sunDist = sunDist > -0.5 ? 0.5 : 0;
-
-				float sunLight = _DirectionalLight * max(0, sunDist);
+				float3 correctedNormal = i.normal;// * (1 + ((bottomSide | topSide) * 4));
+				float sunDist = dot(correctedNormal, _SunWorldPos);
+				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
 				c *= _AmbientLight + sunLight;
 
 				////////////////////////////////////////////////////////
