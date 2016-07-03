@@ -98,7 +98,6 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 
 				// Only allow uniform scale for now, otherwise the normals will end up skewed
-				float scale = length(mul(_Object2World, float3(1, 0, 0)));
 				o.normal = mul(_Object2World, v.normal);
 
 				o.objNormal = objNormal;

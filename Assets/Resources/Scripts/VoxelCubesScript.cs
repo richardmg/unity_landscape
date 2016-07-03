@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
-	public float uniScale = 1;
 	public float cascade = 0.0f;
 
 	Texture2D texture;
@@ -46,6 +45,9 @@ public class VoxelCubesScript : MonoBehaviour {
 		uvAtlasCubeRectEncodedList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
+
+		Vector3 scale = gameObject.transform.localScale;
+		Debug.Assert(scale.x == scale.y && scale.x == scale.z, gameObject.name + " needs a uniform scale to support batching!");
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
@@ -92,7 +94,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
-			normals[i] = normalForCode[normalCodeList[i]];
+			normals[i] = normalForCode[normalCodeList[i]] / scale.x;
 		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
@@ -102,7 +104,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
 
-		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
+//		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
@@ -122,7 +124,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		if (index != -1)
 			return index;
 
-		verticeList.Add(new Vector3(v.x * uniScale, v.y * uniScale, v.z * uniScale));
+		verticeList.Add(new Vector3(v.x, v.y, v.z));
 		normalCodeList.Add(normalCode);
 		uvAtlasCubeRectEncodedList.Add(uvRect);
 
