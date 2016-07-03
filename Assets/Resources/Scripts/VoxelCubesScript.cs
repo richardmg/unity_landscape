@@ -94,6 +94,8 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
+			// To ensure lightning will look the same for all batched objects, we need
+			// to "reverse" the scaling of the normals that batching will perform
 			normals[i] = normalForCode[normalCodeList[i]] / scale.x;
 		}
 
