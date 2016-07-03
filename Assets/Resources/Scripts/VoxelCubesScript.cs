@@ -4,18 +4,16 @@ using System.Collections.Generic;
 
 public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
-	public int subImageWidth = 16;
-	public int subImageHeight = 8;
 	public float voxelDepth = 4;
-	public bool addFront = true;
-	public bool addBack = true;
-	public bool addVolume = true;
-	public bool trimVolume = false;
+	public float uniScale = 1;
 	public float cascade = 0.0f;
 
 	Texture2D texture;
 	int startPixelX;
 	int startPixelY;
+
+	static int subImageWidth = 16;
+	static int subImageHeight = 8;
 
 	static int[] indices = new int[8];
 	static Vector3 vec = new Vector3();
@@ -123,7 +121,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		if (index != -1)
 			return index;
 
-		verticeList.Add(new Vector3(v.x, v.y, v.z));
+		verticeList.Add(new Vector3(v.x * uniScale, v.y * uniScale, v.z * uniScale));
 		normalCodeList.Add(normalCode);
 		uvAtlasCubeRectEncodedList.Add(uvRect);
 

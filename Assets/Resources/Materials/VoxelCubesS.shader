@@ -19,7 +19,7 @@
 	{
 		Tags {
 			"RenderType"="Opaque"
-          	"DisableBatching" = "True"
+//          	"DisableBatching" = "True"
 		}
 
 		LOD 100
@@ -99,7 +99,7 @@
 
 				// Only allow uniform scale for now, otherwise the normals will end up skewed
 				float scale = length(mul(_Object2World, float3(1, 0, 0)));
-				o.normal = mul(_Object2World, v.normal * (1 / scale));
+				o.normal = mul(_Object2World, v.normal);
 
 				o.objNormal = objNormal;
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
