@@ -19,7 +19,7 @@
 	{
 		Tags {
 			"RenderType"="Opaque"
-//          	"DisableBatching" = "True"
+          	"DisableBatching" = "True"
 		}
 
 		LOD 100
@@ -56,7 +56,7 @@
 
 			static float _ClampOffset = 0.0001;
 			static fixed4 red = fixed4(1, 0, 0, 1);
-			static float3 _Sun = normalize(float3(1, 1, 0.5));
+			static float3 _SunWorldPos = float3(0, 1, 0);
 
 			struct appdata
 			{
@@ -87,11 +87,6 @@
 				float3(1, 1, 1)
  			};
 
- 			inline float radBetween(float3 v1, float3 v2)
- 			{
-     			return acos(dot(v1, v2) / (length(v1) * length(v2)));
- 			}
-
 			v2f vert (appdata v)
 			{
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
@@ -101,7 +96,11 @@
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.normal = v.normal;
+
+				// Only allow uniform scale for now, otherwise the normals will end up skewed
+				float scale = length(mul(_Object2World, float3(1, 0, 0)));
+				o.normal = mul(_Object2World, v.normal * (1 / scale));
+
 				o.objNormal = objNormal;
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
@@ -139,12 +138,27 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float3 correctedNormal = i.normal * float3(1, (bottomSide | topSide), 1);
-				correctedNormal = normalize(mul(_Object2World, correctedNormal));
+//				float3 normalOffset = i.normal - i.objNormal;
 
-				float rad = radBetween(correctedNormal, _Sun);
-				float sunLight = min(_DirectionalLight * (1 - (rad / M_PI)), _DirectionalLight * _Specular);
-				c *= max(_AmbientLight, sunLight);
+				// i.normal of i.objNormal skal være like ved null rotasjon??
+
+//				if (i.objNormal.y < 0.9)
+//					 return red;
+//				if (i.normal.y < 0.9)
+//					 return red;
+
+//				if (normalOffset.y < 0)
+////					 if (normalOffset.y < 0.2)
+//					 	return red;
+
+//				float3 normalizedSun = _Sun;//normalize(_Sun - normalOffset);
+
+//				float3 correctedNormal = i.normal;// * float3(1, (bottomSide | topSide), 1);
+//				float3 correctedNormal = i.normal * float3(1, 1, 1);
+//				correctedNormal = normalize(mul(_Object2World, correctedNormal));
+
+				float sunLight = _DirectionalLight * max(0, dot(i.normal, _SunWorldPos));
+				c *= _AmbientLight + sunLight;
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
