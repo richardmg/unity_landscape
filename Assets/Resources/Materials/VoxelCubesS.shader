@@ -139,7 +139,7 @@
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				float sunDist = dot(i.normal, _SunWorldPos);
-				float sunLight = _DirectionalLight * max(0, sunDist);
+				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
 				float ambientLight = _AmbientLight;
 				sunLight += topSide * 0.3;
 				ambientLight += topSide * 0.3;
