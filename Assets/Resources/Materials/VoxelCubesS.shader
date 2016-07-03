@@ -96,10 +96,7 @@
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-
-				// Only allow uniform scale for now, otherwise the normals will end up skewed
 				o.normal = mul(_Object2World, v.normal);
-
 				o.objNormal = objNormal;
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
