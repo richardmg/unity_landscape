@@ -92,7 +92,8 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
-			normals[i] = normalForCode[normalCodeList[i]];		}
+			normals[i] = normalForCode[normalCodeList[i]];
+		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
 		mesh.colors = cubeDesc;
