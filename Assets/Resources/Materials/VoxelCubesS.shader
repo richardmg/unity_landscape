@@ -14,6 +14,7 @@
 		_AmbientLight ("Light ambient", Range(0, 2)) = 0.6
 		_DirectionalLight ("Light directional", Range(0, 3)) = 1.5
 		_Specular ("Light specular", Range(0, 3)) = 0.8
+		_TopLight ("Light top", Range(0, 1)) = 0.3
 	}
 	SubShader
 	{
@@ -50,6 +51,7 @@
 			float _AmbientLight;
 			float _DirectionalLight;
 			float _Specular;
+			float _TopLight;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -137,8 +139,8 @@
 				float sunDist = dot(i.normal, _SunWorldPos);
 				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
 				float ambientLight = _AmbientLight;
-				sunLight += topSide * 0.3;
-				ambientLight += topSide * 0.3;
+				sunLight += topSide * _TopLight;
+				ambientLight += topSide * _TopLight;
 				c *= max(ambientLight, sunLight);
 
 				////////////////////////////////////////////////////////
