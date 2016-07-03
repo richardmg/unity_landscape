@@ -138,10 +138,19 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float3 correctedNormal = i.normal;// * (1 + ((bottomSide | topSide) * 4));
+				float3 correctedNormal = i.normal;
+//				if (i.normal.y > -0.3)
+//					correctedNormal.y += (((bottomSide | topSide) * 0.0));
+
+//				correctedNormal = normalize(correctedNormal);
+
 				float sunDist = dot(correctedNormal, _SunWorldPos);
-				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
-				c *= _AmbientLight + sunLight;
+//				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
+				float sunLight = _DirectionalLight * max(0, sunDist);
+//				if ((topSide | bottomSide)) sunLight = _AmbientLight + 0.3;
+				c *= max(_AmbientLight, sunLight);
+
+//				if (topSide && correctedNormal.y > 0) return red;
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color

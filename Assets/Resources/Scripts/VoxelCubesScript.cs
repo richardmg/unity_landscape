@@ -24,15 +24,15 @@ public class VoxelCubesScript : MonoBehaviour {
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
 
-	static float n = 0.01f;
+	static float n = 1.0f;
 	static Vector3[] normalForCode = {
-		new Vector3(-1, -n, -1).normalized,
 		new Vector3(-1, n, -1).normalized,
-		new Vector3(1, -n, -1).normalized,
+		new Vector3(-1, n, -1).normalized,
 		new Vector3(1, n, -1).normalized,
-		new Vector3(-1, -n, 1).normalized,
+		new Vector3(1, n, -1).normalized,
 		new Vector3(-1, n, 1).normalized,
-		new Vector3(1, -n, 1).normalized,
+		new Vector3(-1, n, 1).normalized,
+		new Vector3(1, n, 1).normalized,
 		new Vector3(1, n, 1).normalized
 	};
 
