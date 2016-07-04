@@ -21,16 +21,15 @@ public class VoxelCubesScript : MonoBehaviour {
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
 
-	static float n = 1.0f;
 	static Vector3[] normalForCode = {
-		new Vector3(-1, n, -1).normalized,
-		new Vector3(-1, n, -1).normalized,
-		new Vector3(1, n, -1).normalized,
-		new Vector3(1, n, -1).normalized,
-		new Vector3(-1, n, 1).normalized,
-		new Vector3(-1, n, 1).normalized,
-		new Vector3(1, n, 1).normalized,
-		new Vector3(1, n, 1).normalized
+		new Vector3(-1, -1, -1).normalized,
+		new Vector3(-1, 1, -1).normalized,
+		new Vector3(1, -1, -1).normalized,
+		new Vector3(1, 1, -1).normalized,
+		new Vector3(-1, -1, 1).normalized,
+		new Vector3(-1, 1, 1).normalized,
+		new Vector3(1, -1, 1).normalized,
+		new Vector3(1, 1, 1).normalized
 	};
 
 	const int kVoxelNotFound = -1;
@@ -94,9 +93,15 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
-			// To ensure lightning will look the same for all batched objects, we need
-			// to "reverse" the scaling of the normals that batching will perform
-			normals[i] = normalForCode[normalCodeList[i]] / scale.x;
+
+			// Divide the normals across the subimage to make the
+			// shade be evenly distributed across the whole object
+			Vector3 uvSubImage = new Vector3(v.x / subImageWidth, v.y / subImageHeight, 1);
+			Vector3 deltaNormal = normalForCode[kTopRight] - normalForCode[kBottomLeft];
+			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(deltaNormal, uvSubImage);
+			normals[i].y = 0;
+			normals[i].z = v.z == 0 ? -1 : 1;
+			normals[i] /= scale.x;
 		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
