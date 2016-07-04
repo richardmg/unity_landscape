@@ -22,14 +22,14 @@ public class VoxelCubesScript : MonoBehaviour {
 	static List<int> tri = new List<int>(); 
 
 	static Vector3[] normalForCode = {
-		new Vector3(-1, -1, -1).normalized,
-		new Vector3(-1, 1, -1).normalized,
-		new Vector3(1, -1, -1).normalized,
-		new Vector3(1, 1, -1).normalized,
-		new Vector3(-1, -1, 1).normalized,
-		new Vector3(-1, 1, 1).normalized,
-		new Vector3(1, -1, 1).normalized,
-		new Vector3(1, 1, 1).normalized
+		new Vector3(-1, -1, -1),
+		new Vector3(-1, 1, -1),
+		new Vector3(1, -1, -1),
+		new Vector3(1, 1, -1),
+		new Vector3(-1, -1, 1),
+		new Vector3(-1, 1, 1),
+		new Vector3(1, -1, 1),
+		new Vector3(1, 1, 1)
 	};
 
 	const int kVoxelNotFound = -1;

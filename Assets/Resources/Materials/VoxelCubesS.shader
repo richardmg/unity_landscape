@@ -105,7 +105,7 @@
 				o.extra = float4(0, 0, v.cubeDesc.a, 0);
 				return o;
 			}
-			
+
 			fixed4 frag (v2f i) : SV_Target
 			{
 				////////////////////////////////////////////////////////
@@ -144,11 +144,55 @@
 					+ (topSide	  * float3(0, 1, 0))
 					+ (backSide	  * float3(0, 0, 1));
 
+				float2 nwxy = normalize(i.normal.xy);
+				float2 noxy = normalize(i.objNormal.xy);
+				float zDist = dot(nwxy, noxy);
+				float zRad = acos(zDist);
+
+//				float2 nw2o = normalize(nwxy - noxy);
+//				float worldUpDist = dot(nw2o, normalize(float2(0, 1)));
+
+				float rad = atan2(nwxy.y, nwxy.y);
+
+				if (rad > 0)
+					return red;
+
+//				float zDistX = dot(nw2o, normalize(float2(0, 1)));
+//				if (zDistX < 0)
+//					return red;
+
+
+//				float zRad2 = atan2(nw2o.x, nw2o.y);
+//				if (zRad2 < M_PI/4) return red;
+
+//				if (worldToObjectNormal.x > 0 && worldToObjectNormal.y > 0 ) return red;
+
+
+//				if (nw2o.y < 0 && nw2o.x < 0) {
+//					zRad += 3*M_PI/4;
+//					}
+
+				float zDeg = zRad * 360/(2*3.1415);
+
+//				if (zDeg < 45) return red;
+
+				float3 normalDelta = (1 + i.objNormal) / 2;
+//				if (normalDelta.y < 0.5) return red;
+
 				flatNormal = normalize(mul(_Object2World, flatNormal));
 
-				float dist = dot(flatNormal, float3(0, 1, 0));
-				float sunLight = _DirectionalLight * max(0, dist);
-				c *= _AmbientLight + sunLight;
+//				float dist = dot(flatNormal, float3(0, 1, 0));
+//				float sunLight = _DirectionalLight * max(0, dist);
+//				c *= _AmbientLight + sunLight;
+
+				float sunDist = dot(i.normal, _SunWorldPos);
+				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
+				float ambientLight = _AmbientLight;
+				sunLight += topSide * _TopLight;
+				sunLight += rightSide * (_TopLight + 0.05);
+				ambientLight += topSide * _TopLight;
+				ambientLight += rightSide * (_TopLight + 0.05);
+				c *= max(ambientLight, sunLight);
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
