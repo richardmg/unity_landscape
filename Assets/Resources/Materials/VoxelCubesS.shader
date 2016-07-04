@@ -20,7 +20,7 @@
 	{
 		Tags {
 			"RenderType"="Opaque"
-//          	"DisableBatching" = "True"
+          	"DisableBatching" = "True"
 		}
 
 		LOD 100
@@ -136,14 +136,19 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float sunDist = dot(i.normal, _SunWorldPos);
-				float sunLight = min(_DirectionalLight * max(0, sunDist), _DirectionalLight * _Specular);
-				float ambientLight = _AmbientLight;
-				sunLight += topSide * _TopLight;
-				sunLight += rightSide * (_TopLight + 0.05);
-				ambientLight += topSide * _TopLight;
-				ambientLight += rightSide * (_TopLight + 0.05);
-				c *= max(ambientLight, sunLight);
+				float3 flatNormal =
+					  (leftSide	  * float3(-1, 0, 0))
+					+ (bottomSide * float3(0, -1, 0))
+					+ (frontSide  * float3(0, 0, -1))
+					+ (rightSide  * float3(1, 0, 0))
+					+ (topSide	  * float3(0, 1, 0))
+					+ (backSide	  * float3(0, 0, 1));
+
+				flatNormal = normalize(mul(_Object2World, flatNormal));
+
+				float dist = dot(flatNormal, float3(0, 1, 0));
+				float sunLight = _DirectionalLight * max(0, dist);
+				c *= _AmbientLight + sunLight;
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
