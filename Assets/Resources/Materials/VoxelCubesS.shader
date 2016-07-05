@@ -13,7 +13,7 @@
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 1
 		_AmbientLight ("Light ambient", Range(0, 2)) = 1.1
 		_DirectionalLight ("Light directional", Range(0, 3)) = 1.5
-		_Specular ("Light specular", Range(0, 3)) = 0.8
+		_Specular ("Light specular", Range(0, 1)) = 0.8
 		_TopLight ("Light top", Range(0, 1)) = 0.11
 		_Attenuation ("Light attenuation", Range(0, 10)) = 0.1
 	}
@@ -60,8 +60,7 @@
 
 			static float _ClampOffset = 0.0001;
 			static fixed4 red = fixed4(1, 0, 0, 1);
-			static float3 _SunWorldPos1 = normalize(float3(0, 0, 1));
-			static float3 _SunWorldPos2 = normalize(float3(0, 1, 0));
+			static float3 _SunPos = normalize(float3(0, 0, 1));
 
 			struct appdata
 			{
@@ -139,16 +138,11 @@
 				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
 				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
-				float sunDist1 = dot(i.normal, _SunWorldPos1);
-				float sunDist2 = dot(i.normal, _SunWorldPos2);
-				float sunLight1 = _DirectionalLight * pow(max(0, asin(sunDist1)), _Attenuation);
-				float sunLight2 = 0;//_DirectionalLight * pow(max(0, asin(sunDist2)), _Attenuation);
-				float sunLight = min(max(sunLight1, sunLight2), _DirectionalLight * _Specular);
+				float sunDist = dot(i.normal, _SunPos);
+				float sunLight = _DirectionalLight * pow(max(0, asin(sunDist)), _Attenuation);
+				sunLight = min(sunLight, _DirectionalLight * _Specular);
 
-				// Mask out some of the sides that we cannot really shade correcly because of lacking normals
-//				sunLight *= 1 - (topSide | bottomSide | leftSide | rightSide);
-
-				// Adjust some of the sides that are masked out to have a fake sun light
+				// Adjust the light on the sides to sharpen contrast reardless of sun position
 				float ambientLight = _AmbientLight;
 				sunLight += topSide * _TopLight;
 				sunLight += rightSide * (_TopLight - 0.05);
