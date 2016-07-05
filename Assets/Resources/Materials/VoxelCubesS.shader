@@ -8,13 +8,13 @@
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
 		_PixelateStrength ("Pixelate strength", Range(0, 0.1)) = 0.05
-		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 0
-		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
-		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
+		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 1
+		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 1
+		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 1
 		_AmbientLight ("Light ambient", Range(0, 2)) = 1.1
-		_DirectionalLight ("Light directional", Range(0, 3)) = 1.3
-		_Specular ("Light specular", Range(0, 3)) = 1
-		_TopLight ("Light top", Range(0, 1)) = 0
+		_DirectionalLight ("Light directional", Range(0, 3)) = 1.5
+		_Specular ("Light specular", Range(0, 3)) = 0.8
+		_TopLight ("Light top", Range(0, 1)) = 0.11
 		_Attenuation ("Light attenuation", Range(0, 10)) = 0.1
 	}
 	SubShader
