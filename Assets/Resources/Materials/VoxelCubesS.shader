@@ -15,6 +15,7 @@
 		_DirectionalLight ("Light directional", Range(0, 3)) = 1.3
 		_Specular ("Light specular", Range(0, 3)) = 1
 		_TopLight ("Light top", Range(0, 1)) = 0.15
+		_Attenuation ("Light attenuation", Range(0, 10)) = 2
 	}
 	SubShader
 	{
@@ -52,6 +53,7 @@
 			float _DirectionalLight;
 			float _Specular;
 			float _TopLight;
+			float _Attenuation;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -139,8 +141,8 @@
 
 				float sunDist1 = dot(i.normal, _SunWorldPos1);
 				float sunDist2 = dot(i.normal, _SunWorldPos2);
-				float sunLight1 = _DirectionalLight * max(0, asin(sunDist1));
-				float sunLight2 = 0;//_DirectionalLight * max(0, asin(sunDist2));
+				float sunLight1 = _DirectionalLight * pow(max(0, asin(sunDist1)), _Attenuation);
+				float sunLight2 = 0;//_DirectionalLight * pow(max(0, asin(sunDist2)), _Attenuation);
 				float sunLight = min(max(sunLight1, sunLight2), _DirectionalLight * _Specular);
 
 				// Mask out some of the sides that we cannot really shade correcly because of lacking normals
