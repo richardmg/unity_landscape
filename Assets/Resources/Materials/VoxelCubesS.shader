@@ -15,8 +15,8 @@
 		_AmbientLight ("Light ambient", Range(0, 2)) = 1.1
 		_DirectionalLight ("Light directional", Range(0, 3)) = 1.6
 		_Specular ("Light specular", Range(0, 1)) = 0.8
-		_EdgeLight ("Light edge", Range(0, 0.3)) = 0.06
 		_Attenuation ("Light attenuation", Range(0, 10)) = 0.1
+		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.06
 	}
 	SubShader
 	{
@@ -54,7 +54,7 @@
 			float _AmbientLight;
 			float _DirectionalLight;
 			float _Specular;
-			float _EdgeLight;
+			float _EdgeSharp;
 			float _Attenuation;
 
 			sampler2D _MainTex;
@@ -160,10 +160,10 @@
 //				c *= 1 + ((bottomSide | topSide) * ((1 - _GradientStrength) + (uvSubImage.z * _GradientStrength) - 1));
 
 				////////////////////////////////////////////////////////
-				// Sharpen contrast between cube sides
+				// Sharpen contrast at cube edges
 
-				c *= 1 + ((leftSide | rightSide) * -_EdgeLight);
-				c *= 1 + ((topSide | bottomSide) * _EdgeLight);
+				c *= 1 + ((leftSide | rightSide) * -_EdgeSharp);
+				c *= 1 + ((topSide | bottomSide) * _EdgeSharp);
 
 				////////////////////////////////////////////////////////
 
