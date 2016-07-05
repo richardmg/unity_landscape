@@ -165,9 +165,10 @@
 
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
-				float gradient = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradient - 1));
-//				c *= 1 + ((bottomSide | topSide) * ((1 - _GradientStrength) + (uvSubImage.z * _GradientStrength) - 1));
+				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
+				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradientSide - 1));
+				float gradientTop = (1 - gradientStrength) + (uvEffectiveSubImage.x * gradientStrength);
+				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1));
 
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at cube edges
