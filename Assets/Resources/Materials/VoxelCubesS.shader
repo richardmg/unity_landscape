@@ -163,20 +163,21 @@
 				c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
 
 				////////////////////////////////////////////////////////
+				// Sharpen contrast at cube edges
+
+				float sharpLeft = 1 + ((leftSide | rightSide) * -_EdgeSharp * _BaseLight);
+				float sharpTop = 1 + ((topSide | bottomSide) * _EdgeSharp * _BaseLight);
+				c *= sharpLeft * sharpTop;
+
+				////////////////////////////////////////////////////////
 				// Apply gradient
 
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
-				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
+				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength * sharpLeft);
 				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradientSide - 1) * _BaseLight);
-				float gradientTop = (1 - gradientStrength) + (uvEffectiveSubImage.x * gradientStrength);
+				float gradientTop = (1 - gradientStrength) + (uvEffectiveSubImage.x * gradientStrength * sharpTop);
 				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1) * _BaseLight);
-
-				////////////////////////////////////////////////////////
-				// Sharpen contrast at cube edges
-
-				c *= 1 + ((leftSide | rightSide) * -_EdgeSharp * _BaseLight);
-				c *= 1 + ((topSide | bottomSide) * _EdgeSharp * _BaseLight);
 
 				////////////////////////////////////////////////////////
 
