@@ -13,6 +13,7 @@
 		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
 		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
 		_VoxelateZ ("Voxelate Z", Range(0, 1)) = 1
+		_BaseLight ("Base light", Range(0, 2)) = 1
 		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
 		_Specular ("Specular", Range(0, 1)) = 0.8
@@ -54,6 +55,7 @@
 			float _GradientSunSide;
 			float _GradientShadeSide;
 
+			float _BaseLight;
 			float _AmbientLight;
 			float _Sunshine;
 			float _Specular;
@@ -151,8 +153,8 @@
 
 				float sunDist = dot(i.normal, _SunPos);
 				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
-				float sunLight = _Sunshine * sunAffection;
-				c *= max(_AmbientLight, min(sunLight, _Sunshine * _Specular));
+				float sunLight = _Sunshine * sunAffection * _BaseLight;
+				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
@@ -166,15 +168,15 @@
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
 				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradientSide - 1));
+				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradientSide - 1) * _BaseLight);
 				float gradientTop = (1 - gradientStrength) + (uvEffectiveSubImage.x * gradientStrength);
-				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1));
+				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1) * _BaseLight);
 
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at cube edges
 
-				c *= 1 + ((leftSide | rightSide) * -_EdgeSharp);
-				c *= 1 + ((topSide | bottomSide) * _EdgeSharp);
+				c *= 1 + ((leftSide | rightSide) * -_EdgeSharp * _BaseLight);
+				c *= 1 + ((topSide | bottomSide) * _EdgeSharp * _BaseLight);
 
 				////////////////////////////////////////////////////////
 
