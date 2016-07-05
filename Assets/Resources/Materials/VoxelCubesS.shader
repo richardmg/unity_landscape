@@ -7,7 +7,7 @@
 		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
-		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.4
+		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.3
 		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
 		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
 		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
@@ -162,8 +162,10 @@
 				////////////////////////////////////////////////////////
 				// Apply gradient
 
-				float sunAffection2 = pow(max(0, asin(sunDist)), _GradientAttenuation);
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (1 - sunAffection2) * ((1 - _GradientStrength) + (uvEffectiveSubImage.y * _GradientStrength) - 1));
+				float factor = sunDist < 0 ? 10 : 1.2;
+				float gradientAffection = min(_GradientStrength, abs(sunDist) * factor * _GradientStrength);
+				float gradient = (1 - _GradientStrength) + (uvEffectiveSubImage.y * _GradientStrength);
+				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * gradientAffection * (gradient - 1));
 //				c *= 1 + ((bottomSide | topSide) * ((1 - _GradientStrength) + (uvSubImage.z * _GradientStrength) - 1));
 
 				////////////////////////////////////////////////////////
