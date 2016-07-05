@@ -7,7 +7,8 @@
 		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
-		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.3
+		_GradientSunSide ("Gradient sunside", Range(0, 1)) = 0.2
+		_GradientShadeSide ("Gradient shadeside", Range(0, 1)) = 0.4
 		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
 		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
 		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
@@ -16,7 +17,6 @@
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
 		_Specular ("Specular", Range(0, 1)) = 0.8
 		_Attenuation ("Attenuation", Range(0, 0.5)) = 0.1
-		_GradientAttenuation ("Attenuation gradient", Range(0, 0.5)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.06
 	}
 	SubShader
@@ -50,14 +50,15 @@
 			float _VoxelateY;
 			float _VoxelateZ;
 			float _VoxelateStrength;
-			float _GradientStrength;
+
+			float _GradientSunSide;
+			float _GradientShadeSide;
 
 			float _AmbientLight;
 			float _Sunshine;
 			float _Specular;
 			float _EdgeSharp;
 			float _Attenuation;
-			float _GradientAttenuation;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -162,10 +163,10 @@
 				////////////////////////////////////////////////////////
 				// Apply gradient
 
-				float factor = sunDist < 0 ? 10 : 1.2;
-				float gradientAffection = min(_GradientStrength, abs(sunDist) * factor * _GradientStrength);
-				float gradient = (1 - _GradientStrength) + (uvEffectiveSubImage.y * _GradientStrength);
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * gradientAffection * (gradient - 1));
+				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
+				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
+				float gradient = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
+				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradient - 1));
 //				c *= 1 + ((bottomSide | topSide) * ((1 - _GradientStrength) + (uvSubImage.z * _GradientStrength) - 1));
 
 				////////////////////////////////////////////////////////
