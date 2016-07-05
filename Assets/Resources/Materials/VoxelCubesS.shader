@@ -139,8 +139,8 @@
 
 				float sunDist1 = dot(i.normal, _SunWorldPos1);
 				float sunDist2 = dot(i.normal, _SunWorldPos2);
-				float sunLight1 = _DirectionalLight * max(0, sunDist1);
-				float sunLight2 = _DirectionalLight * max(0, sunDist2);
+				float sunLight1 = _DirectionalLight * max(0, asin(sunDist1));
+				float sunLight2 = _DirectionalLight * max(0, asin(sunDist2));
 				float sunLight = min(max(sunLight1, sunLight2), _DirectionalLight * _Specular);
 
 				// Mask out some of the sides that we cannot really shade correcly because of lacking normals

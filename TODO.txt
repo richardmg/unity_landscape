@@ -163,7 +163,6 @@
             them further.
 
         - Technical:
-            - Use angle instead of dist to calculate sun shade to let the shade transition smoother
             - Add small gradient to all sides
             - Collapse two adjacent cubes along y-axis in a single object into one.
             - In each cube, for each vertex on either bottom left or top right, add
