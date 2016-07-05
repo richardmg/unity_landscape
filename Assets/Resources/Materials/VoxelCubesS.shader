@@ -8,10 +8,10 @@
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
 		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.6
-		_PixelateStrength ("Pixelate strength", Range(0, 0.1)) = 0.05
-		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 1
-		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 1
-		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 1
+		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
+		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
+		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
+		_VoxelateZ ("Voxelate Z", Range(0, 1)) = 1
 		_AmbientLight ("Light ambient", Range(0, 2)) = 1.1
 		_DirectionalLight ("Light directional", Range(0, 3)) = 1.6
 		_Specular ("Light specular", Range(0, 1)) = 0.8
@@ -45,10 +45,10 @@
 			int _SubImageWidth;
 			int _SubImageHeight;
 
-			float _PixelateVoxelX;
-			float _PixelateVoxelY;
-			float _PixelateVoxelZ;
-			float _PixelateStrength;
+			float _VoxelateX;
+			float _VoxelateY;
+			float _VoxelateZ;
+			float _VoxelateStrength;
 			float _GradientStrength;
 
 			float _AmbientLight;
@@ -150,8 +150,8 @@
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
 
-				int3 voxelate = int3(voxel * float3(_PixelateVoxelX, _PixelateVoxelY, _PixelateVoxelZ));
-				c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _PixelateStrength);
+				int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
+				c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
 
 				////////////////////////////////////////////////////////
 				// Apply gradient
