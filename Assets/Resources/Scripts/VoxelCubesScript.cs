@@ -101,7 +101,7 @@ public class VoxelCubesScript : MonoBehaviour {
 
 			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(deltaNormal, uvSubImage);
 			normals[i].y = 0;
-			normals[i].z = v.z == 0 ? -1 : 1;
+			normals[i].z = (v.z == 0) ? -1 : 1;
 			normals[i] = Vector3.Normalize(normals[i]);
 			normals[i] /= scale.x;
 		}
