@@ -163,7 +163,6 @@
             them further.
 
         - Technical:
-            - Pass effective height from script to better utilize gradient
             - Check if I can apply gradient only if the result is going in the same direction
                 as lightning, and skip otherwise
             - Calculate effective size for objects, and limit shading range to it.

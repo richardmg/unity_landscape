@@ -10,6 +10,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	Texture2D texture;
 	int startPixelX;
 	int startPixelY;
+	float uvEffectiveHeight = 0;
 
 	static int subImageWidth = 16;
 	static int subImageHeight = 8;
@@ -92,7 +93,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			Vector3 v = mesh.vertices[i];
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i], voxelDepth);
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + uvEffectiveHeight, voxelDepth);
 
 			// Divide the normals across the subimage to make the
 			// shade be evenly distributed across the whole object
@@ -145,6 +146,9 @@ public class VoxelCubesScript : MonoBehaviour {
 		vec.Set(x, y, z);
 		int i = -1;//verticeList.FindIndex(v2 => v2 == vec);
 		indices[index] = getVertexIndex(vec, uvRect, normalCode, i);
+		// Ensure uvEffectiveHeight ends up as a fraction, so make the range go from 0 - 0.5
+		uvEffectiveHeight = Mathf.Max(uvEffectiveHeight, y / (2 * subImageHeight));
+
 		return i != -1;
 	}
 

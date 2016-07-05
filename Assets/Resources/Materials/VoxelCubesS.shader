@@ -7,7 +7,7 @@
 		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
-		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.6
+		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.5
 		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
 		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
 		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
@@ -98,7 +98,9 @@
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
 				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
+				float uvEffectiveHeight = frac(v.cubeDesc.b) * 2;
 				float3 objNormal = normalForCode[(int)v.cubeDesc.b];
+				float voxelDepth = v.cubeDesc.a;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
@@ -106,7 +108,7 @@
 				o.objNormal = objNormal;
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
-				o.extra = float4(0, 0, v.cubeDesc.a, 0);
+				o.extra = float4(0, uvEffectiveHeight, voxelDepth, 0);
 				return o;
 			}
 			
@@ -126,6 +128,7 @@
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
 				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float3 uvEffectiveSubImage = uvSubImage / float3(1, i.extra.y, 1);
 				float3 voxel = uvSubImage * subImageSize;
 				float3 uvVoxel = frac(voxel);
 
@@ -156,7 +159,7 @@
 				////////////////////////////////////////////////////////
 				// Apply gradient
 
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * ((1 - _GradientStrength) + (uvSubImage.y * _GradientStrength) - 1));
+				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * ((1 - _GradientStrength) + (uvEffectiveSubImage.y * _GradientStrength) - 1));
 //				c *= 1 + ((bottomSide | topSide) * ((1 - _GradientStrength) + (uvSubImage.z * _GradientStrength) - 1));
 
 				////////////////////////////////////////////////////////
