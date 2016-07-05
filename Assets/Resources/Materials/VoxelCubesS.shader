@@ -11,10 +11,10 @@
 		_PixelateVoxelX ("Pixelate X", Range(0, 1)) = 0
 		_PixelateVoxelY ("Pixelate Y", Range(0, 1)) = 0
 		_PixelateVoxelZ ("Pixelate Z", Range(0, 1)) = 0
-		_AmbientLight ("Light ambient", Range(0, 2)) = 0.6
-		_DirectionalLight ("Light directional", Range(0, 3)) = 1.5
-		_Specular ("Light specular", Range(0, 3)) = 0.8
-		_TopLight ("Light top", Range(0, 1)) = 0.3
+		_AmbientLight ("Light ambient", Range(0, 2)) = 1
+		_DirectionalLight ("Light directional", Range(0, 3)) = 1.3
+		_Specular ("Light specular", Range(0, 3)) = 1
+		_TopLight ("Light top", Range(0, 1)) = 0.15
 	}
 	SubShader
 	{
@@ -140,16 +140,16 @@
 				float sunDist1 = dot(i.normal, _SunWorldPos1);
 				float sunDist2 = dot(i.normal, _SunWorldPos2);
 				float sunLight1 = _DirectionalLight * max(0, asin(sunDist1));
-				float sunLight2 = _DirectionalLight * max(0, asin(sunDist2));
+				float sunLight2 = 0;//_DirectionalLight * max(0, asin(sunDist2));
 				float sunLight = min(max(sunLight1, sunLight2), _DirectionalLight * _Specular);
 
 				// Mask out some of the sides that we cannot really shade correcly because of lacking normals
 				sunLight *= 1 - (topSide | bottomSide | leftSide | rightSide);
 
 				// Adjust some of the sides that are masked out to have a fake sun light
+				float ambientLight = _AmbientLight;
 				sunLight += topSide * _TopLight;
 				sunLight += rightSide * (_TopLight - 0.05);
-				float ambientLight = _AmbientLight;
 				ambientLight += topSide * _TopLight;
 				ambientLight += rightSide * (_TopLight - 0.05);
 
