@@ -7,15 +7,16 @@
 		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
-		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.5
+		_GradientStrength ("Gradient strength", Range(0, 1)) = 0.4
 		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
 		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
 		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
 		_VoxelateZ ("Voxelate Z", Range(0, 1)) = 1
-		_AmbientLight ("Light ambient", Range(0, 2)) = 1.1
-		_DirectionalLight ("Light directional", Range(0, 3)) = 1.6
-		_Specular ("Light specular", Range(0, 1)) = 0.8
-		_Attenuation ("Light attenuation", Range(0, 10)) = 0.1
+		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
+		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
+		_Specular ("Specular", Range(0, 1)) = 0.8
+		_Attenuation ("Attenuation", Range(0, 0.5)) = 0.1
+		_GradientAttenuation ("Attenuation gradient", Range(0, 0.5)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.06
 	}
 	SubShader
@@ -52,10 +53,11 @@
 			float _GradientStrength;
 
 			float _AmbientLight;
-			float _DirectionalLight;
+			float _Sunshine;
 			float _Specular;
 			float _EdgeSharp;
 			float _Attenuation;
+			float _GradientAttenuation;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -147,8 +149,9 @@
 				// Apply lightning
 
 				float sunDist = dot(i.normal, _SunPos);
-				float sunLight = _DirectionalLight * pow(max(0, asin(sunDist)), _Attenuation);
-				c *= max(_AmbientLight, min(sunLight, _DirectionalLight * _Specular));
+				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
+				float sunLight = _Sunshine * sunAffection;
+				c *= max(_AmbientLight, min(sunLight, _Sunshine * _Specular));
 
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
@@ -159,7 +162,8 @@
 				////////////////////////////////////////////////////////
 				// Apply gradient
 
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * ((1 - _GradientStrength) + (uvEffectiveSubImage.y * _GradientStrength) - 1));
+				float sunAffection2 = pow(max(0, asin(sunDist)), _GradientAttenuation);
+				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (1 - sunAffection2) * ((1 - _GradientStrength) + (uvEffectiveSubImage.y * _GradientStrength) - 1));
 //				c *= 1 + ((bottomSide | topSide) * ((1 - _GradientStrength) + (uvSubImage.z * _GradientStrength) - 1));
 
 				////////////////////////////////////////////////////////
