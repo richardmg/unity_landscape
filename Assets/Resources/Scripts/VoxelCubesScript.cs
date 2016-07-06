@@ -10,6 +10,8 @@ public class VoxelCubesScript : MonoBehaviour {
 	Texture2D texture;
 	int startPixelX;
 	int startPixelY;
+
+	float uvEffectiveWidth = 0;
 	float uvEffectiveHeight = 0;
 
 	static int subImageWidth = 16;
@@ -95,15 +97,15 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + uvEffectiveHeight, voxelDepth);
 
-			// Divide the normals across the subimage to make the
-			// shade be evenly distributed across the whole object
-
-			// TODO: Note that a subImage should always start at bottom left for lightning to be correct.
-			// Alternatively we need to track indiviual islands in the sub image, and set their normals
-			// independently
-
+			// Divide the normals across the subimage to make shading evenly
+			// distributed across the whole object (instead of per cube)
 			Vector3 uvSubImage = new Vector3(v.x / subImageWidth, v.y / subImageHeight, 1);
 			Vector3 deltaNormal = normalForCode[kTopRight] - normalForCode[kBottomLeft];
+
+			// TODO: Note that a subImage should always start at bottom left for lightning to be correct.
+			// Alternatively we need to track individual islands in the sub image, and set their normals
+			// independently. We would then need more advanced book keeping than a single EffectiveWidth.
+			deltaNormal.x /= uvEffectiveWidth;
 			deltaNormal.y /= uvEffectiveHeight;
 
 			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(deltaNormal, uvSubImage);
@@ -151,7 +153,9 @@ public class VoxelCubesScript : MonoBehaviour {
 		vec.Set(x, y, z);
 		int i = -1;//verticeList.FindIndex(v2 => v2 == vec);
 		indices[index] = getVertexIndex(vec, uvRect, normalCode, i);
-		// Ensure uvEffectiveHeight ends up as a fraction, so make the range go from 0 - 0.5
+
+		// Ensure uvEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
+		uvEffectiveWidth = Mathf.Max(uvEffectiveWidth, x / (2 * subImageWidth));
 		uvEffectiveHeight = Mathf.Max(uvEffectiveHeight, y / (2 * subImageHeight));
 
 		return i != -1;
