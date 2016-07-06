@@ -97,13 +97,18 @@ public class VoxelCubesScript : MonoBehaviour {
 
 			// Divide the normals across the subimage to make the
 			// shade be evenly distributed across the whole object
+
+			// TODO: Note that a subImage should always start at bottom left for lightning to be correct.
+			// Alternatively we need to track indiviual islands in the sub image, and set their normals
+			// independently
+
 			Vector3 uvSubImage = new Vector3(v.x / subImageWidth, v.y / subImageHeight, 1);
 			Vector3 deltaNormal = normalForCode[kTopRight] - normalForCode[kBottomLeft];
+			deltaNormal.y /= uvEffectiveHeight;
 
 			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(deltaNormal, uvSubImage);
-			normals[i].y = 0;
 			normals[i].z = (v.z == 0) ? -1 : 1;
-			normals[i] = Vector3.Normalize(normals[i]);
+//			normals[i] = Vector3.Normalize(normals[i]); // Creates vierd edges...
 			normals[i] /= scale.x;
 		}
 
