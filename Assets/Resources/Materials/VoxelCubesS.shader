@@ -7,18 +7,18 @@
 		_TextureHeight ("Texture height", Int) = 64
 		_SubImageWidth ("Subimage width", Int) = 16
 		_SubImageHeight ("Subimage height", Int) = 8
-		_GradientSunSide ("Gradient sunside", Range(0, 1)) = 0.2
-		_GradientShadeSide ("Gradient shadeside", Range(0, 1)) = 0.4
+		_GradientSunSide ("Gradient sunside", Range(0, 1)) = 0.1
+		_GradientShadeSide ("Gradient shadeside", Range(0, 1)) = 0.5
 		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
 		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
 		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
 		_VoxelateZ ("Voxelate Z", Range(0, 1)) = 1
-		_BaseLight ("Base light", Range(0, 2)) = 1
+		_BaseLight ("Base light", Range(0, 2)) = 0.85
 		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
 		_Specular ("Specular", Range(0, 1)) = 0.8
-		_Attenuation ("Attenuation", Range(0, 0.5)) = 0.1
-		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.06
+		_Attenuation ("Attenuation", Range(0.0001, 0.5)) = 0.3
+		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.2
 	}
 	SubShader
 	{
