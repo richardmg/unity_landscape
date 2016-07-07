@@ -6,6 +6,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
 	public float cascade = 0.0f;
+	public bool useCenterShading = false;
 
 	Texture2D texture;
 	int startPixelX;
@@ -92,8 +93,8 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		float size = Mathf.Max(Mathf.Max(effectiveSize.x, effectiveSize.y), voxelDepth);
 		Vector3 volumeSize = new Vector3(size, size, size);
-		// Assume for now that object first pixel is at (0, 0)
-		Vector3 objectCenter = effectiveSize * 0.5f;
+		// TODO: analyze subImage to find optimal center of mass as center
+		Vector3 objectCenter = useCenterShading ? (effectiveSize * 0.5f) : new Vector3(effectiveSize.x / 2.0f, 0.5f, voxelDepth / 2);
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
