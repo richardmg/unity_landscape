@@ -11,8 +11,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	int startPixelX;
 	int startPixelY;
 
-	float uvSubImageEffectiveWidth = 0;
-	float uvSubImageEffectiveHeight = 0;
+	Vector3 effectiveSize;
 
 	static int subImageWidth = 16;
 	static int subImageHeight = 8;
@@ -23,6 +22,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	static List<Vector2> uvAtlasCubeRectEncodedList = new List<Vector2>(); 
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
+	static Vector3 deltaNormal = new Vector3(2, 2, 2);
 
 	static Vector3[] normalForCode = {
 		new Vector3(-1, -1, -1),
@@ -42,12 +42,22 @@ public class VoxelCubesScript : MonoBehaviour {
 	const int kTopRight = 3;
 	const int kBackSide = 4;
 
+	Vector3 getVolumeNormal(Vector3 vertex, Vector3 objectCenter, Vector3 volumeSize)
+	{
+		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
+		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
+		Vector3 n = normalForCode[kBottomLeft] + Vector3.Scale(normalizedVertex, deltaNormal);
+		n /= gameObject.transform.localScale.x;
+		return n;
+	}
+
 	void Start () {
 		verticeList.Clear();
 		uvAtlasCubeRectEncodedList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
 
+		effectiveSize = new Vector3(0, 0, voxelDepth);
 		Vector3 scale = gameObject.transform.localScale;
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
@@ -80,6 +90,11 @@ public class VoxelCubesScript : MonoBehaviour {
 			}
 		}
 
+		float size = Mathf.Max(Mathf.Max(effectiveSize.x, effectiveSize.y), voxelDepth);
+		Vector3 volumeSize = new Vector3(size, size, size);
+		// Assume for now that object first pixel is at (0, 0)
+		Vector3 objectCenter = effectiveSize * 0.5f;
+
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
 		mesh.triangles = tri.ToArray();
@@ -99,23 +114,8 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 
 			// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + (uvSubImageEffectiveHeight / 2), (int)(voxelDepth * 100) + (uvSubImageEffectiveWidth / 2));
-
-			// Divide the normals across the subimage to make shading evenly
-			// distributed across the whole object (instead of per cube)
-			Vector3 uvSubImage = new Vector3(v.x / subImageWidth, v.y / subImageHeight, 1);
-			Vector3 deltaNormal = normalForCode[kTopRight] - normalForCode[kBottomLeft];
-
-			// TODO: Note that a subImage should always start at bottom left for lightning to be correct.
-			// Alternatively we need to track individual islands in the sub image, and set their normals
-			// independently. We would then need more advanced book keeping than a single EffectiveWidth.
-			deltaNormal.x /= uvSubImageEffectiveWidth;
-			deltaNormal.y /= uvSubImageEffectiveHeight;
-
-			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(uvSubImage, deltaNormal);
-			normals[i].z = (v.z == 0) ? -1 : 1;
-//			normals[i] = Vector3.Normalize(normals[i]); // Creates wierd edges...
-			normals[i] /= scale.x;
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + (effectiveSize.x / (2 * subImageWidth)), (int)(voxelDepth * 100) + (effectiveSize.y / (2 * subImageHeight)));
+			normals[i] = getVolumeNormal(v, objectCenter, volumeSize);
 		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
@@ -158,8 +158,8 @@ public class VoxelCubesScript : MonoBehaviour {
 		int i = -1;//verticeList.FindIndex(v2 => v2 == vec);
 		indices[index] = getVertexIndex(vec, uvRect, normalCode, i);
 
-		uvSubImageEffectiveWidth = Mathf.Max(uvSubImageEffectiveWidth, x / subImageWidth);
-		uvSubImageEffectiveHeight = Mathf.Max(uvSubImageEffectiveHeight, y / subImageHeight);
+		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
+		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
 
 		return i != -1;
 	}
