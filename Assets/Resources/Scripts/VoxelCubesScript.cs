@@ -25,14 +25,14 @@ public class VoxelCubesScript : MonoBehaviour {
 	static List<int> tri = new List<int>(); 
 
 	static Vector3[] normalForCode = {
-		new Vector3(-1, -1, -1).normalized,
-		new Vector3(-1, 1, -1).normalized,
-		new Vector3(1, -1, -1).normalized,
-		new Vector3(1, 1, -1).normalized,
-		new Vector3(-1, -1, 1).normalized,
-		new Vector3(-1, 1, 1).normalized,
-		new Vector3(1, -1, 1).normalized,
-		new Vector3(1, 1, 1).normalized
+		new Vector3(-1, -1, -1),
+		new Vector3(-1, 1, -1),
+		new Vector3(1, -1, -1),
+		new Vector3(1, 1, -1),
+		new Vector3(-1, -1, 1),
+		new Vector3(-1, 1, 1),
+		new Vector3(1, -1, 1),
+		new Vector3(1, 1, 1),
 	};
 
 	const int kVoxelNotFound = -1;
@@ -49,7 +49,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Clear();
 
 		Vector3 scale = gameObject.transform.localScale;
-		Debug.Assert(scale.x == scale.y && scale.x == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
+		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
@@ -97,7 +97,9 @@ public class VoxelCubesScript : MonoBehaviour {
 			Vector3 v = mesh.vertices[i];
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + uvSubImageEffectiveHeight, (int)(voxelDepth * 100) + uvSubImageEffectiveWidth);
+
+			// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + (uvSubImageEffectiveHeight / 2), (int)(voxelDepth * 100) + (uvSubImageEffectiveWidth / 2));
 
 			// Divide the normals across the subimage to make shading evenly
 			// distributed across the whole object (instead of per cube)
@@ -112,7 +114,7 @@ public class VoxelCubesScript : MonoBehaviour {
 
 			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(uvSubImage, deltaNormal);
 			normals[i].z = (v.z == 0) ? -1 : 1;
-//			normals[i] = Vector3.Normalize(normals[i]); // Creates vierd edges...
+//			normals[i] = Vector3.Normalize(normals[i]); // Creates wierd edges...
 			normals[i] /= scale.x;
 		}
 
@@ -156,9 +158,8 @@ public class VoxelCubesScript : MonoBehaviour {
 		int i = -1;//verticeList.FindIndex(v2 => v2 == vec);
 		indices[index] = getVertexIndex(vec, uvRect, normalCode, i);
 
-		// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
-		uvSubImageEffectiveWidth = Mathf.Max(uvSubImageEffectiveWidth, x / (2 * subImageWidth));
-		uvSubImageEffectiveHeight = Mathf.Max(uvSubImageEffectiveHeight, y / (2 * subImageHeight));
+		uvSubImageEffectiveWidth = Mathf.Max(uvSubImageEffectiveWidth, x / subImageWidth);
+		uvSubImageEffectiveHeight = Mathf.Max(uvSubImageEffectiveHeight, y / subImageHeight);
 
 		return i != -1;
 	}
