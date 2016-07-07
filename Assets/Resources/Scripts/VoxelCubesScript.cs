@@ -49,7 +49,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Clear();
 
 		Vector3 scale = gameObject.transform.localScale;
-		Debug.Assert(scale.x == scale.y && scale.x == scale.z, gameObject.name + " needs a uniform scale to support batching!");
+		Debug.Assert(scale.x == scale.y && scale.x == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
@@ -108,7 +108,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			deltaNormal.x /= uvEffectiveWidth;
 			deltaNormal.y /= uvEffectiveHeight;
 
-			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(deltaNormal, uvSubImage);
+			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(uvSubImage, deltaNormal);
 			normals[i].z = (v.z == 0) ? -1 : 1;
 //			normals[i] = Vector3.Normalize(normals[i]); // Creates vierd edges...
 			normals[i] /= scale.x;
