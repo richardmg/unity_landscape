@@ -11,8 +11,8 @@ public class VoxelCubesScript : MonoBehaviour {
 	int startPixelX;
 	int startPixelY;
 
-	float uvEffectiveWidth = 0;
-	float uvEffectiveHeight = 0;
+	float uvSubImageEffectiveWidth = 0;
+	float uvSubImageEffectiveHeight = 0;
 
 	static int subImageWidth = 16;
 	static int subImageHeight = 8;
@@ -87,6 +87,8 @@ public class VoxelCubesScript : MonoBehaviour {
 		// When using object batching, local vertices and normals will be translated on the CPU before
 		// passed down to the GPU. We therefore loose the original values in the shader, which we need.
 		// We therefore encode this information covered as vertex color.
+		// Note: Several places I pass down two different pieces of information using a single float
+		// where the integer part represents the first piece, and the fraction the second.
 		int vertexCount = mesh.vertices.Length;
 		Color[] cubeDesc = new Color[vertexCount];
 		Vector3[] normals = new Vector3[vertexCount];
@@ -95,7 +97,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			Vector3 v = mesh.vertices[i];
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + uvEffectiveHeight, voxelDepth);
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + uvSubImageEffectiveHeight, (int)(voxelDepth * 100) + uvSubImageEffectiveWidth);
 
 			// Divide the normals across the subimage to make shading evenly
 			// distributed across the whole object (instead of per cube)
@@ -105,8 +107,8 @@ public class VoxelCubesScript : MonoBehaviour {
 			// TODO: Note that a subImage should always start at bottom left for lightning to be correct.
 			// Alternatively we need to track individual islands in the sub image, and set their normals
 			// independently. We would then need more advanced book keeping than a single EffectiveWidth.
-			deltaNormal.x /= uvEffectiveWidth;
-			deltaNormal.y /= uvEffectiveHeight;
+			deltaNormal.x /= uvSubImageEffectiveWidth;
+			deltaNormal.y /= uvSubImageEffectiveHeight;
 
 			normals[i] = normalForCode[kBottomLeft] + Vector3.Scale(uvSubImage, deltaNormal);
 			normals[i].z = (v.z == 0) ? -1 : 1;
@@ -154,9 +156,9 @@ public class VoxelCubesScript : MonoBehaviour {
 		int i = -1;//verticeList.FindIndex(v2 => v2 == vec);
 		indices[index] = getVertexIndex(vec, uvRect, normalCode, i);
 
-		// Ensure uvEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
-		uvEffectiveWidth = Mathf.Max(uvEffectiveWidth, x / (2 * subImageWidth));
-		uvEffectiveHeight = Mathf.Max(uvEffectiveHeight, y / (2 * subImageHeight));
+		// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
+		uvSubImageEffectiveWidth = Mathf.Max(uvSubImageEffectiveWidth, x / (2 * subImageWidth));
+		uvSubImageEffectiveHeight = Mathf.Max(uvSubImageEffectiveHeight, y / (2 * subImageHeight));
 
 		return i != -1;
 	}
