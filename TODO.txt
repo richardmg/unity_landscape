@@ -161,6 +161,9 @@
             and a turtle). Then you go searching and harwesting a
             number of the permutations, and try to evolve / change
             them further.
+       - Cool effect: In the dark, draw species using (almost) gray
+            tones, but light them up (as if the moon makes them shine), to
+            e.g makes the eyes shine etc.
 
         - Technical:
             - Check if I can apply gradient only if the result is going in the same direction
