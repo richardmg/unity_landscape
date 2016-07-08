@@ -138,12 +138,19 @@
 				float3 voxel = uvSubImage * subImageSize;
 				float3 uvVoxel = frac(voxel);
 
- 				int frontSide = int((i.objNormal.z - 1) / -2);
-				int backSide = int((i.objNormal.z + 1) / 2);
-				int leftSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x - 1) / -2);
-				int rightSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x + 1) / 2);
-				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
-				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
+				int leftSide = i.objNormal.x > 0.999 ? 1 : 0;
+				int rightSide = i.objNormal.x < -0.999 ? 1 : 0;
+				int bottomSide = i.objNormal.y > 0.999 ? 1 : 0;
+				int topSide = i.objNormal.y < -0.999 ? 1 : 0;
+				int frontSide = i.objNormal.z > 0.999 ? 1 : 0;
+				int backSide = i.objNormal.z < -0.999 ? 1 : 0;
+
+// 				int frontSide = int((i.objNormal.z - 1) / -2);
+//				int backSide = int((i.objNormal.z + 1) / 2);
+//				int leftSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x - 1) / -2);
+//				int rightSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x + 1) / 2);
+//				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
+//				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
@@ -181,6 +188,8 @@
 				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1) * _BaseLight);
 
 				////////////////////////////////////////////////////////
+
+				c = clamp(c, 0, 1);
 
 				return c;
 			}
