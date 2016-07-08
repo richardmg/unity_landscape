@@ -65,7 +65,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
-			static float _ClampOffset = 0.0001;
+			static float4 _ClampOffset = float4(0.0001, 0.0001, -0.0001, -0.0001);
 			static fixed4 red = fixed4(1, 0, 0, 1);
 			static float3 _SunPos = normalize(float3(0, 1, 1));
 
@@ -125,8 +125,8 @@
 
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
-				float4 clampRect = i.uvAtlasCubeRect - float4(0, 0, _ClampOffset, _ClampOffset);
-				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset)));
+				float4 clampRect = i.uvAtlasCubeRect + _ClampOffset;
+				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
 
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
 				float3 uvAtlasSubImageSize = subImageSize / textureSize;
