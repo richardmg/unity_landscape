@@ -110,7 +110,7 @@
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.normal = mul(_Object2World, v.normal);
+				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.objNormal = objNormal;
 				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
