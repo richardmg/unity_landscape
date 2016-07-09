@@ -17,8 +17,6 @@ public class VoxelCubesScript : MonoBehaviour {
 	static int subImageWidth = 16;
 	static int subImageHeight = 8;
 
-	static int[] indices = new int[8];
-	static Vector3 vec = new Vector3();
 	static List<Vector3> verticeList = new List<Vector3>(); 
 	static List<Vector2> uvAtlasCubeRectEncodedList = new List<Vector2>(); 
 	static List<int> normalCodeList = new List<int>(); 
@@ -142,30 +140,16 @@ public class VoxelCubesScript : MonoBehaviour {
 		return kVoxelNotFound;
 	}
 
-	int getVertexIndex(Vector3 v, Vector2 uvRect, int normalCode, int index)
+	int createVertex(float x, float y, float z, Vector2 uvRect, int normalCode)
 	{
-		// Check if the vertex can be shared with one already created. Note that this causes the normal to
-		// be wrong for the cube on top, but that is corrected in the shader.
-		if (index != -1)
-			return index;
-
-		verticeList.Add(new Vector3(v.x, v.y, v.z));
+		verticeList.Add(new Vector3(x, y, z));
 		normalCodeList.Add(normalCode);
 		uvAtlasCubeRectEncodedList.Add(uvRect);
-
-		return verticeList.Count - 1;
-	}
-
-	bool writeIndex(int index, float x, float y, float z, Vector2 uvRect, int normalCode)
-	{
-		vec.Set(x, y, z);
-		int i = -1;//verticeList.FindIndex(v2 => v2 == vec);
-		indices[index] = getVertexIndex(vec, uvRect, normalCode, i);
 
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
 
-		return i != -1;
+		return verticeList.Count - 1;
 	}
 
 	void createVoxelLineMesh(float voxelX1, float voxelX2, float voxelY1, float voxelY2)
@@ -185,68 +169,61 @@ public class VoxelCubesScript : MonoBehaviour {
 		float atlasCubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
 		Vector2 uvAtlasCubeRectEncoded = new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
 
-		bool reuse0 = writeIndex(0, voxelX1, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kBottomLeft);
-		writeIndex(1, voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kTopLeft);
-		bool reuse2 = writeIndex(2, voxelX2, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kBottomRight);
-		writeIndex(3, voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kTopRight);
-		bool reuse4 = writeIndex(4, voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomLeft + kBackSide);
-		writeIndex(5, voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopLeft + kBackSide);
-		bool reuse6 = writeIndex(6, voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomRight + kBackSide);
-		writeIndex(7, voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopRight + kBackSide);
-
-		if (reuse0 && reuse2 && reuse4 && reuse6) {
-			// All nodes as shared. Flip nodes on one side to mark that this is
-			// bottom of the cube. For the cubes below, no top face will be visible.
-			normalCodeList[indices[0]] = kBottomLeft;
-			normalCodeList[indices[4]] = kBottomLeft + kBackSide;
-		}
+		int index0 = createVertex(voxelX1, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kBottomLeft);
+		int index1 = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kTopLeft);
+		int index2 = createVertex(voxelX2, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kBottomRight);
+		int index3 = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kTopRight);
+		int index4 = createVertex(voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomLeft + kBackSide);
+		int index5 = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopLeft + kBackSide);
+		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomRight + kBackSide);
+		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopRight + kBackSide);
 
 		// Front triangles
-		tri.Add(indices[0]);
-		tri.Add(indices[1]);
-		tri.Add(indices[2]);
-		tri.Add(indices[2]);
-		tri.Add(indices[1]);
-		tri.Add(indices[3]);
+		tri.Add(index0);
+		tri.Add(index1);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1);
+		tri.Add(index3);
 
 		// Back triangles
-		tri.Add(indices[6]);
-		tri.Add(indices[7]);
-		tri.Add(indices[4]);
-		tri.Add(indices[4]);
-		tri.Add(indices[7]);
-		tri.Add(indices[5]);
+		tri.Add(index6);
+		tri.Add(index7);
+		tri.Add(index4);
+		tri.Add(index4);
+		tri.Add(index7);
+		tri.Add(index5);
 
 		// Top triangles
-		tri.Add(indices[1]);
-		tri.Add(indices[5]);
-		tri.Add(indices[3]);
-		tri.Add(indices[3]);
-		tri.Add(indices[5]);
-		tri.Add(indices[7]);
+		tri.Add(index1);
+		tri.Add(index5);
+		tri.Add(index3);
+		tri.Add(index3);
+		tri.Add(index5);
+		tri.Add(index7);
 
 		// Bottom triangles
-		tri.Add(indices[4]);
-		tri.Add(indices[0]);
-		tri.Add(indices[6]);
-		tri.Add(indices[6]);
-		tri.Add(indices[0]);
-		tri.Add(indices[2]);
+		tri.Add(index4);
+		tri.Add(index0);
+		tri.Add(index6);
+		tri.Add(index6);
+		tri.Add(index0);
+		tri.Add(index2);
 
 		// Left triangles
-		tri.Add(indices[4]);
-		tri.Add(indices[5]);
-		tri.Add(indices[0]);
-		tri.Add(indices[0]);
-		tri.Add(indices[5]);
-		tri.Add(indices[1]);
+		tri.Add(index4);
+		tri.Add(index5);
+		tri.Add(index0);
+		tri.Add(index0);
+		tri.Add(index5);
+		tri.Add(index1);
 
 		// Right triangles
-		tri.Add(indices[2]);
-		tri.Add(indices[3]);
-		tri.Add(indices[6]);
-		tri.Add(indices[6]);
-		tri.Add(indices[3]);
-		tri.Add(indices[7]);
+		tri.Add(index2);
+		tri.Add(index3);
+		tri.Add(index6);
+		tri.Add(index6);
+		tri.Add(index3);
+		tri.Add(index7);
 	}
 }
