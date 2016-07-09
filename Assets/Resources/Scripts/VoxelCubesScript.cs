@@ -14,38 +14,36 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	Vector3 effectiveSize;
 
-	static int subImageWidth = 16;
-	static int subImageHeight = 8;
+	const int subImageWidth = 16;
+	const int subImageHeight = 8;
 
 	static List<Vector3> verticeList = new List<Vector3>(); 
 	static List<Vector2> uvAtlasCubeRectEncodedList = new List<Vector2>(); 
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
-	static Vector3 deltaNormal = new Vector3(2, 2, 2);
 
-	static Vector3[] normalForCode = {
-		new Vector3(-1, -1, -1),
-		new Vector3(-1, 1, -1),
-		new Vector3(1, -1, -1),
-		new Vector3(1, 1, -1),
-		new Vector3(-1, -1, 1),
-		new Vector3(-1, 1, 1),
-		new Vector3(1, -1, 1),
-		new Vector3(1, 1, 1),
-	};
+	static Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
+	static Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
 
 	const int kVoxelNotFound = -1;
-	const int kBottomLeft = 0;
-	const int kTopLeft = 1;
-	const int kBottomRight = 2;
-	const int kTopRight = 3;
 	const int kBackSide = 4;
+
+	const int kLeft = 0;
+	const int kRight = 1;
+	const int kBottom = 2;
+	const int kTop = 3;
+	const int kFront = 4;
+	const int kBack = 5;
+	const int kBottomLeft = 6;
+	const int kTopLeft = 7;
+	const int kBottomRight = 8;
+	const int kTopRight = 9;
 
 	Vector3 getVolumeNormal(Vector3 vertex, Vector3 objectCenter, Vector3 volumeSize)
 	{
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
 		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
-		Vector3 n = normalForCode[kBottomLeft] + Vector3.Scale(normalizedVertex, deltaNormal);
+		Vector3 n = kVecBottomLeft + Vector3.Scale(normalizedVertex, kVecDeltaNormal);
 		n /= gameObject.transform.localScale.x;
 		return n;
 	}
