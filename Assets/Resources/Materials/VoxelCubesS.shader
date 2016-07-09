@@ -67,7 +67,7 @@
 
 			static float4 _ClampOffset = float4(0.0001, 0.0001, -0.0001, -0.0001);
 			static fixed4 red = fixed4(1, 0, 0, 1);
-			static float3 _SunPos = normalize(float3(0, 1, 1));
+			static float3 _SunPos = normalize(float3(0, 0, 1));
 
 			struct appdata
 			{
@@ -87,38 +87,65 @@
 				float4 extra : COLOR2;
 			};
 
+			// We only set correct normals for the side exclusive vertices
+			// to be able to determine correct normals after interpolation
+			// in the fragment shader.
 			static float3 normalForCode[14] = {
-				float3(-1, 0, 0),
-				float3(1, 0, 0),
-				float3(0, -1, 0),
-				float3(0, 1, 0),
-				float3(0, 0, -1),
-				float3(0, 0, 1),
-				float3(-1, -1, -1),
-				float3(-1, 1, -1),
-				float3(1, -1, -1),
-				float3(1, 1, -1),
-				float3(-1, -1, 1),
-				float3(-1, 1, 1),
-				float3(1, -1, 1),
-				float3(1, 1, 1)
+				float3(-1, 0, 0),	// left exclusive
+				float3(1, 0, 0),	// right exclusive
+				float3(0, 0, 0),	// bottom exclusive (not used)
+				float3(0, 0, 0),	// top exclusive (not used)
+				float3(0, 0, -1),	// front exclusive
+				float3(0, 0, 1),	// back exclusive
+				float3(0, 0, 0),	// bottom left front
+				float3(0, 0, 0),	// top left front
+				float3(0, 0, 0),	// bottom right front
+				float3(0, 0, 0),	// top right front
+				float3(0, 0, 0),	// bottom left back
+				float3(0, 0, 0),	// top left back
+				float3(0, 0, 0),	// bottom right back
+				float3(0, 0, 0),	// top right back
  			};
+
+			static float3 vertexForCode[14] = {
+				float3(0, 1, 1),	// left exclusive
+				float3(1, 1, 0),	// right exclusive
+				float3(0, 0, 1),	// bottom exclusive
+				float3(0, 1, 1),	// top exclusive
+				float3(0, 1, 0),	// front exclusive
+				float3(1, 1, 1),	// back exclusive
+				float3(0, 0, 0),	// bottom left front
+				float3(0, 1, 0),	// top left front
+				float3(1, 0, 0),	// bottom right front
+				float3(1, 1, 0),	// top right front
+				float3(0, 0, 1),	// bottom left back
+				float3(0, 1, 1),	// top left back
+				float3(1, 0, 1),	// bottom right back
+				float3(1, 1, 1),	// top right back
+ 			};
+
+ 			inline int hasValue(float value)
+ 			{
+ 				return sign(abs(value));
+ 			}
 
 			v2f vert (appdata v)
 			{
+				int vertexCode = (int)v.cubeDesc.b;
+				float voxelDepth = v.cubeDesc.a / 100;
+
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
 				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
+
 				float uvSubImageEffectiveWidth = frac(v.cubeDesc.a) * 2;
 				float uvSubImageEffectiveHeight = frac(v.cubeDesc.b) * 2;
-				float3 objNormal = normalForCode[(int)v.cubeDesc.b];
-				float voxelDepth = v.cubeDesc.a / 100;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-				o.objNormal = objNormal;
-				o.uvAtlas = float3(v.cubeDesc.xy, (objNormal.z + 1) / 2);
+				o.objNormal = normalForCode[vertexCode];
+				o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
 				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, voxelDepth, 0);
 				return o;
@@ -141,25 +168,18 @@
 
 				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
 				float3 uvEffectiveSubImage = uvSubImage / float3(i.extra.x, i.extra.y, 1);
-				float3 voxel = uvSubImage * subImageSize;
-				float3 uvVoxel = frac(voxel);
+				float3 voxelUnclamped = uvSubImage * subImageSize;
+				float3 voxel = min(voxelUnclamped, subImageSize - 1);
+				float3 uvVoxel = frac(voxelUnclamped);
 
-				float d = 0.9;
-				int leftSide = i.objNormal.x < -d ? 1 : 0;
-				int rightSide = i.objNormal.x > d ? 1 : 0;
-				int bottomSide = i.objNormal.y < -d ? 1 : 0;
-				int topSide = i.objNormal.y > d ? 1 : 0;
-				int frontSide = i.objNormal.z < -d ? 1 : 0;
-				int backSide = i.objNormal.z > d ? 1 : 0;
-
-// 				int frontSide = int((i.objNormal.z - 1) / -2);
-//				int backSide = int((i.objNormal.z + 1) / 2);
-//				int leftSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x - 1) / -2);
-//				int rightSide = int(!frontSide) * int(!backSide) * int((i.objNormal.x + 1) / 2);
-//				int topSide = int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide) * int((i.objNormal.y + 1) / 2);
-//				int bottomSide = int(!topSide) * int(!leftSide) * int(!rightSide) * int(!frontSide) * int(!backSide);
-
-//				if (frontSide && !topSide && !leftSide && !rightSide) return red;
+			 	int isLeftOrRightSide = hasValue(i.objNormal.x);
+			 	int isFrontOrBackSide = hasValue(i.objNormal.z);
+				int leftSide = isLeftOrRightSide * (1 - step(0.5, uvVoxel.x));
+				int rightSide = isLeftOrRightSide * step(0.5, uvVoxel.x);
+				int frontSide = isFrontOrBackSide * (1 - hasValue(uvVoxel.z));
+				int backSide = isFrontOrBackSide * hasValue(uvVoxel.z);
+				int bottomSide = !(isLeftOrRightSide | isFrontOrBackSide) * (1 - step(0.5, uvVoxel.y));
+				int topSide = !(isLeftOrRightSide | isFrontOrBackSide | bottomSide);
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color

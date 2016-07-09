@@ -176,20 +176,27 @@ public class VoxelCubesScript : MonoBehaviour {
 		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomRight + kBackSide);
 		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopRight + kBackSide);
 
+		// Perhaps I can skip left/right, and instead mark edges using gradients?
+
+		int index1FrontExlusive = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFront);
+		int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBack);
+		int index5LeftExclusive = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kLeft);
+		int index3RightExclusive = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kRight);
+
 		// Front triangles
 		tri.Add(index0);
-		tri.Add(index1);
+		tri.Add(index1FrontExlusive);
 		tri.Add(index2);
 		tri.Add(index2);
-		tri.Add(index1);
+		tri.Add(index1FrontExlusive);
 		tri.Add(index3);
 
 		// Back triangles
 		tri.Add(index6);
-		tri.Add(index7);
+		tri.Add(index7BackExclusive);
 		tri.Add(index4);
 		tri.Add(index4);
-		tri.Add(index7);
+		tri.Add(index7BackExclusive);
 		tri.Add(index5);
 
 		// Top triangles
@@ -210,18 +217,18 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		// Left triangles
 		tri.Add(index4);
-		tri.Add(index5);
+		tri.Add(index5LeftExclusive);
 		tri.Add(index0);
 		tri.Add(index0);
-		tri.Add(index5);
+		tri.Add(index5LeftExclusive);
 		tri.Add(index1);
 
 		// Right triangles
 		tri.Add(index2);
-		tri.Add(index3);
+		tri.Add(index3RightExclusive);
 		tri.Add(index6);
 		tri.Add(index6);
-		tri.Add(index3);
+		tri.Add(index3RightExclusive);
 		tri.Add(index7);
 	}
 }
