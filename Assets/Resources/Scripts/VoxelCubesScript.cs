@@ -7,6 +7,8 @@ public class VoxelCubesScript : MonoBehaviour {
 	public float voxelDepth = 4;
 	public float cascade = 0.0f;
 	public bool useCenterShading = true;
+	// tile means draw texture on all sides of object rather that just in front
+	public bool tile = false;
 
 	Texture2D texture;
 	int startPixelX;
