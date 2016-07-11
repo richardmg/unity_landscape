@@ -24,7 +24,7 @@ public class TileLayerTrees : ITileLayer
 	{
 		int tileCount = engine.tileCount();
 		m_tileMatrix = new GameObject[tileCount, tileCount];
-		m_layerRoot.transform.SetParent(engine.parentTransform());
+		m_layerRoot.transform.SetParent(engine.parentTransform(), false);
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
