@@ -29,7 +29,7 @@ public class TileLayerTrees : ITileLayer
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity); 
-				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform);
+				m_tileMatrix[x, z].transform.parent = m_layerRoot.transform;
 				BillboardScript bs = m_tileMatrix[x, z].GetComponent<BillboardScript>();
 				if (bs != null)
 					bs.target = LandscapeConstructor.m_instance.player;
@@ -44,7 +44,7 @@ public class TileLayerTrees : ITileLayer
 			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			Vector3 worldPos = desc.worldPos;
 			worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
-			tileObject.transform.position = worldPos;
+			tileObject.transform.localPosition = worldPos;
 		}
 	}
 }

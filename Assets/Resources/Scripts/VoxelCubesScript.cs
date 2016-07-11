@@ -46,6 +46,11 @@ public class VoxelCubesScript : MonoBehaviour {
 		rebuildObject();
 	}
 
+	void OnValidate()
+	{
+		rebuildObject();
+	}
+
 	Vector3 getVolumeNormal(Vector3 vertex, Vector3 objectCenter, Vector3 volumeSize)
 	{
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);

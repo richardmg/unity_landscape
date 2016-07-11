@@ -25,7 +25,8 @@ public class TileLayerTerrain : ITileTerrainLayer
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(LandscapeTools.clone(m_terrainData));
-				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform);
+				m_tileMatrix[x, z].transform.parent = m_layerRoot.transform;
+				m_tileMatrix[x, z].transform.localPosition = Vector3.zero;
 			}
 		}
 	}
