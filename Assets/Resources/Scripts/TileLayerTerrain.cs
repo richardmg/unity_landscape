@@ -18,15 +18,14 @@ public class TileLayerTerrain : ITileTerrainLayer
 	public void initTileLayer(TileEngine engine)
 	{
 		int tileCount = engine.tileCount();
-		m_layerRoot.transform.parent = engine.parentTransform();
+		m_layerRoot.transform.SetParent(engine.parentTransform(), false);
 		m_heightArray = new float[m_terrainData.heightmapResolution, m_terrainData.heightmapResolution];
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(LandscapeTools.clone(m_terrainData));
-				m_tileMatrix[x, z].transform.parent = m_layerRoot.transform;
-				m_tileMatrix[x, z].transform.localPosition = Vector3.zero;
+				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform, false);
 			}
 		}
 	}
