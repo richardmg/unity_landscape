@@ -53,11 +53,8 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public void rebuildLandscape()
 	{
-//		while (transform.childCount > 0) {
-//			Transform t = transform.GetChild(0);
-//			t.parent = null;
-//			GameObject.Destroy(t.gameObject);
-//		}
+		while (transform.childCount > 0)
+			GameObject.DestroyImmediate(transform.GetChild(0).gameObject);
 
 		m_tileEngineLandscape = new TileEngine(tileCountLandscape, tileWidthLandscape, transform);
 		m_tileEngineNear = new TileEngine(tileCountNear, tileWidthNear, transform);
