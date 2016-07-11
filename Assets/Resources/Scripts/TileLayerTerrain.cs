@@ -18,7 +18,7 @@ public class TileLayerTerrain : ITileTerrainLayer
 	public void initTileLayer(TileEngine engine)
 	{
 		int tileCount = engine.tileCount();
-		m_layerRoot.transform.SetParent(engine.parentTransform());
+		m_layerRoot.transform.parent = engine.parentTransform();
 		m_heightArray = new float[m_terrainData.heightmapResolution, m_terrainData.heightmapResolution];
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 
@@ -39,7 +39,7 @@ public class TileLayerTerrain : ITileTerrainLayer
 			Terrain terrain = tileObject.GetComponent<Terrain>();
 			TerrainData tdata = terrain.terrainData;
 
-			tileObject.transform.position = desc.worldPos;
+			tileObject.transform.localPosition = desc.worldPos;
 
 			int res = tdata.heightmapResolution;
 			Vector3 scale = tdata.heightmapScale;
