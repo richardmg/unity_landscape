@@ -39,6 +39,11 @@ public class VoxelCubesScript : MonoBehaviour {
 	const int kBottomRight = 8;
 	const int kTopRight = 9;
 
+	void Start ()
+	{
+		regenerateMesh();
+	}
+
 	Vector3 getVolumeNormal(Vector3 vertex, Vector3 objectCenter, Vector3 volumeSize)
 	{
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
@@ -48,7 +53,8 @@ public class VoxelCubesScript : MonoBehaviour {
 		return n;
 	}
 
-	void Start () {
+	void regenerateMesh()
+	{
 		verticeList.Clear();
 		uvAtlasCubeRectEncodedList.Clear();
 		normalCodeList.Clear();
@@ -122,10 +128,12 @@ public class VoxelCubesScript : MonoBehaviour {
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
 
-		MeshFilter meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		if (!meshFilter)
+			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
 
-//		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
+		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
@@ -154,12 +162,14 @@ public class VoxelCubesScript : MonoBehaviour {
 	{
 		float voxelZ1 = 0;
 		float voxelZ2 = voxelDepth;
-		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
-			voxelX1 += cascade;
-			voxelX2 -= cascade;
-			voxelZ1 += cascade;
-			voxelZ2 -= cascade;
-		}
+//		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
+// 			For cascade to work, I first need to find another way of setting
+//			uv coords other than reading out vertex x and y later
+//			voxelX1 += cascade;
+//			voxelX2 += cascade;
+//			voxelZ1 += cascade;
+//			voxelZ2 += cascade;
+//		}
 
 		int atlasCubeRectX1 = (int)(startPixelX + voxelX1);
 		int atlasCubeRectY1 = (int)(startPixelY + voxelY1);
@@ -176,8 +186,8 @@ public class VoxelCubesScript : MonoBehaviour {
 		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomRight + kBackSide);
 		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopRight + kBackSide);
 
-		// Perhaps I can skip left/right, and instead mark edges using gradients?
-
+		// I add some extra vertices at stratedic points to be able to determine
+		// which side of the cube a triangle is part of from the shader
 		int index1FrontExlusive = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFront);
 		int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBack);
 		int index5LeftExclusive = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kLeft);
