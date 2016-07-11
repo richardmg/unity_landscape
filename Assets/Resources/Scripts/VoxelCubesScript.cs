@@ -41,7 +41,7 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void Start ()
 	{
-		regenerateMesh();
+		rebuildObject();
 	}
 
 	Vector3 getVolumeNormal(Vector3 vertex, Vector3 objectCenter, Vector3 volumeSize)
@@ -53,7 +53,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return n;
 	}
 
-	void regenerateMesh()
+	public void rebuildObject()
 	{
 		verticeList.Clear();
 		uvAtlasCubeRectEncodedList.Clear();
