@@ -6,7 +6,8 @@ public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
 	public float cascade = 0.0f;
-	public bool useCenterShading = true;
+	public bool includeVoxelDepthInNormalVolume = false;
+
 	// tile means draw texture on all sides of object rather that just in front
 	public bool tile = false;
 
@@ -28,7 +29,6 @@ public class VoxelCubesScript : MonoBehaviour {
 	static Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
 
 	const int kVoxelNotFound = -1;
-	const int kBackSide = 4;
 
 	const int kLeft = 0;
 	const int kRight = 1;
@@ -36,10 +36,14 @@ public class VoxelCubesScript : MonoBehaviour {
 	const int kTop = 3;
 	const int kFront = 4;
 	const int kBack = 5;
-	const int kBottomLeft = 6;
-	const int kTopLeft = 7;
-	const int kBottomRight = 8;
-	const int kTopRight = 9;
+	const int kFrontBottomLeft = 6;
+	const int kFrontTopLeft = 7;
+	const int kFrontBottomRight = 8;
+	const int kFrontTopRight = 9;
+	const int kBackBottomLeft = 10;
+	const int kBackTopLeft = 11;
+	const int kBackBottomRight = 12;
+	const int kBackTopRight = 13;
 
 	void Start ()
 	{
@@ -100,13 +104,25 @@ public class VoxelCubesScript : MonoBehaviour {
 			}
 		}
 
-		float size = Mathf.Max(Mathf.Max(effectiveSize.x, effectiveSize.y), voxelDepth);
-		Vector3 volumeSize = new Vector3(size, size, size);
-		// TODO: analyze subImage to find optimal center of mass as center
-		Vector3 objectCenter = useCenterShading ? (effectiveSize * 0.5f) : new Vector3(effectiveSize.x / 2.0f, 0, voxelDepth / 2);
+		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
+		Vector3 objectCenter = effectiveSize * 0.5f;
+
+		if (voxelDepth == 0) {
+			volumeSize.z = 1;
+			objectCenter.z = 0.5f;
+		}
+
+		float size = Mathf.Max(volumeSize.x, volumeSize.y);
+		if (includeVoxelDepthInNormalVolume) {
+			// Gives bad result for small voxel depths
+			size = Mathf.Max(size, volumeSize.z);
+			volumeSize = new Vector3(size, size, size);
+		} else {
+			volumeSize = new Vector3(size, size, volumeSize.z);
+		}
 
 		// Add a small offset to center, to not fall exactly between two pixels
-		objectCenter -= new Vector3((objectCenter.x % 2 == 0) ? 0.5f : 0, (objectCenter.y % 2 == 0) ? 0.5f : 0, 0);
+//		objectCenter -= new Vector3((objectCenter.x % 2 == 0) ? 0.5f : 0, (objectCenter.y % 2 == 0) ? 0.5f : 0, 0);
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
@@ -127,8 +143,17 @@ public class VoxelCubesScript : MonoBehaviour {
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 
 			// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCodeList[i] + (effectiveSize.x / (2 * subImageWidth)), (int)(voxelDepth * 100) + (effectiveSize.y / (2 * subImageHeight)));
-			normals[i] = getVolumeNormal(v, objectCenter, volumeSize);
+			int normalCode = normalCodeList[i];
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode + (effectiveSize.x / (2 * subImageWidth)), (int)(voxelDepth * 100) + (effectiveSize.y / (2 * subImageHeight)));
+
+			if (voxelDepth == 0) {
+				if (normalCode == kBack || (normalCode >= kBackBottomLeft && normalCode <= kBackTopRight))
+					normals[i] = getVolumeNormal(new Vector3(v.x, v.y, 1), objectCenter, volumeSize);
+				else
+					normals[i] = getVolumeNormal(v, objectCenter, volumeSize);
+			} else {
+				normals[i] = getVolumeNormal(v, objectCenter, volumeSize);
+			}
 		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
@@ -184,14 +209,14 @@ public class VoxelCubesScript : MonoBehaviour {
 		float atlasCubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
 		Vector2 uvAtlasCubeRectEncoded = new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
 
-		int index0 = createVertex(voxelX1, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kBottomLeft);
-		int index1 = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kTopLeft);
-		int index2 = createVertex(voxelX2, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kBottomRight);
-		int index3 = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kTopRight);
-		int index4 = createVertex(voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomLeft + kBackSide);
-		int index5 = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopLeft + kBackSide);
-		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBottomRight + kBackSide);
-		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kTopRight + kBackSide);
+		int index0 = createVertex(voxelX1, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomLeft);
+		int index1 = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopLeft);
+		int index2 = createVertex(voxelX2, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomRight);
+		int index3 = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopRight);
+		int index4 = createVertex(voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomLeft);
+		int index5 = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopLeft);
+		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomRight);
+		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopRight);
 
 		// I add some extra vertices at stratedic points to be able to determine
 		// which side of the cube a triangle is part of from the shader

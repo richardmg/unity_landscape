@@ -67,7 +67,7 @@
 
 			static float4 _ClampOffset = float4(0.0001, 0.0001, -0.0001, -0.0001);
 			static fixed4 red = fixed4(1, 0, 0, 1);
-			static float3 _SunPos = normalize(float3(0, 1, 1));
+			static float3 _SunPos = normalize(float3(0, 0, 1));
 
 			struct appdata
 			{
