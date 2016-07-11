@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(VoxelCubesScript))]
-public class ObjectBuilderEditor : Editor
+public class VoxelCubesEditor : Editor
 {
 	public override void OnInspectorGUI()
 	{

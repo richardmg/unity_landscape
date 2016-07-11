@@ -51,7 +51,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		return oct0 + oct1 + oct2;
 	}
 
-	public void constructLandscape()
+	public void reconstructLandscape()
 	{
 		while (transform.childCount > 0)
 			GameObject.Destroy(transform.GetChild(0));
@@ -93,7 +93,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	// Use this for initialization
 	void Start()
 	{
-		constructLandscape();
+		reconstructLandscape();
 		movePlayerOnTop();
 	}
 
