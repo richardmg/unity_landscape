@@ -11,6 +11,10 @@ public class VoxelCubesScript : MonoBehaviour {
 	// tile means draw texture on all sides of object rather that just in front
 	public bool tile = false;
 
+	// Read-only, for editor inspection
+	public int readonlyVertexCount = 0;
+	public int readonlyTriangleCount = 0;
+
 	Texture2D texture;
 	int startPixelX;
 	int startPixelY;
@@ -165,7 +169,9 @@ public class VoxelCubesScript : MonoBehaviour {
 			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
 
-		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
+		readonlyVertexCount = mesh.vertices.Length;
+		readonlyTriangleCount = mesh.triangles.Length;
+//		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
