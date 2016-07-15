@@ -14,6 +14,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
+	public int readonlyCubeCount = 0;
 
 	Texture2D texture;
 	int startPixelX;
@@ -74,6 +75,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		uvAtlasCubeRectEncodedList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
+		readonlyCubeCount = 0;
 
 		effectiveSize = new Vector3(0, 0, voxelDepth);
 		Vector3 scale = gameObject.transform.localScale;
@@ -198,6 +200,8 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void createVoxelLineMesh(float voxelX1, float voxelX2, float voxelY1, float voxelY2)
 	{
+		readonlyCubeCount++;
+
 		float voxelZ1 = 0;
 		float voxelZ2 = voxelDepth;
 //		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
