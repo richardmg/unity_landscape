@@ -125,11 +125,6 @@
 				float3(1, 1, 1),	// top right back
  			};
 
- 			inline int hasValue(float value)
- 			{
- 				return sign(abs(value));
- 			}
-
 			v2f vert (appdata v)
 			{
 				int vertexCode = (int)v.cubeDesc.b;
@@ -151,83 +146,26 @@
 				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, voxelDepth, 0);
 				return o;
 			}
+
+			inline float2 uvAtlasClamp(float2 uv, v2f i)
+			{
+				float4 clampRect = i.uvAtlasCubeRect + _ClampOffset;
+				return clamp(uv, clampRect.xy, clampRect.zw);
+			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				////////////////////////////////////////////////////////
-				// Start by calculating an API that we can use below
+				float2 uvLeft = uvAtlasClamp(float2(i.uvAtlas.x, i.uvAtlas.y), i);
+				float2 uvRight = uvAtlasClamp(float2(i.uvAtlas.x, i.uvAtlas.y), i);
 
-				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
-				float3 uvAtlasOnePixel = 1.0f / textureSize;
-				float4 clampRect = i.uvAtlasCubeRect + _ClampOffset;
-				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
+				fixed4 cLeft = tex2Dlod(_MainTex, float4(uvLeft, 0, 0));
+				fixed4 cRight = tex2Dlod(_MainTex, float4(uvRight, 0, 0));
+				fixed4 c = cLeft + cRight;
 
-				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
-				float3 uvAtlasSubImageSize = subImageSize / textureSize;
-				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
-				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
-
-				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-				float3 uvEffectiveSubImage = uvSubImage / float3(i.extra.x, i.extra.y, 1);
-				float3 voxelUnclamped = uvSubImage * subImageSize;
-				float3 voxel = min(voxelUnclamped, subImageSize - 1);
-				float3 uvVoxel = frac(voxelUnclamped);
-
-			 	int isLeftOrRightSide = hasValue(i.objNormal.x);
-			 	int isFrontOrBackSide = hasValue(i.objNormal.z);
-				int leftSide = isLeftOrRightSide * (1 - step(0.5, uvVoxel.x));
-				int rightSide = isLeftOrRightSide * step(0.5, uvVoxel.x);
-				int frontSide = isFrontOrBackSide * (1 - hasValue(uvVoxel.z));
-				int backSide = isFrontOrBackSide * hasValue(uvVoxel.z);
-				int bottomSide = !(isLeftOrRightSide | isFrontOrBackSide) * (1 - step(0.5, uvVoxel.y));
-				int topSide = !(isLeftOrRightSide | isFrontOrBackSide | bottomSide);
-
-				////////////////////////////////////////////////////////
-				// Fetch main atlas color
-				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
-				if (c.a == 0) {
+				if (c.a == 0)
 					discard;
-					return c;
-				}
 
 				return fixed4(0, 0, 0, 1);
-
-				////////////////////////////////////////////////////////
-				// Apply lightning
-
-				float sunDist = dot(i.normal, _SunPos);
-				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
-				float sunLight = _Sunshine * sunAffection * _BaseLight;
-				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
-					
-				////////////////////////////////////////////////////////
-				// Apply alternate voxel color
-
-				int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-				c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
-
-				////////////////////////////////////////////////////////
-				// Sharpen contrast at cube edges
-
-				float sharpLeft = 1 + ((leftSide | rightSide) * -_EdgeSharp * _BaseLight);
-				float sharpTop = 1 + ((topSide | bottomSide) * -_EdgeSharp * _BaseLight);
-				c *= sharpLeft * sharpTop;
-
-				////////////////////////////////////////////////////////
-				// Apply gradient
-
-				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
-				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
-				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength * sharpLeft);
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradientSide - 1) * _BaseLight);
-				float gradientTop = (1 - gradientStrength) + (uvEffectiveSubImage.x * gradientStrength * sharpTop);
-				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1) * _BaseLight);
-
-				////////////////////////////////////////////////////////
-
-				c = clamp(c, 0, 1);
-
-				return c;
 			}
 			ENDCG
 		}
