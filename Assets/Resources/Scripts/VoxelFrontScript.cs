@@ -20,6 +20,7 @@ public class VoxelFrontScript : MonoBehaviour {
 	const int subImageHeight = 8;
 
 	static List<Vector3> verticeList = new List<Vector3>(); 
+	static List<Vector2> uvList = new List<Vector2>(); 
 	static List<Vector2> uvAtlasCubeRectEncodedList = new List<Vector2>(); 
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
@@ -41,23 +42,6 @@ public class VoxelFrontScript : MonoBehaviour {
 	const int kBackTopLeft = 11;
 	const int kBackBottomRight = 12;
 	const int kBackTopRight = 13;
-
-	static Vector3[] vertexForCode = new Vector3[]{
-		new Vector3(0, 1, 1),	// left exclusive
-		new Vector3(1, 1, 0),	// right exclusive
-		new Vector3(0, 0, 1),	// bottom exclusive
-		new Vector3(0, 1, 1),	// top exclusive
-		new Vector3(0, 1, 0),	// front exclusive
-		new Vector3(1, 1, 1),	// back exclusive
-		new Vector3(0, 0, 0),	// bottom left front
-		new Vector3(0, 1, 0),	// top left front
-		new Vector3(1, 0, 0),	// bottom right front
-		new Vector3(1, 1, 0),	// top right front
-		new Vector3(0, 0, 1),	// bottom left back
-		new Vector3(0, 1, 1),	// top left back
-		new Vector3(1, 0, 1),	// bottom right back
-		new Vector3(1, 1, 1),	// top right back
-	};
 
 	void Start ()
 	{
@@ -81,6 +65,7 @@ public class VoxelFrontScript : MonoBehaviour {
 	public void rebuildObject()
 	{
 		verticeList.Clear();
+		uvList.Clear();
 		uvAtlasCubeRectEncodedList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
@@ -122,7 +107,7 @@ public class VoxelFrontScript : MonoBehaviour {
 		for (int i = 0; i < vertexCount; ++i) {
 			int normalCode = normalCodeList[i];
 			Vector3 v = mesh.vertices[i];
-			Vector3 uv = vertexForCode[normalCode];
+			Vector2 uv = uvList[i];
 
 			float uvAtlasX = (startPixelX + (uv.x * subImageWidth)) / texture.width;
 			float uvAtlasY = (startPixelY + (uv.y * subImageHeight)) / texture.height;
@@ -154,6 +139,8 @@ public class VoxelFrontScript : MonoBehaviour {
 		verticeList.Add(new Vector3(x, y, z));
 		normalCodeList.Add(normalCode);
 		uvAtlasCubeRectEncodedList.Add(uvRect);
+
+		uvList.Add(new Vector2((x + border) / subImageWidth, (y + border) / subImageHeight));
 
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
