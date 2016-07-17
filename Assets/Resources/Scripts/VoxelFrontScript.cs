@@ -140,7 +140,8 @@ public class VoxelFrontScript : MonoBehaviour {
 		normalCodeList.Add(normalCode);
 		uvAtlasCubeRectEncodedList.Add(uvRect);
 
-		uvList.Add(new Vector2((x + border) / subImageWidth, (y + border) / subImageHeight));
+//		uvList.Add(new Vector2((x + border) / subImageWidth, (y + border) / subImageHeight));
+		uvList.Add(new Vector2((x + 0) / subImageWidth, (y + 0) / subImageHeight));
 
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);

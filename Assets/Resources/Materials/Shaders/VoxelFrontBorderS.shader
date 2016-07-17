@@ -147,20 +147,35 @@
 				return o;
 			}
 
-			inline float2 uvAtlasClamp(float2 uv, v2f i)
+			inline float2 uvSubImageClamp(float2 uv, v2f i)
 			{
 				float4 clampRect = i.uvAtlasCubeRect + _ClampOffset;
 				return clamp(uv, clampRect.xy, clampRect.zw);
 			}
+
+			inline bool uvInsideSubImage(float2 uv, v2f i)
+			{
+				float4 clampRect = i.uvAtlasCubeRect + _ClampOffset;
+				return (uv.x >= clampRect.x && uv.x <= clampRect.z && uv.y >= clampRect.y && uv.y <= clampRect.w);
+			}
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float2 uvLeft = uvAtlasClamp(float2(i.uvAtlas.x, i.uvAtlas.y), i);
-				float2 uvRight = uvAtlasClamp(float2(i.uvAtlas.x, i.uvAtlas.y), i);
+				float2 uvOneLine = 1 / float2(_TextureWidth, _TextureHeight);
+				float2 uvBorder = float2(uvOneLine.x * 0.5, uvOneLine.y * -0.5);
+
+				float2 uvLeftBorder = i.uvAtlas + uvBorder;
+				float2 uvLeft = uvSubImageClamp(uvLeftBorder, i);
+//				float2 uvRight = uvSubImageClamp(i.uvAtlas, i);
 
 				fixed4 cLeft = tex2Dlod(_MainTex, float4(uvLeft, 0, 0));
-				fixed4 cRight = tex2Dlod(_MainTex, float4(uvRight, 0, 0));
-				fixed4 c = cLeft + cRight;
+//				fixed4 cRight = tex2Dlod(_MainTex, float4(uvRight, 0, 0));
+				fixed4 c = cLeft;// + cRight;
+
+				if (!uvInsideSubImage(uvLeftBorder, i)) {
+					discard;
+					return red;
+				}
 
 				if (c.a == 0)
 					discard;
