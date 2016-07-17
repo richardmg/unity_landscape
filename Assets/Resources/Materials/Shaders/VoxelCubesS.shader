@@ -203,7 +203,7 @@
 				// Sharpen contrast at cube edges
 
 				float sharpLeft = 1 + ((leftSide | rightSide) * -_EdgeSharp * _BaseLight);
-				float sharpTop = 1 + ((topSide | bottomSide) * _EdgeSharp * _BaseLight);
+				float sharpTop = 1 + ((topSide | bottomSide) * -_EdgeSharp * _BaseLight);
 				c *= sharpLeft * sharpTop;
 
 				////////////////////////////////////////////////////////

@@ -106,7 +106,7 @@ public class VoxelCubesScript : MonoBehaviour {
 				if (x2 == kVoxelNotFound)
 					x2 = subImageWidth;
 
-				createVoxelLineMesh(x1, x2, y, y + 1);
+				createVoxelLineMesh(x1, y, x2, y + 1);
 			}
 		}
 
@@ -198,7 +198,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return verticeList.Count - 1;
 	}
 
-	void createVoxelLineMesh(float voxelX1, float voxelX2, float voxelY1, float voxelY2)
+	void createVoxelLineMesh(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
 	{
 		readonlyCubeCount++;
 
@@ -228,12 +228,10 @@ public class VoxelCubesScript : MonoBehaviour {
 		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomRight);
 		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopRight);
 
-		// I add some extra vertices at stratedic points to be able to determine
+		// Ddd some extra vertices at stratedic points to be able to determine
 		// which side of the cube a triangle is part of from the shader
 		int index1FrontExlusive = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFront);
 		int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBack);
-		int index5LeftExclusive = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kLeft);
-		int index3RightExclusive = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kRight);
 
 		// Front triangles
 		tri.Add(index0);
@@ -269,18 +267,18 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		// Left triangles
 		tri.Add(index4);
-		tri.Add(index5LeftExclusive);
+		tri.Add(index5);
 		tri.Add(index0);
 		tri.Add(index0);
-		tri.Add(index5LeftExclusive);
+		tri.Add(index5);
 		tri.Add(index1);
 
 		// Right triangles
 		tri.Add(index2);
-		tri.Add(index3RightExclusive);
+		tri.Add(index3);
 		tri.Add(index6);
 		tri.Add(index6);
-		tri.Add(index3RightExclusive);
+		tri.Add(index3);
 		tri.Add(index7);
 	}
 }
