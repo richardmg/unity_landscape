@@ -42,6 +42,23 @@ public class VoxelFrontScript : MonoBehaviour {
 	const int kBackBottomRight = 12;
 	const int kBackTopRight = 13;
 
+	static Vector3[] vertexForCode = new Vector3[]{
+		new Vector3(0, 1, 1),	// left exclusive
+		new Vector3(1, 1, 0),	// right exclusive
+		new Vector3(0, 0, 1),	// bottom exclusive
+		new Vector3(0, 1, 1),	// top exclusive
+		new Vector3(0, 1, 0),	// front exclusive
+		new Vector3(1, 1, 1),	// back exclusive
+		new Vector3(0, 0, 0),	// bottom left front
+		new Vector3(0, 1, 0),	// top left front
+		new Vector3(1, 0, 0),	// bottom right front
+		new Vector3(1, 1, 0),	// top right front
+		new Vector3(0, 0, 1),	// bottom left back
+		new Vector3(0, 1, 1),	// top left back
+		new Vector3(1, 0, 1),	// bottom right back
+		new Vector3(1, 1, 1),	// top right back
+	};
+
 	void Start ()
 	{
 		rebuildObject();
@@ -81,9 +98,9 @@ public class VoxelFrontScript : MonoBehaviour {
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
 		if (border == 0)
-			createQuadMesh(0, 0, subImageWidth - 1, subImageHeight - 1, 0, 0);
+			createQuadMesh(0, 0, subImageWidth - 1, subImageHeight - 1);
 		else
-			createQuadMesh(0, 0, subImageWidth - 1, subImageHeight - 1, -border, 0);
+			createQuadMesh(-border, -border, subImageWidth - 1 + border, subImageHeight - 1 + border);
 
 		Vector3 objectCenter = effectiveSize * 0.5f;
 		float size = Mathf.Max(effectiveSize.x, effectiveSize.y);
@@ -103,14 +120,14 @@ public class VoxelFrontScript : MonoBehaviour {
 		Vector3[] normals = new Vector3[vertexCount];
 
 		for (int i = 0; i < vertexCount; ++i) {
+			int normalCode = normalCodeList[i];
 			Vector3 v = mesh.vertices[i];
+			Vector3 uv = vertexForCode[normalCode];
 
-//			Trenger å gjøre om på dette
-			float uvAtlasX = (startPixelX + v.x) / texture.width;
-			float uvAtlasY = (startPixelY + v.y) / texture.height;
+			float uvAtlasX = (startPixelX + (uv.x * subImageWidth)) / texture.width;
+			float uvAtlasY = (startPixelY + (uv.y * subImageHeight)) / texture.height;
 
 			// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
-			int normalCode = normalCodeList[i];
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode + (effectiveSize.x / (2 * subImageWidth)), (effectiveSize.y / (2 * subImageHeight)));
 
 			if (normalCode == kBack || (normalCode >= kBackBottomLeft && normalCode <= kBackTopRight))
@@ -144,14 +161,14 @@ public class VoxelFrontScript : MonoBehaviour {
 		return verticeList.Count - 1;
 	}
 
-	void createQuadMesh(float voxelX1, float voxelY1, float voxelX2, float voxelY2, float offsetX, float offsetY)
+	void createQuadMesh(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
 	{
 		float voxelZ1 = 0;
 
-		int atlasCubeRectX1 = (int)(startPixelX + voxelX1);
-		int atlasCubeRectY1 = (int)(startPixelY + voxelY1);
-		float atlasCubeRectX2 = (float)(startPixelX + voxelX2 - 0.5) / texture.width; 
-		float atlasCubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
+		int atlasCubeRectX1 = (int)(startPixelX);
+		int atlasCubeRectY1 = (int)(startPixelY);
+		float atlasCubeRectX2 = (float)(startPixelX + subImageWidth - 1.5) / texture.width; 
+		float atlasCubeRectY2 = (float)(startPixelY + subImageHeight - 1.5) / texture.height;
 		Vector2 uvAtlasCubeRectEncoded = new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
 
 		int index0 = createVertex(voxelX1, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomLeft);
