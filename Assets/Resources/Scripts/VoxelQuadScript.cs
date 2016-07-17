@@ -201,9 +201,6 @@ public class VoxelQuadScript : MonoBehaviour {
 		float atlasCubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
 		Vector2 uvAtlasCubeRectEncoded = new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
 
-		print(startPixelX + ", " + voxelX2);
-		print(atlasCubeRectX1 + ", " + atlasCubeRectX2 + ", " + atlasCubeRectY1 + ", " + atlasCubeRectY2);
-
 		int index0 = createVertex(voxelX1, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomLeft);
 		int index1 = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopLeft);
 		int index2 = createVertex(voxelX2, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomRight);
@@ -234,6 +231,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		tri.Add(index7BackExclusive);
 		tri.Add(index5);
 
+		/*
 		// Top triangles
 		tri.Add(index1);
 		tri.Add(index5);
@@ -265,5 +263,6 @@ public class VoxelQuadScript : MonoBehaviour {
 		tri.Add(index6);
 		tri.Add(index3);
 		tri.Add(index7);
+		*/
 	}
 }
