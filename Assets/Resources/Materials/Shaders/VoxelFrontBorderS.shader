@@ -82,8 +82,7 @@
 			{
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
-				float3 objNormal : NORMAL1;
-				float3 uvAtlas : POSITION2;
+				float2 uvAtlas : POSITION2;
 				float4 uvAtlasCubeRect : COLOR1;
 				float4 extra : COLOR2;
 			};
@@ -140,8 +139,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-				o.objNormal = normalForCode[vertexCode];
-				o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
+				o.uvAtlas = v.cubeDesc.xy;
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
 				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, voxelDepth, 0);
 				return o;
@@ -161,26 +159,65 @@
 			
 			fixed4 frag (v2f i) : SV_Target
 			{
-				float2 uvOneLine = 1 / float2(_TextureWidth, _TextureHeight);
-				float2 uvBorder = float2(uvOneLine.x * 0.5, uvOneLine.y * -0.5);
+//			return tex2Dlod(_MainTex, float4(uvSubImageClamp(i.uvAtlas, i), 0, 0));
+				float2 textureSize = float2(_TextureWidth, _TextureHeight);
+				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
+				float2 uvAtlasClamped = uvSubImageClamp(i.uvAtlas, i);
+				float2 uvAtlasSubImageSize = subImageSize / textureSize;
+				float2 subImageIndex = floor(uvAtlasClamped / uvAtlasSubImageSize);
+				float2 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
-				float2 uvLeftBorder = i.uvAtlas + uvBorder;
-				float2 uvLeft = uvSubImageClamp(uvLeftBorder, i);
-//				float2 uvRight = uvSubImageClamp(i.uvAtlas, i);
+				float2 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float2 uvEffectiveSubImage = uvSubImage / float3(i.extra.x, i.extra.y, 1);
+				float2 voxelUnclamped = uvSubImage * subImageSize;
+				float2 voxel = min(voxelUnclamped, subImageSize - 1);
+				float2 uvVoxel = frac(voxelUnclamped);
 
-				fixed4 cLeft = tex2Dlod(_MainTex, float4(uvLeft, 0, 0));
-//				fixed4 cRight = tex2Dlod(_MainTex, float4(uvRight, 0, 0));
-				fixed4 c = cLeft;// + cRight;
+				fixed4 c = uvInsideSubImage(i.uvAtlas, i) ? tex2Dlod(_MainTex, float4(i.uvAtlas, 0, 0)) : 0;
 
-				if (!uvInsideSubImage(uvLeftBorder, i)) {
-					discard;
-					return red;
+				if (c.a == 0) {
+					// Draw top shadow
+					float2 uvOneLine = 1 / textureSize;
+					float2 uvShadowVoxel = i.uvAtlas - float2(uvOneLine.x * uvVoxel.y, uvOneLine.y);
+					if (!uvInsideSubImage(uvShadowVoxel, i))
+						uvShadowVoxel = 0;
+					c = tex2Dlod(_MainTex, float4(uvShadowVoxel, 0, 0));
+
+					if (c.a == 0) {
+						// Draw right shadow
+						float2 uvShadowVoxel = i.uvAtlas - uvOneLine;
+						if (!uvInsideSubImage(uvShadowVoxel, i))
+							uvShadowVoxel = 0;
+						c = tex2Dlod(_MainTex, float4(uvShadowVoxel, 0, 0));
+					}
+
+					if (c.a == 0) {
+						// Draw bottom shadow
+						float2 uvShadowVoxel = i.uvAtlas - float2(uvOneLine.x, uvOneLine.y * uvVoxel.x);
+						if (!uvInsideSubImage(uvShadowVoxel, i))
+							uvShadowVoxel = 0;
+						c = tex2Dlod(_MainTex, float4(uvShadowVoxel, 0, 0));
+					}
+
+					if (c.a == 0) {
+						discard;
+						return red;
+					} else {
+						// Return shadow color
+						return c - _EdgeSharp;
+						return fixed4(0, 0, 1, 1);
+					}
 				}
 
-				if (c.a == 0)
-					discard;
+				////////////////////////////////////////////////////////
+				// Apply lightning
 
-				return fixed4(0, 0, 0, 1);
+				float sunDist = dot(i.normal, _SunPos);
+				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
+				float sunLight = _Sunshine * sunAffection * _BaseLight;
+				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
+
+				return c;
 			}
 			ENDCG
 		}
