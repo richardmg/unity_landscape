@@ -166,6 +166,10 @@
             e.g makes the eyes shine etc.
 
         - Technical:
+            - far lod: draw quad with six vertices with small bend
+                - fake depth shade in fragment shader, but only
+                    as much so there are no glitches.
+                - If easily possible, try fill in the corner gaps.
             - Check if I can apply gradient only if the result is going in the same direction
                 as lightning, and skip otherwise
             - Calculate effective size for objects, and limit shading range to it.
