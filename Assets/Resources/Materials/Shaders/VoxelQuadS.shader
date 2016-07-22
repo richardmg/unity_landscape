@@ -108,23 +108,6 @@
 				float3(0, 0, 0),	// top right back
  			};
 
-			static float3 vertexForCode[14] = {
-				float3(0, 1, 1),	// left exclusive
-				float3(1, 1, 0),	// right exclusive
-				float3(0, 0, 1),	// bottom exclusive
-				float3(0, 1, 1),	// top exclusive
-				float3(0, 1, 0),	// front exclusive
-				float3(1, 1, 1),	// back exclusive
-				float3(0, 0, 0),	// bottom left front
-				float3(0, 1, 0),	// top left front
-				float3(1, 0, 0),	// bottom right front
-				float3(1, 1, 0),	// top right front
-				float3(0, 0, 1),	// bottom left back
-				float3(0, 1, 1),	// top left back
-				float3(1, 0, 1),	// bottom right back
-				float3(1, 1, 1),	// top right back
- 			};
-
  			inline int hasValue(float value)
  			{
  				return sign(abs(value));
@@ -132,9 +115,6 @@
 
 			v2f vert (appdata v)
 			{
-				int vertexCode = (int)v.cubeDesc.b;
-				float voxelDepth = v.cubeDesc.a / 100;
-
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
 				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
@@ -145,10 +125,10 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-				o.objNormal = normalForCode[vertexCode];
-				o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
+				o.objNormal = normalForCode[(int)v.cubeDesc.b];
+				o.uvAtlas = float3(v.cubeDesc.xy, 0);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
-				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, voxelDepth, 0);
+				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, 0, 0);
 				return o;
 			}
 			
