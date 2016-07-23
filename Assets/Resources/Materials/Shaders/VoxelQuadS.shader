@@ -82,35 +82,28 @@
 			{
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
-				float3 objNormal : NORMAL1;
 				float3 uvAtlas : POSITION2;
 				float4 uvAtlasCubeRect : COLOR1;
 				float4 extra : COLOR2;
 			};
 
-			// We only set correct normals for the side exclusive vertices
-			// to be able to determine correct normals after interpolation
-			// in the fragment shader.
-			static float3 normalForCode[14] = {
-				float3(-1, 0, 0),	// left exclusive
-				float3(1, 0, 0),	// right exclusive
-				float3(0, 0, 0),	// bottom exclusive (not used)
-				float3(0, 0, 0),	// top exclusive (not used)
-				float3(0, 0, -1),	// front exclusive
-				float3(0, 0, 1),	// back exclusive
-				float3(0, 0, 0),	// bottom left front
-				float3(0, 0, 0),	// top left front
-				float3(0, 0, 0),	// bottom right front
-				float3(0, 0, 0),	// top right front
-				float3(0, 0, 0),	// bottom left back
-				float3(0, 0, 0),	// top left back
-				float3(0, 0, 0),	// bottom right back
-				float3(0, 0, 0),	// top right back
- 			};
-
- 			inline int hasValue(float value)
+ 			inline int isOne(float value)
  			{
- 				return sign(abs(value));
+ 				// value in [-1 -> 1]
+ 				return int((value + 1) / 2);
+ 			}
+
+ 			inline int isMinusOne(float value)
+ 			{
+ 				// value in [-1 -> 1]
+ 				return int((value - 1) / -2);
+ 			}
+
+ 			inline float ifSet(float testValue, float expr)
+ 			{
+ 				// testValue in [0, 1]
+ 				// Returns 1 if testValue == 0, otherwise expr
+ 				return 1 + (testValue * (expr - 1));
  			}
 
 			v2f vert (appdata v)
@@ -125,10 +118,9 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-				o.objNormal = normalForCode[(int)v.cubeDesc.b];
 				o.uvAtlas = float3(v.cubeDesc.xy, 0);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
-				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, 0, 0);
+				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, v.cubeDesc.b, 0);
 				return o;
 			}
 			
@@ -153,14 +145,10 @@
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
 
-			 	int isLeftOrRightSide = hasValue(i.objNormal.x);
-			 	int isFrontOrBackSide = hasValue(i.objNormal.z);
-				int leftSide = isLeftOrRightSide * (1 - step(0.5, uvVoxel.x));
-				int rightSide = isLeftOrRightSide * step(0.5, uvVoxel.x);
-				int frontSide = isFrontOrBackSide * (1 - hasValue(uvVoxel.z));
-				int backSide = isFrontOrBackSide * hasValue(uvVoxel.z);
-				int bottomSide = !(isLeftOrRightSide | isFrontOrBackSide) * (1 - step(0.5, uvVoxel.y));
-				int topSide = !(isLeftOrRightSide | isFrontOrBackSide | bottomSide);
+				int normalCode = i.extra.z;
+				int frontSide = isMinusOne(normalCode);
+				int backSide = isOne(normalCode);
+				int edgeSide = !(frontSide | backSide);
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
@@ -176,7 +164,7 @@
 				float sunDist = dot(i.normal, _SunPos);
 				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
 				float sunLight = _Sunshine * sunAffection * _BaseLight;
-				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
+				c *= ifSet(frontSide | backSide, max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight)));
 					
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
@@ -185,21 +173,18 @@
 				c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
 
 				////////////////////////////////////////////////////////
-				// Sharpen contrast at cube edges
+				// Sharpen contrast at edges
 
-				float sharpLeft = 1 + ((leftSide | rightSide) * -_EdgeSharp * _BaseLight);
-				float sharpTop = 1 + ((topSide | bottomSide) * -_EdgeSharp * _BaseLight);
-				c *= sharpLeft * sharpTop;
+				float sharpenEdge = 1 + (edgeSide * -_EdgeSharp * _BaseLight);
+				c *= sharpenEdge;
 
 				////////////////////////////////////////////////////////
 				// Apply gradient
 
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
-				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength * sharpLeft);
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradientSide - 1) * _BaseLight);
-				float gradientTop = (1 - gradientStrength) + (uvEffectiveSubImage.x * gradientStrength * sharpTop);
-				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1) * _BaseLight);
+				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
+				c *= 1 + ((frontSide | backSide) * (gradientSide - 1) * _BaseLight);
 
 				////////////////////////////////////////////////////////
 
@@ -207,6 +192,7 @@
 
 				return c;
 			}
+
 			ENDCG
 		}
 	}
