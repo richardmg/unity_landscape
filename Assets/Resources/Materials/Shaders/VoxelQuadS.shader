@@ -89,14 +89,16 @@
 
  			inline int isOne(float value)
  			{
- 				// value in [-1 -> 1]
+ 			// FIXME, avoid using if test
+ 			return value == 1;
  				return int((value + 1) / 2);
  			}
 
- 			inline int isMinusOne(float value)
+ 			inline int isNull(float value)
  			{
- 				// value in [-1 -> 1]
- 				return int((value - 1) / -2);
+ 			// FIXME, avoid using if test
+ 				return value == 0;
+ 				return abs(!value);
  			}
 
  			inline float ifSet(float testValue, float expr)
@@ -111,6 +113,7 @@
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
 				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
+				float normalCode = int(v.cubeDesc.b);
 
 				float uvSubImageEffectiveWidth = frac(v.cubeDesc.a) * 2;
 				float uvSubImageEffectiveHeight = frac(v.cubeDesc.b) * 2;
@@ -120,7 +123,7 @@
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.uvAtlas = float3(v.cubeDesc.xy, 0);
 				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
-				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, v.cubeDesc.b, 0);
+				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, normalCode, 0);
 				return o;
 			}
 			
@@ -146,9 +149,11 @@
 				float3 uvVoxel = frac(voxelUnclamped);
 
 				int normalCode = i.extra.z;
-				int frontSide = isMinusOne(normalCode);
-				int backSide = isOne(normalCode);
-				int edgeSide = !(frontSide | backSide);
+				int frontSide = isNull(normalCode);
+				int edgeSide = isOne(normalCode);
+				int backSide = !(frontSide | edgeSide);
+
+//				if (backSide) return red;
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
@@ -170,7 +175,7 @@
 				// Apply alternate voxel color
 
 				int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-				c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
+				c *= 1 + ifSet(frontSide | backSide, ((voxelate.x + voxelate.y + voxelate.z) % 2) *  _VoxelateStrength);
 
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges

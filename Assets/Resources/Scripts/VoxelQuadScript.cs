@@ -6,7 +6,8 @@ using NormalCode = System.Int32;
 
 public class VoxelQuadScript : MonoBehaviour {
 	public int atlasIndex = 0;
-	public float voxelDepth = 4;
+	public int pyramidCount = 4;
+	public float pyramidHeight = 1;
 	public bool includeVoxelDepthInNormalVolume = false;
 
 	// tile means draw texture on all sides of object rather that just in front
@@ -35,9 +36,9 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	const int kVoxelNotFound = -1;
 
-	const NormalCode kNormalCodeFront = -1;
-	const NormalCode kNormalCodeMiddle = 0;
-	const NormalCode kNormalCodeBack = 1;
+	const NormalCode kNormalCodeFront = 0;
+	const NormalCode kNormalCodeMiddle = 1;
+	const NormalCode kNormalCodeBack = 2;
 
 	void Start ()
 	{
@@ -65,7 +66,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		tri.Clear();
 		normalCodeList.Clear();
 
-		effectiveSize = new Vector3(0, 0, voxelDepth);
+		effectiveSize = new Vector3(0, 0, 1);
 		Vector3 scale = gameObject.transform.localScale;
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
@@ -78,12 +79,15 @@ public class VoxelQuadScript : MonoBehaviour {
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
-		createVerticalPyramid(0, kNormalCodeFront);
-		createVerticalPyramid(0.33f, kNormalCodeMiddle);
-		createVerticalPyramid(0.66f, kNormalCodeMiddle);
-		createVerticalPyramid(1, kNormalCodeBack);
+		if (pyramidCount > 0)
+			createVerticalPyramid(0, kNormalCodeFront);
+		if (pyramidCount > 1)
+			createVerticalPyramid(1, kNormalCodeBack);
+		float pyramidDelta = 1.0f / (pyramidCount - 1);
+		for (int i = 1; i < pyramidCount - 1; ++i)
+			createVerticalPyramid(pyramidDelta * i, kNormalCodeMiddle);
 
-		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
+		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, 1);
 		Vector3 objectCenter = effectiveSize * 0.5f;
 
 		volumeSize.z = 1;
@@ -162,7 +166,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		int index1 = createVertex(0, subImageHeight, z, uvAtlasCubeRectEncoded, normalCode);
 		int index2 = createVertex(subImageWidth, 0, z, uvAtlasCubeRectEncoded, normalCode);
 		int index3 = createVertex(subImageWidth, subImageHeight, z, uvAtlasCubeRectEncoded, normalCode);
-		int index4 = createVertex(subImageWidth / 2, subImageHeight / 2, z + 1, uvAtlasCubeRectEncoded, normalCode);
+		int index4 = createVertex(subImageWidth / 2, subImageHeight / 2, z + pyramidHeight, uvAtlasCubeRectEncoded, normalCode);
 
 		tri.Add(index0);
 		tri.Add(index1);
