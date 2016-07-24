@@ -7,7 +7,7 @@ using NormalCode = System.Int32;
 public class VoxelQuadScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public int pyramidCount = 4;
-	public float pyramidHeight = 1;
+	public float removeMePyramidHeight = 1;
 	public bool includeVoxelDepthInNormalVolume = false;
 
 	// tile means draw texture on all sides of object rather that just in front
@@ -166,7 +166,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		int index1 = createVertex(0, subImageHeight, z, uvAtlasCubeRectEncoded, normalCode);
 		int index2 = createVertex(subImageWidth, 0, z, uvAtlasCubeRectEncoded, normalCode);
 		int index3 = createVertex(subImageWidth, subImageHeight, z, uvAtlasCubeRectEncoded, normalCode);
-		int index4 = createVertex(subImageWidth / 2, subImageHeight / 2, z + pyramidHeight, uvAtlasCubeRectEncoded, normalCode);
+		int index4 = createVertex(subImageWidth / 2, subImageHeight / 2, z + removeMePyramidHeight, uvAtlasCubeRectEncoded, normalCode);
 
 		tri.Add(index0);
 		tri.Add(index1);
