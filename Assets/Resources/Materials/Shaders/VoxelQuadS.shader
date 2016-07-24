@@ -175,7 +175,7 @@
 				// Apply alternate voxel color
 
 				int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-				c *= 1 + ifSet(frontSide | backSide, ((voxelate.x + voxelate.y + voxelate.z) % 2) *  _VoxelateStrength);
+				c *= 1 + ((voxelate.x + voxelate.y + voxelate.z) % 2) *  _VoxelateStrength;
 
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
