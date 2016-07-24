@@ -90,9 +90,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, 1);
 		Vector3 objectCenter = effectiveSize * 0.5f;
 
-		volumeSize.z = 1;
-		objectCenter.z = 0.5f;
-
+		// Shape normal volume from rectangular to square
 		float size = Mathf.Max(volumeSize.x, volumeSize.y);
 		volumeSize = new Vector3(size, size, volumeSize.z);
 
@@ -116,7 +114,7 @@ public class VoxelQuadScript : MonoBehaviour {
 
 			int normalCode = normalCodeList[i];
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode + (effectiveSize.x / (2 * subImageWidth)), (effectiveSize.y / (2 * subImageHeight)));
-			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, 1), objectCenter, volumeSize);
+			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, v.z), objectCenter, volumeSize);
 		}
 
 		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();

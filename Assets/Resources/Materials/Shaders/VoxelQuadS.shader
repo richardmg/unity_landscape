@@ -169,7 +169,7 @@
 				float sunDist = dot(i.normal, _SunPos);
 				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
 				float sunLight = _Sunshine * sunAffection * _BaseLight;
-				c *= ifSet(frontSide | backSide, max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight)));
+				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
 					
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
