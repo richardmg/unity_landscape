@@ -129,13 +129,6 @@
  				return sign(abs(value));
  			}
 
- 			inline float ifSet(float testValue, float expr)
- 			{
- 				// testValue in [0, 1]
- 				// Returns 1 if testValue == 0, otherwise expr
- 				return 1 + (testValue * (expr - 1));
- 			}
-
 			v2f vert (appdata v)
 			{
 				int vertexCode = (int)v.cubeDesc.b;
@@ -198,7 +191,7 @@
 				float sunDist = dot(i.normal, _SunPos);
 				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
 				float sunLight = _Sunshine * sunAffection * _BaseLight;
-				c *= ifSet(frontSide | backSide, max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight)));
+				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
 					
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
