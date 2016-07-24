@@ -6,6 +6,7 @@ using NormalCode = System.Int32;
 
 public class VoxelQuadScript : MonoBehaviour {
 	public int atlasIndex = 0;
+	public float voxelDepth = 1;
 	public int pyramidCount = 4;
 	public float removeMePyramidHeight = 1;
 	public bool includeVoxelDepthInNormalVolume = false;
@@ -66,7 +67,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		tri.Clear();
 		normalCodeList.Clear();
 
-		effectiveSize = new Vector3(0, 0, 1);
+		effectiveSize = new Vector3(0, 0, voxelDepth);
 		Vector3 scale = gameObject.transform.localScale;
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
@@ -82,12 +83,12 @@ public class VoxelQuadScript : MonoBehaviour {
 		if (pyramidCount > 0)
 			createVerticalPyramid(0, kNormalCodeFront);
 		if (pyramidCount > 1)
-			createVerticalPyramid(1, kNormalCodeBack);
-		float pyramidDelta = 1.0f / (pyramidCount - 1);
+			createVerticalPyramid(voxelDepth, kNormalCodeBack);
+		float pyramidDelta = voxelDepth / (pyramidCount - 1);
 		for (int i = 1; i < pyramidCount - 1; ++i)
 			createVerticalPyramid(pyramidDelta * i, kNormalCodeMiddle);
 
-		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, 1);
+		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
 		Vector3 objectCenter = effectiveSize * 0.5f;
 
 		// Shape normal volume from rectangular to square
