@@ -7,8 +7,7 @@ using NormalCode = System.Int32;
 public class VoxelQuadScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 1;
-	public int pyramidCount = 4;
-	public float removeMePyramidHeight = 1;
+	public int quadCount = 4;
 	public bool includeVoxelDepthInNormalVolume = false;
 
 	// tile means draw texture on all sides of object rather that just in front
@@ -80,12 +79,12 @@ public class VoxelQuadScript : MonoBehaviour {
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
-		if (pyramidCount > 0)
+		if (quadCount > 0)
 			createVerticalPyramid(0, kNormalCodeFront);
-		if (pyramidCount > 1)
+		if (quadCount > 1)
 			createVerticalPyramid(voxelDepth, kNormalCodeBack);
-		float pyramidDelta = voxelDepth / (pyramidCount - 1);
-		for (int i = 1; i < pyramidCount - 1; ++i)
+		float pyramidDelta = voxelDepth / (quadCount - 1);
+		for (int i = 1; i < quadCount - 1; ++i)
 			createVerticalPyramid(pyramidDelta * i, kNormalCodeMiddle);
 
 		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
@@ -165,22 +164,12 @@ public class VoxelQuadScript : MonoBehaviour {
 		int index1 = createVertex(0, subImageHeight, z, uvAtlasCubeRectEncoded, normalCode);
 		int index2 = createVertex(subImageWidth, 0, z, uvAtlasCubeRectEncoded, normalCode);
 		int index3 = createVertex(subImageWidth, subImageHeight, z, uvAtlasCubeRectEncoded, normalCode);
-		int index4 = createVertex(subImageWidth / 2, subImageHeight / 2, z + removeMePyramidHeight, uvAtlasCubeRectEncoded, normalCode);
 
 		tri.Add(index0);
 		tri.Add(index1);
-		tri.Add(index4);
-
+		tri.Add(index2);
+		tri.Add(index2);
 		tri.Add(index1);
 		tri.Add(index3);
-		tri.Add(index4);
-
-		tri.Add(index3);
-		tri.Add(index2);
-		tri.Add(index4);
-
-		tri.Add(index2);
-		tri.Add(index0);
-		tri.Add(index4);
 	}
 }
