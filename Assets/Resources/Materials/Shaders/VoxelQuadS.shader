@@ -153,8 +153,6 @@
 				int edgeSide = isOne(normalCode);
 				int backSide = !(frontSide | edgeSide);
 
-//				if (backSide) return red;
-
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));

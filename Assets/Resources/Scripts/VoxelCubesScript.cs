@@ -172,8 +172,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		meshFilter.mesh = mesh;
 
 		readonlyVertexCount = mesh.vertices.Length;
-		readonlyTriangleCount = mesh.triangles.Length;
-//		print("VoxelCubes: vertex count for " + gameObject.name + ": " + mesh.vertices.Length);
+		readonlyTriangleCount = tri.Count / 3;
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)

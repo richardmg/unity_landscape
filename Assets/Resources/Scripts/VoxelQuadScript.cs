@@ -127,7 +127,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		meshFilter.mesh = mesh;
 
 		readonlyVertexCount = mesh.vertices.Length;
-		readonlyTriangleCount = mesh.triangles.Length;
+		readonlyTriangleCount = tri.Count / 3;
 	}
 
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
