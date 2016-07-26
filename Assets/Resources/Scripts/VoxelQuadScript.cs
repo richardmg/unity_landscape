@@ -17,9 +17,6 @@ public class VoxelQuadScript : MonoBehaviour {
 	public int readonlyTriangleCount = 0;
 
 	Texture2D texture;
-	int startPixelX;
-	int startPixelY;
-
 	Vector3 effectiveSize;
 	Vector2 uvAtlasSubImageRectEncoded;
 
@@ -48,12 +45,19 @@ public class VoxelQuadScript : MonoBehaviour {
 		rebuildObject();
 	}
 
-	Vector3 getVolumeNormal(Vector3 vertex, Vector3 objectCenter, Vector3 volumeSize)
+	Vector3 getVolumeNormal(Vector3 vertex)
 	{
+		// Shape normal volume from rectangular to square
+		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
+		Vector3 objectCenter = effectiveSize * 0.5f;
+		float size = Mathf.Max(volumeSize.x, volumeSize.y);
+		volumeSize = new Vector3(size, size, volumeSize.z);
+
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
 		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
 		Vector3 n = kVecBottomLeft + Vector3.Scale(normalizedVertex, kVecDeltaNormal);
 		n /= gameObject.transform.localScale.x;
+
 		return n;
 	}
 
@@ -69,17 +73,11 @@ public class VoxelQuadScript : MonoBehaviour {
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
 
-		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
-		// verticeList, since those can be calculated directly (and more precisely) in the shader
-		// based on the local position of the vertices themselves.
-		startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-
-		int atlasSubImageRectX1 = (int)(startPixelX);
-		int atlasSubImageRectY1 = (int)(startPixelY);
+		int startPixelX = (atlasIndex * subImageWidth) % texture.width;
+		int startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 		float atlasSubImageRectX2 = (float)(startPixelX + subImageWidth - 0.5) / texture.width; 
 		float atlasSubImageRectY2 = (float)(startPixelY + subImageHeight - 0.5) / texture.height;
-		uvAtlasSubImageRectEncoded = new Vector2(atlasSubImageRectX1 + atlasSubImageRectX2, atlasSubImageRectY1 + atlasSubImageRectY2);
+		uvAtlasSubImageRectEncoded = new Vector2(startPixelX + atlasSubImageRectX2, startPixelY + atlasSubImageRectY2);
 
 		if (quadCountX) {
 			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
@@ -96,13 +94,6 @@ public class VoxelQuadScript : MonoBehaviour {
 		float deltaZ = voxelDepth / Mathf.Max(1, quadCountZ - 1);
 		for (int z = 0; z < quadCountZ; ++z)
 			createZQuad(z * deltaZ);
-
-		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
-		Vector3 objectCenter = effectiveSize * 0.5f;
-
-		// Shape normal volume from rectangular to square
-		float size = Mathf.Max(volumeSize.x, volumeSize.y);
-		volumeSize = new Vector3(size, size, volumeSize.z);
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
@@ -125,7 +116,7 @@ public class VoxelQuadScript : MonoBehaviour {
 			//int normalCode = normalCodeList[i];
 			int normalCode = v.z == 0 ? kNormalCodeFront : v.z == voxelDepth ? kNormalCodeBack : kNormalCodeMiddle;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode + (effectiveSize.x / (2 * subImageWidth)), (effectiveSize.y / (2 * subImageHeight)));
-			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, v.z), objectCenter, volumeSize);
+			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, v.z));
 		}
 
 		Vector2[] uvAtlasSubImageRectArray = new Vector2[verticeList.Count];
@@ -148,7 +139,7 @@ public class VoxelQuadScript : MonoBehaviour {
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
 	{
 		for (int x = startX; x < subImageWidth; ++x) {
-			Color c = texture.GetPixel(startPixelX + x, startPixelY + startY);
+			Color c = texture.GetPixel(x, startY);
 			if (Mathf.CeilToInt(c.a) == alpha)
 				return x;
 		}
@@ -158,10 +149,8 @@ public class VoxelQuadScript : MonoBehaviour {
 	int createVertex(float x, float y, float z)
 	{
 		verticeList.Add(new Vector3(x, y, z));
-
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
-
 		return verticeList.Count - 1;
 	}
 
