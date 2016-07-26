@@ -8,8 +8,8 @@ public class VoxelQuadScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 1;
 
-	public int quadCountX = 0;
-	public int quadCountY = 0;
+	public bool quadCountX = false;
+	public bool quadCountY = false;
 	public int quadCountZ = 4;
 
 	// Read-only, for editor inspection
@@ -21,12 +21,12 @@ public class VoxelQuadScript : MonoBehaviour {
 	int startPixelY;
 
 	Vector3 effectiveSize;
+	Vector2 uvAtlasSubImageRectEncoded;
 
 	const int subImageWidth = 16;
 	const int subImageHeight = 8;
 
 	static List<Vector3> verticeList = new List<Vector3>(); 
-	static List<Vector2> uvAtlasCubeRectEncodedList = new List<Vector2>(); 
 	static List<int> tri = new List<int>(); 
 
 	static Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
@@ -60,7 +60,6 @@ public class VoxelQuadScript : MonoBehaviour {
 	public void rebuildObject()
 	{
 		verticeList.Clear();
-		uvAtlasCubeRectEncodedList.Clear();
 		tri.Clear();
 
 		effectiveSize = new Vector3(0, 0, voxelDepth);
@@ -75,6 +74,24 @@ public class VoxelQuadScript : MonoBehaviour {
 		// based on the local position of the vertices themselves.
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+
+		int atlasSubImageRectX1 = (int)(startPixelX);
+		int atlasSubImageRectY1 = (int)(startPixelY);
+		float atlasSubImageRectX2 = (float)(startPixelX + subImageWidth - 0.5) / texture.width; 
+		float atlasSubImageRectY2 = (float)(startPixelY + subImageHeight - 0.5) / texture.height;
+		uvAtlasSubImageRectEncoded = new Vector2(atlasSubImageRectX1 + atlasSubImageRectX2, atlasSubImageRectY1 + atlasSubImageRectY2);
+
+		if (quadCountX) {
+			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
+			for (int x = 0; x < subImageWidth; ++x)
+				createXQuad(x * deltaX);
+		}
+
+		if (quadCountY) {
+			float deltaY = subImageHeight / Mathf.Max(1, subImageHeight - 1);
+			for (int y = 0; y < subImageHeight; ++y)
+				createYQuad(y * deltaY);
+		}
 
 		float deltaZ = voxelDepth / Mathf.Max(1, quadCountZ - 1);
 		for (int z = 0; z < quadCountZ; ++z)
@@ -111,7 +128,11 @@ public class VoxelQuadScript : MonoBehaviour {
 			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, v.z), objectCenter, volumeSize);
 		}
 
-		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
+		Vector2[] uvAtlasSubImageRectArray = new Vector2[verticeList.Count];
+		for (int i = 0; i < uvAtlasSubImageRectArray.Length; ++i)
+			uvAtlasSubImageRectArray[i] = uvAtlasSubImageRectEncoded;
+		
+		mesh.uv = uvAtlasSubImageRectArray;
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
 
@@ -134,10 +155,9 @@ public class VoxelQuadScript : MonoBehaviour {
 		return kVoxelNotFound;
 	}
 
-	int createVertex(float x, float y, float z, Vector2 uvRect)
+	int createVertex(float x, float y, float z)
 	{
 		verticeList.Add(new Vector3(x, y, z));
-		uvAtlasCubeRectEncodedList.Add(uvRect);
 
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
@@ -145,18 +165,42 @@ public class VoxelQuadScript : MonoBehaviour {
 		return verticeList.Count - 1;
 	}
 
+	void createXQuad(float x)
+	{
+		int index0 = createVertex(x, 0, voxelDepth);
+		int index1 = createVertex(x, subImageHeight, voxelDepth);
+		int index2 = createVertex(x, 0, 0);
+		int index3 = createVertex(x, subImageHeight, 0);
+
+		tri.Add(index0);
+		tri.Add(index1);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1);
+		tri.Add(index3);
+	}
+
+	void createYQuad(float y)
+	{
+		int index0 = createVertex(0, y, voxelDepth);
+		int index1 = createVertex(0, y, 0);
+		int index2 = createVertex(subImageWidth, y, voxelDepth);
+		int index3 = createVertex(subImageWidth, y, 0);
+
+		tri.Add(index0);
+		tri.Add(index1);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1);
+		tri.Add(index3);
+	}
+
 	void createZQuad(float z)
 	{
-		int atlasCubeRectX1 = (int)(startPixelX);
-		int atlasCubeRectY1 = (int)(startPixelY);
-		float atlasCubeRectX2 = (float)(startPixelX + subImageWidth - 0.5) / texture.width; 
-		float atlasCubeRectY2 = (float)(startPixelY + subImageHeight - 0.5) / texture.height;
-		Vector2 uvAtlasCubeRectEncoded = new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
-
-		int index0 = createVertex(0, 0, z, uvAtlasCubeRectEncoded);
-		int index1 = createVertex(0, subImageHeight, z, uvAtlasCubeRectEncoded);
-		int index2 = createVertex(subImageWidth, 0, z, uvAtlasCubeRectEncoded);
-		int index3 = createVertex(subImageWidth, subImageHeight, z, uvAtlasCubeRectEncoded);
+		int index0 = createVertex(0, 0, z);
+		int index1 = createVertex(0, subImageHeight, z);
+		int index2 = createVertex(subImageWidth, 0, z);
+		int index3 = createVertex(subImageWidth, subImageHeight, z);
 
 		tri.Add(index0);
 		tri.Add(index1);
