@@ -113,7 +113,6 @@ public class VoxelQuadScript : MonoBehaviour {
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
 
-			//int normalCode = normalCodeList[i];
 			int normalCode = v.z == 0 ? kNormalCodeFront : v.z == voxelDepth ? kNormalCodeBack : kNormalCodeMiddle;
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode + (effectiveSize.x / (2 * subImageWidth)), (effectiveSize.y / (2 * subImageHeight)));
 			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, v.z));
