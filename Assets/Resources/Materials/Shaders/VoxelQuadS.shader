@@ -164,12 +164,7 @@
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
 
-				// REMOVE NORMAL CODE IN FAVOR OF FACEDIRECTION
-				int normalCode = i.extra.z;
-				int faceDirection = i.extra.w;
-				int frontSide = isNull(normalCode);
-				int edgeSide = isOne(normalCode);
-				int backSide = !(frontSide | edgeSide);
+				int faceDirection = (int)i.extra.w;
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
@@ -204,7 +199,7 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
 
-				float sharpenEdge = 1 + (edgeSide * -_EdgeSharp * _BaseLight);
+				float sharpenEdge = 1 + (!(faceDirection & kFaceDirectionZ) * -_EdgeSharp * _BaseLight);
 				c *= sharpenEdge;
 
 				////////////////////////////////////////////////////////
@@ -213,7 +208,7 @@
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
 				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-				c *= 1 + ((frontSide | backSide) * (gradientSide - 1) * _BaseLight);
+				c *= 1 + ((faceDirection & kFaceDirectionZ) * (gradientSide - 1) * _BaseLight);
 
 				////////////////////////////////////////////////////////
 
