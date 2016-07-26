@@ -81,13 +81,13 @@ public class VoxelQuadScript : MonoBehaviour {
 
 		if (quadCountX) {
 			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
-			for (int x = 0; x < subImageWidth; ++x)
+			for (int x = 0; x <= subImageWidth; ++x)
 				createXQuad(x * deltaX);
 		}
 
 		if (quadCountY) {
 			float deltaY = subImageHeight / Mathf.Max(1, subImageHeight - 1);
-			for (int y = 0; y < subImageHeight; ++y)
+			for (int y = 0; y <= subImageHeight; ++y)
 				createYQuad(y * deltaY);
 		}
 

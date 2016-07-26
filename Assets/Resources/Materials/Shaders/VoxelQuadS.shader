@@ -70,11 +70,15 @@
 			static fixed4 red = fixed4(1, 0, 0, 1);
 			static float3 _SunPos = normalize(float3(0, 0, 1));
 
+			static int kFaceDirectionX = 0;
+			static int kFaceDirectionY = 1;
+			static int kFaceDirectionZ = 2;
+
 			struct appdata
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float2 uvAtlasCubeRectEncoded : TEXCOORD0;
+				float2 uvAtlasSubImageRectEncoded : TEXCOORD0;
 				float4 cubeDesc : COLOR;
 			};
 
@@ -83,7 +87,7 @@
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
 				float3 uvAtlas : POSITION2;
-				float4 uvAtlasCubeRect : COLOR1;
+				float4 uvAtlasSubImageRect : COLOR1;
 				float4 extra : COLOR2;
 			};
 
@@ -110,9 +114,9 @@
 
 			v2f vert (appdata v)
 			{
-				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
-				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
-				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
+				float2 textureSize = float2(_TextureWidth, _TextureHeight);
+				float2 uvSubImageBottomLeft = floor(v.uvAtlasSubImageRectEncoded) / textureSize;
+				float2 uvSubImageTopRight = frac(v.uvAtlasSubImageRectEncoded) + (0.5 / textureSize);
 				float normalCode = int(v.cubeDesc.b);
 
 				float uvSubImageEffectiveWidth = frac(v.cubeDesc.a) * 2;
@@ -122,8 +126,20 @@
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.uvAtlas = float3(v.cubeDesc.xy, 0);
-				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
-				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, normalCode, 0);
+				o.uvAtlasSubImageRect = float4(uvSubImageBottomLeft, uvSubImageTopRight);
+
+				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
+				float2 uvAtlasSubImageSize = subImageSize / textureSize;
+				float2 uvSubImage = (o.uvAtlas.xy - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float2 uvSubImageOneLine = 1 / subImageSize;
+				float faceDirection = kFaceDirectionZ;
+
+				if (uvSubImage.x >= uvSubImageOneLine.x && uvSubImage.x < 1)
+					faceDirection = kFaceDirectionX;
+				else if (uvSubImage.y >= uvSubImageOneLine.y && uvSubImage.y < 1)
+					faceDirection = kFaceDirectionY;
+
+				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, normalCode, faceDirection);
 				return o;
 			}
 			
@@ -134,7 +150,7 @@
 
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
-				float4 clampRect = i.uvAtlasCubeRect + _ClampOffset;
+				float4 clampRect = i.uvAtlasSubImageRect + _ClampOffset;
 				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
 
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
@@ -148,7 +164,9 @@
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
 
+				// REMOVE NORMAL CODE IN FAVOR OF FACEDIRECTION
 				int normalCode = i.extra.z;
+				int faceDirection = i.extra.w;
 				int frontSide = isNull(normalCode);
 				int edgeSide = isOne(normalCode);
 				int backSide = !(frontSide | edgeSide);
@@ -156,6 +174,14 @@
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+
+				if (c.a == 0) {
+					if (faceDirection == kFaceDirectionX)
+						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasOnePixel.x, 0), 0, 0));
+					else if (faceDirection == kFaceDirectionY)
+						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, uvAtlasOnePixel.y), 0, 0));
+				}
+
 				if (c.a == 0) {
 					discard;
 					return c;
