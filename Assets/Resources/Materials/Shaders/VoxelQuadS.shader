@@ -168,13 +168,26 @@
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
+
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
 				if (c.a == 0) {
-					if (faceDirection == kFaceDirectionX)
-						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasOnePixel.x, 0), 0, 0));
-					else if (faceDirection == kFaceDirectionY)
+					if (faceDirection == kFaceDirectionX) {
+						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasOnePixel.x / 2, 0), 0, 0));
+					} else if (faceDirection == kFaceDirectionY) {
 						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, uvAtlasOnePixel.y), 0, 0));
+					} else if (faceDirection == kFaceDirectionZ) {
+						// Add some padding to compensate for the other faces not being exactly in the center between voxels
+						if (uvVoxel.x > 0.99) {
+							uvAtlasClamped.x -= uvAtlasOnePixel.x / 2;
+							c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+						}
+						if (uvVoxel.x < 0.01) {
+							uvAtlasClamped.x -= uvAtlasOnePixel.x / 2;
+							voxel.x -= 1;
+							c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+						}
+					}
 				}
 
 				if (c.a == 0) {
