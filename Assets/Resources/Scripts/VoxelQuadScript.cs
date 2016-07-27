@@ -11,6 +11,7 @@ public class VoxelQuadScript : MonoBehaviour {
 	public bool quadCountX = false;
 	public bool quadCountY = false;
 	public int quadCountZ = 4;
+	public float planeOffset = 0.01f;
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
@@ -20,6 +21,8 @@ public class VoxelQuadScript : MonoBehaviour {
 	Vector3 effectiveSize;
 	Vector2 uvAtlasSubImageRectEncoded;
 
+	int startPixelX;
+	int startPixelY;
 	const int subImageWidth = 16;
 	const int subImageHeight = 8;
 
@@ -73,27 +76,38 @@ public class VoxelQuadScript : MonoBehaviour {
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
 
-		int startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		int startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		startPixelX = (atlasIndex * subImageWidth) % texture.width;
+		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 		float atlasSubImageRectX2 = (float)(startPixelX + subImageWidth - 0.5) / texture.width; 
 		float atlasSubImageRectY2 = (float)(startPixelY + subImageHeight - 0.5) / texture.height;
 		uvAtlasSubImageRectEncoded = new Vector2(startPixelX + atlasSubImageRectX2, startPixelY + atlasSubImageRectY2);
 
 		if (quadCountX) {
 			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
-			for (int x = 0; x <= subImageWidth; ++x)
-				createXQuad(x * deltaX);
+			for (int x = 0; x <= subImageWidth; ++x) {
+				Vector2 singleFaceCount = countSingleFacesForCol(x);
+				if (singleFaceCount.x > 0)
+					createLeftQuad(x * deltaX);
+				if (singleFaceCount.y > 0)
+					createRightQuad(x * deltaX);
+			}
 		}
 
 		if (quadCountY) {
 			float deltaY = subImageHeight / Mathf.Max(1, subImageHeight - 1);
-			for (int y = 0; y <= subImageHeight; ++y)
-				createYQuad(y * deltaY);
+			for (int y = 0; y <= subImageHeight; ++y) {
+				Vector2 singleFaceCount = countSingleFacesForRow(y);
+				if (singleFaceCount.x > 0)
+					createBottomQuad(y * deltaY);
+				if (singleFaceCount.y > 0)
+					createTopQuad(y * deltaY);
+			}
 		}
 
 		float deltaZ = voxelDepth / Mathf.Max(1, quadCountZ - 1);
-		for (int z = 0; z < quadCountZ; ++z)
-			createZQuad(z * deltaZ);
+		for (int z = 0; z < quadCountZ - 1; ++z)
+			createFrontQuad(z * deltaZ);
+		createBackQuad((quadCountZ - 1) * deltaZ);
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
@@ -135,6 +149,42 @@ public class VoxelQuadScript : MonoBehaviour {
 		readonlyTriangleCount = tri.Count / 3;
 	}
 
+	Vector2 countSingleFacesForCol(int x)
+	{
+		Vector2 faceCount = new Vector2();
+		for (int y = 0; y < subImageHeight; ++y) {
+			Color c1 = (x == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
+			Color c2 = (x == 0) ? Color.clear : texture.GetPixel(startPixelX + x - 1, startPixelY + y);
+			if (c1.a == c2.a)
+				continue;
+
+			if (c1.a != 0)
+				faceCount.x = faceCount.x + 1;
+			else
+				faceCount.y = faceCount.y + 1;
+		}
+
+		return faceCount;
+	}
+
+	Vector2 countSingleFacesForRow(int y)
+	{
+		Vector2 faceCount = new Vector2();
+		for (int x = 0; x < subImageWidth; ++x) {
+			Color c1 = (y == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
+			Color c2 = (y == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y - 1);
+			if (c1.a == c2.a)
+				continue;
+
+			if (c1.a != 0)
+				faceCount.x = faceCount.x + 1;
+			else
+				faceCount.y = faceCount.y + 1;
+		}
+
+		return faceCount;
+	}
+
 	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
 	{
 		for (int x = startX; x < subImageWidth; ++x) {
@@ -153,12 +203,12 @@ public class VoxelQuadScript : MonoBehaviour {
 		return verticeList.Count - 1;
 	}
 
-	void createXQuad(float x)
+	void createLeftQuad(float x)
 	{
-		int index0 = createVertex(x, 0, voxelDepth);
-		int index1 = createVertex(x, subImageHeight, voxelDepth);
-		int index2 = createVertex(x, 0, 0);
-		int index3 = createVertex(x, subImageHeight, 0);
+		int index0 = createVertex(x + planeOffset, 0, voxelDepth);
+		int index1 = createVertex(x + planeOffset, subImageHeight, voxelDepth);
+		int index2 = createVertex(x + planeOffset, 0, 0);
+		int index3 = createVertex(x + planeOffset, subImageHeight, 0);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -168,12 +218,12 @@ public class VoxelQuadScript : MonoBehaviour {
 		tri.Add(index3);
 	}
 
-	void createYQuad(float y)
+	void createRightQuad(float x)
 	{
-		int index0 = createVertex(0, y, voxelDepth);
-		int index1 = createVertex(0, y, 0);
-		int index2 = createVertex(subImageWidth, y, voxelDepth);
-		int index3 = createVertex(subImageWidth, y, 0);
+		int index0 = createVertex(x - planeOffset, 0, 0);
+		int index1 = createVertex(x - planeOffset, subImageHeight, 0);
+		int index2 = createVertex(x - planeOffset, 0, voxelDepth);
+		int index3 = createVertex(x - planeOffset, subImageHeight, voxelDepth);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -183,12 +233,57 @@ public class VoxelQuadScript : MonoBehaviour {
 		tri.Add(index3);
 	}
 
-	void createZQuad(float z)
+	void createBottomQuad(float y)
+	{
+		int index0 = createVertex(0, y + planeOffset, voxelDepth);
+		int index1 = createVertex(0, y + planeOffset, 0);
+		int index2 = createVertex(subImageWidth, y + planeOffset, voxelDepth);
+		int index3 = createVertex(subImageWidth, y + planeOffset, 0);
+
+		tri.Add(index0);
+		tri.Add(index1);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1);
+		tri.Add(index3);
+	}
+
+	void createTopQuad(float y)
+	{
+		int index0 = createVertex(0, y - planeOffset, 0);
+		int index1 = createVertex(0, y - planeOffset, voxelDepth);
+		int index2 = createVertex(subImageWidth, y - planeOffset, 0);
+		int index3 = createVertex(subImageWidth, y - planeOffset, voxelDepth);
+
+		tri.Add(index0);
+		tri.Add(index1);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1);
+		tri.Add(index3);
+	}
+
+	void createFrontQuad(float z)
 	{
 		int index0 = createVertex(0, 0, z);
 		int index1 = createVertex(0, subImageHeight, z);
 		int index2 = createVertex(subImageWidth, 0, z);
 		int index3 = createVertex(subImageWidth, subImageHeight, z);
+
+		tri.Add(index0);
+		tri.Add(index1);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1);
+		tri.Add(index3);
+	}
+
+	void createBackQuad(float z)
+	{
+		int index0 = createVertex(subImageWidth, 0, z);
+		int index1 = createVertex(subImageWidth, subImageHeight, z);
+		int index2 = createVertex(0, 0, z);
+		int index3 = createVertex(0, subImageHeight, z);
 
 		tri.Add(index0);
 		tri.Add(index1);

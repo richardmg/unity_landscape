@@ -32,8 +32,6 @@
 
 		Pass
 		{
-      	 	Cull Off
-
 			CGPROGRAM
 // Upgrade NOTE: excluded shader from DX11 and Xbox360 because it uses wrong array syntax (type[size] name)
 #pragma exclude_renderers d3d11 xbox360
@@ -171,24 +169,12 @@
 
 				int faceDirection = (int)i.extra.w;
 
+//				if (faceDirection == kFaceDirectionX) return red;
+
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
-
-				if (c.a == 0) {
-					// We use one vertical / horisontal quad to draw voxel faces on both sides of the quad.
-					// So if there is no voxel on one side of the quad, we check the other side 
-					if (faceDirection == kFaceDirectionX) {
-						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasOnePixel.x, 0), 0, 0));
-						voxel.x -= 1;
-						uvVoxel.x = 1;
-					} else if (faceDirection == kFaceDirectionY) {
-						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, uvAtlasOnePixel.y), 0, 0));
-						voxel.y -= 1;
-						uvVoxel.y = 1;
-					}
-				}
 
 				if (c.a == 0) {
 					discard;
