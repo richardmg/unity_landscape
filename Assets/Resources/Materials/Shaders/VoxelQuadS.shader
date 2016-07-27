@@ -19,6 +19,7 @@
 		_Specular ("Specular", Range(0, 1)) = 0.8
 		_Attenuation ("Attenuation", Range(0.0001, 0.5)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.2
+		_VoxelBorder("Voxel border", Range(0, 0.1)) = 0.1
 	}
 	SubShader
 	{
@@ -62,6 +63,8 @@
 			float _Specular;
 			float _EdgeSharp;
 			float _Attenuation;
+
+			float _VoxelBorder;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
@@ -193,27 +196,49 @@
 						// perpendicualar planes to the quad that switched side, needs to do the same switching.
 						// Since it's hard to detect exactly when we are at integer coordidates (according to
 						// text2Dlod), we stretch the perpendicular side to be a bit wider.
-						float border = 0.1; // move to static
+						float border = _VoxelBorder; // move to static
 						if (faceDirection == kFaceDirectionX) {
 							if (uvVoxel.y < border || uvVoxel.y > 1 - border) {
 								voxel.y -= 1;
 								uvVoxel.y = 1;
 								c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, uvAtlasHalfPixel.y), 0, 0));
-								if (c.a == 0) {
-									voxel.x -= 1;
-									uvVoxel.x = 1;
+								if (c.a != 0) {
+									voxel.y -= 1;
+									uvVoxel.y = 1;
+								} else {
 									c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - uvAtlasHalfPixel, 0, 0));
+									if (c.a != 0) {
+										voxel.x -= 1;
+										uvVoxel.x = 1;
+									}
 								}
 							}
 						} else if (faceDirection == kFaceDirectionY) {
 							if (uvVoxel.x < border || uvVoxel.x > 1 - border) {
-								voxel.x -= 1;
-								uvVoxel.x = 1;
 								c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasHalfPixel.x, 0), 0, 0));
-								if (c.a == 0) {
-									voxel.y -= 1;
-									uvVoxel.y = 1;
+								if (c.a != 0) {
+									voxel.x -= 1;
+									uvVoxel.x = 1;
+								} else {
 									c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - uvAtlasHalfPixel, 0, 0));
+									if (c.a != 0) {
+										voxel.y -= 1;
+										uvVoxel.y = 1;
+									}
+								}
+							}
+						} else {
+							if (uvVoxel.x < border || uvVoxel.x > 1 - border) {
+								c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasHalfPixel.x, 0), 0, 0));
+								if (c.a != 0) {
+									voxel.x -= 1;
+									uvVoxel.x = 1;
+								} else if (uvVoxel.y < border || uvVoxel.y > 1 - border) {
+									c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - uvAtlasHalfPixel, 0, 0));
+									if (c.a != 0) {
+										voxel.y -= 1;
+										uvVoxel.y = 1;
+									}
 								}
 							}
 						}
