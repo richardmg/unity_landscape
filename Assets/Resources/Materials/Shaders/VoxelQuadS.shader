@@ -148,8 +148,11 @@
 				////////////////////////////////////////////////////////
 				// Start by calculating an API that we can use below
 
+				// Move to static
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
+				float3 uvAtlasHalfPixel = uvAtlasOnePixel / 2;
+
 				float4 clampRect = i.uvAtlasSubImageRect + _ClampOffset;
 				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
 
@@ -172,20 +175,47 @@
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
 				if (c.a == 0) {
+					// We use one vertical / horisontal quad to draw voxel faces on both sides of the quad.
+					// So if there is no voxel on one side of the quad, we check the other side 
 					if (faceDirection == kFaceDirectionX) {
-						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasOnePixel.x / 2, 0), 0, 0));
+						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasOnePixel.x, 0), 0, 0));
+						if (c.a != 0)
+							voxel.x -= 1;
 					} else if (faceDirection == kFaceDirectionY) {
 						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, uvAtlasOnePixel.y), 0, 0));
-					} else if (faceDirection == kFaceDirectionZ) {
-						// Add some padding to compensate for the other faces not being exactly in the center between voxels
-						if (uvVoxel.x > 0.99) {
-							uvAtlasClamped.x -= uvAtlasOnePixel.x / 2;
-							c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
-						}
-						if (uvVoxel.x < 0.01) {
-							uvAtlasClamped.x -= uvAtlasOnePixel.x / 2;
-							voxel.x -= 1;
-							c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+						if (c.a != 0)
+							voxel.y -= 1;
+					}
+
+					if (c.a == 0) {
+						// At integer coordinates, where the horisontal / vertical quads meet, we'll get cracks at
+						// the edges whenever we end up switching which voxel face we draw above. The reason is that
+						// perpendicualar planes to the quad that switched side, needs to do the same switching.
+						// Since it's hard to detect exactly when we are at integer coordidates (according to
+						// text2Dlod), we stretch the perpendicular side to be a bit wider.
+						float border = 0.1; // move to static
+						if (faceDirection == kFaceDirectionX) {
+							if (uvVoxel.y < border || uvVoxel.y > 1 - border) {
+								voxel.y -= 1;
+								uvVoxel.y = 1;
+								c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, uvAtlasHalfPixel.y), 0, 0));
+								if (c.a == 0) {
+									voxel.x -= 1;
+									uvVoxel.x = 1;
+									c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - uvAtlasHalfPixel, 0, 0));
+								}
+							}
+						} else if (faceDirection == kFaceDirectionY) {
+							if (uvVoxel.x < border || uvVoxel.x > 1 - border) {
+								voxel.x -= 1;
+								uvVoxel.x = 1;
+								c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(uvAtlasHalfPixel.x, 0), 0, 0));
+								if (c.a == 0) {
+									voxel.y -= 1;
+									uvVoxel.y = 1;
+									c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - uvAtlasHalfPixel, 0, 0));
+								}
+							}
 						}
 					}
 				}
