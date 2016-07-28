@@ -185,7 +185,6 @@
 				// Apply alternate voxel color
 
 				int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-//				c *= 1 + ((voxelate.x + voxelate.y + voxelate.z) % 2) *  _VoxelateStrength;
 				c *= ifTrue((voxelate.x + voxelate.y + voxelate.z) % 2, 1 + _VoxelateStrength);
 
 				////////////////////////////////////////////////////////
@@ -200,8 +199,7 @@
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
 				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-
-				c *= 1 + ((faceDirection & (kFaceDirectionFront | kFaceDirectionBack)) * (gradientSide - 1) * _BaseLight);
+				c *= ifTrue((faceDirection & (kFaceDirectionFront | kFaceDirectionBack)), 1 + ((gradientSide - 1) * _BaseLight));
 
 				////////////////////////////////////////////////////////
 
