@@ -71,9 +71,14 @@
 			static fixed4 red = fixed4(1, 0, 0, 1);
 			static float3 _SunPos = normalize(float3(0, 0, 1));
 
-			static int kFaceDirectionX = 0;
-			static int kFaceDirectionY = 1;
-			static int kFaceDirectionZ = 2;
+			static int kFaceDirectionUnknown = 0;
+			static int kFaceDirectionLeft = 1;
+			static int kFaceDirectionRight = 2;
+			static int kFaceDirectionBottom = 4;
+			static int kFaceDirectionTop = 8;
+			static int kFaceDirectionFront = 16;
+			static int kFaceDirectionBack = 32;
+			static int kFaceDirectionMiddle = 64;
 
 			struct appdata
 			{
@@ -118,29 +123,18 @@
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvSubImageBottomLeft = floor(v.uvAtlasSubImageRectEncoded) / textureSize;
 				float2 uvSubImageTopRight = frac(v.uvAtlasSubImageRectEncoded) + (0.5 / textureSize);
-				float normalCode = int(v.cubeDesc.b);
+				float faceDirection = int(v.cubeDesc.b);
 
-				float uvSubImageEffectiveWidth = frac(v.cubeDesc.a) * 2;
-				float uvSubImageEffectiveHeight = frac(v.cubeDesc.b) * 2;
+				float unusedSlot1 = frac(v.cubeDesc.a) * 2;
+				float unusedSlot2 = frac(v.cubeDesc.b) * 2;
+				float unusedSlot3 = floor(v.cubeDesc.a);
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.uvAtlas = float3(v.cubeDesc.xy, 0);
 				o.uvAtlasSubImageRect = float4(uvSubImageBottomLeft, uvSubImageTopRight);
-
-				float2 subImageSize = float2(_SubImageWidth, _SubImageHeight);
-				float2 uvAtlasSubImageSize = subImageSize / textureSize;
-				float2 uvSubImage = (o.uvAtlas.xy - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-				float2 uvSubImageOneLine = 1 / subImageSize;
-				float faceDirection = kFaceDirectionZ;
-
-				if (uvSubImage.x >= uvSubImageOneLine.x && uvSubImage.x < 1)
-					faceDirection = kFaceDirectionX;
-				else if (uvSubImage.y >= uvSubImageOneLine.y && uvSubImage.y < 1)
-					faceDirection = kFaceDirectionY;
-
-				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, normalCode, faceDirection);
+				o.extra = float4(unusedSlot1, unusedSlot2, unusedSlot3, faceDirection);
 				return o;
 			}
 			
@@ -169,8 +163,6 @@
 
 				int faceDirection = (int)i.extra.w;
 
-//				if (faceDirection == kFaceDirectionX) return red;
-
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 
@@ -198,8 +190,7 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
 
-				float sharpenEdge = 1 + (!(faceDirection & kFaceDirectionZ) * -_EdgeSharp * _BaseLight);
-				c *= sharpenEdge;
+//				c *= ifSet(faceDirection & (kFaceDirectionLeft | kFaceDirectionRight), -_EdgeSharp * _BaseLight);
 
 				////////////////////////////////////////////////////////
 				// Apply gradient
@@ -207,7 +198,8 @@
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
 				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-				c *= 1 + ((faceDirection & kFaceDirectionZ) * (gradientSide - 1) * _BaseLight);
+
+				c *= 1 + ((faceDirection & (kFaceDirectionFront | kFaceDirectionBack)) * (gradientSide - 1) * _BaseLight);
 
 				////////////////////////////////////////////////////////
 
