@@ -123,7 +123,7 @@
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float2 uvSubImageBottomLeft = floor(v.uvAtlasSubImageRectEncoded) / textureSize;
 				float2 uvSubImageTopRight = frac(v.uvAtlasSubImageRectEncoded) + (0.5 / textureSize);
-				float faceDirection = int(v.cubeDesc.b);
+				float face = int(v.cubeDesc.b);
 
 				float unusedSlot1 = frac(v.cubeDesc.a) * 2;
 				float unusedSlot2 = frac(v.cubeDesc.b) * 2;
@@ -134,7 +134,7 @@
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.uvAtlas = float3(v.cubeDesc.xy, 0);
 				o.uvAtlasSubImageRect = float4(uvSubImageBottomLeft, uvSubImageTopRight);
-				o.extra = float4(unusedSlot1, unusedSlot2, zDepth, faceDirection);
+				o.extra = float4(unusedSlot1, unusedSlot2, zDepth, face);
 				return o;
 			}
 			
@@ -144,12 +144,12 @@
 				// Start by calculating an API that we can use below
 
 				// Move to static
-				int faceDirection = (int)i.extra.w;
+				int face = (int)i.extra.w;
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
 
-				i.uvAtlas.x -= sign(faceDirection & kFaceRight) * uvAtlasOnePixel;
-				i.uvAtlas.y -= sign(faceDirection & kFaceTop) * uvAtlasOnePixel;
+				i.uvAtlas.x -= sign(face & kFaceRight) * uvAtlasOnePixel;
+				i.uvAtlas.y -= sign(face & kFaceTop) * uvAtlasOnePixel;
 
 				float4 clampRect = i.uvAtlasSubImageRect + _ClampOffset;
 				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
@@ -195,8 +195,8 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
 
-				c *= ifTrue(faceDirection & (kFaceLeft | kFaceRight), 1 + (_EdgeSharp * _BaseLight));
-				c *= ifTrue(faceDirection & (kFaceTop | kFaceBottom), 1 - (_EdgeSharp * _BaseLight));
+				c *= ifTrue(face & (kFaceLeft | kFaceRight), 1 + (_EdgeSharp * _BaseLight));
+				c *= ifTrue(face & (kFaceTop | kFaceBottom), 1 - (_EdgeSharp * _BaseLight));
 
 				////////////////////////////////////////////////////////
 				// Apply gradient
@@ -204,7 +204,7 @@
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
 				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-				c *= ifTrue((faceDirection & (kFaceFront | kFaceBack)), 1 + ((gradientSide - 1) * _BaseLight));
+				c *= ifTrue((face & (kFaceFront | kFaceBack)), 1 + ((gradientSide - 1) * _BaseLight));
 
 				////////////////////////////////////////////////////////
 
