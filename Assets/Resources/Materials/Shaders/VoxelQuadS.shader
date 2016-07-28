@@ -71,14 +71,14 @@
 			static fixed4 red = fixed4(1, 0, 0, 1);
 			static float3 _SunPos = normalize(float3(0, 0, 1));
 
-			static int kFaceDirectionUnknown = 0;
-			static int kFaceDirectionLeft = 1;
-			static int kFaceDirectionRight = 2;
-			static int kFaceDirectionBottom = 4;
-			static int kFaceDirectionTop = 8;
-			static int kFaceDirectionFront = 16;
-			static int kFaceDirectionBack = 32;
-			static int kFaceDirectionMiddle = 64;
+			static int kFaceUnknown = 0;
+			static int kFaceLeft = 1;
+			static int kFaceRight = 2;
+			static int kFaceBottom = 4;
+			static int kFaceTop = 8;
+			static int kFaceFront = 16;
+			static int kFaceBack = 32;
+			static int kFaceMiddle = 64;
 
 			struct appdata
 			{
@@ -190,8 +190,8 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
 
-				c *= ifTrue(faceDirection & (kFaceDirectionLeft | kFaceDirectionRight), 1 + (_EdgeSharp * _BaseLight));
-				c *= ifTrue(faceDirection & (kFaceDirectionTop | kFaceDirectionBottom), 1 - (_EdgeSharp * _BaseLight));
+				c *= ifTrue(faceDirection & (kFaceLeft | kFaceRight), 1 + (_EdgeSharp * _BaseLight));
+				c *= ifTrue(faceDirection & (kFaceTop | kFaceBottom), 1 - (_EdgeSharp * _BaseLight));
 
 				////////////////////////////////////////////////////////
 				// Apply gradient
@@ -199,7 +199,7 @@
 				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
 				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
 				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-				c *= ifTrue((faceDirection & (kFaceDirectionFront | kFaceDirectionBack)), 1 + ((gradientSide - 1) * _BaseLight));
+				c *= ifTrue((faceDirection & (kFaceFront | kFaceBack)), 1 + ((gradientSide - 1) * _BaseLight));
 
 				////////////////////////////////////////////////////////
 
