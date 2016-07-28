@@ -127,14 +127,14 @@
 
 				float unusedSlot1 = frac(v.cubeDesc.a) * 2;
 				float unusedSlot2 = frac(v.cubeDesc.b) * 2;
-				float unusedSlot3 = floor(v.cubeDesc.a);
+				float zDepth = 1;//floor(v.cubeDesc.a);
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.uvAtlas = float3(v.cubeDesc.xy, 0);
 				o.uvAtlasSubImageRect = float4(uvSubImageBottomLeft, uvSubImageTopRight);
-				o.extra = float4(unusedSlot1, unusedSlot2, unusedSlot3, faceDirection);
+				o.extra = float4(unusedSlot1, unusedSlot2, zDepth, faceDirection);
 				return o;
 			}
 			
@@ -172,6 +172,8 @@
 					discard;
 					return c;
 				}
+
+				if (voxel.z < 0) return red;
 
 				////////////////////////////////////////////////////////
 				// Apply lightning
