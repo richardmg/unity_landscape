@@ -144,8 +144,12 @@
 				// Start by calculating an API that we can use below
 
 				// Move to static
+				int faceDirection = (int)i.extra.w;
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
+
+				i.uvAtlas.x -= sign(faceDirection & kFaceRight) * uvAtlasOnePixel;
+				i.uvAtlas.y -= sign(faceDirection & kFaceTop) * uvAtlasOnePixel;
 
 				float4 clampRect = i.uvAtlasSubImageRect + _ClampOffset;
 				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
@@ -160,8 +164,6 @@
 				float3 voxelUnclamped = uvSubImage * subImageSize;
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
-
-				int faceDirection = (int)i.extra.w;
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
