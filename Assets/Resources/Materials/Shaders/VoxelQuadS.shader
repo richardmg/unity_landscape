@@ -111,11 +111,11 @@
  				return abs(!value);
  			}
 
- 			inline float ifSet(float testValue, float expr)
+ 			inline float ifTrue(float testValue, float expr)
  			{
  				// testValue in [0, 1]
  				// Returns 1 if testValue == 0, otherwise expr
- 				return 1 + (testValue * (expr - 1));
+ 				return 1 + (sign(testValue) * (expr - 1));
  			}
 
 			v2f vert (appdata v)
@@ -190,7 +190,8 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
 
-//				c *= ifSet(faceDirection & (kFaceDirectionLeft | kFaceDirectionRight), -_EdgeSharp * _BaseLight);
+				c *= ifTrue(faceDirection & (kFaceDirectionLeft | kFaceDirectionRight), 1 + (_EdgeSharp * _BaseLight));
+				c *= ifTrue(faceDirection & (kFaceDirectionTop | kFaceDirectionBottom), 1 - (_EdgeSharp * _BaseLight));
 
 				////////////////////////////////////////////////////////
 				// Apply gradient
