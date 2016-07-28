@@ -166,7 +166,53 @@
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 
-				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+				float2 uv = uvAtlasClamped.xy;
+				if (faceDirection & kFaceRight)
+					uv.x -= uvAtlasOnePixel.x;
+				else if (faceDirection & kFaceTop)
+					uv.y -= uvAtlasOnePixel.y;
+
+				fixed4 c = tex2Dlod(_MainTex, float4(uv, 0, 0));
+
+				float border = 0.001f;
+				if (c.a == 0) {
+					if (faceDirection & kFaceRight)
+						uv.y -= border;
+					else if (faceDirection & kFaceTop)
+						uv.x -= border;
+					if (faceDirection & kFaceLeft)
+						uv.y -= border;
+					else if (faceDirection & kFaceBottom)
+						uv.x -= border;
+
+					c = tex2Dlod(_MainTex, float4(uv, 0, 0));
+				}
+
+				if (c.a == 0) {
+					if (faceDirection & kFaceRight)
+						uv.y += border;
+					else if (faceDirection & kFaceTop)
+						return red;
+//						uv.x += border;
+					if (faceDirection & kFaceLeft)
+						uv.y += border;
+					else if (faceDirection & kFaceBottom)
+						uv.x += border;
+
+					c = tex2Dlod(_MainTex, float4(uv, 0, 0));
+				}
+
+
+//				} else if (faceDirection & kFaceFront) {
+//					if (c.a == 0)
+//						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0.0001, 0), 0, 0));
+//					if (c.a == 0)
+//						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, 0.0001), 0, 0));
+//					if (c.a == 0)
+//						c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0.0001, 0.0001), 0, 0));
+//				} else if (faceDirection & kFaceTop) {
+//					c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy - float2(0, uvAtlasOnePixel.y), 0, 0));
+//				}
 
 				if (c.a == 0) {
 					discard;
