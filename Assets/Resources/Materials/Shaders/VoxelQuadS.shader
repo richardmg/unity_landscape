@@ -168,10 +168,8 @@
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 
-				if (uvVoxel.x > 0.9)
-					uvAtlasClamped.x -= 0.1 * uvAtlasOnePixel.x;
-				if (uvVoxel.y > 0.9)
-					uvAtlasClamped.y -= 0.1 * uvAtlasOnePixel.y;
+				uvAtlasClamped.x -= floor(uvVoxel.x + 0.1) * (0.1 * uvAtlasOnePixel.x);
+				uvAtlasClamped.y -= floor(uvVoxel.y + 0.1) * (0.1 * uvAtlasOnePixel.y);
 
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
@@ -179,8 +177,6 @@
 					discard;
 					return c;
 				}
-
-				if (voxel.z < 0) return red;
 
 				////////////////////////////////////////////////////////
 				// Apply lightning
