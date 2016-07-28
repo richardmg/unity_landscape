@@ -113,8 +113,8 @@ public class VoxelQuadScript : MonoBehaviour {
 
 		float deltaZ = voxelDepth / Mathf.Max(1, quadCountZ - 1);
 		for (int z = 0; z < quadCountZ - 1; ++z)
-			createFrontQuad(z * deltaZ);
-		createBackQuad((quadCountZ - 1) * deltaZ);
+			createFrontQuad((z + planeOffset) * deltaZ);
+		createBackQuad((quadCountZ - 1 - planeOffset) * deltaZ);
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
@@ -205,10 +205,10 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	void createLeftQuad(float x)
 	{
-		int index0 = createVertex(x + planeOffset, 0, voxelDepth, kFaceLeft);
-		int index1 = createVertex(x + planeOffset, subImageHeight, voxelDepth, kFaceLeft);
-		int index2 = createVertex(x + planeOffset, 0, 0, kFaceLeft);
-		int index3 = createVertex(x + planeOffset, subImageHeight, 0, kFaceLeft);
+		int index0 = createVertex(x, 0, voxelDepth, kFaceLeft);
+		int index1 = createVertex(x, subImageHeight, voxelDepth, kFaceLeft);
+		int index2 = createVertex(x, 0, 0, kFaceLeft);
+		int index3 = createVertex(x, subImageHeight, 0, kFaceLeft);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -220,10 +220,10 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	void createRightQuad(float x)
 	{
-		int index0 = createVertex(x - planeOffset, 0, 0, kFaceRight);
-		int index1 = createVertex(x - planeOffset, subImageHeight, 0, kFaceRight);
-		int index2 = createVertex(x - planeOffset, 0, voxelDepth, kFaceRight);
-		int index3 = createVertex(x - planeOffset, subImageHeight, voxelDepth, kFaceRight);
+		int index0 = createVertex(x, 0, 0, kFaceRight);
+		int index1 = createVertex(x, subImageHeight, 0, kFaceRight);
+		int index2 = createVertex(x, 0, voxelDepth, kFaceRight);
+		int index3 = createVertex(x, subImageHeight, voxelDepth, kFaceRight);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -235,10 +235,10 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	void createBottomQuad(float y)
 	{
-		int index0 = createVertex(0, y + planeOffset, voxelDepth, kFaceBottom);
-		int index1 = createVertex(0, y + planeOffset, 0, kFaceBottom);
-		int index2 = createVertex(subImageWidth, y + planeOffset, voxelDepth, kFaceBottom);
-		int index3 = createVertex(subImageWidth, y + planeOffset, 0, kFaceBottom);
+		int index0 = createVertex(0, y, voxelDepth, kFaceBottom);
+		int index1 = createVertex(0, y, 0, kFaceBottom);
+		int index2 = createVertex(subImageWidth, y, voxelDepth, kFaceBottom);
+		int index3 = createVertex(subImageWidth, y, 0, kFaceBottom);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -250,10 +250,10 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	void createTopQuad(float y)
 	{
-		int index0 = createVertex(0, y - planeOffset, 0, kFaceTop);
-		int index1 = createVertex(0, y - planeOffset, voxelDepth, kFaceTop);
-		int index2 = createVertex(subImageWidth, y - planeOffset, 0, kFaceTop);
-		int index3 = createVertex(subImageWidth, y - planeOffset, voxelDepth, kFaceTop);
+		int index0 = createVertex(0, y, 0, kFaceTop);
+		int index1 = createVertex(0, y, voxelDepth, kFaceTop);
+		int index2 = createVertex(subImageWidth, y, 0, kFaceTop);
+		int index3 = createVertex(subImageWidth, y, voxelDepth, kFaceTop);
 
 		tri.Add(index0);
 		tri.Add(index1);
