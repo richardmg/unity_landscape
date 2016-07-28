@@ -115,7 +115,7 @@
  			{
  				// testValue in [0, 1]
  				// Returns 1 if testValue == 0, otherwise expr
- 				return 1 + (sign(testValue) * (expr - 1));
+ 				return 1 + (sign(abs(testValue)) * (expr - 1));
  			}
 
 			v2f vert (appdata v)
@@ -185,7 +185,8 @@
 				// Apply alternate voxel color
 
 				int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-				c *= 1 + ((voxelate.x + voxelate.y + voxelate.z) % 2) *  _VoxelateStrength;
+//				c *= 1 + ((voxelate.x + voxelate.y + voxelate.z) % 2) *  _VoxelateStrength;
+				c *= ifTrue((voxelate.x + voxelate.y + voxelate.z) % 2, 1 + _VoxelateStrength);
 
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
