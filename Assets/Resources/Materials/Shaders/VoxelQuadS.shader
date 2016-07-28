@@ -168,6 +168,11 @@
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 
+				if (uvVoxel.x > 0.9)
+					uvAtlasClamped.x -= 0.1 * uvAtlasOnePixel.x;
+				if (uvVoxel.y > 0.9)
+					uvAtlasClamped.y -= 0.1 * uvAtlasOnePixel.y;
+
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
 				if (c.a == 0) {
