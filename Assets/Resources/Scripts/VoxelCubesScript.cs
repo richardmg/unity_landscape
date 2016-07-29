@@ -7,6 +7,12 @@ public class VoxelCubesScript : MonoBehaviour {
 	public float voxelDepth = 4;
 	public float cascade = 0.0f;
 	public bool includeVoxelDepthInNormalVolume = false;
+	public bool drawXFaces = true;
+	public bool drawYFaces = true;
+	public bool drawZFaces = true;
+	public bool fillHoles = false;
+	public bool oneCubePerRow = false; // Fill inner holes, only keep longest line on the outside
+	public bool oneCubePerObject = false;
 
 	// tile means draw texture on all sides of object rather that just in front
 	public bool tile = false;
@@ -222,62 +228,66 @@ public class VoxelCubesScript : MonoBehaviour {
 		int index1 = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopLeft);
 		int index2 = createVertex(voxelX2, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomRight);
 		int index3 = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopRight);
+		int index1FrontExlusive = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFront);
+
 		int index4 = createVertex(voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomLeft);
 		int index5 = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopLeft);
 		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomRight);
 		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopRight);
-
-		// Ddd some extra vertices at stratedic points to be able to determine
-		// which side of the cube a triangle is part of from the shader
-		int index1FrontExlusive = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFront);
 		int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBack);
 
-		// Front triangles
-		tri.Add(index0);
-		tri.Add(index1FrontExlusive);
-		tri.Add(index2);
-		tri.Add(index2);
-		tri.Add(index1FrontExlusive);
-		tri.Add(index3);
+		if (drawXFaces) {
+			// Left triangles
+			tri.Add(index4);
+			tri.Add(index5);
+			tri.Add(index0);
+			tri.Add(index0);
+			tri.Add(index5);
+			tri.Add(index1);
 
-		// Back triangles
-		tri.Add(index6);
-		tri.Add(index7BackExclusive);
-		tri.Add(index4);
-		tri.Add(index4);
-		tri.Add(index7BackExclusive);
-		tri.Add(index5);
+			// Right triangles
+			tri.Add(index2);
+			tri.Add(index3);
+			tri.Add(index6);
+			tri.Add(index6);
+			tri.Add(index3);
+			tri.Add(index7);
+		}
 
-		// Top triangles
-		tri.Add(index1);
-		tri.Add(index5);
-		tri.Add(index3);
-		tri.Add(index3);
-		tri.Add(index5);
-		tri.Add(index7);
+		if (drawYFaces) {
+			// Top triangles
+			tri.Add(index1);
+			tri.Add(index5);
+			tri.Add(index3);
+			tri.Add(index3);
+			tri.Add(index5);
+			tri.Add(index7);
 
-		// Bottom triangles
-		tri.Add(index4);
-		tri.Add(index0);
-		tri.Add(index6);
-		tri.Add(index6);
-		tri.Add(index0);
-		tri.Add(index2);
+			// Bottom triangles
+			tri.Add(index4);
+			tri.Add(index0);
+			tri.Add(index6);
+			tri.Add(index6);
+			tri.Add(index0);
+			tri.Add(index2);
+		}
 
-		// Left triangles
-		tri.Add(index4);
-		tri.Add(index5);
-		tri.Add(index0);
-		tri.Add(index0);
-		tri.Add(index5);
-		tri.Add(index1);
+		if (drawZFaces) {
+			// Front triangles
+			tri.Add(index0);
+			tri.Add(index1FrontExlusive);
+			tri.Add(index2);
+			tri.Add(index2);
+			tri.Add(index1FrontExlusive);
+			tri.Add(index3);
 
-		// Right triangles
-		tri.Add(index2);
-		tri.Add(index3);
-		tri.Add(index6);
-		tri.Add(index6);
-		tri.Add(index3);
-		tri.Add(index7);
+			// Back triangles
+			tri.Add(index6);
+			tri.Add(index7BackExclusive);
+			tri.Add(index4);
+			tri.Add(index4);
+			tri.Add(index7BackExclusive);
+			tri.Add(index5);
+		}
 	}
 }
