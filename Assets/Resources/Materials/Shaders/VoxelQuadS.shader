@@ -32,6 +32,8 @@
 
 		Pass
 		{
+			Cull off
+
 			CGPROGRAM
 // Upgrade NOTE: excluded shader from DX11 and Xbox360 because it uses wrong array syntax (type[size] name)
 #pragma exclude_renderers d3d11 xbox360

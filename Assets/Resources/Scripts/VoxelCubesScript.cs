@@ -61,6 +61,11 @@ public class VoxelCubesScript : MonoBehaviour {
 		rebuildObject();
 	}
 
+//	public void Update()
+//	{
+//		transform.Rotate(new Vector3(0, 0.1f, 0));
+//	}
+
 	void OnValidate()
 	{
 		rebuildObject();
@@ -96,23 +101,35 @@ public class VoxelCubesScript : MonoBehaviour {
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
-		// Traverse each row in the texture
-		for (int y = 0; y < subImageHeight; ++y) {
-			int x2 = -1;
+		if (oneCubePerObject) {
+			createVoxelLineMesh(0, 0, subImageWidth, subImageHeight);
+		} else {
+			// Traverse each row in the texture
+			for (int y = 0; y < subImageHeight; ++y) {
+				int x2 = -1;
 
-			// Traverse each column in the texture and look for voxel strips
-			while (x2 != subImageWidth) {
-				int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
-				if (x1 == kVoxelNotFound) {
-					x2 =  subImageWidth;
-					continue;
+				if (oneCubePerRow) {
+					int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
+					if (x1 == kVoxelNotFound)
+						continue;
+					x2 = findLastVoxel(y) + 1;
+					createVoxelLineMesh(x1, y, x2, y + 1);
+				} else {
+					// Traverse each column in the texture and look for voxel strips
+					while (x2 != subImageWidth) {
+						int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
+						if (x1 == kVoxelNotFound) {
+							x2 =  subImageWidth;
+							continue;
+						}
+
+						x2 = findFirstVoxelAlphaTest(x1 + 1, y, 0);
+						if (x2 == kVoxelNotFound)
+							x2 = subImageWidth;
+
+						createVoxelLineMesh(x1, y, x2, y + 1);
+					}
 				}
-
-				x2 = findFirstVoxelAlphaTest(x1 + 1, y, 0);
-				if (x2 == kVoxelNotFound)
-					x2 = subImageWidth;
-
-				createVoxelLineMesh(x1, y, x2, y + 1);
 			}
 		}
 
@@ -191,6 +208,16 @@ public class VoxelCubesScript : MonoBehaviour {
 		return kVoxelNotFound;
 	}
 
+	int findLastVoxel(int startY)
+	{
+		for (int x = subImageWidth - 1; x >= 0; --x) {
+			Color c = texture.GetPixel(startPixelX + x, startPixelY + startY);
+			if (Mathf.CeilToInt(c.a) == 1.0)
+				return x;
+		}
+		return kVoxelNotFound;
+	}
+
 	int createVertex(float x, float y, float z, Vector2 uvRect, int normalCode)
 	{
 		verticeList.Add(new Vector3(x, y, z));
@@ -230,46 +257,56 @@ public class VoxelCubesScript : MonoBehaviour {
 		int index3 = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopRight);
 		int index1FrontExlusive = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFront);
 
-		int index4 = createVertex(voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomLeft);
-		int index5 = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopLeft);
-		int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomRight);
-		int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopRight);
-		int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBack);
+		if (drawXFaces || drawYFaces) {
+			int index4 = createVertex(voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomLeft);
+			int index5 = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopLeft);
+			int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomRight);
+			int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopRight);
+			int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBack);
 
-		if (drawXFaces) {
-			// Left triangles
+			if (drawXFaces) {
+				// Left triangles
+				tri.Add(index4);
+				tri.Add(index5);
+				tri.Add(index0);
+				tri.Add(index0);
+				tri.Add(index5);
+				tri.Add(index1);
+
+				// Right triangles
+				tri.Add(index2);
+				tri.Add(index3);
+				tri.Add(index6);
+				tri.Add(index6);
+				tri.Add(index3);
+				tri.Add(index7);
+			}
+
+			if (drawYFaces) {
+				// Top triangles
+				tri.Add(index1);
+				tri.Add(index5);
+				tri.Add(index3);
+				tri.Add(index3);
+				tri.Add(index5);
+				tri.Add(index7);
+
+				// Bottom triangles
+				tri.Add(index4);
+				tri.Add(index0);
+				tri.Add(index6);
+				tri.Add(index6);
+				tri.Add(index0);
+				tri.Add(index2);
+			}
+
+			// Back triangles
+			tri.Add(index6);
+			tri.Add(index7BackExclusive);
 			tri.Add(index4);
-			tri.Add(index5);
-			tri.Add(index0);
-			tri.Add(index0);
-			tri.Add(index5);
-			tri.Add(index1);
-
-			// Right triangles
-			tri.Add(index2);
-			tri.Add(index3);
-			tri.Add(index6);
-			tri.Add(index6);
-			tri.Add(index3);
-			tri.Add(index7);
-		}
-
-		if (drawYFaces) {
-			// Top triangles
-			tri.Add(index1);
-			tri.Add(index5);
-			tri.Add(index3);
-			tri.Add(index3);
-			tri.Add(index5);
-			tri.Add(index7);
-
-			// Bottom triangles
 			tri.Add(index4);
-			tri.Add(index0);
-			tri.Add(index6);
-			tri.Add(index6);
-			tri.Add(index0);
-			tri.Add(index2);
+			tri.Add(index7BackExclusive);
+			tri.Add(index5);
 		}
 
 		if (drawZFaces) {
@@ -280,14 +317,6 @@ public class VoxelCubesScript : MonoBehaviour {
 			tri.Add(index2);
 			tri.Add(index1FrontExlusive);
 			tri.Add(index3);
-
-			// Back triangles
-			tri.Add(index6);
-			tri.Add(index7BackExclusive);
-			tri.Add(index4);
-			tri.Add(index4);
-			tri.Add(index7BackExclusive);
-			tri.Add(index5);
 		}
 	}
 }
