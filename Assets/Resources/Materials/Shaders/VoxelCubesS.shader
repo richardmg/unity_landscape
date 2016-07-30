@@ -31,6 +31,7 @@
 
 		Pass
 		{
+//			cull off
 
 			CGPROGRAM
 // Upgrade NOTE: excluded shader from DX11 and Xbox360 because it uses wrong array syntax (type[size] name)
