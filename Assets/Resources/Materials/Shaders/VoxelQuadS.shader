@@ -146,7 +146,7 @@
 				// Start by calculating an API that we can use below
 
 				// Move to static
-				int face = (int)i.extra.w;
+				int face = round(i.extra.w);
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
 
