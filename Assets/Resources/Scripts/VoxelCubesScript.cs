@@ -39,7 +39,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	static Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
 	static Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
 
-	const int kVoxelNotFound = -1;
+	const int kNotFound = -1;
 
 	const int kLeft = 0;
 	const int kRight = 1;
@@ -101,37 +101,23 @@ public class VoxelCubesScript : MonoBehaviour {
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 
-		if (oneCubePerObject) {
-			createVoxelLineMesh(0, 0, subImageWidth, subImageHeight);
-		} else {
-			// Traverse each row in the texture
-			for (int y = 0; y < subImageHeight; ++y) {
-				int x2 = -1;
-
-				if (oneCubePerRow) {
-					int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
-					if (x1 == kVoxelNotFound)
-						continue;
-					x2 = findLastVoxel(y) + 1;
-					createVoxelLineMesh(x1, y, x2, y + 1);
-				} else {
-					// Traverse each column in the texture and look for voxel strips
-					while (x2 != subImageWidth) {
-						int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
-						if (x1 == kVoxelNotFound) {
-							x2 =  subImageWidth;
-							continue;
-						}
-
-						x2 = findFirstVoxelAlphaTest(x1 + 1, y, 0);
-						if (x2 == kVoxelNotFound)
-							x2 = subImageWidth;
-
-						createVoxelLineMesh(x1, y, x2, y + 1);
-					}
-				}
+		// Traverse each row in the texture
+		if (drawXFaces) {
+			for (int x = 0; x < subImageWidth; ++x) {
+				createFacesForX(x, kLeft);
+				createFacesForX(x, kRight);
 			}
 		}
+
+		if (drawYFaces) {
+			for (int y = 0; y < subImageHeight; ++y) {
+				createFacesForY(y, kBottom);
+				createFacesForY(y, kTop);
+			}
+		}
+
+		if (drawZFaces)
+			createFacesForZ();
 
 		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
 		Vector3 objectCenter = effectiveSize * 0.5f;
@@ -205,7 +191,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			if (Mathf.CeilToInt(c.a) == alpha)
 				return x;
 		}
-		return kVoxelNotFound;
+		return kNotFound;
 	}
 
 	int findLastVoxel(int startY)
@@ -215,7 +201,67 @@ public class VoxelCubesScript : MonoBehaviour {
 			if (Mathf.CeilToInt(c.a) == 1.0)
 				return x;
 		}
-		return kVoxelNotFound;
+		return kNotFound;
+	}
+
+	int getFirstVisibleFaceForX(int startX, int startY, int face)
+	{
+		for (int y = startY; y < subImageHeight; ++y) {
+			Color c1 = (startX == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + startX, startPixelY + y);
+			Color c2 = (startX == 0) ? Color.clear : texture.GetPixel(startPixelX + startX - 1, startPixelY + y);
+
+			if (face == kLeft && c1.a == 1 && c2.a == 0)
+				return y;
+			if (face == kRight && c1.a == 0 && c2.a == 1)
+				return y;
+		}
+
+		return kNotFound;
+	}
+
+	int getFirstHiddenFaceForX(int startX, int startY, int face)
+	{
+		for (int y = startY; y < subImageHeight; ++y) {
+			Color c1 = (startX == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + startX, startPixelY + y);
+			Color c2 = (startX == 0) ? Color.clear : texture.GetPixel(startPixelX + startX - 1, startPixelY + y);
+
+			if (face == kLeft && (c1.a == c2.a || c1.a == 0))
+				return y;
+			if (face == kRight && (c1.a == c2.a || c2.a == 0))
+				return y;
+		}
+
+		return kNotFound;
+	}
+
+	int getFirstVisibleFaceForY(int startX, int startY, int face)
+	{
+		for (int x = startX; x < subImageWidth; ++x) {
+			Color c1 = (startY == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY);
+			Color c2 = (startY == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY - 1);
+
+			if (face == kBottom && c1.a == 1 && c2.a == 0)
+				return x;
+			if (face == kTop && c1.a == 0 && c2.a == 1)
+				return x;
+		}
+
+		return kNotFound;
+	}
+
+	int getFirstHiddenFaceForY(int startX, int startY, int face)
+	{
+		for (int x = startX; x < subImageWidth; ++x) {
+			Color c1 = (startY == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY);
+			Color c2 = (startY == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY - 1);
+
+			if (face == kBottom && (c1.a == c2.a || c1.a == 0))
+				return x;
+			if (face == kTop && (c1.a == c2.a || c2.a == 0))
+				return x;
+		}
+
+		return kNotFound;
 	}
 
 	int createVertex(float x, float y, float z, Vector2 uvRect, int normalCode)
@@ -230,93 +276,181 @@ public class VoxelCubesScript : MonoBehaviour {
 		return verticeList.Count - 1;
 	}
 
-	void createVoxelLineMesh(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
+	Vector2 createCubeRect(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
 	{
-		readonlyCubeCount++;
-
-		float voxelZ1 = 0;
-		float voxelZ2 = voxelDepth;
-//		if (cascade != 0 && (int)voxelY1 % 2 == 0) {
-// 			For cascade to work, I first need to find another way of setting
-//			uv coords other than reading out vertex x and y later
-//			voxelX1 += cascade;
-//			voxelX2 += cascade;
-//			voxelZ1 += cascade;
-//			voxelZ2 += cascade;
-//		}
-
 		int atlasCubeRectX1 = (int)(startPixelX + voxelX1);
 		int atlasCubeRectY1 = (int)(startPixelY + voxelY1);
 		float atlasCubeRectX2 = (float)(startPixelX + voxelX2 - 0.5) / texture.width; 
 		float atlasCubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
-		Vector2 uvAtlasCubeRectEncoded = new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
+		return new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
+	}
 
-		int index0 = createVertex(voxelX1, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomLeft);
-		int index1 = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopLeft);
-		int index2 = createVertex(voxelX2, voxelY1, voxelZ1, uvAtlasCubeRectEncoded, kFrontBottomRight);
-		int index3 = createVertex(voxelX2, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFrontTopRight);
-		int index1FrontExlusive = createVertex(voxelX1, voxelY2, voxelZ1, uvAtlasCubeRectEncoded, kFront);
+	void createFacesForX(int x, int face)
+	{
+		int y2 = -1;
+		int faceShift = (face == kLeft) ? 0 : 1;
+		while (y2 != subImageHeight) {
+			int y1 = getFirstVisibleFaceForX(x + faceShift, y2 + 1, face);
+			if (y1 == kNotFound)
+				return;
 
-		if (drawXFaces || drawYFaces) {
-			int index4 = createVertex(voxelX1, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomLeft);
-			int index5 = createVertex(voxelX1, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopLeft);
-			int index6 = createVertex(voxelX2, voxelY1, voxelZ2, uvAtlasCubeRectEncoded, kBackBottomRight);
-			int index7 = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBackTopRight);
-			int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelZ2, uvAtlasCubeRectEncoded, kBack);
+			y2 = getFirstHiddenFaceForX(x + faceShift, y1 + 1, face);
+			if (y2 == kNotFound)
+				y2 = subImageHeight;
 
-			if (drawXFaces) {
-				// Left triangles
-				tri.Add(index4);
-				tri.Add(index5);
-				tri.Add(index0);
-				tri.Add(index0);
-				tri.Add(index5);
-				tri.Add(index1);
-
-				// Right triangles
-				tri.Add(index2);
-				tri.Add(index3);
-				tri.Add(index6);
-				tri.Add(index6);
-				tri.Add(index3);
-				tri.Add(index7);
-			}
-
-			if (drawYFaces) {
-				// Top triangles
-				tri.Add(index1);
-				tri.Add(index5);
-				tri.Add(index3);
-				tri.Add(index3);
-				tri.Add(index5);
-				tri.Add(index7);
-
-				// Bottom triangles
-				tri.Add(index4);
-				tri.Add(index0);
-				tri.Add(index6);
-				tri.Add(index6);
-				tri.Add(index0);
-				tri.Add(index2);
-			}
-
-			// Back triangles
-			tri.Add(index6);
-			tri.Add(index7BackExclusive);
-			tri.Add(index4);
-			tri.Add(index4);
-			tri.Add(index7BackExclusive);
-			tri.Add(index5);
+			if (face == kLeft)
+				createLeftFace(x, y1, x + 1, y2);
+			else
+				createRightFace(x, y1, x + 1, y2);
 		}
+	}
 
-		if (drawZFaces) {
-			// Front triangles
-			tri.Add(index0);
-			tri.Add(index1FrontExlusive);
-			tri.Add(index2);
-			tri.Add(index2);
-			tri.Add(index1FrontExlusive);
-			tri.Add(index3);
+	void createFacesForY(int y, int face)
+	{
+		int x2 = -1;
+		int faceShift = (face == kBottom) ? 0 : 1;
+		while (x2 != subImageWidth) {
+			int x1 = getFirstVisibleFaceForY(x2 + 1, y + faceShift, face);
+			if (x1 == kNotFound)
+				return;
+
+			x2 = getFirstHiddenFaceForY(x1 + 1, y + faceShift, face);
+			if (x2 == kNotFound)
+				x2 = subImageWidth;
+
+			if (face == kBottom)
+				createBottomFace(x1, y, x2, y + 1);
+			else
+				createTopFace(x1, y, x2, y + 1);
 		}
+	}
+
+	void createFacesForZ()
+	{
+		for (int y = 0; y < subImageHeight; ++y) {
+			int x2 = -1;
+
+			// Traverse each column in the texture and look for voxel strips
+			while (x2 != subImageWidth) {
+				int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
+				if (x1 == kNotFound) {
+					x2 =  subImageWidth;
+					continue;
+				}
+
+				x2 = findFirstVoxelAlphaTest(x1 + 1, y, 0);
+				if (x2 == kNotFound)
+					x2 = subImageWidth;
+
+				createFrontFace(x1, y, x2, y + 1);
+				createBackFace(x1, y, x2, y + 1);
+			}
+		}
+	}
+
+	void createLeftFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
+	{
+		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+
+		int index0 = createVertex(voxelX1, voxelY1, 0, cubeRect, kFrontBottomLeft);
+		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
+		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, cubeRect, kBackBottomLeft);
+		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
+
+		tri.Add(index4);
+		tri.Add(index5);
+		tri.Add(index0);
+		tri.Add(index0);
+		tri.Add(index5);
+		tri.Add(index1);
+	}
+
+	void createRightFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
+	{
+		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+
+		int index2 = createVertex(voxelX2, voxelY1, 0, cubeRect, kFrontBottomRight);
+		int index3 = createVertex(voxelX2, voxelY2, 0, cubeRect, kFrontTopRight);
+		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, cubeRect, kBackBottomRight);
+		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBackTopRight);
+
+		tri.Add(index2);
+		tri.Add(index3);
+		tri.Add(index6);
+		tri.Add(index6);
+		tri.Add(index3);
+		tri.Add(index7);
+	}
+
+	void createBottomFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
+	{
+		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+
+		// TODO: reuse vertices
+
+		int index0 = createVertex(voxelX1, voxelY1, 0, cubeRect, kFrontBottomLeft);
+		int index2 = createVertex(voxelX2, voxelY1, 0, cubeRect, kFrontBottomRight);
+		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, cubeRect, kBackBottomLeft);
+		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, cubeRect, kBackBottomRight);
+
+		tri.Add(index4);
+		tri.Add(index0);
+		tri.Add(index6);
+		tri.Add(index6);
+		tri.Add(index0);
+		tri.Add(index2);
+	}
+
+	void createTopFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
+	{
+		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+
+		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
+		int index3 = createVertex(voxelX2, voxelY2, 0, cubeRect, kFrontTopRight);
+		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
+		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBackTopRight);
+
+		tri.Add(index1);
+		tri.Add(index5);
+		tri.Add(index3);
+		tri.Add(index3);
+		tri.Add(index5);
+		tri.Add(index7);
+	}
+
+	void createFrontFace(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
+	{
+		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+
+		int index0 = createVertex(voxelX1, voxelY1, 0, cubeRect, kFrontBottomLeft);
+//		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
+		int index2 = createVertex(voxelX2, voxelY1, 0, cubeRect, kFrontBottomRight);
+		int index3 = createVertex(voxelX2, voxelY2, 0, cubeRect, kFrontTopRight);
+		int index1FrontExlusive = createVertex(voxelX1, voxelY2, 0, cubeRect, kFront);
+
+		tri.Add(index0);
+		tri.Add(index1FrontExlusive);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1FrontExlusive);
+		tri.Add(index3);
+	}
+
+	void createBackFace(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
+	{
+		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+
+		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, cubeRect, kBackBottomLeft);
+		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
+		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, cubeRect, kBackBottomRight);
+//		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBackTopRight);
+		int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBack);
+
+		tri.Add(index6);
+		tri.Add(index7BackExclusive);
+		tri.Add(index4);
+		tri.Add(index4);
+		tri.Add(index7BackExclusive);
+		tri.Add(index5);
 	}
 }
