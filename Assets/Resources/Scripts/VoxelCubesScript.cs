@@ -32,7 +32,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	const int subImageHeight = 8;
 
 	static List<Vector3> verticeList = new List<Vector3>(); 
-	static List<Vector2> uvAtlasCubeRectEncodedList = new List<Vector2>(); 
+	static List<Vector2> vertexPixelList = new List<Vector2>(); 
 	static List<int> normalCodeList = new List<int>(); 
 	static List<int> tri = new List<int>(); 
 
@@ -83,7 +83,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	public void rebuildObject()
 	{
 		verticeList.Clear();
-		uvAtlasCubeRectEncodedList.Clear();
+		vertexPixelList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
 		readonlyCubeCount = 0;
@@ -171,7 +171,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			}
 		}
 
-		mesh.uv = uvAtlasCubeRectEncodedList.ToArray();
+		mesh.uv = vertexPixelList.ToArray();
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
 
@@ -254,9 +254,9 @@ public class VoxelCubesScript : MonoBehaviour {
 				y2 = subImageHeight;
 
 			if (face == kLeft)
-				createLeftFace(x, y1, x + 1, y2);
+				createLeftFace(x, y1, x, y2);
 			else
-				createRightFace(x, y1, x + 1, y2);
+				createRightFace(x, y1, x, y2);
 		}
 	}
 
@@ -303,11 +303,11 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 	}
 
-	int createVertex(float x, float y, float z, Vector2 uvRect, int normalCode)
+	int createVertex(float x, float y, float z, Vector2 pixel, int normalCode)
 	{
 		verticeList.Add(new Vector3(x, y, z));
 		normalCodeList.Add(normalCode);
-		uvAtlasCubeRectEncodedList.Add(uvRect);
+		vertexPixelList.Add(pixel);
 
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
@@ -315,23 +315,15 @@ public class VoxelCubesScript : MonoBehaviour {
 		return verticeList.Count - 1;
 	}
 
-	Vector2 createCubeRect(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
+	void createLeftFace(int pixelX1, int pixelY1, int pixelY2)
 	{
-		int atlasCubeRectX1 = (int)(startPixelX + voxelX1);
-		int atlasCubeRectY1 = (int)(startPixelY + voxelY1);
-		float atlasCubeRectX2 = (float)(startPixelX + voxelX2 - 0.5) / texture.width; 
-		float atlasCubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
-		return new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
-	}
+		Vector2 pixelBottom = new Vector2(startPixelX + pixelX1, startPixelY + pixelY1);
+		Vector2 pixelTop = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
 
-	void createLeftFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
-	{
-		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
-
-		int index0 = createVertex(voxelX1, voxelY1, 0, cubeRect, kFrontBottomLeft);
-		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
-		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, cubeRect, kBackBottomLeft);
-		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
+		int index0 = createVertex(pixelX1, pixelY1, 0, pixelBottom, kFrontBottomLeft);
+		int index1 = createVertex(pixelX1, pixelY2 + 1, 0, pixelTop, kFrontTopLeft);
+		int index4 = createVertex(pixelX1, pixelY1, voxelDepth, pixelBottom, kBackBottomLeft);
+		int index5 = createVertex(pixelX1, pixelY2 + 1, voxelDepth, pixelTop, kBackTopLeft);
 
 		tri.Add(index4);
 		tri.Add(index5);
@@ -343,12 +335,12 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void createRightFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
 	{
-		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+		Vector2 pixel = new Vector2(startPixelX + voxelX1, startPixelY + voxelY1);
 
-		int index2 = createVertex(voxelX2, voxelY1, 0, cubeRect, kFrontBottomRight);
-		int index3 = createVertex(voxelX2, voxelY2, 0, cubeRect, kFrontTopRight);
-		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, cubeRect, kBackBottomRight);
-		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBackTopRight);
+		int index2 = createVertex(voxelX2, voxelY1, 0, pixel, kFrontBottomRight);
+		int index3 = createVertex(voxelX2, voxelY2, 0, pixel, kFrontTopRight);
+		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, pixel, kBackBottomRight);
+		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, pixel, kBackTopRight);
 
 		tri.Add(index2);
 		tri.Add(index3);
@@ -360,14 +352,12 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void createBottomFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
 	{
-		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
+		Vector2 pixel = new Vector2(startPixelX + voxelX1, startPixelY + voxelY1);
 
-		// TODO: reuse vertices
-
-		int index0 = createVertex(voxelX1, voxelY1, 0, cubeRect, kFrontBottomLeft);
-		int index2 = createVertex(voxelX2, voxelY1, 0, cubeRect, kFrontBottomRight);
-		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, cubeRect, kBackBottomLeft);
-		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, cubeRect, kBackBottomRight);
+		int index0 = createVertex(voxelX1, voxelY1, 0, pixel, kFrontBottomLeft);
+		int index2 = createVertex(voxelX2, voxelY1, 0, pixel, kFrontBottomRight);
+		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, pixel, kBackBottomLeft);
+		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, pixel, kBackBottomRight);
 
 		tri.Add(index4);
 		tri.Add(index0);
@@ -379,8 +369,6 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void createTopFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
 	{
-		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
-
 		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
 		int index3 = createVertex(voxelX2, voxelY2, 0, cubeRect, kFrontTopRight);
 		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
@@ -396,8 +384,6 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void createFrontFace(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
 	{
-		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
-
 		int index0 = createVertex(voxelX1, voxelY1, 0, cubeRect, kFrontBottomLeft);
 //		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
 		int index2 = createVertex(voxelX2, voxelY1, 0, cubeRect, kFrontBottomRight);
@@ -414,8 +400,6 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void createBackFace(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
 	{
-		Vector2 cubeRect = createCubeRect(voxelX1, voxelY1, voxelX2, voxelY2);
-
 		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, cubeRect, kBackBottomLeft);
 		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
 		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, cubeRect, kBackBottomRight);
