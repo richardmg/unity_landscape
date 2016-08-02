@@ -135,8 +135,6 @@
 				int vertexCode = (int)v.cubeDesc.b;
 				float voxelDepth = v.cubeDesc.a / 100;
 
-				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
-
 				float uvSubImageEffectiveWidth = frac(v.cubeDesc.a) * 2;
 				float uvSubImageEffectiveHeight = frac(v.cubeDesc.b) * 2;
 
@@ -145,7 +143,7 @@
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.objNormal = normalForCode[vertexCode];
 				o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
-				o.pixel = float4(v.pixel, 0, 0);
+				o.pixel = float4(v.pixel + 0.5, 0, 0);
 				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, voxelDepth, 0);
 				return o;
 			}
@@ -157,8 +155,9 @@
 
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
-//				float4 clampRect = i.pixel + _ClampOffset;
-				float3 uvAtlasClamped = i.uvAtlas;//clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
+				float2 uvPixelMin = (i.pixel - 0.45) / textureSize;
+				float2 uvPixelMax = (i.pixel + 0.45) / textureSize;
+				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(uvPixelMin, 0), float3(uvPixelMax, (1 - _ClampOffset.x)));
 
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
 				float3 uvAtlasSubImageSize = subImageSize / textureSize;
