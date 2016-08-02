@@ -13,14 +13,11 @@ public class VoxelCubesScript : MonoBehaviour {
 	public bool fillHoles = false;
 	public bool oneCubePerRow = false; // Fill inner holes, only keep longest line on the outside
 	public bool oneCubePerObject = false;
-
-	// tile means draw texture on all sides of object rather that just in front
-	public bool tile = false;
+	public bool shareVertices = true;
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
-	public int readonlyCubeCount = 0;
 
 	Texture2D texture;
 	int startPixelX;
@@ -86,7 +83,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		vertexPixelList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
-		readonlyCubeCount = 0;
 
 		effectiveSize = new Vector3(0, 0, voxelDepth);
 		Vector3 scale = gameObject.transform.localScale;
