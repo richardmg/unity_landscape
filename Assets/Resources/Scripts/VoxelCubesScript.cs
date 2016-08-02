@@ -184,84 +184,123 @@ public class VoxelCubesScript : MonoBehaviour {
 		readonlyTriangleCount = tri.Count / 3;
 	}
 
-	int findFirstVoxelAlphaTest(int startX, int startY, int alpha)
-	{
-		for (int x = startX; x < subImageWidth; ++x) {
-			Color c = texture.GetPixel(startPixelX + x, startPixelY + startY);
-			if (Mathf.CeilToInt(c.a) == alpha)
-				return x;
-		}
-		return kNotFound;
-	}
-
-	int findLastVoxel(int startY)
-	{
-		for (int x = subImageWidth - 1; x >= 0; --x) {
-			Color c = texture.GetPixel(startPixelX + x, startPixelY + startY);
-			if (Mathf.CeilToInt(c.a) == 1.0)
-				return x;
-		}
-		return kNotFound;
-	}
-
-	int getFirstVisibleFaceForX(int startX, int startY, int face)
+	int getFirstFaceForX(int startX, int startY, int face, bool searchForVisible)
 	{
 		for (int y = startY; y < subImageHeight; ++y) {
 			Color c1 = (startX == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + startX, startPixelY + y);
 			Color c2 = (startX == 0) ? Color.clear : texture.GetPixel(startPixelX + startX - 1, startPixelY + y);
 
-			if (face == kLeft && c1.a == 1 && c2.a == 0)
-				return y;
-			if (face == kRight && c1.a == 0 && c2.a == 1)
-				return y;
+			if (searchForVisible) {
+				if (face == kLeft && c1.a == 1 && c2.a == 0)
+					return y;
+				if (face == kRight && c1.a == 0 && c2.a == 1)
+					return y;
+			} else {
+				if (face == kLeft && (c1.a == c2.a || c1.a == 0))
+					return y;
+				if (face == kRight && (c1.a == c2.a || c2.a == 0))
+					return y;
+			}
 		}
 
 		return kNotFound;
 	}
 
-	int getFirstHiddenFaceForX(int startX, int startY, int face)
-	{
-		for (int y = startY; y < subImageHeight; ++y) {
-			Color c1 = (startX == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + startX, startPixelY + y);
-			Color c2 = (startX == 0) ? Color.clear : texture.GetPixel(startPixelX + startX - 1, startPixelY + y);
-
-			if (face == kLeft && (c1.a == c2.a || c1.a == 0))
-				return y;
-			if (face == kRight && (c1.a == c2.a || c2.a == 0))
-				return y;
-		}
-
-		return kNotFound;
-	}
-
-	int getFirstVisibleFaceForY(int startX, int startY, int face)
+	int getFirstFaceForY(int startX, int startY, int face, bool searchForVisible)
 	{
 		for (int x = startX; x < subImageWidth; ++x) {
 			Color c1 = (startY == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY);
 			Color c2 = (startY == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY - 1);
 
-			if (face == kBottom && c1.a == 1 && c2.a == 0)
-				return x;
-			if (face == kTop && c1.a == 0 && c2.a == 1)
-				return x;
+			if (searchForVisible) {
+				if (face == kBottom && c1.a == 1 && c2.a == 0)
+					return x;
+				if (face == kTop && c1.a == 0 && c2.a == 1)
+					return x;
+			} else {
+				if (face == kBottom && (c1.a == c2.a || c1.a == 0))
+					return x;
+				if (face == kTop && (c1.a == c2.a || c2.a == 0))
+					return x;
+			}
 		}
 
 		return kNotFound;
 	}
 
-	int getFirstHiddenFaceForY(int startX, int startY, int face)
+	int getFirstFaceForZ(int startX, int startY, bool searchForVisible)
 	{
 		for (int x = startX; x < subImageWidth; ++x) {
-			Color c1 = (startY == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY);
-			Color c2 = (startY == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY - 1);
-
-			if (face == kBottom && (c1.a == c2.a || c1.a == 0))
+			Color c = texture.GetPixel(startPixelX + x, startPixelY + startY);
+			if (searchForVisible && Mathf.CeilToInt(c.a) == 1)
 				return x;
-			if (face == kTop && (c1.a == c2.a || c2.a == 0))
+			if (!searchForVisible && Mathf.CeilToInt(c.a) == 0)
 				return x;
 		}
-
 		return kNotFound;
+	}
+
+	void createFacesForX(int x, int face)
+	{
+		int y2 = -1;
+		int faceShift = (face == kLeft) ? 0 : 1;
+		while (y2 != subImageHeight) {
+			int y1 = getFirstFaceForX(x + faceShift, y2 + 1, face, true);
+			if (y1 == kNotFound)
+				return;
+
+			y2 = getFirstFaceForX(x + faceShift, y1 + 1, face, false);
+			if (y2 == kNotFound)
+				y2 = subImageHeight;
+
+			if (face == kLeft)
+				createLeftFace(x, y1, x + 1, y2);
+			else
+				createRightFace(x, y1, x + 1, y2);
+		}
+	}
+
+	void createFacesForY(int y, int face)
+	{
+		int x2 = -1;
+		int faceShift = (face == kBottom) ? 0 : 1;
+		while (x2 != subImageWidth) {
+			int x1 = getFirstFaceForY(x2 + 1, y + faceShift, face, true);
+			if (x1 == kNotFound)
+				return;
+
+			x2 = getFirstFaceForY(x1 + 1, y + faceShift, face, false);
+			if (x2 == kNotFound)
+				x2 = subImageWidth;
+
+			if (face == kBottom)
+				createBottomFace(x1, y, x2, y + 1);
+			else
+				createTopFace(x1, y, x2, y + 1);
+		}
+	}
+
+	void createFacesForZ()
+	{
+		for (int y = 0; y < subImageHeight; ++y) {
+			int x2 = -1;
+
+			// Traverse each column in the texture and look for voxel strips
+			while (x2 != subImageWidth) {
+				int x1 = getFirstFaceForZ(x2 + 1, y, true);
+				if (x1 == kNotFound) {
+					x2 =  subImageWidth;
+					continue;
+				}
+
+				x2 = getFirstFaceForZ(x1 + 1, y, false);
+				if (x2 == kNotFound)
+					x2 = subImageWidth;
+
+				createFrontFace(x1, y, x2, y + 1);
+				createBackFace(x1, y, x2, y + 1);
+			}
+		}
 	}
 
 	int createVertex(float x, float y, float z, Vector2 uvRect, int normalCode)
@@ -283,69 +322,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		float atlasCubeRectX2 = (float)(startPixelX + voxelX2 - 0.5) / texture.width; 
 		float atlasCubeRectY2 = (float)(startPixelY + voxelY2 - 0.5) / texture.height;
 		return new Vector2(atlasCubeRectX1 + atlasCubeRectX2, atlasCubeRectY1 + atlasCubeRectY2);
-	}
-
-	void createFacesForX(int x, int face)
-	{
-		int y2 = -1;
-		int faceShift = (face == kLeft) ? 0 : 1;
-		while (y2 != subImageHeight) {
-			int y1 = getFirstVisibleFaceForX(x + faceShift, y2 + 1, face);
-			if (y1 == kNotFound)
-				return;
-
-			y2 = getFirstHiddenFaceForX(x + faceShift, y1 + 1, face);
-			if (y2 == kNotFound)
-				y2 = subImageHeight;
-
-			if (face == kLeft)
-				createLeftFace(x, y1, x + 1, y2);
-			else
-				createRightFace(x, y1, x + 1, y2);
-		}
-	}
-
-	void createFacesForY(int y, int face)
-	{
-		int x2 = -1;
-		int faceShift = (face == kBottom) ? 0 : 1;
-		while (x2 != subImageWidth) {
-			int x1 = getFirstVisibleFaceForY(x2 + 1, y + faceShift, face);
-			if (x1 == kNotFound)
-				return;
-
-			x2 = getFirstHiddenFaceForY(x1 + 1, y + faceShift, face);
-			if (x2 == kNotFound)
-				x2 = subImageWidth;
-
-			if (face == kBottom)
-				createBottomFace(x1, y, x2, y + 1);
-			else
-				createTopFace(x1, y, x2, y + 1);
-		}
-	}
-
-	void createFacesForZ()
-	{
-		for (int y = 0; y < subImageHeight; ++y) {
-			int x2 = -1;
-
-			// Traverse each column in the texture and look for voxel strips
-			while (x2 != subImageWidth) {
-				int x1 = findFirstVoxelAlphaTest(x2 + 1, y, 1);
-				if (x1 == kNotFound) {
-					x2 =  subImageWidth;
-					continue;
-				}
-
-				x2 = findFirstVoxelAlphaTest(x1 + 1, y, 0);
-				if (x2 == kNotFound)
-					x2 = subImageWidth;
-
-				createFrontFace(x1, y, x2, y + 1);
-				createBackFace(x1, y, x2, y + 1);
-			}
-		}
 	}
 
 	void createLeftFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
