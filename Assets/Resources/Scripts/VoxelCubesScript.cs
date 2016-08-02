@@ -254,9 +254,9 @@ public class VoxelCubesScript : MonoBehaviour {
 				y2 = subImageHeight;
 
 			if (face == kLeft)
-				createLeftFace(x, y1, x, y2);
+				createLeftFace(x, y1, y2 - 1);
 			else
-				createRightFace(x, y1, x, y2);
+				createRightFace(x, y1, y2 - 1);
 		}
 	}
 
@@ -274,9 +274,9 @@ public class VoxelCubesScript : MonoBehaviour {
 				x2 = subImageWidth;
 
 			if (face == kBottom)
-				createBottomFace(x1, y, x2, y + 1);
+				createBottomFace(x1, y, x2 - 1);
 			else
-				createTopFace(x1, y, x2, y + 1);
+				createTopFace(x1, y, x2 - 1);
 		}
 	}
 
@@ -297,8 +297,8 @@ public class VoxelCubesScript : MonoBehaviour {
 				if (x2 == kNotFound)
 					x2 = subImageWidth;
 
-				createFrontFace(x1, y, x2, y + 1);
-				createBackFace(x1, y, x2, y + 1);
+				createFrontFace(x1, y, x2 - 1, y);
+				createBackFace(x1, y, x2 - 1, y);
 			}
 		}
 	}
@@ -315,15 +315,15 @@ public class VoxelCubesScript : MonoBehaviour {
 		return verticeList.Count - 1;
 	}
 
-	void createLeftFace(int pixelX1, int pixelY1, int pixelY2)
+	void createLeftFace(int pixelX, int pixelY1, int pixelY2)
 	{
-		Vector2 pixelBottom = new Vector2(startPixelX + pixelX1, startPixelY + pixelY1);
-		Vector2 pixelTop = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
+		Vector2 pixelBottom = new Vector2(startPixelX + pixelX, startPixelY + pixelY1);
+		Vector2 pixelTop = new Vector2(startPixelX + pixelX, startPixelY + pixelY2);
 
-		int index0 = createVertex(pixelX1, pixelY1, 0, pixelBottom, kFrontBottomLeft);
-		int index1 = createVertex(pixelX1, pixelY2 + 1, 0, pixelTop, kFrontTopLeft);
-		int index4 = createVertex(pixelX1, pixelY1, voxelDepth, pixelBottom, kBackBottomLeft);
-		int index5 = createVertex(pixelX1, pixelY2 + 1, voxelDepth, pixelTop, kBackTopLeft);
+		int index0 = createVertex(pixelX, pixelY1, 0, pixelBottom, kFrontBottomLeft);
+		int index1 = createVertex(pixelX, pixelY2 + 1, 0, pixelTop, kFrontTopLeft);
+		int index4 = createVertex(pixelX, pixelY1, voxelDepth, pixelBottom, kBackBottomLeft);
+		int index5 = createVertex(pixelX, pixelY2 + 1, voxelDepth, pixelTop, kBackTopLeft);
 
 		tri.Add(index4);
 		tri.Add(index5);
@@ -333,14 +333,15 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Add(index1);
 	}
 
-	void createRightFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
+	void createRightFace(int pixelX, int pixelY1, int pixelY2)
 	{
-		Vector2 pixel = new Vector2(startPixelX + voxelX1, startPixelY + voxelY1);
+		Vector2 pixelBottom = new Vector2(startPixelX + pixelX, startPixelY + pixelY1);
+		Vector2 pixelTop = new Vector2(startPixelX + pixelX, startPixelY + pixelY2);
 
-		int index2 = createVertex(voxelX2, voxelY1, 0, pixel, kFrontBottomRight);
-		int index3 = createVertex(voxelX2, voxelY2, 0, pixel, kFrontTopRight);
-		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, pixel, kBackBottomRight);
-		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, pixel, kBackTopRight);
+		int index2 = createVertex(pixelX + 1, pixelY1, 0, pixelBottom, kFrontBottomRight);
+		int index3 = createVertex(pixelX + 1, pixelY2 + 1, 0, pixelTop, kFrontTopRight);
+		int index6 = createVertex(pixelX + 1, pixelY1, voxelDepth, pixelBottom, kBackBottomRight);
+		int index7 = createVertex(pixelX + 1, pixelY2 + 1, voxelDepth, pixelTop, kBackTopRight);
 
 		tri.Add(index2);
 		tri.Add(index3);
@@ -350,14 +351,15 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Add(index7);
 	}
 
-	void createBottomFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
+	void createBottomFace(int pixelX1, int pixelY, int pixelX2)
 	{
-		Vector2 pixel = new Vector2(startPixelX + voxelX1, startPixelY + voxelY1);
+		Vector2 pixelLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY);
+		Vector2 pixelRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY);
 
-		int index0 = createVertex(voxelX1, voxelY1, 0, pixel, kFrontBottomLeft);
-		int index2 = createVertex(voxelX2, voxelY1, 0, pixel, kFrontBottomRight);
-		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, pixel, kBackBottomLeft);
-		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, pixel, kBackBottomRight);
+		int index0 = createVertex(pixelX1, pixelY, 0, pixelLeft, kFrontBottomLeft);
+		int index2 = createVertex(pixelX2 + 1, pixelY, 0, pixelRight, kFrontBottomRight);
+		int index4 = createVertex(pixelX1, pixelY, voxelDepth, pixelLeft, kBackBottomLeft);
+		int index6 = createVertex(pixelX2 + 1, pixelY, voxelDepth, pixelRight, kBackBottomRight);
 
 		tri.Add(index4);
 		tri.Add(index0);
@@ -367,12 +369,15 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Add(index2);
 	}
 
-	void createTopFace(int voxelX1, int voxelY1, int voxelX2, int voxelY2)
+	void createTopFace(int pixelX1, int pixelY, int pixelX2)
 	{
-		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
-		int index3 = createVertex(voxelX2, voxelY2, 0, cubeRect, kFrontTopRight);
-		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
-		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBackTopRight);
+		Vector2 pixelLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY);
+		Vector2 pixelRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY);
+
+		int index1 = createVertex(pixelX1, pixelY + 1, 0, pixelLeft, kFrontTopLeft);
+		int index3 = createVertex(pixelX2 + 1, pixelY + 1, 0, pixelRight, kFrontTopRight);
+		int index5 = createVertex(pixelX1, pixelY + 1, voxelDepth, pixelLeft, kBackTopLeft);
+		int index7 = createVertex(pixelX2 + 1, pixelY + 1, voxelDepth, pixelRight, kBackTopRight);
 
 		tri.Add(index1);
 		tri.Add(index5);
@@ -382,35 +387,43 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Add(index7);
 	}
 
-	void createFrontFace(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
+	void createFrontFace(float pixelX1, float pixelY1, float pixelX2, float pixelY2)
 	{
-		int index0 = createVertex(voxelX1, voxelY1, 0, cubeRect, kFrontBottomLeft);
-//		int index1 = createVertex(voxelX1, voxelY2, 0, cubeRect, kFrontTopLeft);
-		int index2 = createVertex(voxelX2, voxelY1, 0, cubeRect, kFrontBottomRight);
-		int index3 = createVertex(voxelX2, voxelY2, 0, cubeRect, kFrontTopRight);
-		int index1FrontExlusive = createVertex(voxelX1, voxelY2, 0, cubeRect, kFront);
+		Vector2 pixelBottomLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY1);
+		Vector2 pixelBottomRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY1);
+		Vector2 pixelTopLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
+		Vector2 pixelTopRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY2);
+
+		int index0 = createVertex(pixelX1, pixelY1, 0, pixelBottomLeft, kFrontBottomLeft);
+		int index1 = createVertex(pixelX1, pixelY2 + 1, 0, pixelTopLeft, kFront);
+		int index2 = createVertex(pixelX2 + 1, pixelY1, 0, pixelBottomRight, kFrontBottomRight);
+		int index3 = createVertex(pixelX2 + 1, pixelY2 + 1, 0, pixelTopRight, kFrontTopRight);
 
 		tri.Add(index0);
-		tri.Add(index1FrontExlusive);
+		tri.Add(index1);
 		tri.Add(index2);
 		tri.Add(index2);
-		tri.Add(index1FrontExlusive);
+		tri.Add(index1);
 		tri.Add(index3);
 	}
 
-	void createBackFace(float voxelX1, float voxelY1, float voxelX2, float voxelY2)
+	void createBackFace(float pixelX1, float pixelY1, float pixelX2, float pixelY2)
 	{
-		int index4 = createVertex(voxelX1, voxelY1, voxelDepth, cubeRect, kBackBottomLeft);
-		int index5 = createVertex(voxelX1, voxelY2, voxelDepth, cubeRect, kBackTopLeft);
-		int index6 = createVertex(voxelX2, voxelY1, voxelDepth, cubeRect, kBackBottomRight);
-//		int index7 = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBackTopRight);
-		int index7BackExclusive = createVertex(voxelX2, voxelY2, voxelDepth, cubeRect, kBack);
+		Vector2 pixelBottomLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY1);
+		Vector2 pixelBottomRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY1);
+		Vector2 pixelTopLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
+		Vector2 pixelTopRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY2);
+
+		int index4 = createVertex(pixelX1, pixelY1, voxelDepth, pixelBottomLeft, kBackBottomLeft);
+		int index5 = createVertex(pixelX1, pixelY2 + 1, voxelDepth, pixelTopLeft, kBackTopLeft);
+		int index6 = createVertex(pixelX2 + 1, pixelY1, voxelDepth, pixelBottomRight, kBackBottomRight);
+		int index7 = createVertex(pixelX2 + 1, pixelY2 + 1, voxelDepth, pixelTopRight, kBack);
 
 		tri.Add(index6);
-		tri.Add(index7BackExclusive);
+		tri.Add(index7);
 		tri.Add(index4);
 		tri.Add(index4);
-		tri.Add(index7BackExclusive);
+		tri.Add(index7);
 		tri.Add(index5);
 	}
 }

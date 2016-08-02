@@ -74,7 +74,7 @@
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float2 uvAtlasCubeRectEncoded : TEXCOORD0;
+				float2 pixel : TEXCOORD0;
 				float4 cubeDesc : COLOR;
 			};
 
@@ -84,7 +84,7 @@
 				float3 normal : NORMAL;
 				float3 objNormal : NORMAL1;
 				float3 uvAtlas : POSITION2;
-				float4 uvAtlasCubeRect : COLOR1;
+				float4 pixel : COLOR1;
 				float4 extra : COLOR2;
 			};
 
@@ -136,8 +136,6 @@
 				float voxelDepth = v.cubeDesc.a / 100;
 
 				float2 uvTextureSize = float2(_TextureWidth, _TextureHeight);
-				float2 uvCubeBottomLeft = floor(v.uvAtlasCubeRectEncoded) / uvTextureSize;
-				float2 uvCubeTopRight = frac(v.uvAtlasCubeRectEncoded) + (0.5 / uvTextureSize);
 
 				float uvSubImageEffectiveWidth = frac(v.cubeDesc.a) * 2;
 				float uvSubImageEffectiveHeight = frac(v.cubeDesc.b) * 2;
@@ -147,7 +145,7 @@
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.objNormal = normalForCode[vertexCode];
 				o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
-				o.uvAtlasCubeRect = float4(uvCubeBottomLeft, uvCubeTopRight);
+				o.pixel = float4(v.pixel, 0, 0);
 				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, voxelDepth, 0);
 				return o;
 			}
@@ -159,8 +157,8 @@
 
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
-				float4 clampRect = i.uvAtlasCubeRect + _ClampOffset;
-				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
+//				float4 clampRect = i.pixel + _ClampOffset;
+				float3 uvAtlasClamped = i.uvAtlas;//clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
 
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
 				float3 uvAtlasSubImageSize = subImageSize / textureSize;
