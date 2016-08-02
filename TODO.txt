@@ -176,6 +176,8 @@
                 vertices lod0 contains. If it contains e.g less than 50 (or less than lod0), it
                 will most likely don't give any speed-up.
 
+            - for Z faces, ensure we create one large rect instead of one rect per line
+
             - remove clamp rect. Instead, store voxel coordinate (atlas pixel pos) in each vertex.
                 - When collapsing vertices, check both vertex position and voxel position. This will
                     ensure that vertices that are in between two voxels will map to only one of them.
