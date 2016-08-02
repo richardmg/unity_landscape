@@ -166,6 +166,13 @@
             e.g makes the eyes shine etc.
 
         - Technical:
+            - lodding: it makes sense to use more vertices for a model if it results in less
+                fragments being drawn when an object is near. The amount of fragments "skipped" will
+                be large compared to the number of extra vertices to calulate. But when the object
+                is far away, it might be different. Since then, the number of fragments drawn on screen
+                will anyway be quite small. So then its perhaps better to reduce the number of vertices
+                and "overdraw" fragments instead?
+
             - remove clamp rect. Instead, store voxel coordinate (atlas pixel pos) in each vertex.
                 - When collapsing vertices, check both vertex position and voxel position. This will
                     ensure that vertices that are in between two voxels will map to only one of them.
