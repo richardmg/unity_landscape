@@ -172,6 +172,9 @@
                 is far away, it might be different. Since then, the number of fragments drawn on screen
                 will anyway be quite small. So then its perhaps better to reduce the number of vertices
                 and "overdraw" fragments instead?
+                Because of this, deciding whether or not to switch to lod1 should depend on how many
+                vertices lod0 contains. If it contains e.g less than 50 (or less than lod0), it
+                will most likely don't give any speed-up.
 
             - remove clamp rect. Instead, store voxel coordinate (atlas pixel pos) in each vertex.
                 - When collapsing vertices, check both vertex position and voxel position. This will
