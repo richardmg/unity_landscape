@@ -166,9 +166,11 @@
             e.g makes the eyes shine etc.
 
         - Technical:
-            - sample above and below. If top face, prefer above pixel, if opaque. Else choose below
-                - on the bottom face, it will be opposite, prefer below.
-                - the same for left and right.
+            - remove clamp rect. Instead, store voxel coordinate (atlas pixel pos) in each vertex.
+                - When collapsing vertices, check both vertex position and voxel position. This will
+                    ensure that vertices that are in between two voxels will map to only one of them.
+                - Assign voxel pos to f2s variable. This will then interpolate between the vertices
+                    and automatically create a clamp rect.
             - far lod: draw quad with six vertices with small bend
                 - fake depth shade in fragment shader, but only
                     as much so there are no glitches.
