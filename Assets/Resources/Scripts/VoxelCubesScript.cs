@@ -276,6 +276,22 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 	}
 
+	bool isFace(int x1, int y, int x2)
+	{
+		if (x1 > 0 && texture.GetPixel(startPixelX + x1 - 1, startPixelY + y).a != 0)
+			return false;
+
+		if (x2 < subImageWidth - 1 && texture.GetPixel(startPixelX + x2 + 1, startPixelY + y).a != 0)
+			return false;
+
+		for (int x = x1; x <= x2; ++x) {
+			if (texture.GetPixel(startPixelX + x, startPixelY + y).a == 0)
+				return false;
+		}
+
+		return true;
+	}
+
 	void createFacesForZ()
 	{
 		for (int y = 0; y < subImageHeight; ++y) {
@@ -293,8 +309,10 @@ public class VoxelCubesScript : MonoBehaviour {
 				if (x2 == kNotFound)
 					x2 = subImageWidth;
 
-				createFrontFace(x1, y, x2 - 1, y);
-				createBackFace(x1, y, x2 - 1, y);
+				if (y == 0 || !isFace(x1, y - 1, x2 - 1)) {
+					createFrontFace(x1, y, x2 - 1, y);
+					createBackFace(x1, y, x2 - 1, y);
+				}
 			}
 		}
 	}
