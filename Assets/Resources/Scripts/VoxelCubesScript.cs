@@ -299,9 +299,42 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 	}
 
+	bool normalCodeIsExclusive(int n)
+	{
+		return n == kLeft || n == kRight || n == kBottom || n == kTop || n == kFront || n == kBack;
+	}
+
+	int getVertexIndex(Vector3 v, Vector2 pixel, int normalCode)
+	{
+		if (normalCodeIsExclusive(normalCode)) {
+			// Cannot share vertices that are meant to be exclusive
+			return kNotFound;
+		}
+
+		int i = verticeList.FindIndex(v2 => v2 == v);
+		if (i == kNotFound)
+			return kNotFound;
+
+		if (vertexPixelList[i] != pixel)
+			return kNotFound;
+
+		if (normalCodeIsExclusive(normalCodeList[i]))
+			return kNotFound;
+
+		return i;
+	}
+
 	int createVertex(float x, float y, float z, Vector2 pixel, int normalCode)
 	{
-		verticeList.Add(new Vector3(x, y, z));
+		Vector3 v = new Vector3(x, y, z);
+
+		if (shareVertices) {
+			int index = getVertexIndex(v, pixel, normalCode);
+			if (index != kNotFound)
+				return index;
+		}
+
+		verticeList.Add(v);
 		normalCodeList.Add(normalCode);
 		vertexPixelList.Add(pixel);
 
