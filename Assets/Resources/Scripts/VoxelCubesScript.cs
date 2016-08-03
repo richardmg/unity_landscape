@@ -294,25 +294,30 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	void createFacesForZ()
 	{
-		for (int y = 0; y < subImageHeight; ++y) {
+		for (int y1 = 0; y1 < subImageHeight; ++y1) {
 			int x2 = -1;
 
 			// Traverse each column in the texture and look for voxel strips
 			while (x2 != subImageWidth) {
-				int x1 = getFirstFaceForZ(x2 + 1, y, true);
+				int x1 = getFirstFaceForZ(x2 + 1, y1, true);
 				if (x1 == kNotFound) {
 					x2 =  subImageWidth;
 					continue;
 				}
 
-				x2 = getFirstFaceForZ(x1 + 1, y, false);
+				x2 = getFirstFaceForZ(x1 + 1, y1, false);
 				if (x2 == kNotFound)
 					x2 = subImageWidth;
 
-				if (y == 0 || !isFace(x1, y - 1, x2 - 1)) {
-					createFrontFace(x1, y, x2 - 1, y);
-					createBackFace(x1, y, x2 - 1, y);
-				}
+				if (y1 > 0 && isFace(x1, y1 - 1, x2 - 1))
+					continue;
+
+				int y2 = y1;
+				while (y2 < subImageHeight - 1 && isFace(x1, y2 + 1, x2 - 1))
+					++y2;
+				
+				createFrontFace(x1, y1, x2 - 1, y2);
+				createBackFace(x1, y1, x2 - 1, y2);
 			}
 		}
 	}
