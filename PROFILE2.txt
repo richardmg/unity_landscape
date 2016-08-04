@@ -16,3 +16,11 @@ vq, obj:21, far count:100 rotating, zOffset:600
     faces:1z, fps:14
     faces:1z, no discard, fps:14
 
+----------
+
+vc, obj:21, far count:50 rotating, zOffset:50 tileSize:1
+    faces:xyz, fps:21fps
+
+vq, obj:21, far count:50 rotating, zOffset:50 tileSize:1
+    faces:1z, fps: 30fps
+
