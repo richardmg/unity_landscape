@@ -17,7 +17,7 @@ public class LandscapeTools
 		data.heightmapResolution = lc.groundResolution;
 
 		float tileMaxHeight = lc.tileHeightOct0 + lc.tileHeightOct1 + lc.tileHeightOct2;
-		data.size = new Vector3(lc.tileWidthLandscape, tileMaxHeight, lc.tileWidthLandscape);
+		data.size = new Vector3(lc.tileSizeLandscape, tileMaxHeight, lc.tileSizeLandscape);
 
 		SplatPrototype[] splatArray = new SplatPrototype[1]; 
 		splatArray[0] = new SplatPrototype(); 

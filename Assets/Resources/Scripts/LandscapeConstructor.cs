@@ -4,16 +4,19 @@ using System.Collections;
 public class LandscapeConstructor : MonoBehaviour {
 
 	public float flyOffset = 0;
+	public float zOffset = 0;
+
 	public bool showLandscape = true;
 	public bool showFarTiles = true;
 	public bool showNearTiles = true;
 
 	public int tileCountLandscape = 4;
-	public int tileCountFar = 4;
-	public int tileCountNear = 4;
-	public float tileWidthLandscape = 1000;
-	public float tileWidthFar = 100;
-	public float tileWidthNear = 10;
+	public int tileCountFarObjects = 4;
+	public int tileCountNearObjects = 4;
+
+	public float tileSizeLandscape = 1000;
+	public float tileSizeFarObjects = 100;
+	public float tileSizeNearObjects = 10;
 
 	public float tileHeightOct0 = 200;
 	public float tileHeightOct1 = 10;
@@ -56,9 +59,9 @@ public class LandscapeConstructor : MonoBehaviour {
 		while (transform.childCount > 0)
 			GameObject.DestroyImmediate(transform.GetChild(0).gameObject);
 
-		m_tileEngineLandscape = new TileEngine(tileCountLandscape, tileWidthLandscape, transform);
-		m_tileEngineNear = new TileEngine(tileCountNear, tileWidthNear, transform);
-		m_tileEngineFar = new TileEngine(tileCountFar, tileWidthFar, transform);
+		m_tileEngineLandscape = new TileEngine(tileCountLandscape, tileSizeLandscape, transform);
+		m_tileEngineNear = new TileEngine(tileCountNearObjects, tileSizeNearObjects, transform);
+		m_tileEngineFar = new TileEngine(tileCountFarObjects, tileSizeFarObjects, transform);
 
 		if (showLandscape)
 			m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
@@ -79,14 +82,6 @@ public class LandscapeConstructor : MonoBehaviour {
 		player.transform.position = playerPos;
 	}
 
-	public void letPlayerFly()
-	{
-		// Move player on top of landscape
-		Vector3 playerPos = player.transform.position;
-		playerPos.y = getGroundHeight(playerPos.x, playerPos.z) + flyOffset;
-		player.transform.position = playerPos;
-	}
-
 	// Use this for initialization
 	void Start()
 	{
@@ -97,10 +92,16 @@ public class LandscapeConstructor : MonoBehaviour {
 	// Update is called once per frame
 	public void Update()
 	{
-		if (flyOffset != 0)
-			letPlayerFly();
-		m_tileEngineLandscape.update(player.transform.position);
-		m_tileEngineNear.update(player.transform.position);
-		m_tileEngineFar.update(player.transform.position);
+		Vector3	pos = player.transform.position;
+		if (flyOffset != 0) {
+			pos.y = getGroundHeight(pos.x, pos.z) + flyOffset;
+			player.transform.position = pos;
+		}
+
+		pos.z += zOffset;
+
+		m_tileEngineLandscape.update(pos);
+		m_tileEngineNear.update(pos);
+		m_tileEngineFar.update(pos);
 	}
 }
