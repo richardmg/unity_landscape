@@ -1,7 +1,18 @@
-vc, obj:21, far count:100 rotating
+vc, obj:21, far count:100, rotating, zOffset:0
     faces:xyz, fps:18
     faces:z, fps:17
 
-vq, obj:21, far count:100 rotating
+vq, obj:21, far count:100 rotating, zOffset:0
     faces:4z, fps:22
+
+----------
+
+vc, obj:21, far count:100, rotating, zOffset:600
+    faces:xyz, fps:7
+    faces:x, fps:8
+
+vq, obj:21, far count:100 rotating, zOffset:600
+    faces:4z, fps:14
+    faces:1z, fps:14
+    faces:1z, no discard, fps:14
 
