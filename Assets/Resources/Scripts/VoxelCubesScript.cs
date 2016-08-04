@@ -180,6 +180,28 @@ public class VoxelCubesScript : MonoBehaviour {
 		readonlyTriangleCount = tri.Count / 3;
 	}
 
+	bool normalCodeIsExclusive(int n)
+	{
+		return n == kLeft || n == kRight || n == kBottom || n == kTop || n == kFront || n == kBack;
+	}
+
+	bool isFace(int x1, int y, int x2)
+	{
+		// Returns true if the given coords maps to a separate pixel strip in the atlas
+		if (x1 > 0 && texture.GetPixel(startPixelX + x1 - 1, startPixelY + y).a != 0)
+			return false;
+
+		if (x2 < subImageWidth - 1 && texture.GetPixel(startPixelX + x2 + 1, startPixelY + y).a != 0)
+			return false;
+
+		for (int x = x1; x <= x2; ++x) {
+			if (texture.GetPixel(startPixelX + x, startPixelY + y).a == 0)
+				return false;
+		}
+
+		return true;
+	}
+
 	int getFirstFaceForX(int startX, int startY, int face, bool searchForVisible)
 	{
 		for (int y = startY; y < subImageHeight; ++y) {
@@ -276,28 +298,11 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 	}
 
-	bool isFace(int x1, int y, int x2)
-	{
-		if (x1 > 0 && texture.GetPixel(startPixelX + x1 - 1, startPixelY + y).a != 0)
-			return false;
-
-		if (x2 < subImageWidth - 1 && texture.GetPixel(startPixelX + x2 + 1, startPixelY + y).a != 0)
-			return false;
-
-		for (int x = x1; x <= x2; ++x) {
-			if (texture.GetPixel(startPixelX + x, startPixelY + y).a == 0)
-				return false;
-		}
-
-		return true;
-	}
-
 	void createFacesForZ()
 	{
 		for (int y1 = 0; y1 < subImageHeight; ++y1) {
 			int x2 = -1;
 
-			// Traverse each column in the texture and look for voxel strips
 			while (x2 != subImageWidth) {
 				int x1 = getFirstFaceForZ(x2 + 1, y1, true);
 				if (x1 == kNotFound) {
@@ -320,11 +325,6 @@ public class VoxelCubesScript : MonoBehaviour {
 				createBackFace(x1, y1, x2 - 1, y2);
 			}
 		}
-	}
-
-	bool normalCodeIsExclusive(int n)
-	{
-		return n == kLeft || n == kRight || n == kBottom || n == kTop || n == kFront || n == kBack;
 	}
 
 	int getVertexIndex(Vector3 v, Vector2 pixel, int normalCode)
