@@ -1,3 +1,7 @@
 vc, obj:21, far count:100 rotating
     faces:xyz, fps:18
     faces:z, fps:17
+
+vq, obj:21, far count:100 rotating
+    faces:4z, fps:22
+
