@@ -1,3 +1,26 @@
+bush, VoxelCube, 10000 rotating:
+    one cube per object: 24fps
+    front face only, one cube per object: 24fps
+    one cube per line: 19fps
+    front face only, one cube per line: 21fps
+    front face only: 18fps
+    full model: 14fps
+
+    VoxelVolume:
+      front face only: 23fps  
+      front face only, 4 faces: 22fps  
+      front face only, 8 faces: 21fps
+      full model: 14fps
+
+Så langt:
+    full model ganske nærme
+    front face only 4/8x på litt avstand, + center kryss?
+
+center kryss aller helst et tverrsnitt av vokselene, men det vil
+i såfall kreve ekstra plass i atlaset.
+
+----------
+
 vc, obj:21, far count:100, rotating, zOffset:0
     faces:xyz, fps:18
     faces:z, fps:17

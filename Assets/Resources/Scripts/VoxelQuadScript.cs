@@ -49,11 +49,6 @@ public class VoxelQuadScript : MonoBehaviour {
 		rebuildObject();
 	}
 
-	public void Update()
-	{
-		transform.Rotate(new Vector3(0, 0.1f, 0));
-	}
-
 	void OnValidate()
 	{
 		rebuildObject();
