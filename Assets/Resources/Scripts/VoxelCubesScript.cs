@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using NormalCode = System.Int32;
+
 public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
@@ -38,20 +40,20 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	const int kNotFound = -1;
 
-	const int kLeft = 0;
-	const int kRight = 1;
-	const int kBottom = 2;
-	const int kTop = 3;
-	const int kFront = 4;
-	const int kBack = 5;
-	const int kFrontBottomLeft = 6;
-	const int kFrontTopLeft = 7;
-	const int kFrontBottomRight = 8;
-	const int kFrontTopRight = 9;
-	const int kBackBottomLeft = 10;
-	const int kBackTopLeft = 11;
-	const int kBackBottomRight = 12;
-	const int kBackTopRight = 13;
+	const NormalCode kLeft = 0;
+	const NormalCode kRight = 1;
+	const NormalCode kBottom = 2;
+	const NormalCode kTop = 3;
+	const NormalCode kFront = 4;
+	const NormalCode kBack = 5;
+	const NormalCode kFrontBottomLeft = 6;
+	const NormalCode kFrontTopLeft = 7;
+	const NormalCode kFrontBottomRight = 8;
+	const NormalCode kFrontTopRight = 9;
+	const NormalCode kBackBottomLeft = 10;
+	const NormalCode kBackTopLeft = 11;
+	const NormalCode kBackBottomRight = 12;
+	const NormalCode kBackTopRight = 13;
 
 	void Start ()
 	{
@@ -175,7 +177,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		readonlyTriangleCount = tri.Count / 3;
 	}
 
-	bool normalCodeIsExclusive(int n)
+	bool normalCodeIsExclusive(NormalCode n)
 	{
 		return n == kLeft || n == kRight || n == kBottom || n == kTop || n == kFront || n == kBack;
 	}
@@ -197,7 +199,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return true;
 	}
 
-	int getFirstFaceForX(int startX, int startY, int face, bool searchForVisible)
+	int getFirstFaceForX(int startX, int startY, NormalCode face, bool searchForVisible)
 	{
 		for (int y = startY; y < subImageHeight; ++y) {
 			Color c1 = (startX == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + startX, startPixelY + y);
@@ -219,7 +221,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return kNotFound;
 	}
 
-	int getFirstFaceForY(int startX, int startY, int face, bool searchForVisible)
+	int getFirstFaceForY(int startX, int startY, NormalCode face, bool searchForVisible)
 	{
 		for (int x = startX; x < subImageWidth; ++x) {
 			Color c1 = (startY == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY);
@@ -253,7 +255,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return kNotFound;
 	}
 
-	void createFacesForX(int x, int face)
+	void createFacesForX(int x, NormalCode face)
 	{
 		int y2 = -1;
 		int faceShift = (face == kLeft) ? 0 : 1;
@@ -273,7 +275,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 	}
 
-	void createFacesForY(int y, int face)
+	void createFacesForY(int y, NormalCode face)
 	{
 		int x2 = -1;
 		int faceShift = (face == kBottom) ? 0 : 1;
@@ -322,7 +324,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 	}
 
-	int getVertexIndex(Vector3 v, Vector2 pixel, int normalCode)
+	int getVertexIndex(Vector3 v, Vector2 pixel, NormalCode normalCode)
 	{
 		if (normalCodeIsExclusive(normalCode)) {
 			// Cannot share vertices that are meant to be exclusive
@@ -342,7 +344,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return i;
 	}
 
-	int createVertex(float x, float y, float z, Vector2 pixel, int normalCode)
+	int createVertex(float x, float y, float z, Vector2 pixel, NormalCode normalCode)
 	{
 		Vector3 v = new Vector3(x, y, z);
 
