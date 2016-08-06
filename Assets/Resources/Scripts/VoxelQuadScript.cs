@@ -10,8 +10,8 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	public bool quadCountX = false;
 	public bool quadCountY = false;
-	public bool centerQuadX = false;
-	public bool centerQuadY = false;
+	public bool dominatingX = true;
+	public bool dominatingY = true;
 
 	public int quadCountZ = 4;
 	public float planeOffset = 0;
@@ -22,7 +22,6 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	Texture2D texture;
 	Vector3 effectiveSize;
-	Vector2 uvAtlasSubImageRectEncoded;
 
 	int startPixelX;
 	int startPixelY;
@@ -90,9 +89,6 @@ public class VoxelQuadScript : MonoBehaviour {
 
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-		float atlasSubImageRectX2 = (float)(startPixelX + subImageWidth - 0.5) / texture.width; 
-		float atlasSubImageRectY2 = (float)(startPixelY + subImageHeight - 0.5) / texture.height;
-		uvAtlasSubImageRectEncoded = new Vector2(startPixelX + atlasSubImageRectX2, startPixelY + atlasSubImageRectY2);
 
 		if (quadCountX) {
 			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
@@ -116,20 +112,60 @@ public class VoxelQuadScript : MonoBehaviour {
 			}
 		}
 
-		if (centerQuadX) {
-			int bestCol = -1;
+		if (dominatingX) {
+			int bestColLeft = kNotFound;
+			int bestColRight = kNotFound;
+
 			int bestCount = 0;
-			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
-			for (int x = 0; x <= subImageWidth; ++x) {
+			for (int x = 0; x <= subImageWidth / 2; ++x) {
 				int count = countPixelsForCol(x);
 				if (count > bestCount) {
-					bestCol = x;
+					bestColLeft = x;
 					bestCount = count;
 				}
 			}
-			if (bestCol != kNotFound)
-				createCenterQuadX(bestCol);
-				
+
+			bestCount = 0;
+			for (int x = subImageWidth - 1; x >= subImageWidth / 2; --x) {
+				int count = countPixelsForCol(x);
+				if (count > bestCount) {
+					bestColRight = x;
+					bestCount = count;
+				}
+			}
+
+			if (bestColLeft != kNotFound)
+				createLeftQuad(bestColLeft);
+			if (bestColRight != kNotFound)
+				createRightQuad(bestColRight + 1);
+		}
+
+		if (dominatingY) {
+			int bestRowBottom = kNotFound;
+			int bestRowTop = kNotFound;
+
+			int bestCount = 0;
+			for (int y = 0; y <= subImageHeight / 2; ++y) {
+				int count = countPixelsForRow(y);
+				if (count > bestCount) {
+					bestRowBottom = y;
+					bestCount = count;
+				}
+			}
+
+			bestCount = 0;
+			for (int y = subImageHeight - 1; y >= subImageHeight / 2; --y) {
+				int count = countPixelsForRow(y);
+				if (count > bestCount) {
+					bestRowTop = y;
+					bestCount = count;
+				}
+			}
+
+			if (bestRowBottom != kNotFound)
+				createBottomQuad(bestRowBottom);
+			if (bestRowTop != kNotFound)
+				createTopQuad(bestRowTop + 1);
 		}
 
 		float deltaZ = voxelDepth / Mathf.Max(1, quadCountZ - 1);
@@ -215,6 +251,18 @@ public class VoxelQuadScript : MonoBehaviour {
 	{
 		int count = 0;
 		for (int y = 0; y < subImageHeight; ++y) {
+			Color c1 = texture.GetPixel(startPixelX + x, startPixelY + y);
+			if (c1.a != 0)
+				++count;
+		}
+
+		return count;
+	}
+
+	int countPixelsForRow(int y)
+	{
+		int count = 0;
+		for (int x = 0; x < subImageWidth; ++x) {
 			Color c1 = texture.GetPixel(startPixelX + x, startPixelY + y);
 			if (c1.a != 0)
 				++count;
@@ -321,26 +369,6 @@ public class VoxelQuadScript : MonoBehaviour {
 		int index1 = createVertex(subImageWidth, subImageHeight, z, kFaceBack);
 		int index2 = createVertex(0, 0, z, kFaceBack);
 		int index3 = createVertex(0, subImageHeight, z, kFaceBack);
-
-		tri.Add(index0);
-		tri.Add(index1);
-		tri.Add(index2);
-		tri.Add(index2);
-		tri.Add(index1);
-		tri.Add(index3);
-	}
-
-	void createCenterQuadX(float col)
-	{
-		float x = 0;
-		float uvX = (startPixelX + col) / texture.width;
-		float uvYBottom = (float)startPixelY / (float)texture.height;
-		float uvYTop = (float)(startPixelY + subImageHeight) / (float)texture.height;
-
-		int index0 = createVertex(x, 0, voxelDepth, kFaceLeft, new Vector2(uvX, uvYBottom));
-		int index1 = createVertex(x, subImageHeight, voxelDepth, kFaceLeft, new Vector2(uvX, uvYTop));
-		int index2 = createVertex(x, 0, 0, kFaceLeft, new Vector2(uvX, uvYBottom));
-		int index3 = createVertex(x, subImageHeight, 0, kFaceLeft, new Vector2(uvX, uvYTop));
 
 		tri.Add(index0);
 		tri.Add(index1);
