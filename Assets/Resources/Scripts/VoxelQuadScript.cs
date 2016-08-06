@@ -10,8 +10,11 @@ public class VoxelQuadScript : MonoBehaviour {
 
 	public bool quadCountX = false;
 	public bool quadCountY = false;
+	public bool centerQuadX = false;
+	public bool centerQuadY = false;
+
 	public int quadCountZ = 4;
-	public float planeOffset = 0.005f;
+	public float planeOffset = 0;
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
@@ -29,11 +32,12 @@ public class VoxelQuadScript : MonoBehaviour {
 	static List<Vector3> verticeList = new List<Vector3>(); 
 	static List<int> tri = new List<int>(); 
 	static List<FaceDirection> faceDirectionList = new List<FaceDirection>(); 
+	static List<Vector2> uvList = new List<Vector2>(); 
 
 	static Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
 	static Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
 
-	const int kVoxelNotFound = -1;
+	const int kNotFound = -1;
 
 	const FaceDirection kFaceUnknown = 0;
 	const FaceDirection kFaceLeft = 1;
@@ -75,6 +79,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		verticeList.Clear();
 		tri.Clear();
 		faceDirectionList.Clear();
+		uvList.Clear();
 
 		effectiveSize = new Vector3(0, 0, voxelDepth);
 		Vector3 scale = gameObject.transform.localScale;
@@ -111,6 +116,22 @@ public class VoxelQuadScript : MonoBehaviour {
 			}
 		}
 
+//		if (centerQuadX) {
+//			int bestCol = -1;
+//			int bestCount = 0;
+//			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
+//			for (int x = 0; x <= subImageWidth; ++x) {
+//				int count = countPixelsForCol(x);
+//				if (count > bestCount) {
+//					bestCol = x;
+//					bestCount = count;
+//				}
+//			}
+//			if (bestCol != kNotFound)
+//				createLeftQuad(bestCol, subImageWidth / 2);
+//				
+//		}
+
 		float deltaZ = voxelDepth / Mathf.Max(1, quadCountZ - 1);
 		for (int z = 0; z < quadCountZ - 1; ++z)
 			createFrontQuad((z + planeOffset) * deltaZ);
@@ -141,11 +162,7 @@ public class VoxelQuadScript : MonoBehaviour {
 			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, v.z));
 		}
 
-		Vector2[] uvAtlasSubImageRectArray = new Vector2[verticeList.Count];
-		for (int i = 0; i < uvAtlasSubImageRectArray.Length; ++i)
-			uvAtlasSubImageRectArray[i] = uvAtlasSubImageRectEncoded;
-		
-		mesh.uv = uvAtlasSubImageRectArray;
+		mesh.uv = uvList.ToArray();
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
 
@@ -197,6 +214,11 @@ public class VoxelQuadScript : MonoBehaviour {
 	int createVertex(float x, float y, float z, FaceDirection faceDirection)
 	{
 		verticeList.Add(new Vector3(x, y, z));
+
+		float uvAtlasX = (startPixelX + x) / texture.width;
+		float uvAtlasY = (startPixelY + y) / texture.height;
+		uvList.Add(new Vector2(uvAtlasX, uvAtlasY));
+
 		faceDirectionList.Add(faceDirection);
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);

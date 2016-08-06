@@ -47,3 +47,22 @@ vc, obj:21, far count:50 rotating, zOffset:50 tileSize:1
 vq, obj:21, far count:50 rotating, zOffset:50 tileSize:1
     faces:1z, fps: 30fps
 
+If static, It's probably faster to use exact mesh. But if dynamic, too many vertices
+creates too much overhead.
+
+----------
+
+lod, 10%, 2%, far count:100/10, rotating, zOffset:500
+    11fps
+    only vc: 7fps
+
+far count:100/10, edge origo
+    lod 100,10: fps:20
+    lod 100,3: fps:20
+    lod 100,1: fps:19
+    uten lod: 9fps
+    lod 100,1, count:80: 24fps
+    lod 100,1, count:60:
+    
+
+Sara

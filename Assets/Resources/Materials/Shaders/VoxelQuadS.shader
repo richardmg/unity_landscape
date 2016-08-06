@@ -86,7 +86,7 @@
 			{
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float2 uvAtlasSubImageRectEncoded : TEXCOORD0;
+				float2 uv : TEXCOORD0;
 				float4 cubeDesc : COLOR;
 			};
 
@@ -95,7 +95,6 @@
 				float4 vertex : SV_POSITION;
 				float3 normal : NORMAL;
 				float3 uvAtlas : POSITION2;
-				float4 uvAtlasSubImageRect : COLOR1;
 				float4 extra : COLOR2;
 			};
 
@@ -123,8 +122,6 @@
 			v2f vert (appdata v)
 			{
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
-				float2 uvSubImageBottomLeft = floor(v.uvAtlasSubImageRectEncoded) / textureSize;
-				float2 uvSubImageTopRight = frac(v.uvAtlasSubImageRectEncoded) + (0.5 / textureSize);
 				float face = int(v.cubeDesc.b);
 
 				float unusedSlot1 = frac(v.cubeDesc.a) * 2;
@@ -134,8 +131,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-				o.uvAtlas = float3(v.cubeDesc.xy, 0);
-				o.uvAtlasSubImageRect = float4(uvSubImageBottomLeft, uvSubImageTopRight);
+				o.uvAtlas = float3(v.uv, 0);
 				o.extra = float4(unusedSlot1, unusedSlot2, zDepth, face);
 				return o;
 			}
@@ -153,8 +149,7 @@
 				i.uvAtlas.x -= sign(face & kFaceRight) * uvAtlasOnePixel;
 				i.uvAtlas.y -= sign(face & kFaceTop) * uvAtlasOnePixel;
 
-				float4 clampRect = i.uvAtlasSubImageRect + _ClampOffset;
-				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(clampRect.xy, 0), float3(clampRect.zw, (1 - _ClampOffset.x)));
+				float3 uvAtlasClamped = i.uvAtlas;
 
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
 				float3 uvAtlasSubImageSize = subImageSize / textureSize;

@@ -4,7 +4,7 @@ using System.Collections;
 public class LandscapeConstructor : MonoBehaviour {
 
 	public float flyOffset = 0;
-	public float zOffset = 0;
+	public bool origoAtEdge = false;
 
 	public bool showLandscape = true;
 	public bool showFarTiles = true;
@@ -98,7 +98,8 @@ public class LandscapeConstructor : MonoBehaviour {
 			player.transform.position = pos;
 		}
 
-		pos.z += zOffset;
+		if (origoAtEdge)
+			pos.z += tileSizeFarObjects * (tileCountFarObjects / 2);
 
 		m_tileEngineLandscape.update(pos);
 		m_tileEngineNear.update(pos);
