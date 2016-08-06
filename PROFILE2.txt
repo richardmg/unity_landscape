@@ -62,7 +62,12 @@ far count:100/10, edge origo
     lod 100,1: fps:19
     uten lod: 9fps
     lod 100,1, count:80: 24fps
-    lod 100,1, count:60:
+    lod 100,1, count:60: 30fps
+    lod 100,1(4z), count:60: 30fps
+    lod 100,1(2z+dominating), count:100: 16fps
+    lod 100,1(2z+dominating), count:80: 26fps
     
 
-Sara
+to ting:
+    1. finn ut hvorfor vv shader tegner feil på sidene
+    2. krymp vv fra alle kanter
