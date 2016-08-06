@@ -116,21 +116,21 @@ public class VoxelQuadScript : MonoBehaviour {
 			}
 		}
 
-//		if (centerQuadX) {
-//			int bestCol = -1;
-//			int bestCount = 0;
-//			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
-//			for (int x = 0; x <= subImageWidth; ++x) {
-//				int count = countPixelsForCol(x);
-//				if (count > bestCount) {
-//					bestCol = x;
-//					bestCount = count;
-//				}
-//			}
-//			if (bestCol != kNotFound)
-//				createLeftQuad(bestCol, subImageWidth / 2);
-//				
-//		}
+		if (centerQuadX) {
+			int bestCol = -1;
+			int bestCount = 0;
+			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
+			for (int x = 0; x <= subImageWidth; ++x) {
+				int count = countPixelsForCol(x);
+				if (count > bestCount) {
+					bestCol = x;
+					bestCount = count;
+				}
+			}
+			if (bestCol != kNotFound)
+				createCenterQuadX(bestCol);
+				
+		}
 
 		float deltaZ = voxelDepth / Mathf.Max(1, quadCountZ - 1);
 		for (int z = 0; z < quadCountZ - 1; ++z)
@@ -211,17 +211,32 @@ public class VoxelQuadScript : MonoBehaviour {
 		return faceCount;
 	}
 
-	int createVertex(float x, float y, float z, FaceDirection faceDirection)
+	int countPixelsForCol(int x)
 	{
+		int count = 0;
+		for (int y = 0; y < subImageHeight; ++y) {
+			Color c1 = texture.GetPixel(startPixelX + x, startPixelY + y);
+			if (c1.a != 0)
+				++count;
+		}
+
+		return count;
+	}
+
+	int createVertex(float x, float y, float z, FaceDirection faceDirection, Vector2? uv = null)
+	{
+		if (uv == null) {
+			float uvAtlasX = (startPixelX + x) / texture.width;
+			float uvAtlasY = (startPixelY + y) / texture.height;
+			uv = new Vector2(uvAtlasX, uvAtlasY);
+		}
+
 		verticeList.Add(new Vector3(x, y, z));
-
-		float uvAtlasX = (startPixelX + x) / texture.width;
-		float uvAtlasY = (startPixelY + y) / texture.height;
-		uvList.Add(new Vector2(uvAtlasX, uvAtlasY));
-
+		uvList.Add((Vector2)uv);
 		faceDirectionList.Add(faceDirection);
 		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
 		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
+
 		return verticeList.Count - 1;
 	}
 
@@ -314,4 +329,25 @@ public class VoxelQuadScript : MonoBehaviour {
 		tri.Add(index1);
 		tri.Add(index3);
 	}
+
+	void createCenterQuadX(float col)
+	{
+		float x = 0;
+		float uvX = (startPixelX + col) / texture.width;
+		float uvYBottom = (float)startPixelY / (float)texture.height;
+		float uvYTop = (float)(startPixelY + subImageHeight) / (float)texture.height;
+
+		int index0 = createVertex(x, 0, voxelDepth, kFaceLeft, new Vector2(uvX, uvYBottom));
+		int index1 = createVertex(x, subImageHeight, voxelDepth, kFaceLeft, new Vector2(uvX, uvYTop));
+		int index2 = createVertex(x, 0, 0, kFaceLeft, new Vector2(uvX, uvYBottom));
+		int index3 = createVertex(x, subImageHeight, 0, kFaceLeft, new Vector2(uvX, uvYTop));
+
+		tri.Add(index0);
+		tri.Add(index1);
+		tri.Add(index2);
+		tri.Add(index2);
+		tri.Add(index1);
+		tri.Add(index3);
+	}
+
 }
