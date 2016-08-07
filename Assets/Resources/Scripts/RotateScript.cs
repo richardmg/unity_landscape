@@ -2,6 +2,7 @@
 using System.Collections;
 
 public class RotateScript : MonoBehaviour {
+	public float speed = 0.1f;
 	public bool rotate = false;
 
 	// Use this for initialization
@@ -12,6 +13,6 @@ public class RotateScript : MonoBehaviour {
 	public void Update()
 	{
 		if (rotate)
-			transform.Rotate(new Vector3(0, 0.2f, 0));
+			transform.Rotate(new Vector3(0, speed, 0));
 	}
 }

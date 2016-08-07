@@ -17,7 +17,7 @@
 		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
 		_Specular ("Specular", Range(0, 1)) = 0.8
-		_Attenuation ("Attenuation", Range(0.0001, 0.5)) = 0.3
+		_Attenuation ("Attenuation", Range(0.0001, 1.0)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.2
 	}
 	SubShader
@@ -186,7 +186,7 @@
 				////////////////////////////////////////////////////////
 				// Apply lightning
 
-				float sunDist = dot(i.normal, _SunPos);
+				float sunDist = dot(normalize(i.normal), _SunPos);
 				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
 				float sunLight = _Sunshine * sunAffection * _BaseLight;
 				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));

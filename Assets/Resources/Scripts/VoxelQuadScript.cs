@@ -305,11 +305,11 @@ public class VoxelQuadScript : MonoBehaviour {
 		return count;
 	}
 
-	int createVertex(float x, float y, float z, FaceDirection faceDirection, Vector2? uv = null)
+	int createVertex(float x, float y, float z, FaceDirection faceDirection, float uvShiftX = 0, float uvShiftY = 0, Vector2? uv = null)
 	{
 		if (uv == null) {
-			float uvAtlasX = (startPixelX + x) / texture.width;
-			float uvAtlasY = (startPixelY + y) / texture.height;
+			float uvAtlasX = (startPixelX + x + uvShiftX) / texture.width;
+			float uvAtlasY = (startPixelY + y + uvShiftY) / texture.height;
 			uv = new Vector2(uvAtlasX, uvAtlasY);
 		}
 
@@ -327,10 +327,10 @@ public class VoxelQuadScript : MonoBehaviour {
 		float y1 = effectiveRect.y;
 		float y2 = effectiveRect.y + effectiveRect.height;
 
-		int index0 = createVertex(x, y1, voxelDepth, kFaceLeft);
-		int index1 = createVertex(x, y2, voxelDepth, kFaceLeft);
-		int index2 = createVertex(x, y1, 0, kFaceLeft);
-		int index3 = createVertex(x, y2, 0, kFaceLeft);
+		int index0 = createVertex(x, y1, voxelDepth, kFaceLeft, 0.5f);
+		int index1 = createVertex(x, y2, voxelDepth, kFaceLeft, 0.5f);
+		int index2 = createVertex(x, y1, 0, kFaceLeft, 0.5f);
+		int index3 = createVertex(x, y2, 0, kFaceLeft, 0.5f);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -345,10 +345,10 @@ public class VoxelQuadScript : MonoBehaviour {
 		float y1 = effectiveRect.y;
 		float y2 = effectiveRect.y + effectiveRect.height;
 
-		int index0 = createVertex(x, y1, 0, kFaceRight);
-		int index1 = createVertex(x, y2, 0, kFaceRight);
-		int index2 = createVertex(x, y1, voxelDepth, kFaceRight);
-		int index3 = createVertex(x, y2, voxelDepth, kFaceRight);
+		int index0 = createVertex(x, y1, 0, kFaceRight, -0.5f);
+		int index1 = createVertex(x, y2, 0, kFaceRight, -0.5f);
+		int index2 = createVertex(x, y1, voxelDepth, kFaceRight, -0.5f);
+		int index3 = createVertex(x, y2, voxelDepth, kFaceRight, -0.5f);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -363,10 +363,10 @@ public class VoxelQuadScript : MonoBehaviour {
 		float x1 = effectiveRect.x;
 		float x2 = effectiveRect.x + effectiveRect.width;
 
-		int index0 = createVertex(x1, y, voxelDepth, kFaceBottom);
-		int index1 = createVertex(x1, y, 0, kFaceBottom);
-		int index2 = createVertex(x2, y, voxelDepth, kFaceBottom);
-		int index3 = createVertex(x2, y, 0, kFaceBottom);
+		int index0 = createVertex(x1, y, voxelDepth, kFaceBottom, 0, 0.5f);
+		int index1 = createVertex(x1, y, 0, kFaceBottom, 0, 0.5f);
+		int index2 = createVertex(x2, y, voxelDepth, kFaceBottom, 0, 0.5f);
+		int index3 = createVertex(x2, y, 0, kFaceBottom, 0, 0.5f);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -381,10 +381,10 @@ public class VoxelQuadScript : MonoBehaviour {
 		float x1 = effectiveRect.x;
 		float x2 = effectiveRect.x + effectiveRect.width;
 
-		int index0 = createVertex(x1, y, 0, kFaceTop);
-		int index1 = createVertex(x1, y, voxelDepth, kFaceTop);
-		int index2 = createVertex(x2, y, 0, kFaceTop);
-		int index3 = createVertex(x2, y, voxelDepth, kFaceTop);
+		int index0 = createVertex(x1, y, 0, kFaceTop, 0, -0.5f);
+		int index1 = createVertex(x1, y, voxelDepth, kFaceTop, 0, -0.5f);
+		int index2 = createVertex(x2, y, 0, kFaceTop, 0, -0.5f);
+		int index3 = createVertex(x2, y, voxelDepth, kFaceTop, 0, -0.5f);
 
 		tri.Add(index0);
 		tri.Add(index1);

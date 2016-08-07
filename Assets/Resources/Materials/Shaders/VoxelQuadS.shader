@@ -17,7 +17,7 @@
 		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
 		_Specular ("Specular", Range(0, 1)) = 0.8
-		_Attenuation ("Attenuation", Range(0.0001, 0.5)) = 0.3
+		_Attenuation ("Attenuation", Range(0.0001, 1.0)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.2
 	}
 	SubShader
@@ -31,7 +31,7 @@
 
 		Pass
 		{
-			Cull off
+//			Cull off
 
 			CGPROGRAM
 // Upgrade NOTE: excluded shader from DX11 and Xbox360 because it uses wrong array syntax (type[size] name)
@@ -141,17 +141,12 @@
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
 
-				i.uvAtlas.x -= sign(face & kFaceRight) * uvAtlasOnePixel;
-				i.uvAtlas.y -= sign(face & kFaceTop) * uvAtlasOnePixel;
-
-				float3 uvAtlasClamped = i.uvAtlas;
-
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
 				float3 uvAtlasSubImageSize = subImageSize / textureSize;
-				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
+				float3 subImageIndex = float3(floor(i.uvAtlas / uvAtlasSubImageSize).xy, 0);
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
-				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float3 uvSubImage = (i.uvAtlas - uvSubImageBottomLeft) / uvAtlasSubImageSize;
 				float3 voxelUnclamped = uvSubImage * subImageSize;
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
@@ -159,10 +154,7 @@
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
 
-				uvAtlasClamped.x -= floor(uvVoxel.x + 0.1) * (0.1 * uvAtlasOnePixel.x);
-				uvAtlasClamped.y -= floor(uvVoxel.y + 0.1) * (0.1 * uvAtlasOnePixel.y);
-
-				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+				fixed4 c = tex2Dlod(_MainTex, float4(i.uvAtlas.xy, 0, 0));
 
 				if (c.a == 0) {
 					discard;
@@ -172,7 +164,7 @@
 				////////////////////////////////////////////////////////
 				// Apply lightning
 
-				float sunDist = dot(i.normal, _SunPos);
+				float sunDist = dot(normalize(i.normal), _SunPos);
 				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
 				float sunLight = _Sunshine * sunAffection * _BaseLight;
 				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
@@ -188,6 +180,9 @@
 
 				c *= ifTrue(face & (kFaceFront | kFaceBack), 1 + (_EdgeSharp * _BaseLight));
 
+				////////////////////////////////////////////////////////
+
+				c = clamp(c, 0, 1);
 				return c;
 			}
 
