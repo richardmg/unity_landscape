@@ -31,7 +31,7 @@
 
 		Pass
 		{
-//			Cull off
+			Cull off
 
 			CGPROGRAM
 // Upgrade NOTE: excluded shader from DX11 and Xbox360 because it uses wrong array syntax (type[size] name)
@@ -126,7 +126,7 @@
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-				o.uvAtlas = float3(v.uv, uvZ);
+				o.uvAtlas = float3(v.uv, min(0.999, uvZ));
 				o.extra = float4(0, 0, zDepth, face);
 				return o;
 			}
@@ -147,9 +147,7 @@
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
 				float3 uvSubImage = (i.uvAtlas - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-				float3 voxelUnclamped = uvSubImage * subImageSize;
-				float3 voxel = min(voxelUnclamped, subImageSize - 1);
-				float3 uvVoxel = frac(voxelUnclamped);
+				float3 voxel = uvSubImage * subImageSize;
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
