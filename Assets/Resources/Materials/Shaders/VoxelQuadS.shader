@@ -19,7 +19,6 @@
 		_Specular ("Specular", Range(0, 1)) = 0.8
 		_Attenuation ("Attenuation", Range(0.0001, 0.5)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.2
-		_VoxelBorder("Voxel border", Range(0, 0.1)) = 0.1
 	}
 	SubShader
 	{
@@ -63,8 +62,6 @@
 			float _Specular;
 			float _EdgeSharp;
 			float _Attenuation;
-
-			float _VoxelBorder;
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
