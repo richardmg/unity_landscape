@@ -123,16 +123,14 @@
 			{
 				float2 textureSize = float2(_TextureWidth, _TextureHeight);
 				float face = int(v.cubeDesc.b);
-
-				float unusedSlot1 = frac(v.cubeDesc.a) * 2;
-				float unusedSlot2 = frac(v.cubeDesc.b) * 2;
-				float zDepth = 1;//floor(v.cubeDesc.a);
+				float uvZ = frac(v.cubeDesc.b) * 2;
+				float zDepth = v.cubeDesc.a;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-				o.uvAtlas = float3(v.uv, 0);
-				o.extra = float4(unusedSlot1, unusedSlot2, zDepth, face);
+				o.uvAtlas = float3(v.uv, uvZ);
+				o.extra = float4(0, 0, zDepth, face);
 				return o;
 			}
 			
@@ -157,7 +155,6 @@
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
 				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-				float3 uvEffectiveSubImage = uvSubImage / float3(i.extra.x, i.extra.y, 1);
 				float3 voxelUnclamped = uvSubImage * subImageSize;
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
@@ -198,10 +195,10 @@
 				////////////////////////////////////////////////////////
 				// Apply gradient
 
-				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
-				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
-				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-				c *= ifTrue((face & (kFaceFront | kFaceBack)), 1 + ((gradientSide - 1) * _BaseLight));
+//				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
+//				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
+//				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
+//				c *= ifTrue((face & (kFaceFront | kFaceBack)), 1 + ((gradientSide - 1) * _BaseLight));
 
 				////////////////////////////////////////////////////////
 
