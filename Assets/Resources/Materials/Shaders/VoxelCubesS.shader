@@ -130,6 +130,13 @@
  				return sign(abs(value));
  			}
 
+ 			inline float ifTrue(float testValue, float expr)
+ 			{
+ 				// testValue in [0, 1]
+ 				// Returns 1 if testValue == 0, otherwise expr
+ 				return 1 + (sign(abs(testValue)) * (expr - 1));
+ 			}
+
 			v2f vert (appdata v)
 			{
 				int vertexCode = (int)v.cubeDesc.b;
@@ -170,14 +177,7 @@
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
 
-			 	int isLeftOrRightSide = hasValue(i.objNormal.x);
 			 	int isFrontOrBackSide = hasValue(i.objNormal.z);
-				int leftSide = isLeftOrRightSide * (1 - step(0.5, uvVoxel.x));
-				int rightSide = isLeftOrRightSide * step(0.5, uvVoxel.x);
-				int frontSide = isFrontOrBackSide * (1 - hasValue(uvVoxel.z));
-				int backSide = isFrontOrBackSide * hasValue(uvVoxel.z);
-				int bottomSide = !(isLeftOrRightSide | isFrontOrBackSide) * (1 - step(0.5, uvVoxel.y));
-				int topSide = !(isLeftOrRightSide | isFrontOrBackSide | bottomSide);
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
@@ -200,23 +200,7 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at cube edges
 
-				float sharpLeft = 1 + ((leftSide | rightSide) * -_EdgeSharp * _BaseLight);
-				float sharpTop = 1 + ((topSide | bottomSide) * -_EdgeSharp * _BaseLight);
-				c *= sharpLeft * sharpTop;
-
-				////////////////////////////////////////////////////////
-				// Apply gradient
-
-				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
-				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
-				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength * sharpLeft);
-				c *= 1 + ((frontSide | backSide | leftSide | rightSide) * (gradientSide - 1) * _BaseLight);
-				float gradientTop = (1 - gradientStrength) + (uvEffectiveSubImage.x * gradientStrength * sharpTop);
-				c *= 1 + ((topSide | bottomSide) * (gradientTop - 1) * _BaseLight);
-
-				////////////////////////////////////////////////////////
-
-//				c = clamp(c, 0, 1);
+				c *= ifTrue(isFrontOrBackSide, 1 + (_EdgeSharp * _BaseLight));
 
 				return c;
 			}

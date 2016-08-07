@@ -186,20 +186,7 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at edges
 
-				c *= ifTrue(face & (kFaceLeft | kFaceRight), 1 + (_EdgeSharp * _BaseLight));
-				c *= ifTrue(face & (kFaceTop | kFaceBottom), 1 - (_EdgeSharp * _BaseLight));
-
-				////////////////////////////////////////////////////////
-				// Apply gradient
-
-//				float gradientStrength = (((sign(sunDist) + 1) / 2) * _GradientSunSide) + (((sign(sunDist) - 1) / -2) * _GradientShadeSide);
-//				gradientStrength = min(gradientStrength, abs(sunDist) * gradientStrength);
-//				float gradientSide = (1 - gradientStrength) + (uvEffectiveSubImage.y * gradientStrength);
-//				c *= ifTrue((face & (kFaceFront | kFaceBack)), 1 + ((gradientSide - 1) * _BaseLight));
-
-				////////////////////////////////////////////////////////
-
-				c = clamp(c, 0, 1);
+				c *= ifTrue(face & (kFaceFront | kFaceBack), 1 + (_EdgeSharp * _BaseLight));
 
 				return c;
 			}
