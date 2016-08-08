@@ -7,16 +7,15 @@ using NormalCode = System.Int32;
 public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
+	public bool shareVertices = true;
 
-	public bool useVolume = false;
 	public bool xFaces = true;
 	public bool yFaces = true;
 	public bool zFaces = true;
+	public bool useVolume = false;
 	public int volumeFaceCountZ = 2;
 	public bool simplify = false;
 	public bool cubify = false;
-
-	public bool shareVertices = true;
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
