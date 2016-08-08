@@ -2,14 +2,14 @@
 using System.Collections;
 using UnityEditor;
 
-[CustomEditor(typeof(VoxelCubesScript))]
+[CustomEditor(typeof(VoxelObject))]
 public class VoxelCubesEditor : Editor
 {
 	public override void OnInspectorGUI()
 	{
 		DrawDefaultInspector();
 
-		VoxelCubesScript myScript = (VoxelCubesScript)target;
+		VoxelObject myScript = (VoxelObject)target;
 		if(GUILayout.Button("Build Object"))
 		{
 			myScript.rebuildObject();
