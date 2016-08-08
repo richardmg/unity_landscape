@@ -172,40 +172,45 @@ public class VoxelObject : MonoBehaviour {
 			int bestRowTop = kNotFound;
 			int x2 = (int)cropRect.x + (int)(cropRect.width / 2);
 			int y2 = (int)cropRect.y + (int)(cropRect.height / 2);
-
 			int bestCount = 0;
-			for (int x = (int)cropRect.x; x <= x2; ++x) {
-				int count = countPixelsForCol(x);
-				if (count > bestCount) {
-					bestColLeft = x;
-					bestCount = count;
+
+			if (xFaces) {
+				bestCount = 0;
+				for (int x = (int)cropRect.x; x <= x2; ++x) {
+					int count = countPixelsForCol(x);
+					if (count > bestCount) {
+						bestColLeft = x;
+						bestCount = count;
+					}
+				}
+
+				bestCount = 0;
+				for (int x = subImageWidth - 1; x >= x2; --x) {
+					int count = countPixelsForCol(x);
+					if (count > bestCount) {
+						bestColRight = x;
+						bestCount = count;
+					}
 				}
 			}
 
-			bestCount = 0;
-			for (int x = subImageWidth - 1; x >= x2; --x) {
-				int count = countPixelsForCol(x);
-				if (count > bestCount) {
-					bestColRight = x;
-					bestCount = count;
+			if (yFaces) {
+				bestCount = 0;
+				for (int y = (int)cropRect.y; y <= y2; ++y) {
+					int count = countPixelsForRow(y);
+					if (count > bestCount) {
+						bestRowBottom = y;
+						bestCount = count;
+					}
 				}
-			}
 
-			bestCount = 0;
-			for (int y = (int)cropRect.y; y <= y2; ++y) {
-				int count = countPixelsForRow(y);
-				if (count > bestCount) {
-					bestRowBottom = y;
-					bestCount = count;
-				}
-			}
-
-			bestCount = 0;
-			for (int y = subImageHeight - 1; y >= y2; --y) {
-				int count = countPixelsForRow(y);
-				if (count > bestCount) {
-					bestRowTop = y;
-					bestCount = count;
+				bestCount = 0;
+				for (int y = subImageHeight - 1; y >= y2; --y) {
+					int count = countPixelsForRow(y);
+					if (count > bestCount) {
+						bestRowTop = y;
+						bestCount = count;
+					}
 				}
 			}
 
