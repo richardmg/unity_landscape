@@ -33,7 +33,6 @@
 			#pragma fragment frag
 
 			#define USE_LOD0
-
 			#include "VoxelObject.cginc"
 
 			v2f vert(appdata v)
