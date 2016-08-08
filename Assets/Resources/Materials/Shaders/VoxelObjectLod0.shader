@@ -1,4 +1,4 @@
-﻿Shader "Custom/VoxelObjectCullOn"
+﻿Shader "Custom/VoxelObjectLod0"
 {
 	Properties
 	{
@@ -27,12 +27,12 @@
 
 		Pass
 		{
-//			cull off
-
 			CGPROGRAM
 
 			#pragma vertex vert
 			#pragma fragment frag
+
+			#define USE_LOD0
 
 			#include "VoxelObject.cginc"
 

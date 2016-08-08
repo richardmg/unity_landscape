@@ -159,7 +159,7 @@ fixed4 voxelobject_frag(v2f i)
 	// Fetch main atlas color
 	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
-	#ifdef ENABLE_DISCARD
+	#ifdef USE_LOD1
 	if (c.a == 0) {
 		discard;
 		return c;
@@ -181,6 +181,8 @@ fixed4 voxelobject_frag(v2f i)
 	int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
 	c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
 
+	#ifdef USE_LOD0
+
 	////////////////////////////////////////////////////////
 	// Sharpen contrast at cube edges
 
@@ -192,6 +194,8 @@ fixed4 voxelobject_frag(v2f i)
 
 	float gradient = (1 - _Gradient) + (uvSubImage.y * _Gradient * sideSharp);
 	c *= if_else(isFrontOrBackSide, gradient, 1);
+
+	#endif
 
 	////////////////////////////////////////////////////////
 
