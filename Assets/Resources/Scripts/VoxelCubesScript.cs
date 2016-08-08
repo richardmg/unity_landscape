@@ -12,9 +12,8 @@ public class VoxelCubesScript : MonoBehaviour {
 	public bool xFaces = true;
 	public bool yFaces = true;
 	public bool zFaces = true;
-	public bool dominatingXFace = false;
-	public bool dominatingYFace = false;
 	public int volumeFaceCountZ = 2;
+	public bool simplify = false;
 	public bool cubify = false;
 
 	public bool shareVertices = true;
@@ -167,30 +166,13 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	public void createVolumeMesh()
 	{
-		if (xFaces) {
-			for (int x = 0; x <= subImageWidth; ++x) {
-				Vector2 singleFaceCount = countSingleFacesForCol(x);
-				if (singleFaceCount.x > 0)
-					createLeftFace(x, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-				if (singleFaceCount.y > 0)
-					createRightFace(x - 1, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-			}
-		}
-
-		if (yFaces) {
-			for (int y = 0; y <= subImageHeight; ++y) {
-				Vector2 singleFaceCount = countSingleFacesForRow(y);
-				if (singleFaceCount.x > 0)
-					createBottomFace((int)cropRect.x, y, (int)cropRect.x + (int)cropRect.width - 1);
-				if (singleFaceCount.y > 0)
-					createTopFace((int)cropRect.x, y - 1, (int)cropRect.x + (int)cropRect.width - 1);
-			}
-		}
-
-		if (dominatingXFace) {
+		if (simplify) {
 			int bestColLeft = kNotFound;
 			int bestColRight = kNotFound;
+			int bestRowBottom = kNotFound;
+			int bestRowTop = kNotFound;
 			int x2 = (int)cropRect.x + (int)(cropRect.width / 2);
+			int y2 = (int)cropRect.y + (int)(cropRect.height / 2);
 
 			int bestCount = 0;
 			for (int x = (int)cropRect.x; x <= x2; ++x) {
@@ -210,18 +192,7 @@ public class VoxelCubesScript : MonoBehaviour {
 				}
 			}
 
-			if (bestColLeft != kNotFound)
-				createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-			if (bestColRight != kNotFound)
-				createRightFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-		}
-
-		if (dominatingYFace) {
-			int bestRowBottom = kNotFound;
-			int bestRowTop = kNotFound;
-			int y2 = (int)cropRect.y + (int)(cropRect.height / 2);
-
-			int bestCount = 0;
+			bestCount = 0;
 			for (int y = (int)cropRect.y; y <= y2; ++y) {
 				int count = countPixelsForRow(y);
 				if (count > bestCount) {
@@ -239,10 +210,35 @@ public class VoxelCubesScript : MonoBehaviour {
 				}
 			}
 
+
+			if (bestColLeft != kNotFound)
+				createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+			if (bestColRight != kNotFound)
+				createRightFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 			if (bestRowBottom != kNotFound)
 				createBottomFace((int)cropRect.x, bestRowBottom, (int)cropRect.x + (int)cropRect.width - 1);
 			if (bestRowTop != kNotFound)
 				createTopFace((int)cropRect.x, bestRowTop, (int)cropRect.x + (int)cropRect.width - 1);
+		} else {
+			if (xFaces) {
+				for (int x = 0; x <= subImageWidth; ++x) {
+					Vector2 singleFaceCount = countSingleFacesForCol(x);
+					if (singleFaceCount.x > 0)
+						createLeftFace(x, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+					if (singleFaceCount.y > 0)
+						createRightFace(x - 1, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+				}
+			}
+
+			if (yFaces) {
+				for (int y = 0; y <= subImageHeight; ++y) {
+					Vector2 singleFaceCount = countSingleFacesForRow(y);
+					if (singleFaceCount.x > 0)
+						createBottomFace((int)cropRect.x, y, (int)cropRect.x + (int)cropRect.width - 1);
+					if (singleFaceCount.y > 0)
+						createTopFace((int)cropRect.x, y - 1, (int)cropRect.x + (int)cropRect.width - 1);
+				}
+			}
 		}
 
 		if (zFaces) {
