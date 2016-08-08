@@ -66,6 +66,9 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
+			static float2 textureSize = float2(_TextureWidth, _TextureHeight);
+			static float2 uvAtlasOnePixel = 1.0f / textureSize;
+			static float2 uvAtlasHalfPixel = uvAtlasOnePixel / 2;
 			static float _ClampOffset = 0.0001;
 			static fixed4 red = fixed4(1, 0, 0, 1);
 			static float3 _SunPos = normalize(float3(0, 0, 1));
@@ -150,7 +153,20 @@
 				return elseExpr + (if_neq(testValue, 0) * (ifExpr - elseExpr));
 			}
 
-			v2f vert (appdata v)
+			inline float3 uvClamped(v2f i)
+			{
+				float2 uvPixel = i.pixel / textureSize;
+				float diffX = i.uvAtlas.x - uvPixel.x;
+				float diffY = i.uvAtlas.y - uvPixel.y;
+				float3 uvAtlasClamped = i.uvAtlas;
+				uvAtlasClamped.x -= if_gt(diffX, uvAtlasOnePixel.x - _ClampOffset) * uvAtlasHalfPixel.x;
+				uvAtlasClamped.y -= if_gt(diffY, uvAtlasOnePixel.y - _ClampOffset) * uvAtlasHalfPixel.y;
+				uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * uvAtlasHalfPixel.x;
+				uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * uvAtlasHalfPixel.y;
+				return uvAtlasClamped;
+			}
+
+			v2f vert(appdata v)
 			{
 				int vertexCode = (int)v.cubeDesc.b;
 				float voxelDepth = v.cubeDesc.a;
@@ -165,26 +181,15 @@
 				return o;
 			}
 			
-			fixed4 frag (v2f i) : SV_Target
+			fixed4 frag(v2f i) : SV_Target
 			{
 				////////////////////////////////////////////////////////
 				// Start by calculating an API that we can use below
 
-				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
-				float3 uvAtlasOnePixel = 1.0f / textureSize;
-				float3 uvAtlasHalfPixel = uvAtlasOnePixel / 2;
-				float2 uvPixel = i.pixel / textureSize;
-
-				float3 uvAtlasClamped = i.uvAtlas;
-				float diffX = i.uvAtlas.x - uvPixel.x;
-				float diffY = i.uvAtlas.y - uvPixel.y;
-				uvAtlasClamped.x -= if_gt(diffX, uvAtlasOnePixel.x - _ClampOffset) * uvAtlasHalfPixel.x;
-				uvAtlasClamped.y -= if_gt(diffY, uvAtlasOnePixel.y - _ClampOffset) * uvAtlasHalfPixel.y;
-				uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * uvAtlasHalfPixel.x;
-				uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * uvAtlasHalfPixel.y;
+				float3 uvAtlasClamped = uvClamped(i);
 
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
-				float3 uvAtlasSubImageSize = subImageSize / textureSize;
+				float3 uvAtlasSubImageSize = subImageSize / float3(textureSize, i.extra.z);
 				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
