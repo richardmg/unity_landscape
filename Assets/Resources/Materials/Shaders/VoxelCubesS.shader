@@ -3,10 +3,6 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_TextureWidth ("Texture width", Int) = 64
-		_TextureHeight ("Texture height", Int) = 64
-		_SubImageWidth ("Subimage width", Int) = 16
-		_SubImageHeight ("Subimage height", Int) = 8
 		_GradientSunSide ("Gradient sunside", Range(0, 1)) = 0.1
 		_GradientShadeSide ("Gradient shadeside", Range(0, 1)) = 0.5
 		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
@@ -43,11 +39,6 @@
 			#include "UnityCG.cginc"
 			#define M_PI 3.1415926535897932384626433832795
 
-			int _TextureWidth;
-			int _TextureHeight;
-			int _SubImageWidth;
-			int _SubImageHeight;
-
 			float _VoxelateX;
 			float _VoxelateY;
 			float _VoxelateZ;
@@ -66,9 +57,11 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
-			static float2 textureSize = float2(_TextureWidth, _TextureHeight);
-			static float2 uvAtlasOnePixel = 1.0f / textureSize;
-			static float2 uvAtlasHalfPixel = uvAtlasOnePixel / 2;
+			static float2 _TextureSize = float2(64, 64);
+			static float2 _SubImageSize = float2(16, 8);
+
+			static float2 _UVAtlasOnePixel = 1.0f / _TextureSize;
+			static float2 _UVAtlasHalfPixel = _UVAtlasOnePixel / 2;
 			static float _ClampOffset = 0.0001;
 			static fixed4 red = fixed4(1, 0, 0, 1);
 			static float3 _SunPos = normalize(float3(0, 0, 1));
@@ -155,14 +148,14 @@
 
 			inline float3 uvClamped(v2f i)
 			{
-				float2 uvPixel = i.pixel / textureSize;
+				float2 uvPixel = i.pixel / _TextureSize;
 				float diffX = i.uvAtlas.x - uvPixel.x;
 				float diffY = i.uvAtlas.y - uvPixel.y;
 				float3 uvAtlasClamped = i.uvAtlas;
-				uvAtlasClamped.x -= if_gt(diffX, uvAtlasOnePixel.x - _ClampOffset) * uvAtlasHalfPixel.x;
-				uvAtlasClamped.y -= if_gt(diffY, uvAtlasOnePixel.y - _ClampOffset) * uvAtlasHalfPixel.y;
-				uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * uvAtlasHalfPixel.x;
-				uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * uvAtlasHalfPixel.y;
+				uvAtlasClamped.x -= if_gt(diffX, _UVAtlasOnePixel.x - _ClampOffset) * _UVAtlasHalfPixel.x;
+				uvAtlasClamped.y -= if_gt(diffY, _UVAtlasOnePixel.y - _ClampOffset) * _UVAtlasHalfPixel.y;
+				uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * _UVAtlasHalfPixel.x;
+				uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * _UVAtlasHalfPixel.y;
 				return uvAtlasClamped;
 			}
 
@@ -188,8 +181,10 @@
 
 				float3 uvAtlasClamped = uvClamped(i);
 
-				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
-				float3 uvAtlasSubImageSize = subImageSize / float3(textureSize, i.extra.z);
+				float3 textureSize = float3(_TextureSize, i.extra.z);
+				float3 subImageSize = float3(_SubImageSize, i.extra.z);
+
+				float3 uvAtlasSubImageSize = subImageSize / textureSize;
 				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
