@@ -181,8 +181,6 @@ fixed4 voxelobject_frag(v2f i)
 	int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
 	c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
 
-	#ifdef USE_LOD0
-
 	////////////////////////////////////////////////////////
 	// Sharpen contrast at cube edges
 
@@ -194,8 +192,6 @@ fixed4 voxelobject_frag(v2f i)
 
 	float gradient = (1 - _Gradient) + (uvSubImage.y * _Gradient * sideSharp);
 	c *= if_else(isFrontOrBackSide, gradient, 1);
-
-	#endif
 
 	////////////////////////////////////////////////////////
 
