@@ -210,14 +210,22 @@ public class VoxelCubesScript : MonoBehaviour {
 			}
 
 
-			if (bestColLeft != kNotFound)
+			if (bestColLeft != kNotFound) {
 				createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-			if (bestColRight != kNotFound)
+				createRightFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+			}
+			if (bestColRight != kNotFound) {
+				createLeftFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 				createRightFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-			if (bestRowBottom != kNotFound)
+			}
+			if (bestRowBottom != kNotFound) {
+				createTopFace((int)cropRect.x, bestRowBottom, (int)cropRect.x + (int)cropRect.width - 1);
 				createBottomFace((int)cropRect.x, bestRowBottom, (int)cropRect.x + (int)cropRect.width - 1);
-			if (bestRowTop != kNotFound)
+			}
+			if (bestRowTop != kNotFound) {
 				createTopFace((int)cropRect.x, bestRowTop, (int)cropRect.x + (int)cropRect.width - 1);
+				createBottomFace((int)cropRect.x, bestRowTop, (int)cropRect.x + (int)cropRect.width - 1);
+			}
 		} else {
 			if (xFaces) {
 				for (int x = 0; x <= subImageWidth; ++x) {
