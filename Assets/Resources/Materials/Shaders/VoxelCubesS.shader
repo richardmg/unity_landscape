@@ -3,8 +3,6 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_GradientSunSide ("Gradient sunside", Range(0, 1)) = 0.1
-		_GradientShadeSide ("Gradient shadeside", Range(0, 1)) = 0.5
 		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
 		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
 		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
@@ -15,6 +13,7 @@
 		_Specular ("Specular", Range(0, 1)) = 0.8
 		_Attenuation ("Attenuation", Range(0.0001, 1.0)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.2
+		_Gradient ("Gradient", Range(0, 0.6)) = 0.3
 	}
 	SubShader
 	{
@@ -44,8 +43,7 @@
 			float _VoxelateZ;
 			float _VoxelateStrength;
 
-			float _GradientSunSide;
-			float _GradientShadeSide;
+			float _Gradient;
 
 			float _BaseLight;
 			float _AmbientLight;
@@ -189,10 +187,8 @@
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
 				float3 uvSubImage = (i.uvAtlas - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-				float3 uvEffectiveSubImage = uvSubImage / float3(i.extra.x, i.extra.y, 1);
-				float3 voxelUnclamped = uvSubImage * subImageSize;
-				float3 voxel = min(voxelUnclamped, subImageSize - 1);
-				float3 uvVoxel = frac(voxelUnclamped);
+				float3 voxel = min(uvSubImage * subImageSize, subImageSize - 1);
+				float3 uvVoxel = frac(voxel);
 
 			 	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
 
@@ -205,8 +201,9 @@
 
 				float sunDist = dot(normalize(i.normal), _SunPos);
 				float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
-				float sunLight = _Sunshine * sunAffection * _BaseLight;
-				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular * _BaseLight));
+				float sunLight = _Sunshine * sunAffection;
+				c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular));
+				c *= _BaseLight;
 					
 				////////////////////////////////////////////////////////
 				// Apply alternate voxel color
@@ -217,7 +214,16 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at cube edges
 
-				c *= if_else(isFrontOrBackSide, (1 + _EdgeSharp) * _BaseLight, 1);
+				float sideSharp = 1 + if_else(isFrontOrBackSide, _EdgeSharp, 0);
+				c *= sideSharp;
+
+				////////////////////////////////////////////////////////
+				// Apply gradient
+
+				float gradient = (1 - _Gradient) + (uvSubImage.y * _Gradient * sideSharp);
+				c *= if_else(isFrontOrBackSide, gradient, 1);
+
+				////////////////////////////////////////////////////////
 
 				return c;
 			}
