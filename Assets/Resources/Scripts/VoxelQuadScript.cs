@@ -199,7 +199,7 @@ public class VoxelQuadScript : MonoBehaviour {
 
 			float uvZ = v.z / (voxelDepth * 2);
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, faceDirectionList[i] + uvZ, voxelDepth);
-			normals[i] = getVolumeNormal(new Vector3(v.x, v.y, v.z));
+			normals[i] = getVolumeNormal(v);
 		}
 
 		mesh.uv = uvList.ToArray();

@@ -8,13 +8,9 @@ public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
 	public float cascade = 0.0f;
-	public bool includeVoxelDepthInNormalVolume = false;
 	public bool drawXFaces = true;
 	public bool drawYFaces = true;
 	public bool drawZFaces = true;
-	public bool fillHoles = false;
-	public bool oneCubePerRow = false; // Fill inner holes, only keep longest line on the outside
-	public bool oneCubePerObject = false;
 	public bool shareVertices = true;
 
 	// Read-only, for editor inspection
@@ -65,12 +61,19 @@ public class VoxelCubesScript : MonoBehaviour {
 		rebuildObject();
 	}
 
-	Vector3 getVolumeNormal(Vector3 vertex, Vector3 objectCenter, Vector3 volumeSize)
+	Vector3 getVolumeNormal(Vector3 vertex)
 	{
+		// Shape normal volume from rectangular to square
+		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
+		Vector3 objectCenter = effectiveSize * 0.5f;
+		float size = Mathf.Max(volumeSize.x, volumeSize.y);
+		volumeSize = new Vector3(size, size, volumeSize.z);
+
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
 		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
 		Vector3 n = kVecBottomLeft + Vector3.Scale(normalizedVertex, kVecDeltaNormal);
 		n /= gameObject.transform.localScale.x;
+
 		return n;
 	}
 
@@ -112,26 +115,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		if (drawZFaces)
 			createFacesForZ();
 
-		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
-		Vector3 objectCenter = effectiveSize * 0.5f;
-
-		if (voxelDepth == 0) {
-			volumeSize.z = 1;
-			objectCenter.z = 0.5f;
-		}
-
-		float size = Mathf.Max(volumeSize.x, volumeSize.y);
-		if (includeVoxelDepthInNormalVolume) {
-			// Gives bad result for small voxel depths
-			size = Mathf.Max(size, volumeSize.z);
-			volumeSize = new Vector3(size, size, size);
-		} else {
-			volumeSize = new Vector3(size, size, volumeSize.z);
-		}
-
-		// Add a small offset to center, to not fall exactly between two pixels
-//		objectCenter -= new Vector3((objectCenter.x % 2 == 0) ? 0.5f : 0, (objectCenter.y % 2 == 0) ? 0.5f : 0, 0);
-
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
 		mesh.triangles = tri.ToArray();
@@ -153,15 +136,7 @@ public class VoxelCubesScript : MonoBehaviour {
 			// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
 			int normalCode = normalCodeList[i];
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode, voxelDepth);
-
-			if (voxelDepth == 0) {
-				if (normalCode == kBack || (normalCode >= kBackBottomLeft && normalCode <= kBackTopRight))
-					normals[i] = getVolumeNormal(new Vector3(v.x, v.y, 1), objectCenter, volumeSize);
-				else
-					normals[i] = getVolumeNormal(v, objectCenter, volumeSize);
-			} else {
-				normals[i] = getVolumeNormal(v, objectCenter, volumeSize);
-			}
+			normals[i] = getVolumeNormal(v);
 		}
 
 		mesh.uv = vertexPixelList.ToArray();
