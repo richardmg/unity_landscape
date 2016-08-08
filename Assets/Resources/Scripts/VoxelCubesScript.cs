@@ -8,7 +8,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
 
-	public bool volume = false;
+	public bool useVolume = false;
 	public bool xFaces = true;
 	public bool yFaces = true;
 	public bool zFaces = true;
@@ -102,23 +102,10 @@ public class VoxelCubesScript : MonoBehaviour {
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 		effectiveRect = calculateEffectiveRect();
 
-		// Traverse each row in the texture
-		if (xFaces) {
-			for (int x = 0; x < subImageWidth; ++x) {
-				createFacesForX(x, kLeft);
-				createFacesForX(x, kRight);
-			}
-		}
-
-		if (yFaces) {
-			for (int y = 0; y < subImageHeight; ++y) {
-				createFacesForY(y, kBottom);
-				createFacesForY(y, kTop);
-			}
-		}
-
-		if (zFaces)
-			createFacesForZ();
+		if (useVolume)
+			createVolumeMesh();
+		else
+			createExactMesh();
 
 		Mesh mesh = new Mesh();
 		mesh.vertices = verticeList.ToArray();
@@ -155,6 +142,30 @@ public class VoxelCubesScript : MonoBehaviour {
 
 		readonlyVertexCount = mesh.vertices.Length;
 		readonlyTriangleCount = tri.Count / 3;
+	}
+
+	public void createExactMesh()
+	{
+		if (xFaces) {
+			for (int x = 0; x < subImageWidth; ++x) {
+				createFacesForX(x, kLeft);
+				createFacesForX(x, kRight);
+			}
+		}
+
+		if (yFaces) {
+			for (int y = 0; y < subImageHeight; ++y) {
+				createFacesForY(y, kBottom);
+				createFacesForY(y, kTop);
+			}
+		}
+
+		if (zFaces)
+			createFacesForZ();
+	}
+
+	public void createVolumeMesh()
+	{
 	}
 
 	bool normalCodeIsExclusive(NormalCode n)
