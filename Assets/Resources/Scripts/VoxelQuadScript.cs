@@ -8,10 +8,11 @@ public class VoxelQuadScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 1;
 
-	public bool quadCountX = false;
-	public bool quadCountY = false;
-	public bool dominatingX = true;
-	public bool dominatingY = true;
+	public bool xFaces = false;
+	public bool yFaces = false;
+	public bool dominatingXFace = true;
+	public bool dominatingYFace = true;
+	public bool cubify = false;
 
 	public int quadCountZ = 4;
 	public float planeOffset = 0;
@@ -92,7 +93,7 @@ public class VoxelQuadScript : MonoBehaviour {
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
 		effectiveRect = calculateEffectiveRect();
 
-		if (quadCountX) {
+		if (xFaces) {
 			float deltaX = subImageWidth / Mathf.Max(1, subImageWidth - 1);
 			for (int x = 0; x <= subImageWidth; ++x) {
 				Vector2 singleFaceCount = countSingleFacesForCol(x);
@@ -103,7 +104,7 @@ public class VoxelQuadScript : MonoBehaviour {
 			}
 		}
 
-		if (quadCountY) {
+		if (yFaces) {
 			float deltaY = subImageHeight / Mathf.Max(1, subImageHeight - 1);
 			for (int y = 0; y <= subImageHeight; ++y) {
 				Vector2 singleFaceCount = countSingleFacesForRow(y);
@@ -114,7 +115,7 @@ public class VoxelQuadScript : MonoBehaviour {
 			}
 		}
 
-		if (dominatingX) {
+		if (dominatingXFace) {
 			int bestColLeft = kNotFound;
 			int bestColRight = kNotFound;
 			int x2 = (int)effectiveRect.x + (int)(effectiveRect.width / 2);
@@ -145,7 +146,7 @@ public class VoxelQuadScript : MonoBehaviour {
 				createRightQuad(bestColRight + 1);
 		}
 
-		if (dominatingY) {
+		if (dominatingYFace) {
 			int bestRowBottom = kNotFound;
 			int bestRowTop = kNotFound;
 			int y2 = (int)effectiveRect.y + (int)(effectiveRect.height / 2);
