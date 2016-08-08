@@ -152,7 +152,7 @@ public class VoxelCubesScript : MonoBehaviour {
 
 			// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
 			int normalCode = normalCodeList[i];
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode + (effectiveSize.x / (2 * subImageWidth)), (int)(voxelDepth * 100) + (effectiveSize.y / (2 * subImageHeight)));
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode, voxelDepth);
 
 			if (voxelDepth == 0) {
 				if (normalCode == kBack || (normalCode >= kBackBottomLeft && normalCode <= kBackTopRight))

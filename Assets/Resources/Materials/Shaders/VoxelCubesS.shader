@@ -140,10 +140,7 @@
 			v2f vert (appdata v)
 			{
 				int vertexCode = (int)v.cubeDesc.b;
-				float voxelDepth = v.cubeDesc.a / 100;
-
-				float uvSubImageEffectiveWidth = frac(v.cubeDesc.a) * 2;
-				float uvSubImageEffectiveHeight = frac(v.cubeDesc.b) * 2;
+				float voxelDepth = v.cubeDesc.a;
 
 				v2f o;
 				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
@@ -151,7 +148,7 @@
 				o.objNormal = normalForCode[vertexCode];
 				o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
 				o.pixel = float4(v.pixel + 0.5, 0, 0);
-				o.extra = float4(uvSubImageEffectiveWidth, uvSubImageEffectiveHeight, voxelDepth, 0);
+				o.extra = float4(0, 0, voxelDepth, 0);
 				return o;
 			}
 			

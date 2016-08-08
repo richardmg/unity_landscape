@@ -197,3 +197,8 @@
                 Other "unused" vertices uses the number 0. When a triangle is interpolated, only
                 the dominant corner will be used, and I should be able to read out if a
                 color value is above or below 0.
+
+            - send pixel from both scripts. Send uvZ from both scripts. Then they should produce the
+                same data.
+            - Figure out why uv clamping based on pixel is not accurate.
+            - See if I can calculate normals in VC script the same way as in VQ script
