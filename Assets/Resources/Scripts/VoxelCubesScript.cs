@@ -26,7 +26,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	Texture2D texture;
 	int startPixelX;
 	int startPixelY;
-	Rect effectiveRect;
+	Rect cropRect;
 
 	const int subImageWidth = 16;
 	const int subImageHeight = 8;
@@ -69,8 +69,8 @@ public class VoxelCubesScript : MonoBehaviour {
 	Vector3 getVolumeNormal(Vector3 vertex)
 	{
 		// Shape normal volume from rectangular to square
-		Vector3 volumeSize = new Vector3(effectiveRect.width, effectiveRect.height, voxelDepth);
-		Vector3 objectCenter = new Vector3(effectiveRect.width * 0.5f, effectiveRect.height * 0.5f, voxelDepth / 2);
+		Vector3 volumeSize = new Vector3(cropRect.width, cropRect.height, voxelDepth);
+		Vector3 objectCenter = new Vector3(cropRect.width * 0.5f, cropRect.height * 0.5f, voxelDepth / 2);
 		float size = Mathf.Max(volumeSize.x, volumeSize.y);
 		volumeSize = new Vector3(size, size, volumeSize.z);
 
@@ -89,7 +89,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		normalCodeList.Clear();
 		tri.Clear();
 
-		effectiveRect = new Rect(0, 0, 0, 0);
+		cropRect = new Rect(0, 0, 0, 0);
 		Vector3 scale = gameObject.transform.localScale;
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
@@ -101,7 +101,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		// based on the local position of the vertices themselves.
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-		effectiveRect = calculateEffectiveRect();
+		cropRect = calculatecropRect();
 
 		if (useVolume)
 			createVolumeMesh();
@@ -171,9 +171,9 @@ public class VoxelCubesScript : MonoBehaviour {
 			for (int x = 0; x <= subImageWidth; ++x) {
 				Vector2 singleFaceCount = countSingleFacesForCol(x);
 				if (singleFaceCount.x > 0)
-					createLeftFace(x, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+					createLeftFace(x, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 				if (singleFaceCount.y > 0)
-					createRightFace(x - 1, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+					createRightFace(x - 1, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 			}
 		}
 
@@ -181,19 +181,19 @@ public class VoxelCubesScript : MonoBehaviour {
 			for (int y = 0; y <= subImageHeight; ++y) {
 				Vector2 singleFaceCount = countSingleFacesForRow(y);
 				if (singleFaceCount.x > 0)
-					createBottomFace((int)effectiveRect.x, y, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+					createBottomFace((int)cropRect.x, y, (int)cropRect.x + (int)cropRect.width - 1);
 				if (singleFaceCount.y > 0)
-					createTopFace((int)effectiveRect.x, y - 1, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+					createTopFace((int)cropRect.x, y - 1, (int)cropRect.x + (int)cropRect.width - 1);
 			}
 		}
 
 		if (dominatingXFace) {
 			int bestColLeft = kNotFound;
 			int bestColRight = kNotFound;
-			int x2 = (int)effectiveRect.x + (int)(effectiveRect.width / 2);
+			int x2 = (int)cropRect.x + (int)(cropRect.width / 2);
 
 			int bestCount = 0;
-			for (int x = (int)effectiveRect.x; x <= x2; ++x) {
+			for (int x = (int)cropRect.x; x <= x2; ++x) {
 				int count = countPixelsForCol(x);
 				if (count > bestCount) {
 					bestColLeft = x;
@@ -211,18 +211,18 @@ public class VoxelCubesScript : MonoBehaviour {
 			}
 
 			if (bestColLeft != kNotFound)
-				createLeftFace(bestColLeft, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+				createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 			if (bestColRight != kNotFound)
-				createRightFace(bestColRight + 1, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+				createRightFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 		}
 
 		if (dominatingYFace) {
 			int bestRowBottom = kNotFound;
 			int bestRowTop = kNotFound;
-			int y2 = (int)effectiveRect.y + (int)(effectiveRect.height / 2);
+			int y2 = (int)cropRect.y + (int)(cropRect.height / 2);
 
 			int bestCount = 0;
-			for (int y = (int)effectiveRect.y; y <= y2; ++y) {
+			for (int y = (int)cropRect.y; y <= y2; ++y) {
 				int count = countPixelsForRow(y);
 				if (count > bestCount) {
 					bestRowBottom = y;
@@ -240,25 +240,25 @@ public class VoxelCubesScript : MonoBehaviour {
 			}
 
 			if (bestRowBottom != kNotFound)
-				createBottomFace((int)effectiveRect.x, bestRowBottom, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+				createBottomFace((int)cropRect.x, bestRowBottom, (int)cropRect.x + (int)cropRect.width - 1);
 			if (bestRowTop != kNotFound)
-				createTopFace((int)effectiveRect.x, bestRowTop + 1, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+				createTopFace((int)cropRect.x, bestRowTop, (int)cropRect.x + (int)cropRect.width - 1);
 		}
 
 		if (zFaces) {
 			float deltaZ = voxelDepth / Mathf.Max(1, volumeFaceCountZ - 1);
 			for (int z = 0; z < volumeFaceCountZ - 1; ++z)
 				createFrontFace(
-					(int)effectiveRect.x,
-					(int)effectiveRect.y,
-					(int)effectiveRect.x + (int)effectiveRect.width - 1,
-					(int)effectiveRect.y + (int)effectiveRect.height - 1,
+					(int)cropRect.x,
+					(int)cropRect.y,
+					(int)cropRect.x + (int)cropRect.width - 1,
+					(int)cropRect.y + (int)cropRect.height - 1,
 					z * deltaZ); 
 
 			createBackFace(
-				(int)effectiveRect.x, (int)effectiveRect.y,
-				(int)effectiveRect.x + (int)effectiveRect.width - 1,
-				(int)effectiveRect.y + (int)effectiveRect.height - 1); 
+				(int)cropRect.x, (int)cropRect.y,
+				(int)cropRect.x + (int)cropRect.width - 1,
+				(int)cropRect.y + (int)cropRect.height - 1); 
 		}
 	}
 
@@ -284,7 +284,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		return true;
 	}
 
-	Rect calculateEffectiveRect()
+	Rect calculatecropRect()
 	{
 		int x1 = 0;
 		int y1 = 0;
