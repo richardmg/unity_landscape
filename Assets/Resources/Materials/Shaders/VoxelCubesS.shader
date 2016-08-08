@@ -125,24 +125,29 @@
 				float3(1, 1, 1),	// top right back
  			};
 
- 			inline int hasValue(float value)
- 			{
- 				return sign(abs(value));
- 			}
-
- 			inline float ifTrue(float testValue, float expr)
- 			{
- 				// testValue in [0, 1]
- 				// Returns 1 if testValue == 0, otherwise expr
- 				return 1 + (sign(abs(testValue)) * (expr - 1));
- 			}
-
- 			inline float if_gt(float x, float y) {
-  				return max(sign(x - y), 0.0);
+			inline float if_eq(float x, float y)
+			{
+				return 1.0 - abs(sign(x - y));
 			}
 
-			inline float if_lt(float x, float y) {
-  				return max(sign(y - x), 0.0);
+			inline float if_neq(float x, float y)
+			{
+				return abs(sign(x - y));
+			}
+
+			inline float if_gt(float x, float y)
+			{
+				return max(sign(x - y), 0.0);
+			}
+
+			inline float if_lt(float x, float y)
+			{
+				return max(sign(y - x), 0.0);
+			}
+
+			inline float if_else(float testValue, float ifExpr, float elseExpr)
+			{
+				return elseExpr + (if_neq(testValue, 0) * (ifExpr - elseExpr));
 			}
 
 			v2f vert (appdata v)
@@ -189,7 +194,7 @@
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
 				float3 uvVoxel = frac(voxelUnclamped);
 
-			 	int isFrontOrBackSide = hasValue(i.objNormal.z);
+			 	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
 
 				////////////////////////////////////////////////////////
 				// Fetch main atlas color
@@ -212,7 +217,7 @@
 				////////////////////////////////////////////////////////
 				// Sharpen contrast at cube edges
 
-				c *= ifTrue(isFrontOrBackSide, 1 + (_EdgeSharp * _BaseLight));
+				c *= if_else(isFrontOrBackSide, (1 + _EdgeSharp) * _BaseLight, 1);
 
 				return c;
 			}
