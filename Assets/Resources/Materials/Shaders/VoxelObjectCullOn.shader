@@ -1,4 +1,4 @@
-﻿Shader "Custom/VoxelCubesS"
+﻿Shader "Custom/VoxelObjectCullOn"
 {
 	Properties
 	{
