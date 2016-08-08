@@ -7,10 +7,15 @@ using NormalCode = System.Int32;
 public class VoxelCubesScript : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
-	public float cascade = 0.0f;
-	public bool drawXFaces = true;
-	public bool drawYFaces = true;
-	public bool drawZFaces = true;
+
+	public bool volume = false;
+	public bool xFaces = true;
+	public bool yFaces = true;
+	public bool zFaces = true;
+	public bool dominatingXFace = true;
+	public bool dominatingYFace = true;
+	public bool cubify = false;
+
 	public bool shareVertices = true;
 
 	// Read-only, for editor inspection
@@ -20,8 +25,7 @@ public class VoxelCubesScript : MonoBehaviour {
 	Texture2D texture;
 	int startPixelX;
 	int startPixelY;
-
-	Vector3 effectiveSize;
+	Rect effectiveRect;
 
 	const int subImageWidth = 16;
 	const int subImageHeight = 8;
@@ -64,8 +68,8 @@ public class VoxelCubesScript : MonoBehaviour {
 	Vector3 getVolumeNormal(Vector3 vertex)
 	{
 		// Shape normal volume from rectangular to square
-		Vector3 volumeSize = new Vector3(effectiveSize.x, effectiveSize.y, voxelDepth);
-		Vector3 objectCenter = effectiveSize * 0.5f;
+		Vector3 volumeSize = new Vector3(effectiveRect.width, effectiveRect.height, voxelDepth);
+		Vector3 objectCenter = new Vector3(effectiveRect.width * 0.5f, effectiveRect.height * 0.5f, voxelDepth / 2);
 		float size = Mathf.Max(volumeSize.x, volumeSize.y);
 		volumeSize = new Vector3(size, size, volumeSize.z);
 
@@ -84,7 +88,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		normalCodeList.Clear();
 		tri.Clear();
 
-		effectiveSize = new Vector3(0, 0, voxelDepth);
+		effectiveRect = new Rect(0, 0, 0, 0);
 		Vector3 scale = gameObject.transform.localScale;
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
@@ -96,23 +100,24 @@ public class VoxelCubesScript : MonoBehaviour {
 		// based on the local position of the vertices themselves.
 		startPixelX = (atlasIndex * subImageWidth) % texture.width;
 		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		effectiveRect = calculateEffectiveRect();
 
 		// Traverse each row in the texture
-		if (drawXFaces) {
+		if (xFaces) {
 			for (int x = 0; x < subImageWidth; ++x) {
 				createFacesForX(x, kLeft);
 				createFacesForX(x, kRight);
 			}
 		}
 
-		if (drawYFaces) {
+		if (yFaces) {
 			for (int y = 0; y < subImageHeight; ++y) {
 				createFacesForY(y, kBottom);
 				createFacesForY(y, kTop);
 			}
 		}
 
-		if (drawZFaces)
+		if (zFaces)
 			createFacesForZ();
 
 		Mesh mesh = new Mesh();
@@ -172,6 +177,60 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 
 		return true;
+	}
+
+	Rect calculateEffectiveRect()
+	{
+		int x1 = 0;
+		int y1 = 0;
+		int x2 = 0;
+		int y2 = 0;
+
+		for (x1 = 0; x1 < subImageWidth; ++x1) {
+			if (countPixelsForCol(x1) > 0)
+				break;
+		}
+
+		for (x2 = subImageWidth; x2 > x1; --x2) {
+			if (countPixelsForCol(x2 - 1) > 0)
+				break;
+		}
+
+		for (y1 = 0; y1 < subImageHeight; ++y1) {
+			if (countPixelsForRow(y1) > 0)
+				break;
+		}
+
+		for (y2 = subImageHeight; y2 > y1; --y2) {
+			if (countPixelsForRow(y2 - 1) > 0)
+				break;
+		}
+
+		return new Rect(x1, y1, x2 - x1, y2 -y1);
+	}
+
+	int countPixelsForCol(int x)
+	{
+		int count = 0;
+		for (int y = 0; y < subImageHeight; ++y) {
+			Color c1 = texture.GetPixel(startPixelX + x, startPixelY + y);
+			if (c1.a != 0)
+				++count;
+		}
+
+		return count;
+	}
+
+	int countPixelsForRow(int y)
+	{
+		int count = 0;
+		for (int x = 0; x < subImageWidth; ++x) {
+			Color c1 = texture.GetPixel(startPixelX + x, startPixelY + y);
+			if (c1.a != 0)
+				++count;
+		}
+
+		return count;
 	}
 
 	int getFirstFaceForX(int startX, int startY, NormalCode face, bool searchForVisible)
@@ -332,9 +391,6 @@ public class VoxelCubesScript : MonoBehaviour {
 		verticeList.Add(v);
 		normalCodeList.Add(normalCode);
 		vertexPixelList.Add(pixel);
-
-		effectiveSize.x = Mathf.Max(effectiveSize.x, x);
-		effectiveSize.y = Mathf.Max(effectiveSize.y, y);
 
 		return verticeList.Count - 1;
 	}
