@@ -119,8 +119,6 @@ public class VoxelQuadScript : MonoBehaviour {
 			int bestColLeft = kNotFound;
 			int bestColRight = kNotFound;
 			int x2 = (int)effectiveRect.x + (int)(effectiveRect.width / 2);
-			if (gameObject.name == "VoxelVolume")
-				print(effectiveRect.x + ", " + x2);
 
 			int bestCount = 0;
 			for (int x = (int)effectiveRect.x; x <= x2; ++x) {

@@ -66,7 +66,7 @@
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
 
-			static float4 _ClampOffset = float4(0.0001, 0.0001, -0.0001, -0.0001);
+			static float _ClampOffset = 0.0001;
 			static fixed4 red = fixed4(1, 0, 0, 1);
 			static float3 _SunPos = normalize(float3(0, 0, 1));
 
@@ -137,6 +137,14 @@
  				return 1 + (sign(abs(testValue)) * (expr - 1));
  			}
 
+ 			inline float if_gt(float x, float y) {
+  				return max(sign(x - y), 0.0);
+			}
+
+			inline float if_lt(float x, float y) {
+  				return max(sign(y - x), 0.0);
+			}
+
 			v2f vert (appdata v)
 			{
 				int vertexCode = (int)v.cubeDesc.b;
@@ -147,7 +155,7 @@
 				o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 				o.objNormal = normalForCode[vertexCode];
 				o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
-				o.pixel = float4(v.pixel + 0.5, 0, 0);
+				o.pixel = float4(v.pixel, 0, 0);
 				o.extra = float4(0, 0, voxelDepth, 0);
 				return o;
 			}
@@ -159,16 +167,23 @@
 
 				float3 textureSize = float3(_TextureWidth, _TextureHeight, i.extra.z);
 				float3 uvAtlasOnePixel = 1.0f / textureSize;
-				float2 uvPixelMin = (i.pixel - 0.45) / textureSize;
-				float2 uvPixelMax = (i.pixel + 0.45) / textureSize;
-				float3 uvAtlasClamped = clamp(i.uvAtlas, float3(uvPixelMin, 0), float3(uvPixelMax, (1 - _ClampOffset.x)));
+				float3 uvAtlasHalfPixel = uvAtlasOnePixel / 2;
+				float2 uvPixel = i.pixel / textureSize;
+
+				float3 uvAtlasClamped = i.uvAtlas;
+				float diffX = i.uvAtlas.x - uvPixel.x;
+				float diffY = i.uvAtlas.y - uvPixel.y;
+				uvAtlasClamped.x -= if_gt(diffX, uvAtlasOnePixel.x - _ClampOffset) * uvAtlasHalfPixel.x;
+				uvAtlasClamped.y -= if_gt(diffY, uvAtlasOnePixel.y - _ClampOffset) * uvAtlasHalfPixel.y;
+				uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * uvAtlasHalfPixel.x;
+				uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * uvAtlasHalfPixel.y;
 
 				float3 subImageSize = float3(_SubImageWidth, _SubImageHeight, i.extra.z);
 				float3 uvAtlasSubImageSize = subImageSize / textureSize;
 				float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
 				float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
-				float3 uvSubImage = (uvAtlasClamped - uvSubImageBottomLeft) / uvAtlasSubImageSize;
+				float3 uvSubImage = (i.uvAtlas - uvSubImageBottomLeft) / uvAtlasSubImageSize;
 				float3 uvEffectiveSubImage = uvSubImage / float3(i.extra.x, i.extra.y, 1);
 				float3 voxelUnclamped = uvSubImage * subImageSize;
 				float3 voxel = min(voxelUnclamped, subImageSize - 1);
