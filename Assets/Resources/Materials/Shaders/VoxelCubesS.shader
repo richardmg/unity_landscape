@@ -196,6 +196,12 @@
 				// Fetch main atlas color
 				fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
+				if (c.a == 0) {
+					// REMOVE ME; Only use when using volume
+					discard;
+					return c;
+				}
+
 				////////////////////////////////////////////////////////
 				// Apply lightning
 

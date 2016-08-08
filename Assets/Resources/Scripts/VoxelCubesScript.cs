@@ -12,8 +12,9 @@ public class VoxelCubesScript : MonoBehaviour {
 	public bool xFaces = true;
 	public bool yFaces = true;
 	public bool zFaces = true;
-	public bool dominatingXFace = true;
-	public bool dominatingYFace = true;
+	public bool dominatingXFace = false;
+	public bool dominatingYFace = false;
+	public int volumeFaceCountZ = 2;
 	public bool cubify = false;
 
 	public bool shareVertices = true;
@@ -166,6 +167,99 @@ public class VoxelCubesScript : MonoBehaviour {
 
 	public void createVolumeMesh()
 	{
+		if (xFaces) {
+			for (int x = 0; x <= subImageWidth; ++x) {
+				Vector2 singleFaceCount = countSingleFacesForCol(x);
+				if (singleFaceCount.x > 0)
+					createLeftFace(x, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+				if (singleFaceCount.y > 0)
+					createRightFace(x - 1, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+			}
+		}
+
+		if (yFaces) {
+			for (int y = 0; y <= subImageHeight; ++y) {
+				Vector2 singleFaceCount = countSingleFacesForRow(y);
+				if (singleFaceCount.x > 0)
+					createBottomFace((int)effectiveRect.x, y, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+				if (singleFaceCount.y > 0)
+					createTopFace((int)effectiveRect.x, y - 1, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+			}
+		}
+
+		if (dominatingXFace) {
+			int bestColLeft = kNotFound;
+			int bestColRight = kNotFound;
+			int x2 = (int)effectiveRect.x + (int)(effectiveRect.width / 2);
+
+			int bestCount = 0;
+			for (int x = (int)effectiveRect.x; x <= x2; ++x) {
+				int count = countPixelsForCol(x);
+				if (count > bestCount) {
+					bestColLeft = x;
+					bestCount = count;
+				}
+			}
+
+			bestCount = 0;
+			for (int x = subImageWidth - 1; x >= x2; --x) {
+				int count = countPixelsForCol(x);
+				if (count > bestCount) {
+					bestColRight = x;
+					bestCount = count;
+				}
+			}
+
+			if (bestColLeft != kNotFound)
+				createLeftFace(bestColLeft, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+			if (bestColRight != kNotFound)
+				createRightFace(bestColRight + 1, (int)effectiveRect.y, (int)effectiveRect.y + (int)effectiveRect.height - 1);
+		}
+
+		if (dominatingYFace) {
+			int bestRowBottom = kNotFound;
+			int bestRowTop = kNotFound;
+			int y2 = (int)effectiveRect.y + (int)(effectiveRect.height / 2);
+
+			int bestCount = 0;
+			for (int y = (int)effectiveRect.y; y <= y2; ++y) {
+				int count = countPixelsForRow(y);
+				if (count > bestCount) {
+					bestRowBottom = y;
+					bestCount = count;
+				}
+			}
+
+			bestCount = 0;
+			for (int y = subImageHeight - 1; y >= y2; --y) {
+				int count = countPixelsForRow(y);
+				if (count > bestCount) {
+					bestRowTop = y;
+					bestCount = count;
+				}
+			}
+
+			if (bestRowBottom != kNotFound)
+				createBottomFace((int)effectiveRect.x, bestRowBottom, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+			if (bestRowTop != kNotFound)
+				createTopFace((int)effectiveRect.x, bestRowTop + 1, (int)effectiveRect.x + (int)effectiveRect.width - 1);
+		}
+
+		if (zFaces) {
+			float deltaZ = voxelDepth / Mathf.Max(1, volumeFaceCountZ - 1);
+			for (int z = 0; z < volumeFaceCountZ - 1; ++z)
+				createFrontFace(
+					(int)effectiveRect.x,
+					(int)effectiveRect.y,
+					(int)effectiveRect.x + (int)effectiveRect.width - 1,
+					(int)effectiveRect.y + (int)effectiveRect.height - 1,
+					z * deltaZ); 
+
+			createBackFace(
+				(int)effectiveRect.x, (int)effectiveRect.y,
+				(int)effectiveRect.x + (int)effectiveRect.width - 1,
+				(int)effectiveRect.y + (int)effectiveRect.height - 1); 
+		}
 	}
 
 	bool normalCodeIsExclusive(NormalCode n)
@@ -242,6 +336,42 @@ public class VoxelCubesScript : MonoBehaviour {
 		}
 
 		return count;
+	}
+
+	Vector2 countSingleFacesForCol(int x)
+	{
+		Vector2 faceCount = new Vector2();
+		for (int y = 0; y < subImageHeight; ++y) {
+			Color c1 = (x == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
+			Color c2 = (x == 0) ? Color.clear : texture.GetPixel(startPixelX + x - 1, startPixelY + y);
+			if (c1.a == c2.a)
+				continue;
+
+			if (c1.a != 0)
+				faceCount.x = faceCount.x + 1;
+			else
+				faceCount.y = faceCount.y + 1;
+		}
+
+		return faceCount;
+	}
+
+	Vector2 countSingleFacesForRow(int y)
+	{
+		Vector2 faceCount = new Vector2();
+		for (int x = 0; x < subImageWidth; ++x) {
+			Color c1 = (y == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
+			Color c2 = (y == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y - 1);
+			if (c1.a == c2.a)
+				continue;
+
+			if (c1.a != 0)
+				faceCount.x = faceCount.x + 1;
+			else
+				faceCount.y = faceCount.y + 1;
+		}
+
+		return faceCount;
 	}
 
 	int getFirstFaceForX(int startX, int startY, NormalCode face, bool searchForVisible)
@@ -363,7 +493,7 @@ public class VoxelCubesScript : MonoBehaviour {
 				while (y2 < subImageHeight - 1 && isFace(x1, y2 + 1, x2 - 1))
 					++y2;
 				
-				createFrontFace(x1, y1, x2 - 1, y2);
+				createFrontFace(x1, y1, x2 - 1, y2, 0);
 				createBackFace(x1, y1, x2 - 1, y2);
 			}
 		}
@@ -478,17 +608,17 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Add(index7);
 	}
 
-	void createFrontFace(float pixelX1, float pixelY1, float pixelX2, float pixelY2)
+	void createFrontFace(int pixelX1, int pixelY1, int pixelX2, int pixelY2, float z)
 	{
 		Vector2 pixelBottomLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY1);
 		Vector2 pixelBottomRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY1);
 		Vector2 pixelTopLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
 		Vector2 pixelTopRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY2);
 
-		int index0 = createVertex(pixelX1, pixelY1, 0, pixelBottomLeft, kFrontBottomLeft);
-		int index1 = createVertex(pixelX1, pixelY2 + 1, 0, pixelTopLeft, kFront);
-		int index2 = createVertex(pixelX2 + 1, pixelY1, 0, pixelBottomRight, kFrontBottomRight);
-		int index3 = createVertex(pixelX2 + 1, pixelY2 + 1, 0, pixelTopRight, kFrontTopRight);
+		int index0 = createVertex(pixelX1, pixelY1, z, pixelBottomLeft, kFrontBottomLeft);
+		int index1 = createVertex(pixelX1, pixelY2 + 1, z, pixelTopLeft, kFront);
+		int index2 = createVertex(pixelX2 + 1, pixelY1, z, pixelBottomRight, kFrontBottomRight);
+		int index3 = createVertex(pixelX2 + 1, pixelY2 + 1, z, pixelTopRight, kFrontTopRight);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -498,7 +628,7 @@ public class VoxelCubesScript : MonoBehaviour {
 		tri.Add(index3);
 	}
 
-	void createBackFace(float pixelX1, float pixelY1, float pixelX2, float pixelY2)
+	void createBackFace(int pixelX1, int pixelY1, int pixelX2, int pixelY2)
 	{
 		Vector2 pixelBottomLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY1);
 		Vector2 pixelBottomRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY1);
