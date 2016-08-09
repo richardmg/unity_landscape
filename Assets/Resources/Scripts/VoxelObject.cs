@@ -91,32 +91,20 @@ public class VoxelObject : MonoBehaviour {
 		normalCodeList.Clear();
 		tri.Clear();
 
-		cropRect = new Rect(0, 0, 0, 0);
-		Vector3 scale = gameObject.transform.localScale;
-		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
-
 		// Ensure the object has a mesh filter and renderer
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
+
 		if (!meshFilter)
 			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
 		if (!renderer)
 			renderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-
-		if (materialExact == null) {
-			materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
-			materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
-			materialVolumeSimplified = (Material)Resources.Load("Materials/VoxelObjectVolumeSimplified", typeof(Material));
-			Debug.Assert(materialExact != null);
-			Debug.Assert(materialVolume != null);
-			Debug.Assert(materialVolumeSimplified != null);
-		}
+		if (materialExact == null)
+			loadStaticMaterial();
 
 		// Change material depending on configuration
 		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
-		gameObject.GetComponent<Renderer>().sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
-		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
-		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
+		texture = (Texture2D)renderer.sharedMaterial.mainTexture;
 
 		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
 		// verticeList, since those can be calculated directly (and more precisely) in the shader
@@ -161,6 +149,23 @@ public class VoxelObject : MonoBehaviour {
 
 		readonlyVertexCount = mesh.vertices.Length;
 		readonlyTriangleCount = tri.Count / 3;
+	}
+
+	public void loadStaticMaterial()
+	{
+		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
+		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
+		materialVolumeSimplified = (Material)Resources.Load("Materials/VoxelObjectVolumeSimplified", typeof(Material));
+
+		Debug.Assert(materialExact != null);
+		Debug.Assert(materialVolume != null);
+		Debug.Assert(materialVolumeSimplified != null);
+		Debug.Assert(materialExact.mainTexture != null);
+		Debug.Assert(materialVolume.mainTexture != null);
+		Debug.Assert(materialVolumeSimplified.mainTexture != null);
+
+		materialVolume.CopyPropertiesFromMaterial(materialExact);
+		materialVolumeSimplified.CopyPropertiesFromMaterial(materialExact);
 	}
 
 	public void createExactMesh()
