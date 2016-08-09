@@ -153,6 +153,8 @@ public class VoxelObject : MonoBehaviour {
 
 	public void loadStaticMaterial()
 	{
+		print("Loading static material for: " + gameObject.name);
+
 		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
 		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
 		materialVolumeSimplified = (Material)Resources.Load("Materials/VoxelObjectVolumeSimplified", typeof(Material));
