@@ -95,7 +95,16 @@ public class VoxelObject : MonoBehaviour {
 		Vector3 scale = gameObject.transform.localScale;
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
+		// Ensure the object has a mesh filter and renderer
+		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		if (!meshFilter)
+			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
+		if (!renderer)
+			renderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+
 		// Change material depending on configuration
+		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
 		gameObject.GetComponent<Renderer>().sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
@@ -139,10 +148,6 @@ public class VoxelObject : MonoBehaviour {
 		mesh.uv = vertexPixelList.ToArray();
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
-
-		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-		if (!meshFilter)
-			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		meshFilter.mesh = mesh;
 
 		readonlyVertexCount = mesh.vertices.Length;
