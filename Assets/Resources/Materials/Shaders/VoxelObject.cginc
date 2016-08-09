@@ -137,9 +137,6 @@ inline v2f voxelobject_vert(appdata v)
 
 inline fixed4 voxelobject_frag(v2f i)
 {
-	////////////////////////////////////////////////////////
-	// Start by calculating an API that we can use below
-
 	float3 uvAtlasClamped = uvClamped(i);
 
 	float3 textureSize = float3(_TextureSize, i.extra.z);
@@ -155,8 +152,6 @@ inline fixed4 voxelobject_frag(v2f i)
 
  	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
 
-	////////////////////////////////////////////////////////
-	// Fetch main atlas color
 	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
 	#ifndef NO_DISCARD
@@ -180,13 +175,11 @@ inline fixed4 voxelobject_frag(v2f i)
 	#endif
 
 	#ifndef NO_SIDESHARP
-		float sideSharp = 1 + if_else(isFrontOrBackSide, _EdgeSharp, 0);
-		c *= sideSharp;
+		c *= 1 + if_else(isFrontOrBackSide, _EdgeSharp, 0);
 	#endif
 
 	#ifndef NO_GRADIENT
-		float gradient = (1 - _Gradient) + (uvSubImage.y * _Gradient);
-		c *= if_else(isFrontOrBackSide, gradient, 1);
+		c *= if_else(isFrontOrBackSide, (1 - _Gradient) + (uvSubImage.y * _Gradient), 1);
 	#endif
 
 	return c;
