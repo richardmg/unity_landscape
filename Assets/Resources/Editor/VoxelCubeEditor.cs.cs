@@ -17,8 +17,8 @@ public class VoxelCubesEditor : Editor
 
 		if(GUILayout.Button("Sync materials"))
 		{
-			vo.materialVolume.CopyPropertiesFromMaterial(vo.materialExact);
-			vo.materialVolumeSimplified.CopyPropertiesFromMaterial(vo.materialExact);
+			VoxelObject.materialVolume.CopyPropertiesFromMaterial(VoxelObject.materialExact);
+			VoxelObject.materialVolumeSimplified.CopyPropertiesFromMaterial(VoxelObject.materialExact);
 		}
 	}
 }

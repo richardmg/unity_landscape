@@ -17,10 +17,6 @@ public class VoxelObject : MonoBehaviour {
 	public bool simplify = false;
 	public bool cubify = false;
 
-	public Material materialExact;
-	public Material materialVolume;
-	public Material materialVolumeSimplified;
-
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
@@ -32,6 +28,10 @@ public class VoxelObject : MonoBehaviour {
 
 	const int subImageWidth = 16;
 	const int subImageHeight = 8;
+
+	static public Material materialExact;
+	static public Material materialVolume;
+	static public Material materialVolumeSimplified;
 
 	static List<Vector3> verticeList = new List<Vector3>(); 
 	static List<Vector2> vertexPixelList = new List<Vector2>(); 
@@ -102,6 +102,15 @@ public class VoxelObject : MonoBehaviour {
 		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
 		if (!renderer)
 			renderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+
+		if (materialExact == null) {
+			materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
+			materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
+			materialVolumeSimplified = (Material)Resources.Load("Materials/VoxelObjectVolumeSimplified", typeof(Material));
+			Debug.Assert(materialExact != null);
+			Debug.Assert(materialVolume != null);
+			Debug.Assert(materialVolumeSimplified != null);
+		}
 
 		// Change material depending on configuration
 		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
