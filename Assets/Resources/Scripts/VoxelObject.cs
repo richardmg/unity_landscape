@@ -68,6 +68,10 @@ public class VoxelObject : MonoBehaviour {
 		rebuildObject();
 	}
 
+	void Update()
+	{
+	}
+
 	Vector3 getVolumeNormal(Vector3 vertex)
 	{
 		// Shape normal volume from rectangular to square
