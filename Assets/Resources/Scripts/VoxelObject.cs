@@ -17,6 +17,9 @@ public class VoxelObject : MonoBehaviour {
 	public bool simplify = false;
 	public bool cubify = false;
 
+	public Material materialNoDiscard;
+	public Material materialWithDiscard;
+
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
@@ -91,6 +94,8 @@ public class VoxelObject : MonoBehaviour {
 		Vector3 scale = gameObject.transform.localScale;
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
+		// Change material depending on configuration
+		gameObject.GetComponent<Renderer>().material = simplify ? materialWithDiscard : materialNoDiscard;
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
 
