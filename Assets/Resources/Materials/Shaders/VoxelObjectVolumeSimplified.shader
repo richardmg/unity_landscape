@@ -1,4 +1,4 @@
-﻿Shader "Custom/VoxelObjectLod0"
+﻿Shader "Custom/VoxelObjectVolumeSimplified"
 {
 	Properties
 	{
@@ -27,12 +27,13 @@
 
 		Pass
 		{
+			Cull off
+
 			CGPROGRAM
 
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#define USE_LOD0
 			#include "VoxelObject.cginc"
 
 			v2f vert(appdata v)

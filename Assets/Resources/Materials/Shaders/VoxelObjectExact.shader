@@ -1,4 +1,4 @@
-﻿Shader "Custom/VoxelObjectLod1"
+﻿Shader "Custom/VoxelObjectExact"
 {
 	Properties
 	{
@@ -27,16 +27,15 @@
 
 		Pass
 		{
-			cull off
+			Cull Back
 
 			CGPROGRAM
 
 			#pragma vertex vert
 			#pragma fragment frag
 
-			#define USE_LOD1
+			#define NO_DISCARD
 			#include "VoxelObject.cginc"
-
 
 			v2f vert(appdata v)
 			{

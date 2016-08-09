@@ -120,7 +120,7 @@ inline float3 uvClamped(v2f i)
 	return uvAtlasClamped;
 }
 
-v2f voxelobject_vert(appdata v)
+inline v2f voxelobject_vert(appdata v)
 {
 	int vertexCode = (int)v.cubeDesc.b;
 	float voxelDepth = v.cubeDesc.a;
@@ -135,7 +135,7 @@ v2f voxelobject_vert(appdata v)
 	return o;
 }
 
-fixed4 voxelobject_frag(v2f i)
+inline fixed4 voxelobject_frag(v2f i)
 {
 	////////////////////////////////////////////////////////
 	// Start by calculating an API that we can use below
@@ -159,41 +159,35 @@ fixed4 voxelobject_frag(v2f i)
 	// Fetch main atlas color
 	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
-	#ifdef USE_LOD1
-	if (c.a == 0) {
-		discard;
-		return c;
-	}
+	#ifndef NO_DISCARD
+		if (c.a == 0) {
+			discard;
+			return c;
+		}
 	#endif
 
-	////////////////////////////////////////////////////////
-	// Apply lightning
-
-	float sunDist = dot(normalize(i.normal), _SunPos);
-	float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
-	float sunLight = _Sunshine * sunAffection;
-	c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular));
-	c *= _BaseLight;
+	#ifndef NO_LIGHT
+		float sunDist = dot(normalize(i.normal), _SunPos);
+		float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
+		float sunLight = _Sunshine * sunAffection;
+		c *= max(_AmbientLight * _BaseLight, min(sunLight, _Sunshine * _Specular));
+		c *= _BaseLight;
+	#endif
 		
-	////////////////////////////////////////////////////////
-	// Apply alternate voxel color
+	#ifndef NO_VOXELATE
+		int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
+		c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
+	#endif
 
-	int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-	c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
+	#ifndef NO_SIDESHARP
+		float sideSharp = 1 + if_else(isFrontOrBackSide, _EdgeSharp, 0);
+		c *= sideSharp;
+	#endif
 
-	////////////////////////////////////////////////////////
-	// Sharpen contrast at cube edges
-
-	float sideSharp = 1 + if_else(isFrontOrBackSide, _EdgeSharp, 0);
-	c *= sideSharp;
-
-	////////////////////////////////////////////////////////
-	// Apply gradient
-
-	float gradient = (1 - _Gradient) + (uvSubImage.y * _Gradient * sideSharp);
-	c *= if_else(isFrontOrBackSide, gradient, 1);
-
-	////////////////////////////////////////////////////////
+	#ifndef NO_GRADIENT
+		float gradient = (1 - _Gradient) + (uvSubImage.y * _Gradient);
+		c *= if_else(isFrontOrBackSide, gradient, 1);
+	#endif
 
 	return c;
 }
