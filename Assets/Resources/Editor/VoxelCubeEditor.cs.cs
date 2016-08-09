@@ -9,10 +9,16 @@ public class VoxelCubesEditor : Editor
 	{
 		DrawDefaultInspector();
 
-		VoxelObject myScript = (VoxelObject)target;
+		VoxelObject vo = (VoxelObject)target;
 		if(GUILayout.Button("Build Object"))
 		{
-			myScript.rebuildObject();
+			vo.rebuildObject();
+		}
+
+		if(GUILayout.Button("Sync materials"))
+		{
+			vo.materialVolume.CopyPropertiesFromMaterial(vo.materialExact);
+			vo.materialVolumeSimplified.CopyPropertiesFromMaterial(vo.materialExact);
 		}
 	}
 }

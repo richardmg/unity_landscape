@@ -96,7 +96,7 @@ public class VoxelObject : MonoBehaviour {
 		Debug.Assert(scale.x == scale.y && scale.y == scale.z, gameObject.name + " needs a uniform model-View scale to support batching!");
 
 		// Change material depending on configuration
-		gameObject.GetComponent<Renderer>().material = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
+		gameObject.GetComponent<Renderer>().sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
 		MeshRenderer meshRenderer = (MeshRenderer)gameObject.GetComponent<MeshRenderer>();
 		texture = (Texture2D)meshRenderer.sharedMaterial.mainTexture;
 
