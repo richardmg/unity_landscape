@@ -19,7 +19,7 @@ public class DynamicLod : MonoBehaviour {
 	}
 	
 	void Update () {
-		float d = cameraDistance();
+		float d = Vector3.Distance(transform.position, Camera.main.transform.position);
 		Lod lod = d < lodDistance1 ? kLod0 : d < lodDistanceCulled ? kLod1 : kNoLod;
 		if (lod != currentLod) {
 			currentLod = lod;
@@ -31,13 +31,6 @@ public class DynamicLod : MonoBehaviour {
 	{
 		currentLod = kLod0;
 		rebuildObject();
-	}
-
-	public float cameraDistance()
-	{
-		Transform camera = Camera.main.transform;
-		Vector3 heading = transform.position - camera.position;
-		return Vector3.Dot(heading, camera.forward);
 	}
 
 	public void rebuildObject()
