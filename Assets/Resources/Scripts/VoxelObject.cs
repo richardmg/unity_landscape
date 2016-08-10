@@ -66,7 +66,7 @@ public class VoxelObject : MonoBehaviour {
 
 		switch (currentLod) {
 		case kLod0:
-			instance.useVolume = false;
+			instance.useVolume = voxelDepth == 0;
 			instance.simplify = false;
 			break;
 		case kLod1:

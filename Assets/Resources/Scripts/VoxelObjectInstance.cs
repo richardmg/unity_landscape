@@ -15,7 +15,6 @@ public class VoxelObjectInstance : MonoBehaviour {
 	public bool useVolume = false;
 	public int volumeFaceCountZ = 2;
 	public bool simplify = false;
-	public bool cubify = false;
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
@@ -91,11 +90,6 @@ public class VoxelObjectInstance : MonoBehaviour {
 
 	public void rebuildObject()
 	{
-		verticeList.Clear();
-		vertexPixelList.Clear();
-		normalCodeList.Clear();
-		tri.Clear();
-
 		// Ensure the object has a mesh filter and renderer
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
 		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
@@ -107,9 +101,23 @@ public class VoxelObjectInstance : MonoBehaviour {
 		if (materialExact == null)
 			loadStaticMaterial();
 
-		// Change material depending on configuration
 		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
-		texture = (Texture2D)renderer.sharedMaterial.mainTexture;
+
+		meshFilter.mesh = createMesh();
+		readonlyVertexCount = meshFilter.mesh.vertices.Length;
+		readonlyTriangleCount = tri.Count / 3;
+	}
+
+	public Mesh createMesh()
+	{
+		verticeList.Clear();
+		vertexPixelList.Clear();
+		normalCodeList.Clear();
+		tri.Clear();
+
+		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
+		// And, need to fetch texture from other place than MeshRenderer.
+		texture = (Texture2D)gameObject.GetComponent<MeshRenderer>().sharedMaterial.mainTexture;
 
 		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
 		// verticeList, since those can be calculated directly (and more precisely) in the shader
@@ -123,37 +131,31 @@ public class VoxelObjectInstance : MonoBehaviour {
 		else
 			createExactMesh();
 
-		Mesh mesh = new Mesh();
-		mesh.vertices = verticeList.ToArray();
-		mesh.triangles = tri.ToArray();
+		Color[] cubeDesc = new Color[verticeList.Count];
+		Vector3[] normals = new Vector3[verticeList.Count];
 
-		// When using object batching, local vertices and normals will be translated on the CPU before
-		// passed down to the GPU. We therefore loose the original values in the shader, which we need.
-		// We therefore encode this information covered as vertex color.
-		// Note: Several places I pass down two different pieces of information using a single float
-		// where the integer part represents the first piece, and the fraction the second.
-		int vertexCount = mesh.vertices.Length;
-		Color[] cubeDesc = new Color[vertexCount];
-		Vector3[] normals = new Vector3[vertexCount];
-
-		for (int i = 0; i < vertexCount; ++i) {
-			Vector3 v = mesh.vertices[i];
+		for (int i = 0; i < verticeList.Count; ++i) {
+			// When using object batching, local vertices and normals will be translated on the CPU before
+			// passed down to the GPU. We therefore loose the original values in the shader, which we need.
+			// We therefore encode this information covered as vertex color.
+			// Note: Several places I pass down two different pieces of information using a single float
+			// where the integer part represents the first piece, and the fraction the second.
+			Vector3 v = verticeList[i];
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
-
-			// Ensure uvSubImageEffectiveWidth ends up as a fraction, so make the range go from 0 - 0.5
 			int normalCode = normalCodeList[i];
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode, voxelDepth);
 			normals[i] = getVolumeNormal(v);
 		}
 
+		Mesh mesh = new Mesh();
+		mesh.vertices = verticeList.ToArray();
+		mesh.triangles = tri.ToArray();
 		mesh.uv = vertexPixelList.ToArray();
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
-		meshFilter.mesh = mesh;
 
-		readonlyVertexCount = mesh.vertices.Length;
-		readonlyTriangleCount = tri.Count / 3;
+		return mesh;
 	}
 
 	public void loadStaticMaterial()
