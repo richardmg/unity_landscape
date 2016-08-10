@@ -75,8 +75,9 @@ public class VoxelObjectInstance : MonoBehaviour {
 	Vector3 getVolumeNormal(Vector3 vertex)
 	{
 		// Shape normal volume from rectangular to square
-		Vector3 volumeSize = new Vector3(cropRect.width, cropRect.height, voxelDepth);
-		Vector3 objectCenter = new Vector3(cropRect.width * 0.5f, cropRect.height * 0.5f, voxelDepth / 2);
+		float depth = Mathf.Max(1, voxelDepth);
+		Vector3 volumeSize = new Vector3(cropRect.width, cropRect.height, depth);
+		Vector3 objectCenter = new Vector3(cropRect.width * 0.5f, cropRect.height * 0.5f, depth / 2);
 		float size = Mathf.Max(volumeSize.x, volumeSize.y);
 		volumeSize = new Vector3(size, size, volumeSize.z);
 
