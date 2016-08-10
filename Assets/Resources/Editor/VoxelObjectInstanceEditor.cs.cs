@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEditor;
 
 [CustomEditor(typeof(VoxelObjectInstance))]
-public class VoxelCubesEditor : Editor
+public class VoxelObjectInstanceEditor : Editor
 {
 	public override void OnInspectorGUI()
 	{

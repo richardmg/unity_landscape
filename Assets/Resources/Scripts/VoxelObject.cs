@@ -8,9 +8,9 @@ public class VoxelObject : MonoBehaviour {
 	public float lodDistance1 = 100;
 	public float lodDistanceCulled = 100000;
 
-	const Lod kNoLod = -1;
-	const Lod kLod0 = 0;
-	const Lod kLod1 = 1;
+	public const Lod kNoLod = -1;
+	public const Lod kLod0 = 0;
+	public const Lod kLod1 = 1;
 
 	public Lod currentLod = kLod0;
 
@@ -28,14 +28,18 @@ public class VoxelObject : MonoBehaviour {
 	void Update () {
 		float d = Vector3.Distance(transform.position, Camera.main.transform.position);
 		Lod lod = d < lodDistance1 ? kLod0 : d < lodDistanceCulled ? kLod1 : kNoLod;
-		if (lod != currentLod) {
-			currentLod = lod;
-			rebuildObject();
-		}
+		if (lod != currentLod)
+			setLod(lod);
 	}
 
 	void OnValidate()
 	{
+		rebuildObject();
+	}
+
+	public void setLod(Lod lod)
+	{
+		currentLod = lod;
 		rebuildObject();
 	}
 
