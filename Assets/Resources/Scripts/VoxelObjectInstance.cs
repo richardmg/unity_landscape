@@ -199,13 +199,13 @@ public class VoxelObjectInstance : MonoBehaviour {
 			int bestColRight = kNotFound;
 			int bestRowBottom = kNotFound;
 			int bestRowTop = kNotFound;
-			int x2 = (int)cropRect.x + (int)(cropRect.width / 2);
-			int y2 = (int)cropRect.y + (int)(cropRect.height / 2);
+			int x2 = (int)cropRect.x + (int)(cropRect.width);
+			int y2 = (int)cropRect.y + (int)(cropRect.height);
 			int bestCount = 0;
 
 			if (xFaces) {
 				bestCount = 0;
-				for (int x = (int)cropRect.x; x <= x2; ++x) {
+				for (int x = (int)cropRect.x; x < x2; ++x) {
 					int count = countPixelsForCol(x);
 					if (count > bestCount) {
 						bestColLeft = x;
@@ -214,7 +214,7 @@ public class VoxelObjectInstance : MonoBehaviour {
 				}
 
 				bestCount = 0;
-				for (int x = subImageWidth - 1; x >= x2; --x) {
+				for (int x = subImageWidth - 1; x >= Mathf.Max(0, bestColLeft + 1); --x) {
 					int count = countPixelsForCol(x);
 					if (count > bestCount) {
 						bestColRight = x;
@@ -225,7 +225,7 @@ public class VoxelObjectInstance : MonoBehaviour {
 
 			if (yFaces) {
 				bestCount = 0;
-				for (int y = (int)cropRect.y; y <= y2; ++y) {
+				for (int y = (int)cropRect.y; y < y2; ++y) {
 					int count = countPixelsForRow(y);
 					if (count > bestCount) {
 						bestRowBottom = y;
@@ -234,7 +234,7 @@ public class VoxelObjectInstance : MonoBehaviour {
 				}
 
 				bestCount = 0;
-				for (int y = subImageHeight - 1; y >= y2; --y) {
+				for (int y = subImageHeight - 1; y >= Mathf.Max(0, bestRowBottom + 1); --y) {
 					int count = countPixelsForRow(y);
 					if (count > bestCount) {
 						bestRowTop = y;
@@ -242,7 +242,6 @@ public class VoxelObjectInstance : MonoBehaviour {
 					}
 				}
 			}
-
 
 			if (bestColLeft != kNotFound)
 				createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
