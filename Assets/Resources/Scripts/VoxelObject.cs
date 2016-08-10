@@ -20,21 +20,24 @@ public class VoxelObject : MonoBehaviour {
 		this.voxelDepth = voxelDepth;
 	}
 
-	void Start () {
+	void OnValidate()
+	{
+		rebuildObject();
+	}
+
+	void Start()
+	{
 		currentLod = kNoLod;
 		Update();
 	}
 	
-	void Update () {
+	void Update()
+	{
 		float d = Vector3.Distance(transform.position, Camera.main.transform.position);
 		Lod lod = d < lodDistance1 ? kLod0 : d < lodDistanceCulled ? kLod1 : kNoLod;
+
 		if (lod != currentLod)
 			setLod(lod);
-	}
-
-	void OnValidate()
-	{
-		rebuildObject();
 	}
 
 	public void setLod(Lod lod)
@@ -45,10 +48,9 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildObject()
 	{
-		if (gameObject.scene.name == null) {
-			// Don't modify the prefab itself
+		// Don't modify the prefab itself
+		if (gameObject.scene.name == null)
 			return;
-		}
 
 		VoxelObjectInstance instance = gameObject.GetComponent<VoxelObjectInstance>();
 		if (instance == null) {
@@ -59,6 +61,8 @@ public class VoxelObject : MonoBehaviour {
 
 		instance.atlasIndex = atlasIndex;
 		instance.voxelDepth = voxelDepth;
+		instance.xFaces = voxelDepth != 0;
+		instance.yFaces = voxelDepth != 0;
 
 		switch (currentLod) {
 		case kLod0:
