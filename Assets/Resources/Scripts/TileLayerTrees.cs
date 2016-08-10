@@ -30,9 +30,6 @@ public class TileLayerTrees : ITileLayer
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMatrix[x, z] = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity); 
 				m_tileMatrix[x, z].transform.parent = m_layerRoot.transform;
-				BillboardScript bs = m_tileMatrix[x, z].GetComponent<BillboardScript>();
-				if (bs != null)
-					bs.target = LandscapeConstructor.m_instance.player;
 			}
 		}
 	}

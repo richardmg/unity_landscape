@@ -2,14 +2,14 @@
 using System.Collections;
 using UnityEditor;
 
-[CustomEditor(typeof(VoxelObject))]
+[CustomEditor(typeof(VoxelObjectInstance))]
 public class VoxelCubesEditor : Editor
 {
 	public override void OnInspectorGUI()
 	{
 		DrawDefaultInspector();
 
-		VoxelObject vo = (VoxelObject)target;
+		VoxelObjectInstance vo = (VoxelObjectInstance)target;
 		if(GUILayout.Button("Build Object"))
 		{
 			vo.rebuildObject();
@@ -17,8 +17,8 @@ public class VoxelCubesEditor : Editor
 
 		if(GUILayout.Button("Sync materials"))
 		{
-			VoxelObject.materialVolume.CopyPropertiesFromMaterial(VoxelObject.materialExact);
-			VoxelObject.materialVolumeSimplified.CopyPropertiesFromMaterial(VoxelObject.materialExact);
+			VoxelObjectInstance.materialVolume.CopyPropertiesFromMaterial(VoxelObjectInstance.materialExact);
+			VoxelObjectInstance.materialVolumeSimplified.CopyPropertiesFromMaterial(VoxelObjectInstance.materialExact);
 		}
 	}
 }
