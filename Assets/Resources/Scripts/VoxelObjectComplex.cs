@@ -93,10 +93,6 @@ public class VoxelObjectComplex : MonoBehaviour {
 			init();
 
 		m_meshFilter.mesh = new Mesh();
-//		Transform prevTransform = this.transform;
-//		transform.localRotation = Quaternion.identity;
-//		transform.localPosition = Vector3.zero;
-//		transform.localScale = Vector3.one;
 
 		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < voxelObjects.Length; ++i)
@@ -114,9 +110,6 @@ public class VoxelObjectComplex : MonoBehaviour {
 
 		m_meshFilter.sharedMesh = new Mesh();
 		m_meshFilter.sharedMesh.CombineMeshes(combine);
-//		transform.localRotation = prevTransform.localRotation;
-//		transform.localPosition = prevTransform.localPosition;
-//		transform.localScale = prevTransform.localScale;
 		gameObject.SetActive(true);
 
 		switch (currentLod) {
@@ -131,5 +124,16 @@ public class VoxelObjectComplex : MonoBehaviour {
 		}
 
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+	}
+
+	public void centerChildren()
+	{
+		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
+		if (voxelObjects.Length == 0)
+			return;
+
+		Transform firstChildTransform = voxelObjects[0].transform;
+		for (int i = 0; i < voxelObjects.Length; ++i)
+			voxelObjects[i].transform.localPosition -= firstChildTransform.localPosition;
 	}
 }

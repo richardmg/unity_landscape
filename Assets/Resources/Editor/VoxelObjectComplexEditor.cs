@@ -24,5 +24,10 @@ public class VoxelObjectComplexEditor : Editor
 		{
 			vo.rebuildObject();
 		}
+
+		if(GUILayout.Button("Center"))
+		{
+			vo.centerChildren();
+		}
 	}
 }
