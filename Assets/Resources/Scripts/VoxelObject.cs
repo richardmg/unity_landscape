@@ -105,6 +105,9 @@ public class VoxelObject : MonoBehaviour {
 				m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		}
 
+		if (!m_meshFilter.sharedMesh)
+			m_meshFilter.sharedMesh = new Mesh();
+
 		if (!m_meshRenderer) {
 			m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 			if (!m_meshRenderer)

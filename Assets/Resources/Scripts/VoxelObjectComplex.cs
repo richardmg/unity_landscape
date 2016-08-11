@@ -60,6 +60,9 @@ public class VoxelObjectComplex : MonoBehaviour {
 				m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
 		}
 
+		if (!m_meshFilter.sharedMesh)
+			m_meshFilter.sharedMesh = new Mesh();
+
 		if (!m_meshRenderer) {
 			m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 			if (!m_meshRenderer)
@@ -139,6 +142,11 @@ public class VoxelObjectComplex : MonoBehaviour {
 
 	public void clearMesh()
 	{
-		m_meshFilter.sharedMesh.Clear();
+		GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
+		GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
+		GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
+		GameObject.Destroy(gameObject.GetComponent<MeshRenderer>());
+		m_meshFilter = null;
+		m_meshRenderer = null;
 	}
 }
