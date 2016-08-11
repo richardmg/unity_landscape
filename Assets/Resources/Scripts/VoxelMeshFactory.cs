@@ -22,6 +22,7 @@ public class VoxelMeshFactory {
 	int startPixelY;
 	Rect cropRect;
 
+	Mesh mesh = new Mesh();
 	List<Vector3> verticeList = new List<Vector3>(); 
 	List<Vector2> vertexPixelList = new List<Vector2>(); 
 	List<int> normalCodeList = new List<int>(); 
@@ -52,6 +53,57 @@ public class VoxelMeshFactory {
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
 
+	public void beginMesh()
+	{
+		mesh.Clear();
+		verticeList.Clear();
+		vertexPixelList.Clear();
+		normalCodeList.Clear();
+		tri.Clear();
+	}
+
+	public void endMesh()
+	{
+		Color[] cubeDesc = new Color[verticeList.Count];
+		Vector3[] normals = new Vector3[verticeList.Count];
+
+		for (int i = 0; i < verticeList.Count; ++i) {
+			// When using object batching, local vertices and normals will be translated on the CPU before
+			// passed down to the GPU. We therefore loose the original values in the shader, which we need.
+			// We therefore encode this information covered as vertex color.
+			// Note: Several places I pass down two different pieces of information using a single float
+			// where the integer part represents the first piece, and the fraction the second.
+			Vector3 v = verticeList[i];
+			float uvAtlasX = (startPixelX + v.x) / texture.width;
+			float uvAtlasY = (startPixelY + v.y) / texture.height;
+			int normalCode = normalCodeList[i];
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode, voxelDepth);
+			normals[i] = getVolumeNormal(v);
+		}
+
+		mesh.vertices = verticeList.ToArray();
+		mesh.triangles = tri.ToArray();
+		mesh.uv = vertexPixelList.ToArray();
+		mesh.colors = cubeDesc;
+		mesh.normals = normals;
+	}
+
+	public void buildMesh()
+	{
+		startPixelX = (atlasIndex * subImageWidth) % texture.width;
+		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		cropRect = calculatecropRect();
+
+		if (useVolume)
+			createVolumeMesh();
+		else
+			createExactMesh();
+	}
+
+	public Mesh getMesh() {
+		return mesh;
+	}
+
 	Vector3 getVolumeNormal(Vector3 vertex)
 	{
 		// Shape normal volume from rectangular to square
@@ -71,53 +123,7 @@ public class VoxelMeshFactory {
 		return n;
 	}
 
-	public Mesh createMesh()
-	{
-		verticeList.Clear();
-		vertexPixelList.Clear();
-		normalCodeList.Clear();
-		tri.Clear();
-
-		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
-		// verticeList, since those can be calculated directly (and more precisely) in the shader
-		// based on the local position of the vertices themselves.
-		startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-		cropRect = calculatecropRect();
-
-		if (useVolume)
-			createVolumeMesh();
-		else
-			createExactMesh();
-
-		Color[] cubeDesc = new Color[verticeList.Count];
-		Vector3[] normals = new Vector3[verticeList.Count];
-
-		for (int i = 0; i < verticeList.Count; ++i) {
-			// When using object batching, local vertices and normals will be translated on the CPU before
-			// passed down to the GPU. We therefore loose the original values in the shader, which we need.
-			// We therefore encode this information covered as vertex color.
-			// Note: Several places I pass down two different pieces of information using a single float
-			// where the integer part represents the first piece, and the fraction the second.
-			Vector3 v = verticeList[i];
-			float uvAtlasX = (startPixelX + v.x) / texture.width;
-			float uvAtlasY = (startPixelY + v.y) / texture.height;
-			int normalCode = normalCodeList[i];
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode, voxelDepth);
-			normals[i] = getVolumeNormal(v);
-		}
-
-		Mesh mesh = new Mesh();
-		mesh.vertices = verticeList.ToArray();
-		mesh.triangles = tri.ToArray();
-		mesh.uv = vertexPixelList.ToArray();
-		mesh.colors = cubeDesc;
-		mesh.normals = normals;
-
-		return mesh;
-	}
-
-	public void createExactMesh()
+	void createExactMesh()
 	{
 		if (xFaces) {
 			for (int x = 0; x < subImageWidth; ++x) {
@@ -137,7 +143,7 @@ public class VoxelMeshFactory {
 			createFacesForZ();
 	}
 
-	public void createVolumeMesh()
+	void createVolumeMesh()
 	{
 		if (simplify) {
 			int bestColLeft = kNotFound;
