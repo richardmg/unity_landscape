@@ -132,6 +132,8 @@ public class VoxelObject : MonoBehaviour {
 		// And I need to be careful not to merge meshes runtime. So perhaps I can also
 		// store the number of vertices needed to build all children (or perhaps just preallocate
 		// a max value  array in the factory. After all it's static.) And the apply the
-		// factory child by child, enabling vertex sharing etc as well.
+		// factory child by child, enabling vertex sharing etc as well. But then I also need a
+		// way to snap vertices, since the are probably not aligned after building in editor.
+		// Or is there a way to snap in editor?
 	}
 }
