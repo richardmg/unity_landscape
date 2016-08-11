@@ -67,8 +67,25 @@ public class VoxelMeshFactory : MonoBehaviour {
 		rebuildObject();
 	}
 
-	void Update()
+	public void rebuildObject()
 	{
+		// Called if this factory is used as a stand-alone game object
+		// Ensure the object has a mesh filter and renderer
+		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
+
+		if (!meshFilter)
+			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		if (!renderer)
+			renderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		if (materialExact == null)
+			loadStaticMaterial();
+
+		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
+
+		meshFilter.sharedMesh = createMesh();
+		readonlyVertexCount = meshFilter.sharedMesh.vertices.Length;
+		readonlyTriangleCount = tri.Count / 3;
 	}
 
 	Vector3 getVolumeNormal(Vector3 vertex)
@@ -86,26 +103,6 @@ public class VoxelMeshFactory : MonoBehaviour {
 		n /= gameObject.transform.localScale.x;
 
 		return n;
-	}
-
-	public void rebuildObject()
-	{
-		// Ensure the object has a mesh filter and renderer
-		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
-
-		if (!meshFilter)
-			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		if (!renderer)
-			renderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-		if (materialExact == null)
-			loadStaticMaterial();
-
-		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
-
-		meshFilter.sharedMesh = createMesh();
-		readonlyVertexCount = meshFilter.sharedMesh.vertices.Length;
-		readonlyTriangleCount = tri.Count / 3;
 	}
 
 	public Mesh createMesh()
