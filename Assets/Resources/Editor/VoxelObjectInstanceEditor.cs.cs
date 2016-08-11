@@ -9,16 +9,16 @@ public class VoxelObjectInstanceEditor : Editor
 	{
 		DrawDefaultInspector();
 
-		VoxelMeshFactory vo = (VoxelMeshFactory)target;
-		if(GUILayout.Button("Build Object"))
-		{
-			vo.rebuildObject();
-		}
-
-		if(GUILayout.Button("Sync materials"))
-		{
-			VoxelMeshFactory.materialVolume.CopyPropertiesFromMaterial(VoxelMeshFactory.materialExact);
-			VoxelMeshFactory.materialVolumeSimplified.CopyPropertiesFromMaterial(VoxelMeshFactory.materialExact);
-		}
+//		VoxelMeshFactory vo = (VoxelMeshFactory)target;
+//		if(GUILayout.Button("Build Object"))
+//		{
+//			vo.rebuildObject();
+//		}
+//
+//		if(GUILayout.Button("Sync materials"))
+//		{
+//			VoxelMeshFactory.materialVolume.CopyPropertiesFromMaterial(VoxelMeshFactory.materialExact);
+//			VoxelMeshFactory.materialVolumeSimplified.CopyPropertiesFromMaterial(VoxelMeshFactory.materialExact);
+//		}
 	}
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using NormalCode = System.Int32;
 
-public class VoxelMeshFactory : MonoBehaviour {
+public class VoxelMeshFactory {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
 	public bool shareVertices = true;
@@ -16,30 +16,21 @@ public class VoxelMeshFactory : MonoBehaviour {
 	public int volumeFaceCountZ = 2;
 	public bool simplify = false;
 
-	// Read-only, for editor inspection
-	public int readonlyVertexCount = 0;
-	public int readonlyTriangleCount = 0;
-
-	Texture2D texture;
 	int startPixelX;
 	int startPixelY;
 	Rect cropRect;
 
+	public static Texture2D texture;
+	List<Vector3> verticeList = new List<Vector3>(); 
+	List<Vector2> vertexPixelList = new List<Vector2>(); 
+	List<int> normalCodeList = new List<int>(); 
+	List<int> tri = new List<int>(); 
+
+	Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
+	Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
+
 	const int subImageWidth = 16;
 	const int subImageHeight = 8;
-
-	static public Material materialExact;
-	static public Material materialVolume;
-	static public Material materialVolumeSimplified;
-
-	static List<Vector3> verticeList = new List<Vector3>(); 
-	static List<Vector2> vertexPixelList = new List<Vector2>(); 
-	static List<int> normalCodeList = new List<int>(); 
-	static List<int> tri = new List<int>(); 
-
-	static Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
-	static Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
-
 	const int kNotFound = -1;
 
 	const NormalCode kLeft = 0;
@@ -57,36 +48,8 @@ public class VoxelMeshFactory : MonoBehaviour {
 	const NormalCode kBackBottomRight = 12;
 	const NormalCode kBackTopRight = 13;
 
-	void Start ()
-	{
-		rebuildObject();
-	}
-
-	void OnValidate()
-	{
-		rebuildObject();
-	}
-
-	public void rebuildObject()
-	{
-		// Called if this factory is used as a stand-alone game object
-		// Ensure the object has a mesh filter and renderer
-		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-		MeshRenderer renderer = gameObject.GetComponent<MeshRenderer>();
-
-		if (!meshFilter)
-			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		if (!renderer)
-			renderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-		if (materialExact == null)
-			loadStaticMaterial();
-
-		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
-
-		meshFilter.sharedMesh = createMesh();
-		readonlyVertexCount = meshFilter.sharedMesh.vertices.Length;
-		readonlyTriangleCount = tri.Count / 3;
-	}
+	public int readonlyVertexCount = 0;
+	public int readonlyTriangleCount = 0;
 
 	Vector3 getVolumeNormal(Vector3 vertex)
 	{
@@ -100,7 +63,9 @@ public class VoxelMeshFactory : MonoBehaviour {
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
 		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
 		Vector3 n = kVecBottomLeft + Vector3.Scale(normalizedVertex, kVecDeltaNormal);
-		n /= gameObject.transform.localScale.x;
+
+// OBS, can cause problems after commenting out
+//		n /= gameObject.transform.localScale.x;
 
 		return n;
 	}
@@ -111,10 +76,6 @@ public class VoxelMeshFactory : MonoBehaviour {
 		vertexPixelList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
-
-		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
-		// And, need to fetch texture from other place than MeshRenderer.
-		texture = (Texture2D)gameObject.GetComponent<MeshRenderer>().sharedMaterial.mainTexture;
 
 		// Caluclate uv coords based on atlasIndex. Note that we don't assign any uv coords to the
 		// verticeList, since those can be calculated directly (and more precisely) in the shader
@@ -153,23 +114,6 @@ public class VoxelMeshFactory : MonoBehaviour {
 		mesh.normals = normals;
 
 		return mesh;
-	}
-
-	public void loadStaticMaterial()
-	{
-		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
-		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
-		materialVolumeSimplified = (Material)Resources.Load("Materials/VoxelObjectVolumeSimplified", typeof(Material));
-
-		Debug.Assert(materialExact != null);
-		Debug.Assert(materialVolume != null);
-		Debug.Assert(materialVolumeSimplified != null);
-		Debug.Assert(materialExact.mainTexture != null);
-		Debug.Assert(materialVolume.mainTexture != null);
-		Debug.Assert(materialVolumeSimplified.mainTexture != null);
-
-		materialVolume.CopyPropertiesFromMaterial(materialExact);
-		materialVolumeSimplified.CopyPropertiesFromMaterial(materialExact);
 	}
 
 	public void createExactMesh()

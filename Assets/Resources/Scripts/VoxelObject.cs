@@ -5,14 +5,24 @@ using Lod = System.Int32;
 public class VoxelObject : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
+	public Lod currentLod = kLod0;
 	public float lodDistance1 = 100;
 	public float lodDistanceCulled = 100000;
+
+	MeshFilter m_meshFilter;
+	MeshRenderer m_meshRenderer;
+
+	static public Material materialExact;
+	static public Material materialVolume;
+	static public Material materialVolumeSimplified;
+	static VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
 	public const Lod kLod1 = 1;
 
-	public Lod currentLod = kLod0;
+	// Read-only, for editor inspection
+	public int readonlyVertexCount = 0;
 
 	public VoxelObject(int atlasIndex, float voxelDepth)
 	{
@@ -22,12 +32,14 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
+		init();
 		rebuildObject();
 	}
 
 	void Start()
 	{
 		currentLod = kNoLod;
+		init();
 		Update();
 	}
 	
@@ -52,26 +64,21 @@ public class VoxelObject : MonoBehaviour {
 		if (gameObject.scene.name == null)
 			return;
 
-		VoxelMeshFactory factory = gameObject.GetComponent<VoxelMeshFactory>();
-		if (factory == null) {
-			if (currentLod == kNoLod)
-				return;
-			factory = gameObject.AddComponent<VoxelMeshFactory>();
-		}
-
-		factory.atlasIndex = atlasIndex;
-		factory.voxelDepth = voxelDepth;
-		factory.xFaces = voxelDepth != 0;
-		factory.yFaces = voxelDepth != 0;
+		voxelMeshFactory.atlasIndex = atlasIndex;
+		voxelMeshFactory.voxelDepth = voxelDepth;
+		voxelMeshFactory.xFaces = voxelDepth != 0;
+		voxelMeshFactory.yFaces = voxelDepth != 0;
 
 		switch (currentLod) {
 		case kLod0:
-			factory.useVolume = voxelDepth == 0;
-			factory.simplify = false;
+			voxelMeshFactory.useVolume = voxelDepth == 0;
+			voxelMeshFactory.simplify = false;
+			m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
 			break;
 		case kLod1:
-			factory.useVolume = true;
-			factory.simplify = true;
+			voxelMeshFactory.useVolume = true;
+			voxelMeshFactory.simplify = true;
+			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
 			break;
 		case kNoLod:
 		default:
@@ -79,6 +86,42 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		factory.rebuildObject();
+		m_meshFilter.mesh = voxelMeshFactory.createMesh();
+		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+	}
+
+	public void init()
+	{
+		if (gameObject.scene.name == null)
+			return;
+		
+		m_meshFilter = gameObject.GetComponent<MeshFilter>();
+		m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+
+		if (!m_meshFilter)
+			m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+
+		if (!m_meshRenderer)
+			m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+
+		if (materialExact == null) {
+			materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
+			materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
+			materialVolumeSimplified = (Material)Resources.Load("Materials/VoxelObjectVolumeSimplified", typeof(Material));
+
+			Debug.Assert(materialExact != null);
+			Debug.Assert(materialVolume != null);
+			Debug.Assert(materialVolumeSimplified != null);
+			Debug.Assert(materialExact.mainTexture != null);
+			Debug.Assert(materialVolume.mainTexture != null);
+			Debug.Assert(materialVolumeSimplified.mainTexture != null);
+
+			materialVolume.CopyPropertiesFromMaterial(materialExact);
+			materialVolumeSimplified.CopyPropertiesFromMaterial(materialExact);
+		}
+
+		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
+		// And, need to fetch texture from other place than MeshRenderer.
+		VoxelMeshFactory.texture = (Texture2D)materialExact.mainTexture;
 	}
 }
