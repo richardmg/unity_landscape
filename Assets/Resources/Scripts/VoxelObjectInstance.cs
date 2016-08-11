@@ -103,8 +103,8 @@ public class VoxelObjectInstance : MonoBehaviour {
 
 		renderer.sharedMaterial = useVolume && simplify ? materialVolumeSimplified : useVolume ? materialVolume : materialExact;
 
-		meshFilter.mesh = createMesh();
-		readonlyVertexCount = meshFilter.mesh.vertices.Length;
+		meshFilter.sharedMesh = createMesh();
+		readonlyVertexCount = meshFilter.sharedMesh.vertices.Length;
 		readonlyTriangleCount = tri.Count / 3;
 	}
 
