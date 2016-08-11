@@ -19,5 +19,10 @@ public class VoxelObjectEditor : Editor
 		{
 			vo.setLod(VoxelObject.kLod1);
 		}
+
+		if(GUILayout.Button("Merge children"))
+		{
+			vo.mergeChildren();
+		}
 	}
 }

@@ -16,11 +16,12 @@ public class VoxelMeshFactory {
 	public int volumeFaceCountZ = 2;
 	public bool simplify = false;
 
+	public static Texture2D texture;
+
 	int startPixelX;
 	int startPixelY;
 	Rect cropRect;
 
-	public static Texture2D texture;
 	List<Vector3> verticeList = new List<Vector3>(); 
 	List<Vector2> vertexPixelList = new List<Vector2>(); 
 	List<int> normalCodeList = new List<int>(); 

@@ -124,4 +124,14 @@ public class VoxelObject : MonoBehaviour {
 		// And, need to fetch texture from other place than MeshRenderer.
 		VoxelMeshFactory.texture = (Texture2D)materialExact.mainTexture;
 	}
+
+	public void mergeChildren()
+	{
+		// Not sure how to this, since merging children will make it hard to do lodding.
+		// I need to store the config somehow (transform, index, depth etc) for each child.
+		// And I need to be careful not to merge meshes runtime. So perhaps I can also
+		// store the number of vertices needed to build all children (or perhaps just preallocate
+		// a max value  array in the factory. After all it's static.) And the apply the
+		// factory child by child, enabling vertex sharing etc as well.
+	}
 }
