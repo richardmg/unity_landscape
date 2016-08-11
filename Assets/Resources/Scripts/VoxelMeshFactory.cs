@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 using NormalCode = System.Int32;
 
-public class VoxelObjectInstance : MonoBehaviour {
+public class VoxelMeshFactory : MonoBehaviour {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
 	public bool shareVertices = true;

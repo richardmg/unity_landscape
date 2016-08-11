@@ -52,26 +52,26 @@ public class VoxelObject : MonoBehaviour {
 		if (gameObject.scene.name == null)
 			return;
 
-		VoxelObjectInstance instance = gameObject.GetComponent<VoxelObjectInstance>();
-		if (instance == null) {
+		VoxelMeshFactory factory = gameObject.GetComponent<VoxelMeshFactory>();
+		if (factory == null) {
 			if (currentLod == kNoLod)
 				return;
-			instance = gameObject.AddComponent<VoxelObjectInstance>();
+			factory = gameObject.AddComponent<VoxelMeshFactory>();
 		}
 
-		instance.atlasIndex = atlasIndex;
-		instance.voxelDepth = voxelDepth;
-		instance.xFaces = voxelDepth != 0;
-		instance.yFaces = voxelDepth != 0;
+		factory.atlasIndex = atlasIndex;
+		factory.voxelDepth = voxelDepth;
+		factory.xFaces = voxelDepth != 0;
+		factory.yFaces = voxelDepth != 0;
 
 		switch (currentLod) {
 		case kLod0:
-			instance.useVolume = voxelDepth == 0;
-			instance.simplify = false;
+			factory.useVolume = voxelDepth == 0;
+			factory.simplify = false;
 			break;
 		case kLod1:
-			instance.useVolume = true;
-			instance.simplify = true;
+			factory.useVolume = true;
+			factory.simplify = true;
 			break;
 		case kNoLod:
 		default:
@@ -79,6 +79,6 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		instance.rebuildObject();
+		factory.rebuildObject();
 	}
 }
