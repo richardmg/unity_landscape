@@ -86,10 +86,7 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		voxelMeshFactory.beginMesh();
-		voxelMeshFactory.buildMesh();
-		voxelMeshFactory.endMesh();
-		m_meshFilter.mesh = voxelMeshFactory.getMesh();
+		m_meshFilter.mesh = voxelMeshFactory.createMesh();
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 

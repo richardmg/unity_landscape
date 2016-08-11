@@ -55,11 +55,23 @@ public class VoxelMeshFactory {
 
 	public void beginMesh()
 	{
-		mesh.Clear();
+		mesh = new Mesh();
 		verticeList.Clear();
 		vertexPixelList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
+	}
+
+	public void buildMesh()
+	{
+		startPixelX = (atlasIndex * subImageWidth) % texture.width;
+		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		cropRect = calculatecropRect();
+
+		if (useVolume)
+			createVolumeMesh();
+		else
+			createExactMesh();
 	}
 
 	public void endMesh()
@@ -88,19 +100,10 @@ public class VoxelMeshFactory {
 		mesh.normals = normals;
 	}
 
-	public void buildMesh()
-	{
-		startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
-		cropRect = calculatecropRect();
-
-		if (useVolume)
-			createVolumeMesh();
-		else
-			createExactMesh();
-	}
-
-	public Mesh getMesh() {
+	public Mesh createMesh() {
+		beginMesh();
+		buildMesh();
+		endMesh();
 		return mesh;
 	}
 
