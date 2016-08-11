@@ -2,9 +2,7 @@
 using System.Collections;
 using Lod = System.Int32;
 
-public class VoxelObject : MonoBehaviour {
-	public int atlasIndex = -1;
-	public float voxelDepth = 4;
+public class VoxelObjectComplex : MonoBehaviour {
 	public Lod currentLod = kLod0;
 	public float lodDistance1 = 100;
 	public float lodDistanceCulled = 100000;
@@ -15,7 +13,6 @@ public class VoxelObject : MonoBehaviour {
 	static public Material materialExact;
 	static public Material materialVolume;
 	static public Material materialVolumeSimplified;
-	static VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -23,12 +20,6 @@ public class VoxelObject : MonoBehaviour {
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
-
-	public VoxelObject(int atlasIndex, float voxelDepth)
-	{
-		this.atlasIndex = atlasIndex;
-		this.voxelDepth = voxelDepth;
-	}
 
 	void OnValidate()
 	{
@@ -42,7 +33,7 @@ public class VoxelObject : MonoBehaviour {
 		init();
 		Update();
 	}
-	
+
 	void Update()
 	{
 		float d = Vector3.Distance(transform.position, Camera.main.transform.position);
@@ -58,43 +49,11 @@ public class VoxelObject : MonoBehaviour {
 		rebuildObject();
 	}
 
-	public void rebuildObject()
-	{
-		// Don't modify the prefab itself
-		if (gameObject.scene.name == null)
-			return;
-
-		voxelMeshFactory.atlasIndex = atlasIndex;
-		voxelMeshFactory.voxelDepth = voxelDepth;
-		voxelMeshFactory.xFaces = voxelDepth != 0;
-		voxelMeshFactory.yFaces = voxelDepth != 0;
-
-		switch (currentLod) {
-		case kLod0:
-			voxelMeshFactory.useVolume = voxelDepth == 0;
-			voxelMeshFactory.simplify = false;
-			m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
-			break;
-		case kLod1:
-			voxelMeshFactory.useVolume = true;
-			voxelMeshFactory.simplify = true;
-			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
-			break;
-		case kNoLod:
-		default:
-			// TODO: toggle visibility?
-			return;
-		}
-
-		m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
-		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
-	}
-
 	public void init()
 	{
 		if (gameObject.scene.name == null)
 			return;
-		
+
 		m_meshFilter = gameObject.GetComponent<MeshFilter>();
 		m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
 
@@ -125,4 +84,45 @@ public class VoxelObject : MonoBehaviour {
 		VoxelMeshFactory.texture = (Texture2D)materialExact.mainTexture;
 	}
 
+	public void rebuildObject()
+	{
+		// Don't modify the prefab itself
+		if (gameObject.scene.name == null)
+			return;
+
+		m_meshFilter.sharedMesh = new Mesh();
+		Transform prevTransform = this.transform;
+		transform.localRotation = Quaternion.identity;
+		transform.localPosition = Vector3.zero;
+		transform.localScale = Vector3.one;
+
+		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+		for (int i = 0; i < meshFilters.Length; ++i) {
+			combine[i].mesh = meshFilters[i].sharedMesh;
+			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+			meshFilters[i].gameObject.SetActive(false);
+		}
+
+		m_meshFilter.sharedMesh = new Mesh();
+		m_meshFilter.sharedMesh.CombineMeshes(combine);
+		transform.localRotation = prevTransform.localRotation;
+		transform.localPosition = prevTransform.localPosition;
+		transform.localScale = prevTransform.localScale;
+		gameObject.SetActive(true);
+
+		switch (currentLod) {
+		case kLod0:
+			m_meshRenderer.sharedMaterial = materialExact;
+			break;
+		case kLod1:
+			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
+			break;
+		default:
+			break;
+		}
+
+		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+	}
 }
