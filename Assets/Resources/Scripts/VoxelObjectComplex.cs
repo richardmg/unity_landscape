@@ -23,11 +23,13 @@ public class VoxelObjectComplex : MonoBehaviour {
 
 	void OnValidate()
 	{
+		init();
 		rebuildObject();
 	}
 
 	void Start()
 	{
+		init();
 		currentLod = kNoLod;
 		Update();
 	}
@@ -52,14 +54,17 @@ public class VoxelObjectComplex : MonoBehaviour {
 		if (gameObject.scene.name == null)
 			return;
 
-		m_meshFilter = gameObject.GetComponent<MeshFilter>();
-		m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+		if (!m_meshFilter) {
+			m_meshFilter = gameObject.GetComponent<MeshFilter>();
+			if (!m_meshFilter)
+				m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		}
 
-		if (!m_meshFilter)
-			m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-
-		if (!m_meshRenderer)
-			m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		if (!m_meshRenderer) {
+			m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+			if (!m_meshRenderer)
+				m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		}
 
 		if (materialExact == null) {
 			materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
@@ -76,10 +81,6 @@ public class VoxelObjectComplex : MonoBehaviour {
 			materialVolume.CopyPropertiesFromMaterial(materialExact);
 			materialVolumeSimplified.CopyPropertiesFromMaterial(materialExact);
 		}
-
-		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
-		// And, need to fetch texture from other place than MeshRenderer.
-		VoxelMeshFactory.texture = (Texture2D)materialExact.mainTexture;
 	}
 
 	public void rebuildObject()
@@ -87,6 +88,7 @@ public class VoxelObjectComplex : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
+
 		if (!m_meshFilter)
 			init();
 
@@ -105,13 +107,13 @@ public class VoxelObjectComplex : MonoBehaviour {
 
 		for (int i = 0; i < meshFilters.Length; ++i) {
 			MeshFilter filter = meshFilters[i];
-			combine[i].mesh = filter.mesh;
+			combine[i].mesh = filter.sharedMesh;
 			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
-		m_meshFilter.mesh = new Mesh();
-		m_meshFilter.mesh.CombineMeshes(combine);
+		m_meshFilter.sharedMesh = new Mesh();
+		m_meshFilter.sharedMesh.CombineMeshes(combine);
 //		transform.localRotation = prevTransform.localRotation;
 //		transform.localPosition = prevTransform.localPosition;
 //		transform.localScale = prevTransform.localScale;
@@ -128,6 +130,6 @@ public class VoxelObjectComplex : MonoBehaviour {
 			break;
 		}
 
-		readonlyVertexCount = m_meshFilter.mesh.vertices.Length;
+		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 }

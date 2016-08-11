@@ -32,11 +32,13 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
+		init();
 		rebuildObject();
 	}
 
 	void Start()
 	{
+		init();
 		currentLod = kNoLod;
 		Update();
 	}
@@ -61,6 +63,7 @@ public class VoxelObject : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
+
 		if (!m_meshFilter)
 			init();
 
@@ -86,8 +89,8 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		m_meshFilter.mesh = voxelMeshFactory.createMesh();
-		readonlyVertexCount = m_meshFilter.mesh.vertices.Length;
+		m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
+		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
 	public void init()
@@ -95,14 +98,17 @@ public class VoxelObject : MonoBehaviour {
 		if (gameObject.scene.name == null)
 			return;
 		
-		m_meshFilter = gameObject.GetComponent<MeshFilter>();
-		m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+		if (!m_meshFilter) {
+			m_meshFilter = gameObject.GetComponent<MeshFilter>();
+			if (!m_meshFilter)
+				m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		}
 
-		if (!m_meshFilter)
-			m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-
-		if (!m_meshRenderer)
-			m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		if (!m_meshRenderer) {
+			m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+			if (!m_meshRenderer)
+				m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		}
 
 		if (materialExact == null) {
 			materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
@@ -119,10 +125,6 @@ public class VoxelObject : MonoBehaviour {
 			materialVolume.CopyPropertiesFromMaterial(materialExact);
 			materialVolumeSimplified.CopyPropertiesFromMaterial(materialExact);
 		}
-
-		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
-		// And, need to fetch texture from other place than MeshRenderer.
-		VoxelMeshFactory.texture = (Texture2D)materialExact.mainTexture;
 	}
 
 }

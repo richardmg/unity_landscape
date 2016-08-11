@@ -16,7 +16,7 @@ public class VoxelMeshFactory {
 	public int volumeFaceCountZ = 2;
 	public bool simplify = false;
 
-	public static Texture2D texture;
+	public Texture2D texture;
 
 	int startPixelX;
 	int startPixelY;
@@ -52,6 +52,14 @@ public class VoxelMeshFactory {
 
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
+
+	public VoxelMeshFactory()
+	{
+		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
+		// And, need to fetch texture from other place than MeshRenderer.
+		Material m = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
+		texture = (Texture2D)m.mainTexture;
+	}
 
 	public void beginMesh()
 	{
