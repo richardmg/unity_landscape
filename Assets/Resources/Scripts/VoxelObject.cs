@@ -3,8 +3,9 @@ using System.Collections;
 using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
-	public int atlasIndex = 0;
+	public int atlasIndex = -1;
 	public float voxelDepth = 4;
+	public bool topLevel = false;
 	public Lod currentLod = kLod0;
 	public float lodDistance1 = 100;
 	public float lodDistanceCulled = 100000;
@@ -64,29 +65,11 @@ public class VoxelObject : MonoBehaviour {
 		if (gameObject.scene.name == null)
 			return;
 
-		voxelMeshFactory.atlasIndex = atlasIndex;
-		voxelMeshFactory.voxelDepth = voxelDepth;
-		voxelMeshFactory.xFaces = voxelDepth != 0;
-		voxelMeshFactory.yFaces = voxelDepth != 0;
+		if (topLevel)
+			buildTopLevelMesh();
+		else
+			buildChildLevelMesh();
 
-		switch (currentLod) {
-		case kLod0:
-			voxelMeshFactory.useVolume = voxelDepth == 0;
-			voxelMeshFactory.simplify = false;
-			m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
-			break;
-		case kLod1:
-			voxelMeshFactory.useVolume = true;
-			voxelMeshFactory.simplify = true;
-			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
-			break;
-		case kNoLod:
-		default:
-			// TODO: toggle visibility?
-			return;
-		}
-
-		m_meshFilter.mesh = voxelMeshFactory.createMesh();
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
@@ -135,5 +118,51 @@ public class VoxelObject : MonoBehaviour {
 		// factory child by child, enabling vertex sharing etc as well. But then I also need a
 		// way to snap vertices, since the are probably not aligned after building in editor.
 		// Or is there a way to snap in editor?
+		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+		print("children mesh count for " + gameObject.name + ": " + meshFilters.Length);
+	}
+
+	void buildChildLevelMesh()
+	{
+		voxelMeshFactory.atlasIndex = atlasIndex;
+		voxelMeshFactory.voxelDepth = voxelDepth;
+		voxelMeshFactory.xFaces = voxelDepth != 0;
+		voxelMeshFactory.yFaces = voxelDepth != 0;
+
+		switch (currentLod) {
+		case kLod0:
+			voxelMeshFactory.useVolume = voxelDepth == 0;
+			voxelMeshFactory.simplify = false;
+			m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
+			break;
+		case kLod1:
+			voxelMeshFactory.useVolume = true;
+			voxelMeshFactory.simplify = true;
+			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
+			break;
+		case kNoLod:
+		default:
+			// TODO: toggle visibility?
+			return;
+		}
+
+		m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
+	}
+
+	void buildTopLevelMesh()
+	{
+		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>();
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		int i = 0;
+		while (i < meshFilters.Length) {
+			combine[i].mesh = meshFilters[i].sharedMesh;
+			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+			meshFilters[i].gameObject.SetActive(false);
+			i++;
+		}
+
+		m_meshFilter.sharedMesh = new Mesh();
+		m_meshFilter.sharedMesh.CombineMeshes(combine);
+		transform.gameObject.SetActive(true);
 	}
 }
