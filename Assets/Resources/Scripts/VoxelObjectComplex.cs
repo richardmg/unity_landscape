@@ -23,14 +23,12 @@ public class VoxelObjectComplex : MonoBehaviour {
 
 	void OnValidate()
 	{
-		init();
 		rebuildObject();
 	}
 
 	void Start()
 	{
 		currentLod = kNoLod;
-		init();
 		Update();
 	}
 
@@ -89,27 +87,34 @@ public class VoxelObjectComplex : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
+		if (!m_meshFilter)
+			init();
 
-		m_meshFilter.sharedMesh = new Mesh();
-		Transform prevTransform = this.transform;
-		transform.localRotation = Quaternion.identity;
-		transform.localPosition = Vector3.zero;
-		transform.localScale = Vector3.one;
+		m_meshFilter.mesh = new Mesh();
+//		Transform prevTransform = this.transform;
+//		transform.localRotation = Quaternion.identity;
+//		transform.localPosition = Vector3.zero;
+//		transform.localScale = Vector3.one;
+
+		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
+		for (int i = 0; i < voxelObjects.Length; ++i)
+			voxelObjects[i].setLod(currentLod);
 
 		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
 		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
 
 		for (int i = 0; i < meshFilters.Length; ++i) {
-			combine[i].mesh = meshFilters[i].sharedMesh;
+			MeshFilter filter = meshFilters[i];
+			combine[i].mesh = filter.mesh;
 			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
-		m_meshFilter.sharedMesh = new Mesh();
-		m_meshFilter.sharedMesh.CombineMeshes(combine);
-		transform.localRotation = prevTransform.localRotation;
-		transform.localPosition = prevTransform.localPosition;
-		transform.localScale = prevTransform.localScale;
+		m_meshFilter.mesh = new Mesh();
+		m_meshFilter.mesh.CombineMeshes(combine);
+//		transform.localRotation = prevTransform.localRotation;
+//		transform.localPosition = prevTransform.localPosition;
+//		transform.localScale = prevTransform.localScale;
 		gameObject.SetActive(true);
 
 		switch (currentLod) {
@@ -123,6 +128,6 @@ public class VoxelObjectComplex : MonoBehaviour {
 			break;
 		}
 
-		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+		readonlyVertexCount = m_meshFilter.mesh.vertices.Length;
 	}
 }

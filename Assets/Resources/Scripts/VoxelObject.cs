@@ -32,14 +32,12 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
-		init();
 		rebuildObject();
 	}
 
 	void Start()
 	{
 		currentLod = kNoLod;
-		init();
 		Update();
 	}
 	
@@ -63,6 +61,8 @@ public class VoxelObject : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
+		if (!m_meshFilter)
+			init();
 
 		voxelMeshFactory.atlasIndex = atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
@@ -86,8 +86,8 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
-		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+		m_meshFilter.mesh = voxelMeshFactory.createMesh();
+		readonlyVertexCount = m_meshFilter.mesh.vertices.Length;
 	}
 
 	public void init()
