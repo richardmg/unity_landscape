@@ -92,7 +92,7 @@ public class VoxelObjectComplex : MonoBehaviour {
 		if (!m_meshFilter)
 			init();
 
-		m_meshFilter.mesh = new Mesh();
+		m_meshFilter.sharedMesh.Clear(false);
 
 		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < voxelObjects.Length; ++i)
@@ -128,12 +128,17 @@ public class VoxelObjectComplex : MonoBehaviour {
 
 	public void centerChildren()
 	{
-		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
-		if (voxelObjects.Length == 0)
+		int childCount = transform.childCount;
+		if (childCount == 0)
 			return;
+		
+		Vector3 firstChildPos = transform.GetChild(0).localPosition;
+		for (int i = 0; i < childCount; ++i)
+			transform.GetChild(i).localPosition -= firstChildPos;
+	}
 
-		Transform firstChildTransform = voxelObjects[0].transform;
-		for (int i = 0; i < voxelObjects.Length; ++i)
-			voxelObjects[i].transform.localPosition -= firstChildTransform.localPosition;
+	public void clearMesh()
+	{
+		m_meshFilter.sharedMesh.Clear();
 	}
 }

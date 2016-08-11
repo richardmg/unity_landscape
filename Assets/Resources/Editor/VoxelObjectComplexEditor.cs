@@ -29,5 +29,10 @@ public class VoxelObjectComplexEditor : Editor
 		{
 			vo.centerChildren();
 		}
+
+		if(GUILayout.Button("Clear"))
+		{
+			vo.centerChildren();
+		}
 	}
 }
