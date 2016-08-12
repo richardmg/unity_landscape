@@ -3,7 +3,7 @@ using System.Collections;
 using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
-	public int atlasIndex = -2;
+	public int atlasIndex = kNoIndex;
 	public float voxelDepth = 4;
 	public Lod currentLod = kLod0;
 	public float lodDistance1 = 100;
@@ -22,6 +22,7 @@ public class VoxelObject : MonoBehaviour {
 	public const Lod kLod1 = 1;
 
 	public const Lod kTopLevel = -1;
+	public const Lod kNoIndex = -2;
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
@@ -29,7 +30,15 @@ public class VoxelObject : MonoBehaviour {
 	void OnValidate()
 	{
 		init();
-		rebuildObject();
+
+		if (atlasIndex == kTopLevel) {
+			centerChildren();
+			rebuildObject();
+//			clear(false, true);
+
+		} else {
+			rebuildObject();
+		}
 	}
 
 	void Start()
@@ -56,9 +65,6 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildObject()
 	{
-		if (atlasIndex < kTopLevel)
-			return;
-		
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
@@ -67,8 +73,10 @@ public class VoxelObject : MonoBehaviour {
 			init();
 
 		m_meshFilter.sharedMesh.Clear(false);
-		
-		if (atlasIndex == kTopLevel)
+
+		if (atlasIndex <= kNoIndex)
+			readonlyVertexCount = 0;
+		else if (atlasIndex == kTopLevel)
 			rebuildAndMergeChildren();
 		else
 			rebuildThisObjectOnly();
@@ -104,17 +112,19 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildAndMergeChildren()
 	{
-		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
-		for (int i = 0; i < voxelObjects.Length; ++i)
-			voxelObjects[i].setLod(currentLod);
+		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
+		for (int i = 0; i < children.Length; ++i)
+			if (children[i] != this) 
+				children[i].setLod(currentLod);
 
 		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
 		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		Matrix4x4 parentTransform = transform.worldToLocalMatrix;
 
 		for (int i = 0; i < meshFilters.Length; ++i) {
 			MeshFilter filter = meshFilters[i];
 			combine[i].mesh = filter.sharedMesh;
-			combine[i].transform = Matrix4x4.identity;
+			combine[i].transform = filter.transform.localToWorldMatrix * parentTransform;
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
@@ -184,19 +194,21 @@ public class VoxelObject : MonoBehaviour {
 			transform.GetChild(i).localPosition -= firstChildPos;
 	}
 
-	public void clear()
+	public void clear(bool includeSelf, bool recursive)
 	{
-		GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
-		GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
-		m_meshFilter = null;
-		m_meshRenderer = null;
-		readonlyVertexCount = 0;
+		if (includeSelf) {
+			GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
+			GameObject.Destroy(gameObject.GetComponent<MeshRenderer>());
+			m_meshFilter = null;
+			m_meshRenderer = null;
+			readonlyVertexCount = 0;
+		}
 
-		if (atlasIndex == kTopLevel) {
+		if (recursive) {
 			VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
 			for (int i = 0; i < children.Length; ++i) {
 				if (children[i] != this) 
-					children[i].clear();
+					children[i].clear(true, false);
 			}
 		}
 	}

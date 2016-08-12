@@ -27,7 +27,7 @@ public class VoxelObjectEditor : Editor
 
 		if(GUILayout.Button("Clear"))
 		{
-			vo.clear();
+			vo.clear(true, true);
 		}
 	}
 }
