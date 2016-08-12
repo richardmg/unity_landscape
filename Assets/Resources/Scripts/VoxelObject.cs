@@ -24,16 +24,10 @@ public class VoxelObject : MonoBehaviour {
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
 
-	public VoxelObject(int atlasIndex, float voxelDepth)
-	{
-		this.atlasIndex = atlasIndex;
-		this.voxelDepth = voxelDepth;
-	}
-
 	void OnValidate()
 	{
 		init();
-		rebuildObject();
+		rebuildObject(false);
 	}
 
 	void Start()
@@ -55,10 +49,10 @@ public class VoxelObject : MonoBehaviour {
 	public void setLod(Lod lod)
 	{
 		currentLod = lod;
-		rebuildObject();
+		rebuildObject(false);
 	}
 
-	public void rebuildObject()
+	public void rebuildObject(bool isTopLevel)
 	{
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
@@ -66,7 +60,15 @@ public class VoxelObject : MonoBehaviour {
 
 		if (!m_meshFilter)
 			init();
+		
+		if (isTopLevel)
+			rebuildTopLevel();
+		else
+			rebuildChild();
+	}
 
+	public void rebuildChild()
+	{
 		voxelMeshFactory.atlasIndex = atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
@@ -89,8 +91,43 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-//		m_meshFilter.sharedMesh.Clear(false);
 		m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
+		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+	}
+
+	public void rebuildTopLevel()
+	{
+		m_meshFilter.sharedMesh.Clear(false);
+
+		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
+		for (int i = 0; i < voxelObjects.Length; ++i)
+			voxelObjects[i].setLod(currentLod);
+
+		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
+		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+
+		for (int i = 0; i < meshFilters.Length; ++i) {
+			MeshFilter filter = meshFilters[i];
+			combine[i].mesh = filter.sharedMesh;
+			combine[i].transform = Matrix4x4.identity;
+			meshFilters[i].gameObject.SetActive(false);
+		}
+
+		m_meshFilter.sharedMesh = new Mesh();
+		m_meshFilter.sharedMesh.CombineMeshes(combine);
+		gameObject.SetActive(true);
+
+		switch (currentLod) {
+		case kLod0:
+			m_meshRenderer.sharedMaterial = materialExact;
+			break;
+		case kLod1:
+			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
+			break;
+		default:
+			break;
+		}
+
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
@@ -131,12 +168,31 @@ public class VoxelObject : MonoBehaviour {
 		}
 	}
 
-	public void clear()
+	public void centerChildren()
+	{
+		int childCount = transform.childCount;
+		if (childCount == 0)
+			return;
+
+		Vector3 firstChildPos = transform.GetChild(0).localPosition;
+		for (int i = 0; i < childCount; ++i)
+			transform.GetChild(i).localPosition -= firstChildPos;
+	}
+
+	public void clear(bool isTopLevel)
 	{
 		GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
 		GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
 		m_meshFilter = null;
 		m_meshRenderer = null;
 		readonlyVertexCount = 0;
+
+		if (isTopLevel) {
+			VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
+			for (int i = 0; i < children.Length; ++i) {
+				if (children[i] != this)
+					children[i].clear(false);
+			}
+		}
 	}
 }
