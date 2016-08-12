@@ -131,4 +131,12 @@ public class VoxelObject : MonoBehaviour {
 		}
 	}
 
+	public void clear()
+	{
+		GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
+		GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
+		m_meshFilter = null;
+		m_meshRenderer = null;
+		readonlyVertexCount = 0;
+	}
 }

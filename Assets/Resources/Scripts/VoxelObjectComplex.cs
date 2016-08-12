@@ -107,7 +107,7 @@ public class VoxelObjectComplex : MonoBehaviour {
 		for (int i = 0; i < meshFilters.Length; ++i) {
 			MeshFilter filter = meshFilters[i];
 			combine[i].mesh = filter.sharedMesh;
-			combine[i].transform = Matrix4x4.identity;//meshFilters[i].transform.localToWorldMatrix;
+			combine[i].transform = Matrix4x4.identity;
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
@@ -140,13 +140,16 @@ public class VoxelObjectComplex : MonoBehaviour {
 			transform.GetChild(i).localPosition -= firstChildPos;
 	}
 
-	public void clearMesh()
+	public void clear()
 	{
 		GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
 		GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
-		GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
-		GameObject.Destroy(gameObject.GetComponent<MeshRenderer>());
 		m_meshFilter = null;
 		m_meshRenderer = null;
+		readonlyVertexCount = 0;
+
+		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
+		for (int i = 0; i < voxelObjects.Length; ++i)
+			voxelObjects[i].clear();
 	}
 }
