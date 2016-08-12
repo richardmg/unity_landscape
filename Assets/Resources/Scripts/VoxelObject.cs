@@ -74,9 +74,9 @@ public class VoxelObject : MonoBehaviour {
 
 		switch (currentLod) {
 		case kLod0:
-			voxelMeshFactory.useVolume = voxelDepth == 0;
+			voxelMeshFactory.useVolume = false;
 			voxelMeshFactory.simplify = false;
-			m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
+			m_meshRenderer.sharedMaterial = materialExact;
 			break;
 		case kLod1:
 			voxelMeshFactory.useVolume = true;
