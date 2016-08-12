@@ -30,15 +30,9 @@ public class VoxelObject : MonoBehaviour {
 	void OnValidate()
 	{
 		init();
-
-		if (atlasIndex == kTopLevel) {
+		if (atlasIndex == kTopLevel)
 			centerChildren();
-			rebuildObject();
-//			clear(false, true);
-
-		} else {
-			rebuildObject();
-		}
+		rebuildObject();
 	}
 
 	void Start()
@@ -128,6 +122,8 @@ public class VoxelObject : MonoBehaviour {
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
+		clear(false, true);
+
 		m_meshFilter.sharedMesh = new Mesh();
 		m_meshFilter.sharedMesh.CombineMeshes(combine);
 		gameObject.SetActive(true);
@@ -197,8 +193,10 @@ public class VoxelObject : MonoBehaviour {
 	public void clear(bool includeSelf, bool recursive)
 	{
 		if (includeSelf) {
-			GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
-			GameObject.Destroy(gameObject.GetComponent<MeshRenderer>());
+//			GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
+//			GameObject.Destroy(gameObject.GetComponent<MeshRenderer>());
+			GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
+			GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
 			m_meshFilter = null;
 			m_meshRenderer = null;
 			readonlyVertexCount = 0;
