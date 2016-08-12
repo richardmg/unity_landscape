@@ -60,6 +60,8 @@ public class VoxelObject : MonoBehaviour {
 
 		if (!m_meshFilter)
 			init();
+
+		m_meshFilter.sharedMesh.Clear(false);
 		
 		if (isTopLevel)
 			rebuildTopLevel();
@@ -69,6 +71,9 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildChild()
 	{
+		if (atlasIndex == -1)
+			return;
+
 		voxelMeshFactory.atlasIndex = atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
@@ -97,8 +102,6 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildTopLevel()
 	{
-		m_meshFilter.sharedMesh.Clear(false);
-
 		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < voxelObjects.Length; ++i)
 			voxelObjects[i].setLod(currentLod);
