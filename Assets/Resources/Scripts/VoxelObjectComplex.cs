@@ -150,6 +150,6 @@ public class VoxelObjectComplex : MonoBehaviour {
 
 		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < voxelObjects.Length; ++i)
-			voxelObjects[i].clear(false);
+			voxelObjects[i].clear();
 	}
 }

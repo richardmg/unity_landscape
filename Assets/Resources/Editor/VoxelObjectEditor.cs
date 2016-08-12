@@ -20,15 +20,14 @@ public class VoxelObjectEditor : Editor
 			vo.setLod(VoxelObject.kLod1);
 		}
 
-		if(GUILayout.Button("Merge"))
+		if(GUILayout.Button("Center children"))
 		{
 			vo.centerChildren();
-			vo.rebuildObject(true);
 		}
 
 		if(GUILayout.Button("Clear"))
 		{
-			vo.clear(true);
+			vo.clear();
 		}
 	}
 }

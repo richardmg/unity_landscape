@@ -3,7 +3,7 @@ using System.Collections;
 using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
-	public int atlasIndex = -1;
+	public int atlasIndex = -2;
 	public float voxelDepth = 4;
 	public Lod currentLod = kLod0;
 	public float lodDistance1 = 100;
@@ -21,13 +21,15 @@ public class VoxelObject : MonoBehaviour {
 	public const Lod kLod0 = 0;
 	public const Lod kLod1 = 1;
 
+	public const Lod kTopLevel = -1;
+
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
 
 	void OnValidate()
 	{
 		init();
-		rebuildObject(false);
+		rebuildObject();
 	}
 
 	void Start()
@@ -49,11 +51,14 @@ public class VoxelObject : MonoBehaviour {
 	public void setLod(Lod lod)
 	{
 		currentLod = lod;
-		rebuildObject(false);
+		rebuildObject();
 	}
 
-	public void rebuildObject(bool isTopLevel)
+	public void rebuildObject()
 	{
+		if (atlasIndex < kTopLevel)
+			return;
+		
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
@@ -63,17 +68,14 @@ public class VoxelObject : MonoBehaviour {
 
 		m_meshFilter.sharedMesh.Clear(false);
 		
-		if (isTopLevel)
-			rebuildTopLevel();
+		if (atlasIndex == kTopLevel)
+			rebuildAndMergeChildren();
 		else
-			rebuildChild();
+			rebuildThisObjectOnly();
 	}
 
-	public void rebuildChild()
+	public void rebuildThisObjectOnly()
 	{
-		if (atlasIndex == -1)
-			return;
-
 		voxelMeshFactory.atlasIndex = atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
@@ -100,7 +102,7 @@ public class VoxelObject : MonoBehaviour {
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
-	public void rebuildTopLevel()
+	public void rebuildAndMergeChildren()
 	{
 		VoxelObject[] voxelObjects = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < voxelObjects.Length; ++i)
@@ -182,7 +184,7 @@ public class VoxelObject : MonoBehaviour {
 			transform.GetChild(i).localPosition -= firstChildPos;
 	}
 
-	public void clear(bool isTopLevel)
+	public void clear()
 	{
 		GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
 		GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
@@ -190,11 +192,11 @@ public class VoxelObject : MonoBehaviour {
 		m_meshRenderer = null;
 		readonlyVertexCount = 0;
 
-		if (isTopLevel) {
+		if (atlasIndex == kTopLevel) {
 			VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
 			for (int i = 0; i < children.Length; ++i) {
-				if (children[i] != this)
-					children[i].clear(false);
+				if (children[i] != this) 
+					children[i].clear();
 			}
 		}
 	}
