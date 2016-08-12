@@ -20,14 +20,10 @@ public class VoxelObjectComplexEditor : Editor
 			vo.setLod(VoxelObjectComplex.kLod1);
 		}
 
-		if(GUILayout.Button("Rebuild"))
-		{
-			vo.rebuildObject();
-		}
-
-		if(GUILayout.Button("Center"))
+		if(GUILayout.Button("Center and rebuild"))
 		{
 			vo.centerChildren();
+			vo.rebuildObject();
 		}
 
 		if(GUILayout.Button("Clear"))

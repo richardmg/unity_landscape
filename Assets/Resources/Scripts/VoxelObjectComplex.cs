@@ -107,7 +107,7 @@ public class VoxelObjectComplex : MonoBehaviour {
 		for (int i = 0; i < meshFilters.Length; ++i) {
 			MeshFilter filter = meshFilters[i];
 			combine[i].mesh = filter.sharedMesh;
-			combine[i].transform = meshFilters[i].transform.localToWorldMatrix;
+			combine[i].transform = Matrix4x4.identity;//meshFilters[i].transform.localToWorldMatrix;
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
