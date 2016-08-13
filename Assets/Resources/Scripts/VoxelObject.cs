@@ -122,8 +122,6 @@ public class VoxelObject : MonoBehaviour {
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
-		clear(false, true);
-
 		m_meshFilter.sharedMesh = new Mesh();
 		m_meshFilter.sharedMesh.CombineMeshes(combine);
 		gameObject.SetActive(true);
