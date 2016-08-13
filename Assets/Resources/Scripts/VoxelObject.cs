@@ -30,8 +30,6 @@ public class VoxelObject : MonoBehaviour {
 	void OnValidate()
 	{
 		init();
-		if (atlasIndex == kTopLevel)
-			centerChildren();
 		rebuildObject();
 	}
 
@@ -178,37 +176,5 @@ public class VoxelObject : MonoBehaviour {
 
 		if (voxelMeshFactory == null)
 			voxelMeshFactory = new VoxelMeshFactory();
-	}
-
-	public void centerChildren()
-	{
-		int childCount = transform.childCount;
-		if (childCount == 0)
-			return;
-
-		Vector3 firstChildPos = transform.GetChild(0).localPosition;
-		for (int i = 0; i < childCount; ++i)
-			transform.GetChild(i).localPosition -= firstChildPos;
-	}
-
-	public void removeMeshFilter(bool includeSelf, bool recursive)
-	{
-		if (includeSelf) {
-//			GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
-//			GameObject.Destroy(gameObject.GetComponent<MeshRenderer>());
-			GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
-			GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
-			m_meshFilter = null;
-			m_meshRenderer = null;
-			readonlyVertexCount = 0;
-		}
-
-		if (recursive) {
-			VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
-			for (int i = 0; i < children.Length; ++i) {
-				if (children[i] != this) 
-					children[i].removeMeshFilter(true, false);
-			}
-		}
 	}
 }
