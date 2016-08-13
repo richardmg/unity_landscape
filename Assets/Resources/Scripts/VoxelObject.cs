@@ -15,7 +15,7 @@ public class VoxelObject : MonoBehaviour {
 	static public Material materialExact;
 	static public Material materialVolume;
 	static public Material materialVolumeSimplified;
-	static VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
+	static VoxelMeshFactory voxelMeshFactory;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -177,6 +177,9 @@ public class VoxelObject : MonoBehaviour {
 			materialVolume.CopyPropertiesFromMaterial(materialExact);
 			materialVolumeSimplified.CopyPropertiesFromMaterial(materialExact);
 		}
+
+		if (voxelMeshFactory == null)
+			voxelMeshFactory = new VoxelMeshFactory();
 	}
 
 	public void centerChildren()
