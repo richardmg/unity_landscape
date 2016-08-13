@@ -191,7 +191,7 @@ public class VoxelObject : MonoBehaviour {
 			transform.GetChild(i).localPosition -= firstChildPos;
 	}
 
-	public void clear(bool includeSelf, bool recursive)
+	public void removeMeshFilter(bool includeSelf, bool recursive)
 	{
 		if (includeSelf) {
 //			GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
@@ -207,7 +207,7 @@ public class VoxelObject : MonoBehaviour {
 			VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
 			for (int i = 0; i < children.Length; ++i) {
 				if (children[i] != this) 
-					children[i].clear(true, false);
+					children[i].removeMeshFilter(true, false);
 			}
 		}
 	}

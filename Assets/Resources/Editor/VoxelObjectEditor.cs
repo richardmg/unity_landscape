@@ -20,14 +20,9 @@ public class VoxelObjectEditor : Editor
 			vo.setLod(VoxelObject.kLod1);
 		}
 
-		if(GUILayout.Button("Center children"))
+		if(GUILayout.Button("Remove mesh filters recursive"))
 		{
-			vo.centerChildren();
-		}
-
-		if(GUILayout.Button("Clear"))
-		{
-			vo.clear(true, true);
+			vo.removeMeshFilter(true, true);
 		}
 	}
 }
