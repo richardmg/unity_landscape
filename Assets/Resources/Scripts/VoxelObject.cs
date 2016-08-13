@@ -118,7 +118,7 @@ public class VoxelObject : MonoBehaviour {
 		for (int i = 0; i < meshFilters.Length; ++i) {
 			MeshFilter filter = meshFilters[i];
 			combine[i].mesh = filter.sharedMesh;
-			combine[i].transform = filter.transform.localToWorldMatrix * parentTransform;
+			combine[i].transform = parentTransform * filter.transform.localToWorldMatrix;
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
