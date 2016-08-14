@@ -58,6 +58,23 @@ public class VoxelMeshFactory {
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
 
+	Vector3[] normalForCode = {
+		new Vector3(-1, 0, 0),
+		new Vector3(1, 0, 0),
+		new Vector3(0, -1, 0),
+		new Vector3(0, 1, 0),
+		new Vector3(0, 0, -1),
+		new Vector3(0, 0, 1),
+		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 0),
+	};
+
 	public VoxelMeshFactory()
 	{
 		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
@@ -100,7 +117,8 @@ public class VoxelMeshFactory {
 
 		for (int i = 0; i < verticeList.Count; ++i) {
 			Vector3 v = verticeList[i];
-			normals[i] = getVolumeNormal(i);
+//			normals[i] = getVolumeNormal(i);
+			normals[i] = normalForCode[normalCodeList[i]];
 
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
 			// since each pixel have four corners, one pixel can map to four utAtlas coords.
@@ -149,10 +167,9 @@ public class VoxelMeshFactory {
 				vertex.z = depth;
 		}
 
-		Vector3 volumeSize = new Vector3(cropRect.width, cropRect.height, depth);
-		Vector3 objectCenter = new Vector3(cropRect.width * 0.5f, cropRect.height * 0.5f, depth / 2);
-		float size = Mathf.Max(volumeSize.x, volumeSize.y);
-		volumeSize = new Vector3(size, size, volumeSize.z);
+//		Vector3 volumeSize = new Vector3(cropRect.width, cropRect.height, depth);
+		Vector3 volumeSize = new Vector3(3, 3, 3);
+		Vector3 objectCenter = new Vector3(cropRect.x + (cropRect.width * 0.5f), cropRect.y + (cropRect.height * 0.5f), depth / 2);
 
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
 		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
@@ -551,7 +568,7 @@ public class VoxelMeshFactory {
 		int index0 = createVertex(pixelX, pixelY1, 0, pixelBottom, kFrontBottomLeft);
 		int index1 = createVertex(pixelX, pixelY2 + 1, 0, pixelTop, kFrontTopLeft);
 		int index4 = createVertex(pixelX, pixelY1, voxelDepth, pixelBottom, kBackBottomLeft);
-		int index5 = createVertex(pixelX, pixelY2 + 1, voxelDepth, pixelTop, kBackTopLeft);
+		int index5 = createVertex(pixelX, pixelY2 + 1, voxelDepth, pixelTop, kLeft);
 
 		tri.Add(index4);
 		tri.Add(index5);
@@ -567,7 +584,7 @@ public class VoxelMeshFactory {
 		Vector2 pixelTop = new Vector2(startPixelX + pixelX, startPixelY + pixelY2);
 
 		int index2 = createVertex(pixelX + 1, pixelY1, 0, pixelBottom, kFrontBottomRight);
-		int index3 = createVertex(pixelX + 1, pixelY2 + 1, 0, pixelTop, kFrontTopRight);
+		int index3 = createVertex(pixelX + 1, pixelY2 + 1, 0, pixelTop, kRight);
 		int index6 = createVertex(pixelX + 1, pixelY1, voxelDepth, pixelBottom, kBackBottomRight);
 		int index7 = createVertex(pixelX + 1, pixelY2 + 1, voxelDepth, pixelTop, kBackTopRight);
 
@@ -584,7 +601,7 @@ public class VoxelMeshFactory {
 		Vector2 pixelLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY);
 		Vector2 pixelRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY);
 
-		int index0 = createVertex(pixelX1, pixelY, 0, pixelLeft, kFrontBottomLeft);
+		int index0 = createVertex(pixelX1, pixelY, 0, pixelLeft, kBottom);
 		int index2 = createVertex(pixelX2 + 1, pixelY, 0, pixelRight, kFrontBottomRight);
 		int index4 = createVertex(pixelX1, pixelY, voxelDepth, pixelLeft, kBackBottomLeft);
 		int index6 = createVertex(pixelX2 + 1, pixelY, voxelDepth, pixelRight, kBackBottomRight);
@@ -604,7 +621,7 @@ public class VoxelMeshFactory {
 
 		int index1 = createVertex(pixelX1, pixelY + 1, 0, pixelLeft, kFrontTopLeft);
 		int index3 = createVertex(pixelX2 + 1, pixelY + 1, 0, pixelRight, kFrontTopRight);
-		int index5 = createVertex(pixelX1, pixelY + 1, voxelDepth, pixelLeft, kBackTopLeft);
+		int index5 = createVertex(pixelX1, pixelY + 1, voxelDepth, pixelLeft, kTop);
 		int index7 = createVertex(pixelX2 + 1, pixelY + 1, voxelDepth, pixelRight, kBackTopRight);
 
 		tri.Add(index1);
