@@ -262,10 +262,12 @@ public class VoxelMeshFactory {
 					(int)cropRect.y + (int)cropRect.height - 1,
 					z * deltaZ); 
 
-			createBackFace(
-				(int)cropRect.x, (int)cropRect.y,
-				(int)cropRect.x + (int)cropRect.width - 1,
-				(int)cropRect.y + (int)cropRect.height - 1); 
+			if (voxelDepth != 0) {
+				createBackFace(
+					(int)cropRect.x, (int)cropRect.y,
+					(int)cropRect.x + (int)cropRect.width - 1,
+					(int)cropRect.y + (int)cropRect.height - 1); 
+			}
 		}
 	}
 

@@ -10,7 +10,7 @@
 		_BaseLight ("Base light", Range(0, 2)) = 0.85
 		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
-		_Specular ("Specular", Range(0, 1)) = 0.8
+		_Specular ("Specular", Range(0, 2)) = 0.8
 		_Attenuation ("Attenuation", Range(0.0001, 1.0)) = 0.3
 		_EdgeSharp ("Sharpen edge", Range(0, 0.3)) = 0.2
 		_Gradient ("Gradient", Range(0, 0.6)) = 0.3
