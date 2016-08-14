@@ -54,8 +54,8 @@ struct v2f
 static float3 normalForCode[14] = {
 	float3(-1, 0, 0),	// left exclusive
 	float3(1, 0, 0),	// right exclusive
-	float3(0, 0, 0),	// bottom exclusive (not used)
-	float3(0, 0, 0),	// top exclusive (not used)
+	float3(0, -1, 0),	// bottom exclusive (not used)
+	float3(0, 1, 0),	// top exclusive (not used)
 	float3(0, 0, -1),	// front exclusive
 	float3(0, 0, 1),	// back exclusive
 	float3(0, 0, 0),	// bottom left front
@@ -154,6 +154,8 @@ inline fixed4 voxelobject_frag(v2f i)
 	float3 voxel = min(uvSubImage * subImageSize, subImageSize - 1);
 	float3 uvVoxel = frac(voxel);
 
+ 	float isLeftOrRightSide = if_neq(i.objNormal.x, 0);
+ 	float isBottomOrTopSide = if_neq(i.objNormal.y, 0);
  	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
 
 	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
@@ -183,6 +185,8 @@ inline fixed4 voxelobject_frag(v2f i)
 	#endif
 
 	#ifndef NO_GRADIENT
+		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
+		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.z) * _Gradient), 1);
 		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
 	#endif
 
