@@ -117,7 +117,6 @@ public class VoxelMeshFactory {
 
 		for (int i = 0; i < verticeList.Count; ++i) {
 			Vector3 v = verticeList[i];
-//			normals[i] = getVolumeNormal(i);
 			normals[i] = normalForCode[normalCodeList[i]];
 
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
@@ -153,29 +152,6 @@ public class VoxelMeshFactory {
 		buildMesh();
 		endMesh();
 		return mesh;
-	}
-
-	Vector3 getVolumeNormal(int vertexIndex)
-	{
-		Vector3 vertex = verticeList[vertexIndex];
-
-		float depth = voxelDepth;
-		if (depth == 0) {
-			depth = 1;
-			int nc = normalCodeList[vertexIndex];
-			if (nc == kBack || nc == kBackBottomLeft || nc == kBackBottomRight || nc == kBackTopLeft || nc == kBackTopRight)
-				vertex.z = depth;
-		}
-
-//		Vector3 volumeSize = new Vector3(cropRect.width, cropRect.height, depth);
-		Vector3 volumeSize = new Vector3(3, 3, 3);
-		Vector3 objectCenter = new Vector3(cropRect.x + (cropRect.width * 0.5f), cropRect.y + (cropRect.height * 0.5f), depth / 2);
-
-		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
-		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
-		Vector3 n = kVecBottomLeft + Vector3.Scale(normalizedVertex, kVecDeltaNormal);
-
-		return n;
 	}
 
 	void createExactMesh()
