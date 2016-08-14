@@ -99,25 +99,26 @@ public class VoxelMeshFactory {
 		Vector2[] uvPixels = new Vector2[verticeList.Count];
 
 		for (int i = 0; i < verticeList.Count; ++i) {
+			Vector3 v = verticeList[i];
+			normals[i] = getVolumeNormal(v);
+
+			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
+			// since each pixel have four corners, one pixel can map to four utAtlas coords.
+			float uvAtlasX = (startPixelX + v.x) / (float)kAtlasWidth;
+			float uvAtlasY = (startPixelY + v.y) / (float)kAtlasHeight;
+			float uvPixelX = (float)vertexPixelList[i].x / (float)kAtlasWidth;
+			float uvPixelY = (float)vertexPixelList[i].y / (float)kAtlasHeight;
+			uvAtlas[i] = new Vector2(uvAtlasX, uvAtlasY);
+			uvPixels[i] = new Vector2(uvPixelX, uvPixelY);
+
 			// When using object batching, local vertices and normals will be translated on the CPU before
 			// passed down to the GPU. We therefore loose the original values in the shader, which we need.
 			// We therefore encode this information covered as vertex color.
 			// Also, when combinding meshes, vertex data is truncated to be between 0 and 1. So we therefore
 			// need to normalize some of the value onto that format.
-			Vector3 v = verticeList[i];
-			float uvAtlasX = (startPixelX + v.x) / (float)kAtlasWidth;
-			float uvAtlasY = (startPixelY + v.y) / (float)kAtlasHeight;
 			float normalizedNormalCode = (float)normalCodeList[i] / (float)kNormalCodeMaxValue;
 			float normalizedDepth = voxelDepth / kMaxVoxelDepth;
-			float uvPixelX = (float)vertexPixelList[i].x / (float)kAtlasWidth;
-			float uvPixelY = (float)vertexPixelList[i].y / (float)kAtlasHeight;
-
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalizedNormalCode, normalizedDepth);
-			normals[i] = getVolumeNormal(v);
-			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
-			// since each pixel have four corners, one pixel can map to four utAtlas coords.
-			uvAtlas[i] = new Vector2(uvAtlasX, uvAtlasY);
-			uvPixels[i] = new Vector2(uvPixelX, uvPixelY);
+			cubeDesc[i] = new Color(0, 0, normalizedNormalCode, normalizedDepth);
 		}
 
 		mesh.vertices = verticeList.ToArray();
