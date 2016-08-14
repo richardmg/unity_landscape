@@ -95,6 +95,7 @@ public class VoxelMeshFactory {
 	{
 		Color[] cubeDesc = new Color[verticeList.Count];
 		Vector3[] normals = new Vector3[verticeList.Count];
+		Vector2[] uvAtlas = new Vector2[verticeList.Count];
 		Vector2[] uvPixels = new Vector2[verticeList.Count];
 
 		for (int i = 0; i < verticeList.Count; ++i) {
@@ -115,12 +116,14 @@ public class VoxelMeshFactory {
 			normals[i] = getVolumeNormal(v);
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
 			// since each pixel have four corners, one pixel can map to four utAtlas coords.
+			uvAtlas[i] = new Vector2(uvAtlasX, uvAtlasY);
 			uvPixels[i] = new Vector2(uvPixelX, uvPixelY);
 		}
 
 		mesh.vertices = verticeList.ToArray();
 		mesh.triangles = tri.ToArray();
-		mesh.uv = uvPixels;
+		mesh.uv = uvAtlas;
+		mesh.uv2 = uvPixels;
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
 	}

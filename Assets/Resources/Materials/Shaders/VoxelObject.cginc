@@ -34,7 +34,8 @@ struct appdata
 {
 	float4 vertex : POSITION;
 	float3 normal : NORMAL;
-	float2 uvPixel : TEXCOORD0;
+	float2 uvAtlas: TEXCOORD0;
+	float2 uvPixel : TEXCOORD1;
 	float4 cubeDesc : COLOR;
 };
 
@@ -132,7 +133,7 @@ inline v2f voxelobject_vert(appdata v)
 	o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 	o.objNormal = normalForCode[vertexCode];
 	// TODO: move uv atlas and pixel into one float4
-	o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
+	o.uvAtlas = float3(v.uvAtlas, vertexForCode[vertexCode].z);
 	o.uvPixel = float3(v.uvPixel, 0);
 	o.extra = float4(0, 0, voxelDepth, 0);
 
