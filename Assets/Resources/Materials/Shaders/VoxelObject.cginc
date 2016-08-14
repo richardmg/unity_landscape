@@ -27,6 +27,9 @@ static float _ClampOffset = 0.0001;
 static fixed4 red = fixed4(1, 0, 0, 1);
 static float3 _SunPos = normalize(float3(0, 0, 1));
 
+static float _NormalCodeMaxValue = 13;
+static float _VoxelDepthMaxValue = 100;
+
 struct appdata
 {
 	float4 vertex : POSITION;
@@ -122,8 +125,8 @@ inline float3 uvClamped(v2f i)
 
 inline v2f voxelobject_vert(appdata v)
 {
-	int vertexCode = (int)v.cubeDesc.b;
-	float voxelDepth = v.cubeDesc.a;
+	int vertexCode = round(v.cubeDesc.b * _NormalCodeMaxValue);
+	float voxelDepth = round(v.cubeDesc.a * _VoxelDepthMaxValue);
 
 	v2f o;
 	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
@@ -132,6 +135,7 @@ inline v2f voxelobject_vert(appdata v)
 	o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
 	o.pixel = float4(v.pixel, 0, 0);
 	o.extra = float4(0, 0, voxelDepth, 0);
+
 	return o;
 }
 

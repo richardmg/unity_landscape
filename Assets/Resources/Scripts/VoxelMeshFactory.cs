@@ -7,7 +7,7 @@ using NormalCode = System.Int32;
 public class VoxelMeshFactory {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
-	public bool shareVertices = true;
+	public bool shareVertices = false;//true;
 
 	public bool xFaces = true;
 	public bool yFaces = true;
@@ -31,8 +31,9 @@ public class VoxelMeshFactory {
 	Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
 	Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
 
-	const int subImageWidth = 16;
-	const int subImageHeight = 8;
+	const int kMaxVoxelDepth = 100;
+	const int kSubImageWidth = 16;
+	const int kSubImageHeight = 8;
 	const int kNotFound = -1;
 
 	const NormalCode kLeft = 0;
@@ -49,6 +50,7 @@ public class VoxelMeshFactory {
 	const NormalCode kBackTopLeft = 11;
 	const NormalCode kBackBottomRight = 12;
 	const NormalCode kBackTopRight = 13;
+	const NormalCode kNormalCodeMaxValue = kBackTopRight;
 
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
@@ -72,8 +74,8 @@ public class VoxelMeshFactory {
 
 	public void buildMesh()
 	{
-		startPixelX = (atlasIndex * subImageWidth) % texture.width;
-		startPixelY = (int)((atlasIndex * subImageWidth) / texture.width) * subImageHeight;
+		startPixelX = (atlasIndex * kSubImageWidth) % texture.width;
+		startPixelY = (int)((atlasIndex * kSubImageWidth) / texture.width) * kSubImageHeight;
 		cropRect = calculatecropRect();
 
 		if (useVolume)
@@ -91,13 +93,14 @@ public class VoxelMeshFactory {
 			// When using object batching, local vertices and normals will be translated on the CPU before
 			// passed down to the GPU. We therefore loose the original values in the shader, which we need.
 			// We therefore encode this information covered as vertex color.
-			// Note: Several places I pass down two different pieces of information using a single float
-			// where the integer part represents the first piece, and the fraction the second.
+			// Also, when combinding meshes, vertex data is truncated to be between 0 and 1. So we therefore
+			// need to normalize some of the value onto that format.
 			Vector3 v = verticeList[i];
 			float uvAtlasX = (startPixelX + v.x) / texture.width;
 			float uvAtlasY = (startPixelY + v.y) / texture.height;
-			int normalCode = normalCodeList[i];
-			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalCode, voxelDepth);
+			float normalizedNormalCode = (float)normalCodeList[i] / (float)kNormalCodeMaxValue;
+			float normalizedDepth = voxelDepth / kMaxVoxelDepth;
+			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalizedNormalCode, normalizedDepth);
 			normals[i] = getVolumeNormal(v);
 		}
 
@@ -137,14 +140,14 @@ public class VoxelMeshFactory {
 	void createExactMesh()
 	{
 		if (xFaces) {
-			for (int x = 0; x < subImageWidth; ++x) {
+			for (int x = 0; x < kSubImageWidth; ++x) {
 				createFacesForX(x, kLeft);
 				createFacesForX(x, kRight);
 			}
 		}
 
 		if (yFaces) {
-			for (int y = 0; y < subImageHeight; ++y) {
+			for (int y = 0; y < kSubImageHeight; ++y) {
 				createFacesForY(y, kBottom);
 				createFacesForY(y, kTop);
 			}
@@ -176,7 +179,7 @@ public class VoxelMeshFactory {
 				}
 
 				bestCount = 0;
-				for (int x = subImageWidth - 1; x >= Mathf.Max(0, bestColLeft + 1); --x) {
+				for (int x = kSubImageWidth - 1; x >= Mathf.Max(0, bestColLeft + 1); --x) {
 					int count = countPixelsForCol(x);
 					if (count > bestCount) {
 						bestColRight = x;
@@ -196,7 +199,7 @@ public class VoxelMeshFactory {
 				}
 
 				bestCount = 0;
-				for (int y = subImageHeight - 1; y >= Mathf.Max(0, bestRowBottom + 1); --y) {
+				for (int y = kSubImageHeight - 1; y >= Mathf.Max(0, bestRowBottom + 1); --y) {
 					int count = countPixelsForRow(y);
 					if (count > bestCount) {
 						bestRowTop = y;
@@ -215,7 +218,7 @@ public class VoxelMeshFactory {
 				createTopFace((int)cropRect.x, bestRowTop, (int)cropRect.x + (int)cropRect.width - 1);
 		} else {
 			if (xFaces) {
-				for (int x = 0; x <= subImageWidth; ++x) {
+				for (int x = 0; x <= kSubImageWidth; ++x) {
 					Vector2 singleFaceCount = countSingleFacesForCol(x);
 					if (singleFaceCount.x > 0)
 						createLeftFace(x, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
@@ -225,7 +228,7 @@ public class VoxelMeshFactory {
 			}
 
 			if (yFaces) {
-				for (int y = 0; y <= subImageHeight; ++y) {
+				for (int y = 0; y <= kSubImageHeight; ++y) {
 					Vector2 singleFaceCount = countSingleFacesForRow(y);
 					if (singleFaceCount.x > 0)
 						createBottomFace((int)cropRect.x, y, (int)cropRect.x + (int)cropRect.width - 1);
@@ -263,7 +266,7 @@ public class VoxelMeshFactory {
 		if (x1 > 0 && texture.GetPixel(startPixelX + x1 - 1, startPixelY + y).a != 0)
 			return false;
 
-		if (x2 < subImageWidth - 1 && texture.GetPixel(startPixelX + x2 + 1, startPixelY + y).a != 0)
+		if (x2 < kSubImageWidth - 1 && texture.GetPixel(startPixelX + x2 + 1, startPixelY + y).a != 0)
 			return false;
 
 		for (int x = x1; x <= x2; ++x) {
@@ -281,22 +284,22 @@ public class VoxelMeshFactory {
 		int x2 = 0;
 		int y2 = 0;
 
-		for (x1 = 0; x1 < subImageWidth; ++x1) {
+		for (x1 = 0; x1 < kSubImageWidth; ++x1) {
 			if (countPixelsForCol(x1) > 0)
 				break;
 		}
 
-		for (x2 = subImageWidth; x2 > x1; --x2) {
+		for (x2 = kSubImageWidth; x2 > x1; --x2) {
 			if (countPixelsForCol(x2 - 1) > 0)
 				break;
 		}
 
-		for (y1 = 0; y1 < subImageHeight; ++y1) {
+		for (y1 = 0; y1 < kSubImageHeight; ++y1) {
 			if (countPixelsForRow(y1) > 0)
 				break;
 		}
 
-		for (y2 = subImageHeight; y2 > y1; --y2) {
+		for (y2 = kSubImageHeight; y2 > y1; --y2) {
 			if (countPixelsForRow(y2 - 1) > 0)
 				break;
 		}
@@ -307,7 +310,7 @@ public class VoxelMeshFactory {
 	int countPixelsForCol(int x)
 	{
 		int count = 0;
-		for (int y = 0; y < subImageHeight; ++y) {
+		for (int y = 0; y < kSubImageHeight; ++y) {
 			Color c1 = texture.GetPixel(startPixelX + x, startPixelY + y);
 			if (c1.a != 0)
 				++count;
@@ -319,7 +322,7 @@ public class VoxelMeshFactory {
 	int countPixelsForRow(int y)
 	{
 		int count = 0;
-		for (int x = 0; x < subImageWidth; ++x) {
+		for (int x = 0; x < kSubImageWidth; ++x) {
 			Color c1 = texture.GetPixel(startPixelX + x, startPixelY + y);
 			if (c1.a != 0)
 				++count;
@@ -331,8 +334,8 @@ public class VoxelMeshFactory {
 	Vector2 countSingleFacesForCol(int x)
 	{
 		Vector2 faceCount = new Vector2();
-		for (int y = 0; y < subImageHeight; ++y) {
-			Color c1 = (x == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
+		for (int y = 0; y < kSubImageHeight; ++y) {
+			Color c1 = (x == kSubImageWidth) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
 			Color c2 = (x == 0) ? Color.clear : texture.GetPixel(startPixelX + x - 1, startPixelY + y);
 			if (c1.a == c2.a)
 				continue;
@@ -349,8 +352,8 @@ public class VoxelMeshFactory {
 	Vector2 countSingleFacesForRow(int y)
 	{
 		Vector2 faceCount = new Vector2();
-		for (int x = 0; x < subImageWidth; ++x) {
-			Color c1 = (y == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
+		for (int x = 0; x < kSubImageWidth; ++x) {
+			Color c1 = (y == kSubImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y);
 			Color c2 = (y == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + y - 1);
 			if (c1.a == c2.a)
 				continue;
@@ -366,8 +369,8 @@ public class VoxelMeshFactory {
 
 	int getFirstFaceForX(int startX, int startY, NormalCode face, bool searchForVisible)
 	{
-		for (int y = startY; y < subImageHeight; ++y) {
-			Color c1 = (startX == subImageWidth) ? Color.clear : texture.GetPixel(startPixelX + startX, startPixelY + y);
+		for (int y = startY; y < kSubImageHeight; ++y) {
+			Color c1 = (startX == kSubImageWidth) ? Color.clear : texture.GetPixel(startPixelX + startX, startPixelY + y);
 			Color c2 = (startX == 0) ? Color.clear : texture.GetPixel(startPixelX + startX - 1, startPixelY + y);
 
 			if (searchForVisible) {
@@ -388,8 +391,8 @@ public class VoxelMeshFactory {
 
 	int getFirstFaceForY(int startX, int startY, NormalCode face, bool searchForVisible)
 	{
-		for (int x = startX; x < subImageWidth; ++x) {
-			Color c1 = (startY == subImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY);
+		for (int x = startX; x < kSubImageWidth; ++x) {
+			Color c1 = (startY == kSubImageHeight) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY);
 			Color c2 = (startY == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY - 1);
 
 			if (searchForVisible) {
@@ -410,7 +413,7 @@ public class VoxelMeshFactory {
 
 	int getFirstFaceForZ(int startX, int startY, bool searchForVisible)
 	{
-		for (int x = startX; x < subImageWidth; ++x) {
+		for (int x = startX; x < kSubImageWidth; ++x) {
 			Color c = texture.GetPixel(startPixelX + x, startPixelY + startY);
 			if (searchForVisible && Mathf.CeilToInt(c.a) == 1)
 				return x;
@@ -424,14 +427,14 @@ public class VoxelMeshFactory {
 	{
 		int y2 = -1;
 		int faceShift = (face == kLeft) ? 0 : 1;
-		while (y2 != subImageHeight) {
+		while (y2 != kSubImageHeight) {
 			int y1 = getFirstFaceForX(x + faceShift, y2 + 1, face, true);
 			if (y1 == kNotFound)
 				return;
 
 			y2 = getFirstFaceForX(x + faceShift, y1 + 1, face, false);
 			if (y2 == kNotFound)
-				y2 = subImageHeight;
+				y2 = kSubImageHeight;
 
 			if (face == kLeft)
 				createLeftFace(x, y1, y2 - 1);
@@ -444,14 +447,14 @@ public class VoxelMeshFactory {
 	{
 		int x2 = -1;
 		int faceShift = (face == kBottom) ? 0 : 1;
-		while (x2 != subImageWidth) {
+		while (x2 != kSubImageWidth) {
 			int x1 = getFirstFaceForY(x2 + 1, y + faceShift, face, true);
 			if (x1 == kNotFound)
 				return;
 
 			x2 = getFirstFaceForY(x1 + 1, y + faceShift, face, false);
 			if (x2 == kNotFound)
-				x2 = subImageWidth;
+				x2 = kSubImageWidth;
 
 			if (face == kBottom)
 				createBottomFace(x1, y, x2 - 1);
@@ -462,25 +465,25 @@ public class VoxelMeshFactory {
 
 	void createFacesForZ()
 	{
-		for (int y1 = 0; y1 < subImageHeight; ++y1) {
+		for (int y1 = 0; y1 < kSubImageHeight; ++y1) {
 			int x2 = -1;
 
-			while (x2 != subImageWidth) {
+			while (x2 != kSubImageWidth) {
 				int x1 = getFirstFaceForZ(x2 + 1, y1, true);
 				if (x1 == kNotFound) {
-					x2 =  subImageWidth;
+					x2 =  kSubImageWidth;
 					continue;
 				}
 
 				x2 = getFirstFaceForZ(x1 + 1, y1, false);
 				if (x2 == kNotFound)
-					x2 = subImageWidth;
+					x2 = kSubImageWidth;
 
 				if (y1 > 0 && isFace(x1, y1 - 1, x2 - 1))
 					continue;
 
 				int y2 = y1;
-				while (y2 < subImageHeight - 1 && isFace(x1, y2 + 1, x2 - 1))
+				while (y2 < kSubImageHeight - 1 && isFace(x1, y2 + 1, x2 - 1))
 					++y2;
 				
 				createFrontFace(x1, y1, x2 - 1, y2, 0);
