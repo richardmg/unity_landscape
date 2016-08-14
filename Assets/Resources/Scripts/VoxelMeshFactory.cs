@@ -104,7 +104,7 @@ public class VoxelMeshFactory {
 
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
 			// since each pixel have four corners, one pixel can map to four utAtlas coords.
-			// We send both to be able to clamp uv to be inside a subImage in the shader.
+			// We send both as a way to clamp uv inside the subImage in the shader.
 			float uvAtlasX = (startPixelX + v.x) / (float)kAtlasWidth;
 			float uvAtlasY = (startPixelY + v.y) / (float)kAtlasHeight;
 			float uvPixelX = (float)vertexPixelList[i].x / (float)kAtlasWidth;
