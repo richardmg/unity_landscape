@@ -168,7 +168,7 @@ inline fixed4 voxelobject_frag(v2f i)
 	#ifndef NO_LIGHT
 		float sunDist = dot(normalize(i.normal), _SunPos);
 		float sunAffection = pow(max(0, asin(sunDist)), _Attenuation);
-		float sunLight = _Sunshine * sunAffection;
+		float sunLight = min(_Sunshine * sunAffection, _Specular);
 		c *= _AmbientLight + sunLight;
 		c *= _BaseLight;
 	#endif

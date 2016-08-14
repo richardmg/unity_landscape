@@ -28,9 +28,6 @@ public class VoxelMeshFactory {
 	List<int> normalCodeList = new List<int>(2 * 4 * kSubImageWidth * kSubImageHeight); 
 	List<int> tri = new List<int>(2 * kSubImageWidth * kSubImageHeight); 
 
-	Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
-	Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
-
 	const int kAtlasWidth = 64;
 	const int kAtlasHeight = 64;
 	const int kSubImageWidth = 16;
