@@ -46,7 +46,6 @@ struct v2f
 	float3 objNormal : NORMAL1;
 	float3 uvAtlas : POSITION2;
 	float3 uvPixel : POSITION3;
-	float4 extra : COLOR2;
 };
 
 // We only set correct normals for the side exclusive vertices
@@ -134,8 +133,7 @@ inline v2f voxelobject_vert(appdata v)
 	o.objNormal = normalForCode[vertexCode];
 	// TODO: move uv atlas and pixel into one float4
 	o.uvAtlas = float3(v.uvAtlas, vertexForCode[vertexCode].z);
-	o.uvPixel = float3(v.uvPixel, 0);
-	o.extra = float4(0, 0, voxelDepth, 0);
+	o.uvPixel = float3(v.uvPixel, voxelDepth);
 
 	return o;
 }
@@ -144,8 +142,9 @@ inline fixed4 voxelobject_frag(v2f i)
 {
 	float3 uvAtlasClamped = uvClamped(i);
 
-	float3 textureSize = float3(_TextureSize, i.extra.z);
-	float3 subImageSize = float3(_SubImageSize, i.extra.z);
+	float depth = i.uvPixel.z;
+	float3 textureSize = float3(_TextureSize, depth);
+	float3 subImageSize = float3(_SubImageSize, depth);
 
 	float3 uvAtlasSubImageSize = subImageSize / textureSize;
 	float3 subImageIndex = float3(floor(uvAtlasClamped / uvAtlasSubImageSize).xy, 0);
