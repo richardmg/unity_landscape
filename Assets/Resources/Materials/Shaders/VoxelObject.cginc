@@ -34,7 +34,7 @@ struct appdata
 {
 	float4 vertex : POSITION;
 	float3 normal : NORMAL;
-	float2 pixel : TEXCOORD0;
+	float2 uvPixel : TEXCOORD0;
 	float4 cubeDesc : COLOR;
 };
 
@@ -44,7 +44,7 @@ struct v2f
 	float3 normal : NORMAL;
 	float3 objNormal : NORMAL1;
 	float3 uvAtlas : POSITION2;
-	float4 pixel : COLOR1;
+	float3 uvPixel : POSITION3;
 	float4 extra : COLOR2;
 };
 
@@ -112,9 +112,8 @@ inline float if_else(float testValue, float ifExpr, float elseExpr)
 
 inline float3 uvClamped(v2f i)
 {
-	float2 uvPixel = i.pixel / _TextureSize;
-	float diffX = i.uvAtlas.x - uvPixel.x;
-	float diffY = i.uvAtlas.y - uvPixel.y;
+	float diffX = i.uvAtlas.x - i.uvPixel.x;
+	float diffY = i.uvAtlas.y - i.uvPixel.y;
 	float3 uvAtlasClamped = i.uvAtlas;
 	uvAtlasClamped.x -= if_gt(diffX, _UVAtlasOnePixel.x - _ClampOffset) * _UVAtlasHalfPixel.x;
 	uvAtlasClamped.y -= if_gt(diffY, _UVAtlasOnePixel.y - _ClampOffset) * _UVAtlasHalfPixel.y;
@@ -132,8 +131,9 @@ inline v2f voxelobject_vert(appdata v)
 	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 	o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
 	o.objNormal = normalForCode[vertexCode];
+	// TODO: move uv atlas and pixel into one float4
 	o.uvAtlas = float3(v.cubeDesc.xy, vertexForCode[vertexCode].z);
-	o.pixel = float4(v.pixel, 0, 0);
+	o.uvPixel = float3(v.uvPixel, 0);
 	o.extra = float4(0, 0, voxelDepth, 0);
 
 	return o;

@@ -31,9 +31,12 @@ public class VoxelMeshFactory {
 	Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
 	Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
 
-	const int kMaxVoxelDepth = 100;
+	const int kAtlasWidth = 64;
+	const int kAtlasHeight = 64;
 	const int kSubImageWidth = 16;
 	const int kSubImageHeight = 8;
+
+	const int kMaxVoxelDepth = 100;
 	const int kNotFound = -1;
 
 	const NormalCode kLeft = 0;
@@ -59,8 +62,12 @@ public class VoxelMeshFactory {
 	{
 		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
 		// And, need to fetch texture from other place than MeshRenderer.
+		// TODO: Use fixed sized arrays when creating vertices to avoid uneccessart memory allocations.
 		Material m = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
 		texture = (Texture2D)m.mainTexture;
+		// Ensure that sizes are synced with shader code
+		Debug.Assert(texture.width == kAtlasWidth);
+		Debug.Assert(texture.height == kAtlasHeight);
 	}
 
 	public void beginMesh()
@@ -88,6 +95,7 @@ public class VoxelMeshFactory {
 	{
 		Color[] cubeDesc = new Color[verticeList.Count];
 		Vector3[] normals = new Vector3[verticeList.Count];
+		Vector2[] uvPixels = new Vector2[verticeList.Count];
 
 		for (int i = 0; i < verticeList.Count; ++i) {
 			// When using object batching, local vertices and normals will be translated on the CPU before
@@ -96,17 +104,23 @@ public class VoxelMeshFactory {
 			// Also, when combinding meshes, vertex data is truncated to be between 0 and 1. So we therefore
 			// need to normalize some of the value onto that format.
 			Vector3 v = verticeList[i];
-			float uvAtlasX = (startPixelX + v.x) / texture.width;
-			float uvAtlasY = (startPixelY + v.y) / texture.height;
+			float uvAtlasX = (startPixelX + v.x) / (float)kAtlasWidth;
+			float uvAtlasY = (startPixelY + v.y) / (float)kAtlasHeight;
 			float normalizedNormalCode = (float)normalCodeList[i] / (float)kNormalCodeMaxValue;
 			float normalizedDepth = voxelDepth / kMaxVoxelDepth;
+			float uvPixelX = (float)vertexPixelList[i].x / (float)kAtlasWidth;
+			float uvPixelY = (float)vertexPixelList[i].y / (float)kAtlasHeight;
+
 			cubeDesc[i] = new Color(uvAtlasX, uvAtlasY, normalizedNormalCode, normalizedDepth);
 			normals[i] = getVolumeNormal(v);
+			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
+			// since each pixel have four corners, one pixel can map to four utAtlas coords.
+			uvPixels[i] = new Vector2(uvPixelX, uvPixelY);
 		}
 
 		mesh.vertices = verticeList.ToArray();
 		mesh.triangles = tri.ToArray();
-		mesh.uv = vertexPixelList.ToArray();
+		mesh.uv = uvPixels;
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
 	}
