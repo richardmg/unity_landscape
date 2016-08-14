@@ -45,23 +45,11 @@ public class VoxelObjectEditor : Editor
 			vo.rebuildObject();
 		}
 
-//		if(GUILayout.Button("Remove mesh filters recursive"))
-//		{
-//			removeMeshFilter(target);
-//		}
-
+		if(GUILayout.Button("Clear mesh"))
+		{
+			VoxelObject[] children = vo.gameObject.GetComponentsInChildren<VoxelObject>(true);
+			for (int i = 0; i < children.Length; ++i)
+				children[i].clearMesh();
+		}
 	}
-
-//	public void removeMeshFilter(VoxelObject vo)
-//{
-////			GameObject.Destroy(gameObject.GetComponent<MeshFilter>());
-////			GameObject.Destroy(gameObject.GetComponent<MeshRenderer>());
-//		GameObject.DestroyImmediate(gameObject.GetComponent<MeshFilter>());
-//		GameObject.DestroyImmediate(gameObject.GetComponent<MeshRenderer>());
-//
-//		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
-//		for (int i = 0; i < children.Length; ++i) {
-//			if (children[i] != this) 
-//				children[i].removeMeshFilter(true, false);
-//		}
 }

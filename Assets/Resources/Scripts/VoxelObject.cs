@@ -64,7 +64,7 @@ public class VoxelObject : MonoBehaviour {
 		if (!m_meshFilter)
 			init();
 
-		m_meshFilter.sharedMesh.Clear(false);
+		clearMesh();
 
 		if (atlasIndex <= kNoIndex)
 			readonlyVertexCount = 0;
@@ -176,5 +176,11 @@ public class VoxelObject : MonoBehaviour {
 
 		if (voxelMeshFactory == null)
 			voxelMeshFactory = new VoxelMeshFactory();
+	}
+
+	public void clearMesh()
+	{
+		m_meshFilter.sharedMesh.Clear(false);
+		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 }

@@ -7,7 +7,7 @@ using NormalCode = System.Int32;
 public class VoxelMeshFactory {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
-	public bool shareVertices = false;//true;
+	public bool shareVertices = true;
 
 	public bool xFaces = true;
 	public bool yFaces = true;
