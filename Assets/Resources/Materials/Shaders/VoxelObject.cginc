@@ -71,7 +71,7 @@ static float3 normalForCode[14] = {
 static float3 vertexForCode[14] = {
 	float3(0, 1, 1),	// left exclusive
 	float3(1, 1, 0),	// right exclusive
-	float3(0, 0, 1),	// bottom exclusive
+	float3(0, 0, 0),	// bottom exclusive
 	float3(0, 1, 1),	// top exclusive
 	float3(0, 1, 0),	// front exclusive
 	float3(1, 1, 1),	// back exclusive
