@@ -100,7 +100,7 @@ public class VoxelMeshFactory {
 
 		for (int i = 0; i < verticeList.Count; ++i) {
 			Vector3 v = verticeList[i];
-			normals[i] = getVolumeNormal(v);
+			normals[i] = getVolumeNormal(i);
 
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
 			// since each pixel have four corners, one pixel can map to four utAtlas coords.
@@ -137,10 +137,18 @@ public class VoxelMeshFactory {
 		return mesh;
 	}
 
-	Vector3 getVolumeNormal(Vector3 vertex)
+	Vector3 getVolumeNormal(int vertexIndex)
 	{
-		// Shape normal volume from rectangular to square
-		float depth = Mathf.Max(1, voxelDepth);
+		Vector3 vertex = verticeList[vertexIndex];
+
+		float depth = voxelDepth;
+		if (depth == 0) {
+			depth = 1;
+			int nc = normalCodeList[vertexIndex];
+			if (nc == kBack || nc == kBackBottomLeft || nc == kBackBottomRight || nc == kBackTopLeft || nc == kBackTopRight)
+				vertex.z = depth;
+		}
+
 		Vector3 volumeSize = new Vector3(cropRect.width, cropRect.height, depth);
 		Vector3 objectCenter = new Vector3(cropRect.width * 0.5f, cropRect.height * 0.5f, depth / 2);
 		float size = Mathf.Max(volumeSize.x, volumeSize.y);
@@ -149,9 +157,6 @@ public class VoxelMeshFactory {
 		Vector3 v = vertex - objectCenter + (volumeSize * 0.5f);
 		Vector3 normalizedVertex = new Vector3(v.x / volumeSize.x, v.y / volumeSize.y, v.z / volumeSize.z);
 		Vector3 n = kVecBottomLeft + Vector3.Scale(normalizedVertex, kVecDeltaNormal);
-
-// OBS, can cause problems after commenting out
-//		n /= gameObject.transform.localScale.x;
 
 		return n;
 	}
