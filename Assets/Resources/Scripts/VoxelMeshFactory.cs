@@ -23,10 +23,10 @@ public class VoxelMeshFactory {
 	Rect cropRect;
 
 	Mesh mesh = new Mesh();
-	List<Vector3> verticeList = new List<Vector3>(); 
-	List<Vector2> vertexPixelList = new List<Vector2>(); 
-	List<int> normalCodeList = new List<int>(); 
-	List<int> tri = new List<int>(); 
+	List<Vector3> verticeList = new List<Vector3>(2 * 4 * kSubImageWidth * kSubImageHeight); 
+	List<Vector2> vertexPixelList = new List<Vector2>(kSubImageWidth * kSubImageHeight); 
+	List<int> normalCodeList = new List<int>(2 * 4 * kSubImageWidth * kSubImageHeight); 
+	List<int> tri = new List<int>(2 * kSubImageWidth * kSubImageHeight); 
 
 	Vector3 kVecBottomLeft = new Vector3(-1, -1, -1);
 	Vector3 kVecDeltaNormal = new Vector3(2, 2, 2);
