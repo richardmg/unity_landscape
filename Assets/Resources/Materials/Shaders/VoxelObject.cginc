@@ -183,7 +183,7 @@ inline fixed4 voxelobject_frag(v2f i)
 	#endif
 
 	#ifndef NO_GRADIENT
-		c -= if_else(isFrontOrBackSide, (1 - uvSubImage.y) * _Gradient, 0);
+		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
 	#endif
 
 	return c;
