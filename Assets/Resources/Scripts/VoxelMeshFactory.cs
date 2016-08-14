@@ -274,11 +274,6 @@ public class VoxelMeshFactory {
 		}
 	}
 
-	bool normalCodeIsExclusive(NormalCode n)
-	{
-		return n == kLeft || n == kRight || n == kBottom || n == kTop || n == kFront || n == kBack;
-	}
-
 	bool isFace(int x1, int y, int x2)
 	{
 		// Returns true if the given coords maps to a separate pixel strip in the atlas
@@ -513,11 +508,6 @@ public class VoxelMeshFactory {
 
 	int getVertexIndex(Vector3 v, Vector2 pixel, NormalCode normalCode)
 	{
-		if (normalCodeIsExclusive(normalCode)) {
-			// Cannot share vertices that are meant to be exclusive
-			return kNotFound;
-		}
-
 		int i = verticeList.FindIndex(v2 => v2 == v);
 		if (i == kNotFound)
 			return kNotFound;
@@ -525,7 +515,7 @@ public class VoxelMeshFactory {
 		if (vertexPixelList[i] != pixel)
 			return kNotFound;
 
-		if (normalCodeIsExclusive(normalCodeList[i]))
+		if (normalCode != normalCodeList[i])
 			return kNotFound;
 
 		return i;
