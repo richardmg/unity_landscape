@@ -27,7 +27,7 @@ static float _ClampOffset = 0.0001;
 static fixed4 red = fixed4(1, 0, 0, 1);
 static float3 _SunPos = normalize(float3(0, 0, 1));
 
-static float _NormalCodeMaxValue = 13;
+static float _NormalCodeMaxValue = 9;
 static float _VoxelDepthMaxValue = 100;
 
 struct appdata
@@ -51,39 +51,20 @@ struct v2f
 // We only set correct normals for the side exclusive vertices
 // to be able to determine correct normals after interpolation
 // in the fragment shader.
-static float3 normalForCode[14] = {
-	float3(-1, 0, 0),	// left exclusive
-	float3(1, 0, 0),	// right exclusive
-	float3(0, -1, 0),	// bottom exclusive (not used)
-	float3(0, 1, 0),	// top exclusive (not used)
-	float3(0, 0, -1),	// front exclusive
-	float3(0, 0, 1),	// back exclusive
-	float3(0, 0, 0),	// bottom left front
-	float3(0, 0, 0),	// top left front
-	float3(0, 0, 0),	// bottom right front
-	float3(0, 0, 0),	// top right front
-	float3(0, 0, 0),	// bottom left back
-	float3(0, 0, 0),	// top left back
-	float3(0, 0, 0),	// bottom right back
-	float3(0, 0, 0),	// top right back
+static float3 normalForCode[10] = {
+	float3(-1, 0, 0),
+	float3(-1, 0, 0),
+	float3(1, 0, 0),
+	float3(1, 0, 0),
+	float3(0, -1, 0),
+	float3(0, -1, 0),
+	float3(0, 1, 0),
+	float3(0, 1, 0),
+	float3(0, 0, -1),
+	float3(0, 0, 1)
 };
 
-static float3 vertexForCode[14] = {
-	float3(0, 1, 1),	// left exclusive
-	float3(1, 1, 0),	// right exclusive
-	float3(0, 0, 0),	// bottom exclusive
-	float3(0, 1, 1),	// top exclusive
-	float3(0, 1, 0),	// front exclusive
-	float3(1, 1, 1),	// back exclusive
-	float3(0, 0, 0),	// bottom left front
-	float3(0, 1, 0),	// top left front
-	float3(1, 0, 0),	// bottom right front
-	float3(1, 1, 0),	// top right front
-	float3(0, 0, 1),	// bottom left back
-	float3(0, 1, 1),	// top left back
-	float3(1, 0, 1),	// bottom right back
-	float3(1, 1, 1),	// top right back
-};
+static float depthForCode[10] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
 
 inline float if_eq(float x, float y)
 {
@@ -124,15 +105,14 @@ inline float3 uvClamped(v2f i)
 
 inline v2f voxelobject_vert(appdata v)
 {
-	int vertexCode = round(v.cubeDesc.b * _NormalCodeMaxValue);
+	int normalCode = round(v.cubeDesc.b * _NormalCodeMaxValue);
 	float voxelDepth = round(v.cubeDesc.a * _VoxelDepthMaxValue);
 
 	v2f o;
 	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 	o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
-	o.objNormal = normalForCode[vertexCode];
-	// TODO: move uv atlas and pixel into one float4
-	o.uvAtlas = float3(v.uvAtlas, vertexForCode[vertexCode].z);
+	o.objNormal = normalForCode[normalCode];
+	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
 
 	return o;
@@ -185,7 +165,7 @@ inline fixed4 voxelobject_frag(v2f i)
 	#endif
 
 	#ifndef NO_GRADIENT
-		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
+		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.z) * _Gradient), 1);
 		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.z) * _Gradient), 1);
 		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
 	#endif

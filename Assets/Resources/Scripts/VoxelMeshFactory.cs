@@ -36,41 +36,33 @@ public class VoxelMeshFactory {
 	const int kMaxVoxelDepth = 100;
 	const int kNotFound = -1;
 
-	const NormalCode kLeft = 0;
-	const NormalCode kRight = 1;
-	const NormalCode kBottom = 2;
-	const NormalCode kTop = 3;
-	const NormalCode kFront = 4;
-	const NormalCode kBack = 5;
-	const NormalCode kFrontBottomLeft = 6;
-	const NormalCode kFrontTopLeft = 7;
-	const NormalCode kFrontBottomRight = 8;
-	const NormalCode kFrontTopRight = 9;
-	const NormalCode kBackBottomLeft = 10;
-	const NormalCode kBackTopLeft = 11;
-	const NormalCode kBackBottomRight = 12;
-	const NormalCode kBackTopRight = 13;
-	const NormalCode kNormalCodeMaxValue = kBackTopRight;
-
-	public int readonlyVertexCount = 0;
-	public int readonlyTriangleCount = 0;
+	const NormalCode kFrontLeft = 0;
+	const NormalCode kBackLeft = 1;
+	const NormalCode kFrontRight = 2;
+	const NormalCode kBackRight = 3;
+	const NormalCode kFrontBottom = 4;
+	const NormalCode kBackBottom = 5;
+	const NormalCode kFrontTop = 6;
+	const NormalCode kBackTop = 7;
+	const NormalCode kFront = 8;
+	const NormalCode kBack = 9;
+	const NormalCode kNormalCodeMaxValue = kBack;
 
 	Vector3[] normalForCode = {
 		new Vector3(-1, 0, 0),
+		new Vector3(-1, 0, 0),
+		new Vector3(1, 0, 0),
 		new Vector3(1, 0, 0),
 		new Vector3(0, -1, 0),
+		new Vector3(0, -1, 0),
+		new Vector3(0, 1, 0),
 		new Vector3(0, 1, 0),
 		new Vector3(0, 0, -1),
-		new Vector3(0, 0, 1),
-		new Vector3(0, 0, 0),
-		new Vector3(0, 0, 0),
-		new Vector3(0, 0, 0),
-		new Vector3(0, 0, 0),
-		new Vector3(0, 0, 0),
-		new Vector3(0, 0, 0),
-		new Vector3(0, 0, 0),
-		new Vector3(0, 0, 0),
+		new Vector3(0, 0, 1)
 	};
+
+	public int readonlyVertexCount = 0;
+	public int readonlyTriangleCount = 0;
 
 	public VoxelMeshFactory()
 	{
@@ -155,15 +147,15 @@ public class VoxelMeshFactory {
 	{
 		if (xFaces) {
 			for (int x = 0; x < kSubImageWidth; ++x) {
-				createFacesForX(x, kLeft);
-				createFacesForX(x, kRight);
+				createFacesForX(x, kFrontLeft);
+				createFacesForX(x, kFrontRight);
 			}
 		}
 
 		if (yFaces) {
 			for (int y = 0; y < kSubImageHeight; ++y) {
-				createFacesForY(y, kBottom);
-				createFacesForY(y, kTop);
+				createFacesForY(y, kFrontBottom);
+				createFacesForY(y, kFrontTop);
 			}
 		}
 
@@ -385,14 +377,14 @@ public class VoxelMeshFactory {
 			Color c2 = (startX == 0) ? Color.clear : texture.GetPixel(startPixelX + startX - 1, startPixelY + y);
 
 			if (searchForVisible) {
-				if (face == kLeft && c1.a == 1 && c2.a == 0)
+				if (face == kFrontLeft && c1.a == 1 && c2.a == 0)
 					return y;
-				if (face == kRight && c1.a == 0 && c2.a == 1)
+				if (face == kFrontRight && c1.a == 0 && c2.a == 1)
 					return y;
 			} else {
-				if (face == kLeft && (c1.a == c2.a || c1.a == 0))
+				if (face == kFrontLeft && (c1.a == c2.a || c1.a == 0))
 					return y;
-				if (face == kRight && (c1.a == c2.a || c2.a == 0))
+				if (face == kFrontRight && (c1.a == c2.a || c2.a == 0))
 					return y;
 			}
 		}
@@ -407,14 +399,14 @@ public class VoxelMeshFactory {
 			Color c2 = (startY == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY - 1);
 
 			if (searchForVisible) {
-				if (face == kBottom && c1.a == 1 && c2.a == 0)
+				if (face == kFrontBottom && c1.a == 1 && c2.a == 0)
 					return x;
-				if (face == kTop && c1.a == 0 && c2.a == 1)
+				if (face == kFrontTop && c1.a == 0 && c2.a == 1)
 					return x;
 			} else {
-				if (face == kBottom && (c1.a == c2.a || c1.a == 0))
+				if (face == kFrontBottom && (c1.a == c2.a || c1.a == 0))
 					return x;
-				if (face == kTop && (c1.a == c2.a || c2.a == 0))
+				if (face == kFrontTop && (c1.a == c2.a || c2.a == 0))
 					return x;
 			}
 		}
@@ -437,7 +429,7 @@ public class VoxelMeshFactory {
 	void createFacesForX(int x, NormalCode face)
 	{
 		int y2 = -1;
-		int faceShift = (face == kLeft) ? 0 : 1;
+		int faceShift = (face == kFrontLeft) ? 0 : 1;
 		while (y2 != kSubImageHeight) {
 			int y1 = getFirstFaceForX(x + faceShift, y2 + 1, face, true);
 			if (y1 == kNotFound)
@@ -447,7 +439,7 @@ public class VoxelMeshFactory {
 			if (y2 == kNotFound)
 				y2 = kSubImageHeight;
 
-			if (face == kLeft)
+			if (face == kFrontLeft)
 				createLeftFace(x, y1, y2 - 1);
 			else
 				createRightFace(x, y1, y2 - 1);
@@ -457,7 +449,7 @@ public class VoxelMeshFactory {
 	void createFacesForY(int y, NormalCode face)
 	{
 		int x2 = -1;
-		int faceShift = (face == kBottom) ? 0 : 1;
+		int faceShift = (face == kFrontBottom) ? 0 : 1;
 		while (x2 != kSubImageWidth) {
 			int x1 = getFirstFaceForY(x2 + 1, y + faceShift, face, true);
 			if (x1 == kNotFound)
@@ -467,7 +459,7 @@ public class VoxelMeshFactory {
 			if (x2 == kNotFound)
 				x2 = kSubImageWidth;
 
-			if (face == kBottom)
+			if (face == kFrontBottom)
 				createBottomFace(x1, y, x2 - 1);
 			else
 				createTopFace(x1, y, x2 - 1);
@@ -540,10 +532,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelBottom = new Vector2(startPixelX + pixelX, startPixelY + pixelY1);
 		Vector2 pixelTop = new Vector2(startPixelX + pixelX, startPixelY + pixelY2);
 
-		int index0 = createVertex(pixelX, pixelY1, 0, pixelBottom, kFrontBottomLeft);
-		int index1 = createVertex(pixelX, pixelY2 + 1, 0, pixelTop, kFrontTopLeft);
-		int index4 = createVertex(pixelX, pixelY1, voxelDepth, pixelBottom, kBackBottomLeft);
-		int index5 = createVertex(pixelX, pixelY2 + 1, voxelDepth, pixelTop, kLeft);
+		int index0 = createVertex(pixelX, pixelY1, 0, pixelBottom, kFrontLeft);
+		int index1 = createVertex(pixelX, pixelY2 + 1, 0, pixelTop, kFrontLeft);
+		int index4 = createVertex(pixelX, pixelY1, voxelDepth, pixelBottom, kBackLeft);
+		int index5 = createVertex(pixelX, pixelY2 + 1, voxelDepth, pixelTop, kBackLeft);
 
 		tri.Add(index4);
 		tri.Add(index5);
@@ -558,10 +550,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelBottom = new Vector2(startPixelX + pixelX, startPixelY + pixelY1);
 		Vector2 pixelTop = new Vector2(startPixelX + pixelX, startPixelY + pixelY2);
 
-		int index2 = createVertex(pixelX + 1, pixelY1, 0, pixelBottom, kFrontBottomRight);
-		int index3 = createVertex(pixelX + 1, pixelY2 + 1, 0, pixelTop, kRight);
-		int index6 = createVertex(pixelX + 1, pixelY1, voxelDepth, pixelBottom, kBackBottomRight);
-		int index7 = createVertex(pixelX + 1, pixelY2 + 1, voxelDepth, pixelTop, kBackTopRight);
+		int index2 = createVertex(pixelX + 1, pixelY1, 0, pixelBottom, kFrontRight);
+		int index3 = createVertex(pixelX + 1, pixelY2 + 1, 0, pixelTop, kFrontRight);
+		int index6 = createVertex(pixelX + 1, pixelY1, voxelDepth, pixelBottom, kBackRight);
+		int index7 = createVertex(pixelX + 1, pixelY2 + 1, voxelDepth, pixelTop, kBackRight);
 
 		tri.Add(index2);
 		tri.Add(index3);
@@ -576,10 +568,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY);
 		Vector2 pixelRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY);
 
-		int index0 = createVertex(pixelX1, pixelY, 0, pixelLeft, kBottom);
-		int index2 = createVertex(pixelX2 + 1, pixelY, 0, pixelRight, kFrontBottomRight);
-		int index4 = createVertex(pixelX1, pixelY, voxelDepth, pixelLeft, kBackBottomLeft);
-		int index6 = createVertex(pixelX2 + 1, pixelY, voxelDepth, pixelRight, kBackBottomRight);
+		int index0 = createVertex(pixelX1, pixelY, 0, pixelLeft, kFrontBottom);
+		int index2 = createVertex(pixelX2 + 1, pixelY, 0, pixelRight, kFrontBottom);
+		int index4 = createVertex(pixelX1, pixelY, voxelDepth, pixelLeft, kBackBottom);
+		int index6 = createVertex(pixelX2 + 1, pixelY, voxelDepth, pixelRight, kBackBottom);
 
 		tri.Add(index4);
 		tri.Add(index0);
@@ -594,10 +586,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY);
 		Vector2 pixelRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY);
 
-		int index1 = createVertex(pixelX1, pixelY + 1, 0, pixelLeft, kFrontTopLeft);
-		int index3 = createVertex(pixelX2 + 1, pixelY + 1, 0, pixelRight, kFrontTopRight);
-		int index5 = createVertex(pixelX1, pixelY + 1, voxelDepth, pixelLeft, kTop);
-		int index7 = createVertex(pixelX2 + 1, pixelY + 1, voxelDepth, pixelRight, kBackTopRight);
+		int index1 = createVertex(pixelX1, pixelY + 1, 0, pixelLeft, kFrontTop);
+		int index3 = createVertex(pixelX2 + 1, pixelY + 1, 0, pixelRight, kFrontTop);
+		int index5 = createVertex(pixelX1, pixelY + 1, voxelDepth, pixelLeft, kBackTop);
+		int index7 = createVertex(pixelX2 + 1, pixelY + 1, voxelDepth, pixelRight, kBackTop);
 
 		tri.Add(index1);
 		tri.Add(index5);
@@ -614,10 +606,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelTopLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
 		Vector2 pixelTopRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY2);
 
-		int index0 = createVertex(pixelX1, pixelY1, z, pixelBottomLeft, kFrontBottomLeft);
+		int index0 = createVertex(pixelX1, pixelY1, z, pixelBottomLeft, kFront);
 		int index1 = createVertex(pixelX1, pixelY2 + 1, z, pixelTopLeft, kFront);
-		int index2 = createVertex(pixelX2 + 1, pixelY1, z, pixelBottomRight, kFrontBottomRight);
-		int index3 = createVertex(pixelX2 + 1, pixelY2 + 1, z, pixelTopRight, kFrontTopRight);
+		int index2 = createVertex(pixelX2 + 1, pixelY1, z, pixelBottomRight, kFront);
+		int index3 = createVertex(pixelX2 + 1, pixelY2 + 1, z, pixelTopRight, kFront);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -634,9 +626,9 @@ public class VoxelMeshFactory {
 		Vector2 pixelTopLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
 		Vector2 pixelTopRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY2);
 
-		int index4 = createVertex(pixelX1, pixelY1, voxelDepth, pixelBottomLeft, kBackBottomLeft);
-		int index5 = createVertex(pixelX1, pixelY2 + 1, voxelDepth, pixelTopLeft, kBackTopLeft);
-		int index6 = createVertex(pixelX2 + 1, pixelY1, voxelDepth, pixelBottomRight, kBackBottomRight);
+		int index4 = createVertex(pixelX1, pixelY1, voxelDepth, pixelBottomLeft, kBack);
+		int index5 = createVertex(pixelX1, pixelY2 + 1, voxelDepth, pixelTopLeft, kBack);
+		int index6 = createVertex(pixelX2 + 1, pixelY1, voxelDepth, pixelBottomRight, kBack);
 		int index7 = createVertex(pixelX2 + 1, pixelY2 + 1, voxelDepth, pixelTopRight, kBack);
 
 		tri.Add(index6);
