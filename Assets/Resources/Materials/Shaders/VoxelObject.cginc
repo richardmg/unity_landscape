@@ -165,8 +165,8 @@ inline fixed4 voxelobject_frag(v2f i)
 	#endif
 
 	#ifndef NO_GRADIENT
-		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.z) * _Gradient), 1);
-		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.z) * _Gradient), 1);
+		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
+		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
 		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
 	#endif
 
