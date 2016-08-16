@@ -8,6 +8,8 @@ public class VoxelObject : MonoBehaviour {
 	public Lod currentLod = kLod0;
 	public float lodDistance1 = 100;
 	public float lodDistanceCulled = 100000;
+	public bool shareVertices = false;
+	public bool useVolume = false;
 
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
@@ -65,40 +67,15 @@ public class VoxelObject : MonoBehaviour {
 			init();
 
 		clearMesh();
+		configureFactory();
 
 		if (atlasIndex <= kNoIndex)
 			readonlyVertexCount = 0;
 		else if (atlasIndex == kTopLevel)
 			rebuildAndMergeChildren();
 		else
-			rebuildThisObjectOnly();
-	}
+			m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
 
-	public void rebuildThisObjectOnly()
-	{
-		voxelMeshFactory.atlasIndex = atlasIndex;
-		voxelMeshFactory.voxelDepth = voxelDepth;
-		voxelMeshFactory.xFaces = voxelDepth != 0;
-		voxelMeshFactory.yFaces = voxelDepth != 0;
-
-		switch (currentLod) {
-		case kLod0:
-			voxelMeshFactory.useVolume = false;
-			voxelMeshFactory.simplify = false;
-			m_meshRenderer.sharedMaterial = materialExact;
-			break;
-		case kLod1:
-			voxelMeshFactory.useVolume = true;
-			voxelMeshFactory.simplify = true;
-			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
-			break;
-		case kNoLod:
-		default:
-			// TODO: toggle visibility?
-			return;
-		}
-
-		m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
@@ -106,8 +83,11 @@ public class VoxelObject : MonoBehaviour {
 	{
 		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < children.Length; ++i)
-			if (children[i] != this) 
+			if (children[i] != this) {
+				children[i].shareVertices = shareVertices;
+				children[i].useVolume = useVolume;
 				children[i].setLod(currentLod);
+			}
 
 		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
 		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
@@ -123,19 +103,33 @@ public class VoxelObject : MonoBehaviour {
 		m_meshFilter.sharedMesh = new Mesh();
 		m_meshFilter.sharedMesh.CombineMeshes(combine);
 		gameObject.SetActive(true);
+	}
+
+	public void configureFactory()
+	{
+		voxelMeshFactory.atlasIndex = atlasIndex;
+		voxelMeshFactory.voxelDepth = voxelDepth;
+		voxelMeshFactory.xFaces = voxelDepth != 0;
+		voxelMeshFactory.yFaces = voxelDepth != 0;
+		voxelMeshFactory.shareVertices = shareVertices;
+		voxelMeshFactory.useVolume = useVolume;
 
 		switch (currentLod) {
 		case kLod0:
-			m_meshRenderer.sharedMaterial = materialExact;
+//			voxelMeshFactory.useVolume = false;
+			voxelMeshFactory.simplify = false;
+			m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
 			break;
 		case kLod1:
+//			voxelMeshFactory.useVolume = true;
+			voxelMeshFactory.simplify = true;
 			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
 			break;
+		case kNoLod:
 		default:
-			break;
+			// TODO: toggle visibility?
+			return;
 		}
-
-		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
 	public void init()
