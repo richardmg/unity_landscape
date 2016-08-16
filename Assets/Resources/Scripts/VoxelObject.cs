@@ -112,16 +112,15 @@ public class VoxelObject : MonoBehaviour {
 		voxelMeshFactory.xFaces = voxelDepth != 0;
 		voxelMeshFactory.yFaces = voxelDepth != 0;
 		voxelMeshFactory.shareVertices = shareVertices;
-		voxelMeshFactory.useVolume = useVolume;
 
 		switch (currentLod) {
 		case kLod0:
-//			voxelMeshFactory.useVolume = false;
+			voxelMeshFactory.useVolume = useVolume;
 			voxelMeshFactory.simplify = false;
-			m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
+			m_meshRenderer.sharedMaterial = useVolume ? materialVolume : materialExact;
 			break;
 		case kLod1:
-//			voxelMeshFactory.useVolume = true;
+			voxelMeshFactory.useVolume = true;
 			voxelMeshFactory.simplify = true;
 			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
 			break;
