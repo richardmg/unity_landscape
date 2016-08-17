@@ -202,3 +202,6 @@
                 same data.
             - Figure out why uv clamping based on pixel is not accurate.
             - See if I can calculate normals in VC script the same way as in VQ script
+
+            - Copy atlas to Color32
+            - Change simplified to create several faces when not using volume
