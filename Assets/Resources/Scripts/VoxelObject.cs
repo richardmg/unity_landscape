@@ -8,8 +8,6 @@ public class VoxelObject : MonoBehaviour {
 	public Lod currentLod = kLod0;
 	public float lodDistance1 = 100;
 	public float lodDistanceCulled = 100000;
-	public bool shareVertices = false;
-	public bool useVolume = false;
 
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
@@ -101,8 +99,6 @@ public class VoxelObject : MonoBehaviour {
 		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < children.Length; ++i) {
 			if (children[i] != this) {
-				children[i].shareVertices = shareVertices;
-				children[i].useVolume = useVolume;
 				children[i].setLod(currentLod);
 				children[i].rebuildObject();
 			}
@@ -133,11 +129,10 @@ public class VoxelObject : MonoBehaviour {
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
 		voxelMeshFactory.yFaces = voxelDepth != 0;
-		voxelMeshFactory.shareVertices = shareVertices;
 
 		switch (currentLod) {
 		case kLod0:
-			voxelMeshFactory.useVolume = useVolume;
+			voxelMeshFactory.useVolume = false;
 			voxelMeshFactory.simplify = false;
 			break;
 		case kLod1:
