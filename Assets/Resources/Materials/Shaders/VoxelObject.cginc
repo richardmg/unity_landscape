@@ -122,6 +122,8 @@ inline v2f voxelobject_vert(appdata v)
 	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
 
+	// For objects with voxelDepth == 0, we don't cull away
+	// backface triangles, but flip their normals instead
 	int backface = isBackface(v.vertex, o.normal);
 	o.normal *= if_else(backface, if_else(voxelDepth, 1, -1), 1);
 	o.vertex *= if_else(backface, if_else(voxelDepth, 0, 1), 1);
