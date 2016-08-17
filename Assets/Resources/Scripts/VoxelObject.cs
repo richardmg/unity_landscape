@@ -75,7 +75,7 @@ public class VoxelObject : MonoBehaviour {
 		clearMesh();
 		configureFactory();
 
-		if (atlasIndex <= kNoIndex)
+		if (atlasIndex < 0)
 			readonlyVertexCount = 0;
 		else
 			m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
