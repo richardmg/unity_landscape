@@ -16,7 +16,6 @@ public class VoxelObject : MonoBehaviour {
 
 	static public Material materialExact;
 	static public Material materialVolume;
-	static public Material materialVolumeSimplified;
 	static VoxelMeshFactory voxelMeshFactory;
 
 	public const Lod kNoLod = -1;
@@ -76,6 +75,7 @@ public class VoxelObject : MonoBehaviour {
 		else
 			m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
 
+		m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
@@ -117,12 +117,10 @@ public class VoxelObject : MonoBehaviour {
 		case kLod0:
 			voxelMeshFactory.useVolume = useVolume;
 			voxelMeshFactory.simplify = false;
-			m_meshRenderer.sharedMaterial = useVolume ? materialVolume : materialExact;
 			break;
 		case kLod1:
 			voxelMeshFactory.useVolume = true;
 			voxelMeshFactory.simplify = true;
-			m_meshRenderer.sharedMaterial = materialVolumeSimplified;
 			break;
 		case kNoLod:
 		default:
@@ -154,17 +152,13 @@ public class VoxelObject : MonoBehaviour {
 		if (materialExact == null) {
 			materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
 			materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
-			materialVolumeSimplified = (Material)Resources.Load("Materials/VoxelObjectVolumeSimplified", typeof(Material));
 
 			Debug.Assert(materialExact != null);
 			Debug.Assert(materialVolume != null);
-			Debug.Assert(materialVolumeSimplified != null);
 			Debug.Assert(materialExact.mainTexture != null);
 			Debug.Assert(materialVolume.mainTexture != null);
-			Debug.Assert(materialVolumeSimplified.mainTexture != null);
 
 			materialVolume.CopyPropertiesFromMaterial(materialExact);
-			materialVolumeSimplified.CopyPropertiesFromMaterial(materialExact);
 		}
 
 		if (voxelMeshFactory == null)
