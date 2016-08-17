@@ -50,6 +50,9 @@ public class VoxelMeshFactory {
 
 	// Set to true if shader discard operations should be avoided.
 	// Also remember to disable discard in the shader.
+	// Note that current factory implementation will anyway create volume faces for
+	// inner faces (it creates one big face across the whole subimage). So this must
+	// also be fixed if this route is taken.
 	const bool kDisableVolume = false;
 
 	Vector3[] normalForCode = {
