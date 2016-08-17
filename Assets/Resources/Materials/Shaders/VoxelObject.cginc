@@ -115,6 +115,19 @@ inline v2f voxelobject_vert(appdata v)
 	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
 
+	float3 worldPos = mul(_Object2World, v.vertex).xyz;
+	float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
+    float isBackFace = dot(o.normal, worldViewDir) > 0 ? 0 : 1; 
+
+	if (isBackFace) {
+		if (voxelDepth == 0) {
+			o.normal *= -1;
+		} else {
+			// Create degenereate
+			o.vertex = 0;
+		}
+	}
+
 	return o;
 }
 
