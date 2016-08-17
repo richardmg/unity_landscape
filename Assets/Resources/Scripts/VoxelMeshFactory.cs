@@ -48,7 +48,8 @@ public class VoxelMeshFactory {
 	const NormalCode kBack = 9;
 	const NormalCode kNormalCodeMaxValue = kBack;
 
-	// Set to true if shader discard operations should be avoided
+	// Set to true if shader discard operations should be avoided.
+	// Also remember to disable discard in the shader.
 	const bool kDisableVolume = false;
 
 	Vector3[] normalForCode = {
@@ -196,16 +197,50 @@ public class VoxelMeshFactory {
 	void createXFacesExact()
 	{
 		for (int x = 0; x < kSubImageWidth; ++x) {
-			createFacesForX(x, kFrontLeft);
-			createFacesForX(x, kFrontRight);
+			createVerticalFaces(x, kFrontLeft);
+			createVerticalFaces(x, kFrontRight);
 		}
 	}
 
 	void createYFacesExact()
 	{
 		for (int y = 0; y < kSubImageHeight; ++y) {
-			createFacesForY(y, kFrontBottom);
-			createFacesForY(y, kFrontTop);
+			createHorizontalFaces(y, kFrontBottom);
+			createHorizontalFaces(y, kFrontTop);
+		}
+	}
+
+	void createZFacesExact()
+	{
+		for (int y1 = 0; y1 < kSubImageHeight; ++y1) {
+			int x2 = -1;
+
+			while (x2 != kSubImageWidth) {
+				int x1 = getFirstFaceForZ(x2 + 1, y1, true);
+				if (x1 == kNotFound) {
+					x2 =  kSubImageWidth;
+					continue;
+				}
+
+				x2 = getFirstFaceForZ(x1 + 1, y1, false);
+				if (x2 == kNotFound)
+					x2 = kSubImageWidth;
+
+				if (y1 > 0 && isFace(x1, y1 - 1, x2 - 1))
+					continue;
+
+				int y2 = y1;
+				while (y2 < kSubImageHeight - 1 && isFace(x1, y2 + 1, x2 - 1))
+					++y2;
+				
+				createFrontFace(x1, y1, x2 - 1, y2, 0);
+
+				if (voxelDepth != 0) {
+					// Skip back faces for depth == 0, and instead
+					// flip normals in the shader for the front surface
+					createBackFace(x1, y1, x2 - 1, y2);
+				}
+			}
 		}
 	}
 
@@ -474,7 +509,7 @@ public class VoxelMeshFactory {
 		return kNotFound;
 	}
 
-	void createFacesForX(int x, NormalCode face)
+	void createVerticalFaces(int x, NormalCode face)
 	{
 		int y2 = -1;
 		int faceShift = (face == kFrontLeft) ? 0 : 1;
@@ -494,7 +529,7 @@ public class VoxelMeshFactory {
 		}
 	}
 
-	void createFacesForY(int y, NormalCode face)
+	void createHorizontalFaces(int y, NormalCode face)
 	{
 		int x2 = -1;
 		int faceShift = (face == kFrontBottom) ? 0 : 1;
@@ -511,40 +546,6 @@ public class VoxelMeshFactory {
 				createBottomFace(x1, y, x2 - 1);
 			else
 				createTopFace(x1, y, x2 - 1);
-		}
-	}
-
-	void createZFacesExact()
-	{
-		for (int y1 = 0; y1 < kSubImageHeight; ++y1) {
-			int x2 = -1;
-
-			while (x2 != kSubImageWidth) {
-				int x1 = getFirstFaceForZ(x2 + 1, y1, true);
-				if (x1 == kNotFound) {
-					x2 =  kSubImageWidth;
-					continue;
-				}
-
-				x2 = getFirstFaceForZ(x1 + 1, y1, false);
-				if (x2 == kNotFound)
-					x2 = kSubImageWidth;
-
-				if (y1 > 0 && isFace(x1, y1 - 1, x2 - 1))
-					continue;
-
-				int y2 = y1;
-				while (y2 < kSubImageHeight - 1 && isFace(x1, y2 + 1, x2 - 1))
-					++y2;
-				
-				createFrontFace(x1, y1, x2 - 1, y2, 0);
-
-				if (voxelDepth != 0) {
-					// Skip back faces for depth == 0, and instead
-					// flip normals in the shader for the front surface
-					createBackFace(x1, y1, x2 - 1, y2);
-				}
-			}
 		}
 	}
 
