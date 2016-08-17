@@ -117,6 +117,7 @@ public class VoxelMeshFactory {
 		Vector3[] normals = new Vector3[verticeList.Count];
 		Vector2[] uvAtlas = new Vector2[verticeList.Count];
 		Vector2[] uvPixels = new Vector2[verticeList.Count];
+		float cull = (voxelDepth == 0 || simplify) ? 0 : 1;
 
 		for (int i = 0; i < verticeList.Count; ++i) {
 			Vector3 v = verticeList[i];
@@ -139,7 +140,7 @@ public class VoxelMeshFactory {
 			// need to normalize some of the value onto that format.
 			float normalizedNormalCode = (float)normalCodeList[i] / (float)kNormalCodeMaxValue;
 			float normalizedDepth = voxelDepth / kMaxVoxelDepth;
-			cubeDesc[i] = new Color(0, 0, normalizedNormalCode, normalizedDepth);
+			cubeDesc[i] = new Color(cull, 0, normalizedNormalCode, normalizedDepth);
 		}
 
 		mesh.vertices = verticeList.ToArray();

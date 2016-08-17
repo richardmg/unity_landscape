@@ -125,9 +125,10 @@ inline v2f voxelobject_vert(appdata v)
 	#ifndef NO_CULL
 		// For objects with voxelDepth == 0, we don't cull away
 		// backface triangles, but flip their normals instead
+		int cull = v.cubeDesc.r;
 		int backface = isBackface(v.vertex, o.normal);
-		o.normal *= if_else(backface, if_else(voxelDepth, 1, -1), 1);
-		o.vertex *= if_else(backface, if_else(voxelDepth, 0, 1), 1);
+		o.normal *= if_else(backface, -1, 1);
+		o.vertex *= if_else(backface, if_else(cull, 0, 1), 1);
 	#endif
 
 	return o;
