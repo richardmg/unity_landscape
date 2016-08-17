@@ -490,7 +490,12 @@ public class VoxelMeshFactory {
 					++y2;
 				
 				createFrontFace(x1, y1, x2 - 1, y2, 0);
-				createBackFace(x1, y1, x2 - 1, y2);
+
+				if (voxelDepth != 0) {
+					// Skip back faces for depth == 0, and instead
+					// flip normals in the shader for the front surface
+					createBackFace(x1, y1, x2 - 1, y2);
+				}
 			}
 		}
 	}
