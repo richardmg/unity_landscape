@@ -103,6 +103,13 @@ inline float3 uvClamped(v2f i)
 	return uvAtlasClamped;
 }
 
+inline int isBackface(float4 vertex, float3 worldNormal)
+{
+	float3 worldPos = mul(_Object2World, vertex).xyz;
+	float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
+    return if_else(if_gt(dot(worldNormal, worldViewDir), 0), 0, 1); 
+}
+
 inline v2f voxelobject_vert(appdata v)
 {
 	int normalCode = round(v.cubeDesc.b * _NormalCodeMaxValue);
@@ -115,18 +122,9 @@ inline v2f voxelobject_vert(appdata v)
 	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
 
-	float3 worldPos = mul(_Object2World, v.vertex).xyz;
-	float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
-    float isBackFace = dot(o.normal, worldViewDir) > 0 ? 0 : 1; 
-
-	if (isBackFace) {
-		if (voxelDepth == 0) {
-			o.normal *= -1;
-		} else {
-			// Create degenereate
-			o.vertex = 0;
-		}
-	}
+	int backface = isBackface(v.vertex, o.normal);
+	o.normal *= if_else(backface, if_else(voxelDepth, 1, -1), 1);
+	o.vertex *= if_else(backface, if_else(voxelDepth, 0, 1), 1);
 
 	return o;
 }
