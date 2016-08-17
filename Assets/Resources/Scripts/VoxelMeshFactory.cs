@@ -91,10 +91,17 @@ public class VoxelMeshFactory {
 		startPixelY = (int)((atlasIndex * kSubImageWidth) / texture.width) * kSubImageHeight;
 		cropRect = calculatecropRect();
 
-		if (useVolume)
-			createVolumeMesh();
-		else
-			createExactMesh();
+		if (useVolume) {
+			if (simplify)
+				createMeshVolumeSimplified();
+			else
+				createMeshVolume();
+		} else {
+			if (simplify)
+				createMeshExactSimplified();
+			else
+				createMeshExact();
+		}
 	}
 
 	public void endMesh()
@@ -143,124 +150,167 @@ public class VoxelMeshFactory {
 		return mesh;
 	}
 
-	void createExactMesh()
+	void createMeshExact()
 	{
-		if (xFaces) {
-			for (int x = 0; x < kSubImageWidth; ++x) {
-				createFacesForX(x, kFrontLeft);
-				createFacesForX(x, kFrontRight);
-			}
-		}
+		if (xFaces)
+			createXFacesExact();
 
-		if (yFaces) {
-			for (int y = 0; y < kSubImageHeight; ++y) {
-				createFacesForY(y, kFrontBottom);
-				createFacesForY(y, kFrontTop);
-			}
-		}
+		if (yFaces)
+			createYFacesExact();
 
 		if (zFaces)
-			createFacesForZ();
+			createZFacesExact();
 	}
 
-	void createVolumeMesh()
+	void createMeshVolume()
 	{
-		if (simplify) {
-			int bestColLeft = kNotFound;
-			int bestColRight = kNotFound;
-			int bestRowBottom = kNotFound;
-			int bestRowTop = kNotFound;
-			int x2 = (int)cropRect.x + (int)(cropRect.width);
-			int y2 = (int)cropRect.y + (int)(cropRect.height);
-			int bestCount = 0;
+		if (xFaces)
+			createXFacesVolume();
 
-			if (xFaces) {
-				bestCount = 0;
-				for (int x = (int)cropRect.x; x < x2; ++x) {
-					int count = countPixelsForCol(x);
-					if (count > bestCount) {
-						bestColLeft = x;
-						bestCount = count;
-					}
-				}
+		if (yFaces)
+			createYFacesVolume();
 
-				bestCount = 0;
-				for (int x = kSubImageWidth - 1; x >= Mathf.Max(0, bestColLeft + 1); --x) {
-					int count = countPixelsForCol(x);
-					if (count > bestCount) {
-						bestColRight = x;
-						bestCount = count;
-					}
-				}
-			}
+		if (zFaces)
+			createZFacesVolume();
+	}
 
-			if (yFaces) {
-				bestCount = 0;
-				for (int y = (int)cropRect.y; y < y2; ++y) {
-					int count = countPixelsForRow(y);
-					if (count > bestCount) {
-						bestRowBottom = y;
-						bestCount = count;
-					}
-				}
+	void createMeshExactSimplified()
+	{
+		if (xFaces)
+			createXFacesVolumeSimplified();
+		if (yFaces)
+			createYFacesVolumeSimplified();
+		if (zFaces)
+			createZFacesExact();
+	}
 
-				bestCount = 0;
-				for (int y = kSubImageHeight - 1; y >= Mathf.Max(0, bestRowBottom + 1); --y) {
-					int count = countPixelsForRow(y);
-					if (count > bestCount) {
-						bestRowTop = y;
-						bestCount = count;
-					}
-				}
-			}
+	void createMeshVolumeSimplified()
+	{
+		if (xFaces)
+			createXFacesVolumeSimplified();
+		if (yFaces)
+			createYFacesVolumeSimplified();
+		if (zFaces)
+			createZFacesVolume();
+	}
 
-			if (bestColLeft != kNotFound)
-				createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-			if (bestColRight != kNotFound)
-				createRightFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-			if (bestRowBottom != kNotFound)
-				createBottomFace((int)cropRect.x, bestRowBottom, (int)cropRect.x + (int)cropRect.width - 1);
-			if (bestRowTop != kNotFound)
-				createTopFace((int)cropRect.x, bestRowTop, (int)cropRect.x + (int)cropRect.width - 1);
-		} else {
-			if (xFaces) {
-				for (int x = 0; x <= kSubImageWidth; ++x) {
-					Vector2 singleFaceCount = countSingleFacesForCol(x);
-					if (singleFaceCount.x > 0)
-						createLeftFace(x, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-					if (singleFaceCount.y > 0)
-						createRightFace(x - 1, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
-				}
-			}
+	void createXFacesExact()
+	{
+		for (int x = 0; x < kSubImageWidth; ++x) {
+			createFacesForX(x, kFrontLeft);
+			createFacesForX(x, kFrontRight);
+		}
+	}
 
-			if (yFaces) {
-				for (int y = 0; y <= kSubImageHeight; ++y) {
-					Vector2 singleFaceCount = countSingleFacesForRow(y);
-					if (singleFaceCount.x > 0)
-						createBottomFace((int)cropRect.x, y, (int)cropRect.x + (int)cropRect.width - 1);
-					if (singleFaceCount.y > 0)
-						createTopFace((int)cropRect.x, y - 1, (int)cropRect.x + (int)cropRect.width - 1);
-				}
+	void createYFacesExact()
+	{
+		for (int y = 0; y < kSubImageHeight; ++y) {
+			createFacesForY(y, kFrontBottom);
+			createFacesForY(y, kFrontTop);
+		}
+	}
+
+	void createXFacesVolume()
+	{
+		for (int x = 0; x <= kSubImageWidth; ++x) {
+			Vector2 singleFaceCount = countSingleFacesForCol(x);
+			if (singleFaceCount.x > 0)
+				createLeftFace(x, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+			if (singleFaceCount.y > 0)
+				createRightFace(x - 1, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+		}
+	}
+
+	void createYFacesVolume()
+	{
+		for (int y = 0; y <= kSubImageHeight; ++y) {
+			Vector2 singleFaceCount = countSingleFacesForRow(y);
+			if (singleFaceCount.x > 0)
+				createBottomFace((int)cropRect.x, y, (int)cropRect.x + (int)cropRect.width - 1);
+			if (singleFaceCount.y > 0)
+				createTopFace((int)cropRect.x, y - 1, (int)cropRect.x + (int)cropRect.width - 1);
+		}
+	}
+
+	void createZFacesVolume()
+	{
+		float deltaZ = voxelDepth / Mathf.Max(1, volumeFaceCountZ - 1);
+
+		for (int z = 0; z < volumeFaceCountZ - 1; ++z)
+			createFrontFace(
+				(int)cropRect.x,
+				(int)cropRect.y,
+				(int)cropRect.x + (int)cropRect.width - 1,
+				(int)cropRect.y + (int)cropRect.height - 1,
+				z * deltaZ); 
+
+		if (voxelDepth != 0) {
+			createBackFace(
+				(int)cropRect.x, (int)cropRect.y,
+				(int)cropRect.x + (int)cropRect.width - 1,
+				(int)cropRect.y + (int)cropRect.height - 1); 
+		}
+	}
+
+	void createXFacesVolumeSimplified()
+	{
+		int bestColLeft = kNotFound;
+		int bestColRight = kNotFound;
+		int x2 = (int)cropRect.x + (int)(cropRect.width);
+
+		int bestCount = 0;
+		for (int x = (int)cropRect.x; x < x2; ++x) {
+			int count = countPixelsForCol(x);
+			if (count > bestCount) {
+				bestColLeft = x;
+				bestCount = count;
 			}
 		}
 
-		if (zFaces) {
-			float deltaZ = voxelDepth / Mathf.Max(1, volumeFaceCountZ - 1);
-			for (int z = 0; z < volumeFaceCountZ - 1; ++z)
-				createFrontFace(
-					(int)cropRect.x,
-					(int)cropRect.y,
-					(int)cropRect.x + (int)cropRect.width - 1,
-					(int)cropRect.y + (int)cropRect.height - 1,
-					z * deltaZ); 
-
-			if (voxelDepth != 0) {
-				createBackFace(
-					(int)cropRect.x, (int)cropRect.y,
-					(int)cropRect.x + (int)cropRect.width - 1,
-					(int)cropRect.y + (int)cropRect.height - 1); 
+		bestCount = 0;
+		for (int x = kSubImageWidth - 1; x >= Mathf.Max(0, bestColLeft + 1); --x) {
+			int count = countPixelsForCol(x);
+			if (count > bestCount) {
+				bestColRight = x;
+				bestCount = count;
 			}
 		}
+
+
+		if (bestColLeft != kNotFound)
+			createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+		if (bestColRight != kNotFound)
+			createRightFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
+	}
+
+	void createYFacesVolumeSimplified()
+	{
+		int bestRowBottom = kNotFound;
+		int bestRowTop = kNotFound;
+		int y2 = (int)cropRect.y + (int)(cropRect.height);
+
+		int bestCount = 0;
+		for (int y = (int)cropRect.y; y < y2; ++y) {
+			int count = countPixelsForRow(y);
+			if (count > bestCount) {
+				bestRowBottom = y;
+				bestCount = count;
+			}
+		}
+
+		bestCount = 0;
+		for (int y = kSubImageHeight - 1; y >= Mathf.Max(0, bestRowBottom + 1); --y) {
+			int count = countPixelsForRow(y);
+			if (count > bestCount) {
+				bestRowTop = y;
+				bestCount = count;
+			}
+		}
+
+		if (bestRowBottom != kNotFound)
+			createBottomFace((int)cropRect.x, bestRowBottom, (int)cropRect.x + (int)cropRect.width - 1);
+		if (bestRowTop != kNotFound)
+			createTopFace((int)cropRect.x, bestRowTop, (int)cropRect.x + (int)cropRect.width - 1);
 	}
 
 	bool isFace(int x1, int y, int x2)
@@ -466,7 +516,7 @@ public class VoxelMeshFactory {
 		}
 	}
 
-	void createFacesForZ()
+	void createZFacesExact()
 	{
 		for (int y1 = 0; y1 < kSubImageHeight; ++y1) {
 			int x2 = -1;
