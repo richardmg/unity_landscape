@@ -48,6 +48,9 @@ public class VoxelMeshFactory {
 	const NormalCode kBack = 9;
 	const NormalCode kNormalCodeMaxValue = kBack;
 
+	// Set to true if shader discard operations should be avoided
+	const bool kDisableVolume = false;
+
 	Vector3[] normalForCode = {
 		new Vector3(-1, 0, 0),
 		new Vector3(-1, 0, 0),
@@ -91,7 +94,7 @@ public class VoxelMeshFactory {
 		startPixelY = (int)((atlasIndex * kSubImageWidth) / texture.width) * kSubImageHeight;
 		cropRect = calculatecropRect();
 
-		if (useVolume) {
+		if (useVolume && !kDisableVolume) {
 			if (simplify)
 				createMeshVolumeSimplified();
 			else
@@ -154,10 +157,8 @@ public class VoxelMeshFactory {
 	{
 		if (xFaces)
 			createXFacesExact();
-
 		if (yFaces)
 			createYFacesExact();
-
 		if (zFaces)
 			createZFacesExact();
 	}
@@ -166,10 +167,8 @@ public class VoxelMeshFactory {
 	{
 		if (xFaces)
 			createXFacesVolume();
-
 		if (yFaces)
 			createYFacesVolume();
-
 		if (zFaces)
 			createZFacesVolume();
 	}
@@ -177,9 +176,9 @@ public class VoxelMeshFactory {
 	void createMeshExactSimplified()
 	{
 		if (xFaces)
-			createXFacesVolumeSimplified();
+			createXFacesSimplified();
 		if (yFaces)
-			createYFacesVolumeSimplified();
+			createYFacesSimplified();
 		if (zFaces)
 			createZFacesExact();
 	}
@@ -187,9 +186,9 @@ public class VoxelMeshFactory {
 	void createMeshVolumeSimplified()
 	{
 		if (xFaces)
-			createXFacesVolumeSimplified();
+			createXFacesSimplified();
 		if (yFaces)
-			createYFacesVolumeSimplified();
+			createYFacesSimplified();
 		if (zFaces)
 			createZFacesVolume();
 	}
@@ -252,7 +251,7 @@ public class VoxelMeshFactory {
 		}
 	}
 
-	void createXFacesVolumeSimplified()
+	void createXFacesSimplified()
 	{
 		int bestColLeft = kNotFound;
 		int bestColRight = kNotFound;
@@ -276,14 +275,13 @@ public class VoxelMeshFactory {
 			}
 		}
 
-
 		if (bestColLeft != kNotFound)
 			createLeftFace(bestColLeft, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 		if (bestColRight != kNotFound)
 			createRightFace(bestColRight, (int)cropRect.y, (int)cropRect.y + (int)cropRect.height - 1);
 	}
 
-	void createYFacesVolumeSimplified()
+	void createYFacesSimplified()
 	{
 		int bestRowBottom = kNotFound;
 		int bestRowTop = kNotFound;
