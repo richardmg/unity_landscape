@@ -31,7 +31,7 @@ public class VoxelObject : MonoBehaviour {
 	void OnValidate()
 	{
 		init();
-		rebuildObject();
+		rebuild();
 	}
 
 	void Start()
@@ -40,20 +40,29 @@ public class VoxelObject : MonoBehaviour {
 		currentLod = kNoLod;
 		Update();
 	}
-	
+
 	void Update()
 	{
 		float d = Vector3.Distance(transform.position, Camera.main.transform.position);
 		Lod lod = d < lodDistance1 ? kLod0 : d < lodDistanceCulled ? kLod1 : kNoLod;
 
-		if (lod != currentLod)
+		if (lod != currentLod) {
 			setLod(lod);
+			rebuild();
+		}
 	}
 
 	public void setLod(Lod lod)
 	{
 		currentLod = lod;
-		rebuildObject();
+	}
+
+	public void rebuild()
+	{
+		if (atlasIndex == kTopLevel)
+			rebuildTopLevel();
+		else
+			rebuildObject();
 	}
 
 	public void rebuildObject()
@@ -70,8 +79,6 @@ public class VoxelObject : MonoBehaviour {
 
 		if (atlasIndex <= kNoIndex)
 			readonlyVertexCount = 0;
-		else if (atlasIndex == kTopLevel)
-			rebuildAndMergeChildren();
 		else
 			m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
 
@@ -79,15 +86,27 @@ public class VoxelObject : MonoBehaviour {
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
-	public void rebuildAndMergeChildren()
+	public void rebuildTopLevel()
 	{
+		// Don't modify the prefab itself
+		if (gameObject.scene.name == null)
+			return;
+
+		if (!m_meshFilter)
+			init();
+
+		clearMesh();
+		configureFactory();
+
 		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
-		for (int i = 0; i < children.Length; ++i)
+		for (int i = 0; i < children.Length; ++i) {
 			if (children[i] != this) {
 				children[i].shareVertices = shareVertices;
 				children[i].useVolume = useVolume;
 				children[i].setLod(currentLod);
+				children[i].rebuildObject();
 			}
+		}
 
 		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
 		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
@@ -100,9 +119,12 @@ public class VoxelObject : MonoBehaviour {
 			meshFilters[i].gameObject.SetActive(false);
 		}
 
+		gameObject.SetActive(true);
+
 		m_meshFilter.sharedMesh = new Mesh();
 		m_meshFilter.sharedMesh.CombineMeshes(combine);
-		gameObject.SetActive(true);
+		m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
+		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
 	public void configureFactory()

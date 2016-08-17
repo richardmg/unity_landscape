@@ -13,11 +13,13 @@ public class VoxelObjectEditor : Editor
 		if(GUILayout.Button("Lod 0"))
 		{
 			vo.setLod(VoxelObject.kLod0);
+			vo.rebuild();
 		}
 
 		if(GUILayout.Button("Lod 1"))
 		{
 			vo.setLod(VoxelObject.kLod1);
+			vo.rebuild();
 		}
 
 		if(vo.atlasIndex != -1 && GUILayout.Button("Make top level"))
@@ -32,7 +34,7 @@ public class VoxelObjectEditor : Editor
 				transform.GetChild(i).localPosition -= firstChildPos;
 
 			vo.atlasIndex = -1;
-			vo.rebuildObject();
+			vo.rebuild();
 		}
 
 		if(vo.atlasIndex == -1 && GUILayout.Button("Undo top level"))
@@ -42,7 +44,7 @@ public class VoxelObjectEditor : Editor
 				children[i].gameObject.SetActive(true);
 
 			vo.atlasIndex = -2;
-			vo.rebuildObject();
+			vo.rebuild();
 		}
 
 		if(GUILayout.Button("Clear mesh"))
