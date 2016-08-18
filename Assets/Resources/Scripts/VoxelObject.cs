@@ -6,8 +6,6 @@ public class VoxelObject : MonoBehaviour {
 	public int atlasIndex = kNoIndex;
 	public float voxelDepth = 4;
 	public Lod currentLod = kLod0;
-	public float lodDistance1 = 100;
-	public float lodDistanceCulled = 100000;
 
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
@@ -25,6 +23,9 @@ public class VoxelObject : MonoBehaviour {
 
 	// Read-only, for editor inspection
 	public int readonlyVertexCount = 0;
+
+	const float lodDistance1 = 200;
+	const float lodDistanceCulled = 100000;
 
 	void OnValidate()
 	{
