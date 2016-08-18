@@ -176,10 +176,6 @@ inline fixed4 voxelobject_frag(v2f i)
 		c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
 	#endif
 
-	#ifndef NO_SIDESHARP
-		c *= 1 + if_else(isFrontOrBackSide, _EdgeSharp, 0);
-	#endif
-
 	#ifndef NO_GRADIENT
 		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
 		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
