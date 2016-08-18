@@ -205,3 +205,16 @@
 
             - Copy atlas to Color32
             - Change simplified to create several faces when not using volume
+
+OPTIMIZATIONS
+-------------
+            - Copy atlas to Color32
+            - Tranform vertices directly when creating mesh, instead of when combining them
+            - Preallocate memory for mesh factory
+            - Preallocate one big chunk of memory, and give it to factory when creating mesh.
+                Use this to combine meshes directly in factory instead of creating many meshes
+                and cominding them in the end. This the factory is static, this allocation could
+                be done only once, at startup.
+            - build meshes in separate thread.
+
+    
