@@ -31,9 +31,11 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
-		// Don't modify prefabs, only concrete instances
-		if (gameObject.scene.name == null)
+		if (gameObject.scene.name == null) {
+			// Don't create and store mesh for prefabs
+			readonlyVertexCount = 0;
 			return;
+		}
 		
 		ensureInitialized();
 		rebuild();
@@ -80,7 +82,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildObject()
 	{
-		clearMesh();
+		m_meshFilter.sharedMesh.Clear(false);
 		configureFactory();
 
 		if (atlasIndex < 0)
@@ -94,7 +96,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildTopLevel()
 	{
-		clearMesh();
+		m_meshFilter.sharedMesh.Clear(false);
 		configureFactory();
 
 		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
@@ -184,14 +186,5 @@ public class VoxelObject : MonoBehaviour {
 		materialVolume.CopyPropertiesFromMaterial(materialExact);
 		voxelMeshFactory = new VoxelMeshFactory();
 		staticResourcesInitialized = true;
-	}
-
-	public void clearMesh()
-	{
-		if (!meshComponentsInitialized)
-			initMeshComponents();
-
-		m_meshFilter.sharedMesh.Clear(false);
-		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 }
