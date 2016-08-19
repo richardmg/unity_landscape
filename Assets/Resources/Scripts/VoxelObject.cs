@@ -185,6 +185,7 @@ public class VoxelObject : MonoBehaviour {
 
 		materialVolume.CopyPropertiesFromMaterial(materialExact);
 		voxelMeshFactory = new VoxelMeshFactory();
+
 		staticResourcesInitialized = true;
 	}
 }
