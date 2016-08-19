@@ -216,5 +216,6 @@ OPTIMIZATIONS
                 and cominding them in the end. This the factory is static, this allocation could
                 be done only once, at startup.
             - build meshes in separate thread.
+            - For volume mesh, draw horisontal/vertical quads as minimal as possible (not always 0->subImageWidth)
 
     
