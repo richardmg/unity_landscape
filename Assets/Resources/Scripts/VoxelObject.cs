@@ -96,16 +96,12 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildTopLevel()
 	{
-		m_meshFilter.sharedMesh.Clear(false);
-		configureFactory();
-
-		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
-		for (int i = 0; i < children.Length; ++i) {
-			if (children[i] != this) {
-				children[i].ensureInitialized();
-				children[i].setLod(currentLod);
-				children[i].rebuildObject();
-			}
+		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
+		for (int i = 0; i < selfAndchildren.Length; ++i) {
+			VoxelObject vo = selfAndchildren[i];
+			vo.ensureInitialized();
+			vo.setLod(currentLod);
+			vo.rebuildObject();
 		}
 
 		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
