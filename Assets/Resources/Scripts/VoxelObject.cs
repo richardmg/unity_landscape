@@ -31,11 +31,13 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
+		ensureInitialized();
 		rebuild();
 	}
 
 	void Start()
 	{
+		ensureInitialized();
 		currentLod = kNoLod;
 		Update();
 	}
@@ -49,6 +51,14 @@ public class VoxelObject : MonoBehaviour {
 			setLod(lod);
 			rebuild();
 		}
+	}
+
+	public void ensureInitialized()
+	{
+		if (!staticResourcesInitialized)
+			initStaticResources();
+		if (!meshComponentsInitialized)
+			initMeshComponents();
 	}
 
 	public void setLod(Lod lod)
@@ -69,10 +79,6 @@ public class VoxelObject : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
-		if (!staticResourcesInitialized)
-			initStaticResources();
-		if (!meshComponentsInitialized)
-			initMeshComponents();
 
 		clearMesh();
 		configureFactory();
@@ -91,10 +97,6 @@ public class VoxelObject : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
-		if (!staticResourcesInitialized)
-			initStaticResources();
-		if (!meshComponentsInitialized)
-			initMeshComponents();
 
 		clearMesh();
 		configureFactory();
@@ -102,6 +104,7 @@ public class VoxelObject : MonoBehaviour {
 		VoxelObject[] children = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < children.Length; ++i) {
 			if (children[i] != this) {
+				children[i].ensureInitialized();
 				children[i].setLod(currentLod);
 				children[i].rebuildObject();
 			}
