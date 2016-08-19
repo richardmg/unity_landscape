@@ -9,7 +9,9 @@ public class VoxelObject : MonoBehaviour {
 
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
+	bool meshComponentsInitialized = false;
 
+	static bool staticResourcesInitialized = false;
 	static public Material materialExact;
 	static public Material materialVolume;
 	static VoxelMeshFactory voxelMeshFactory;
@@ -29,13 +31,11 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
-		init();
 		rebuild();
 	}
 
 	void Start()
 	{
-		init();
 		currentLod = kNoLod;
 		Update();
 	}
@@ -69,9 +69,10 @@ public class VoxelObject : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
-
-		if (!m_meshFilter)
-			init();
+		if (!staticResourcesInitialized)
+			initStaticResources();
+		if (!meshComponentsInitialized)
+			initMeshComponents();
 
 		clearMesh();
 		configureFactory();
@@ -90,9 +91,10 @@ public class VoxelObject : MonoBehaviour {
 		// Don't modify the prefab itself
 		if (gameObject.scene.name == null)
 			return;
-
-		if (!m_meshFilter)
-			init();
+		if (!staticResourcesInitialized)
+			initStaticResources();
+		if (!meshComponentsInitialized)
+			initMeshComponents();
 
 		clearMesh();
 		configureFactory();
@@ -147,7 +149,7 @@ public class VoxelObject : MonoBehaviour {
 		}
 	}
 
-	public void init()
+	public void initMeshComponents()
 	{
 		if (gameObject.scene.name == null)
 			return;
@@ -167,24 +169,29 @@ public class VoxelObject : MonoBehaviour {
 				m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
 		}
 
-		if (materialExact == null) {
-			materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
-			materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
+		meshComponentsInitialized = true;
+	}
 
-			Debug.Assert(materialExact != null);
-			Debug.Assert(materialVolume != null);
-			Debug.Assert(materialExact.mainTexture != null);
-			Debug.Assert(materialVolume.mainTexture != null);
+	public void initStaticResources()
+	{
+		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
+		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
 
-			materialVolume.CopyPropertiesFromMaterial(materialExact);
-		}
+		Debug.Assert(materialExact != null);
+		Debug.Assert(materialVolume != null);
+		Debug.Assert(materialExact.mainTexture != null);
+		Debug.Assert(materialVolume.mainTexture != null);
 
-		if (voxelMeshFactory == null)
-			voxelMeshFactory = new VoxelMeshFactory();
+		materialVolume.CopyPropertiesFromMaterial(materialExact);
+		voxelMeshFactory = new VoxelMeshFactory();
+		staticResourcesInitialized = true;
 	}
 
 	public void clearMesh()
 	{
+		if (!meshComponentsInitialized)
+			initMeshComponents();
+
 		m_meshFilter.sharedMesh.Clear(false);
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
