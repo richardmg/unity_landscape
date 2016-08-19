@@ -31,6 +31,10 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
+		// Don't modify prefabs, only concrete instances
+		if (gameObject.scene.name == null)
+			return;
+		
 		ensureInitialized();
 		rebuild();
 	}
@@ -76,10 +80,6 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildObject()
 	{
-		// Don't modify the prefab itself
-		if (gameObject.scene.name == null)
-			return;
-
 		clearMesh();
 		configureFactory();
 
@@ -94,10 +94,6 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuildTopLevel()
 	{
-		// Don't modify the prefab itself
-		if (gameObject.scene.name == null)
-			return;
-
 		clearMesh();
 		configureFactory();
 
