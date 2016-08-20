@@ -36,6 +36,9 @@ public class VoxelObject : MonoBehaviour {
 			readonlyVertexCount = 0;
 			return;
 		}
+
+		if (!gameObject.activeSelf)
+			return;
 		
 		ensureInitialized();
 		rebuild();
