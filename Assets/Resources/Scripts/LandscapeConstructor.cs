@@ -23,6 +23,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	public float tileHeightOct2 = 1;
 
 	public int groundResolution = 33;
+	public int pixelError = 50;
 
 	public GameObject player;
 	public Texture2D terrainTexture;
@@ -56,8 +57,7 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public void rebuildLandscape()
 	{
-		while (transform.childCount > 0)
-			GameObject.DestroyImmediate(transform.GetChild(0).gameObject);
+		clear();
 
 		m_tileEngineLandscape = new TileEngine(tileCountLandscape, tileSizeLandscape, transform);
 		m_tileEngineNear = new TileEngine(tileCountNearObjects, tileSizeNearObjects, transform);
@@ -104,5 +104,11 @@ public class LandscapeConstructor : MonoBehaviour {
 		m_tileEngineLandscape.update(pos);
 		m_tileEngineNear.update(pos);
 		m_tileEngineFar.update(pos);
+	}
+
+	public void clear()
+	{
+		while (transform.childCount > 0)
+			GameObject.DestroyImmediate(transform.GetChild(0).gameObject);
 	}
 }
