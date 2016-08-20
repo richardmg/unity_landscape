@@ -7,6 +7,7 @@ public class TileLayerTrees : ITileLayer
 	GameObject m_prefab;
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY = 0;
+	float m_prefabSize = 6;
 
 	const int max_items = 100;
 
@@ -33,7 +34,7 @@ public class TileLayerTrees : ITileLayer
 				m_tileMatrix[x, z] = goTile;
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
 				vo.atlasIndex = VoxelObject.kTopLevel;
-				initVoxelObjects(goTile);
+				initVoxelObjects(goTile, engine.tileWorldSize());
 				vo.rebuild();
 			}
 		}
@@ -44,24 +45,40 @@ public class TileLayerTrees : ITileLayer
 		for (int i = 0; i < tilesToMove.Length; ++i) {
 			TileDescription desc = tilesToMove[i];
 			GameObject goTile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			moveVoxelObjects(goTile, desc);
+			goTile.transform.position = desc.worldPos;
+			moveVoxelObjects(goTile, desc.tileWorldSize);
+			goTile.GetComponent<VoxelObject>().rebuild();
 		}
 	}
 
-	private void initVoxelObjects(GameObject goTile)
+	private void initVoxelObjects(GameObject goTile, float tileWorldSize)
 	{
 		// TODO: create a bunch of voxel objects based on noise
 
 		// Hide prefab so we don't create the voxel objects upon construction
 		m_prefab.SetActive(false);
-		GameObject vo = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity); 
-		vo.transform.parent = goTile.transform;
+
+		int objectsPerRow = 4;//(int)(tileWorldSize / m_prefabSize);
+		int objectCount = objectsPerRow * objectsPerRow;
+
+		for (int i = 0; i < objectCount; ++i) {
+			GameObject vo = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity); 
+			vo.transform.parent = goTile.transform;
+		}
 	}
 
-	private void moveVoxelObjects(GameObject goTile, TileDescription desc)
+	private void moveVoxelObjects(GameObject goTile, float tileWorldSize)
 	{
-		Vector3 worldPos = desc.worldPos;
-		worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
-		goTile.transform.localPosition = worldPos;
+		int objectsPerRow = 4;//(int)(tileWorldSize / m_prefabSize);
+
+		for (int z = 0; z < objectsPerRow; ++z) {
+			for (int x = 0; x < objectsPerRow; ++x) {
+				Transform voTransform = goTile.transform.GetChild((int)(z * objectsPerRow) + x);
+				Vector3 localPos = new Vector3(x * m_prefabSize, 0, z * m_prefabSize);
+				Vector3 worldPos = voTransform.TransformPoint(localPos);
+				worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
+				voTransform.position = worldPos;
+			}
+		}
 	}
 }
