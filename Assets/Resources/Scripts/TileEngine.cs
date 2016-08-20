@@ -111,6 +111,11 @@ public class TileEngine {
 		foreach (ITileLayer tileLayer in m_tileLayerList)
 			tileLayer.initTileLayer(this);
 
+		updateAllTiles();
+	}
+
+	public void updateAllTiles()
+	{
 		for (int z = 0; z < m_tileCount; ++z) {
 			for (int x = 0; x < m_tileCount; ++x) {
 				m_tileMoveDesc[x].matrixCoord.Set(x, z);
@@ -216,4 +221,5 @@ public class TileEngine {
 			}
 		}
 	}
+
 }

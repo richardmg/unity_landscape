@@ -82,6 +82,16 @@ public class LandscapeConstructor : MonoBehaviour {
 		player.transform.position = playerPos;
 	}
 
+	void OnValidate()
+	{
+		if (m_tileEngineLandscape == null)
+			return;
+		
+		m_tileEngineLandscape.updateAllTiles();
+		m_tileEngineNear.updateAllTiles();
+		m_tileEngineFar.updateAllTiles();
+	}
+
 	// Use this for initialization
 	void Start()
 	{
@@ -108,6 +118,10 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public void clear()
 	{
+		m_tileEngineLandscape = null;
+		m_tileEngineNear = null;
+		m_tileEngineFar = null;
+
 		while (transform.childCount > 0)
 			GameObject.DestroyImmediate(transform.GetChild(0).gameObject);
 	}
