@@ -15,6 +15,7 @@ public class TileDescription
 	public Vector2 gridCoord = new Vector2();
 	public Vector3 worldPos = new Vector3();
 	public Vector2 matrixCoord = new Vector2();
+	public float tileWorldSize;
 	public TileNeighbours neighbours = new TileNeighbours();
 }
 
@@ -118,6 +119,7 @@ public class TileEngine {
 	{
 		for (int z = 0; z < m_tileCount; ++z) {
 			for (int x = 0; x < m_tileCount; ++x) {
+				m_tileMoveDesc[x].tileWorldSize = m_tileWorldSize;
 				m_tileMoveDesc[x].matrixCoord.Set(x, z);
 				m_tileMoveDesc[x].gridCoord.Set(
 					x + (int)m_gridCenter.x - m_tileCountHalf,

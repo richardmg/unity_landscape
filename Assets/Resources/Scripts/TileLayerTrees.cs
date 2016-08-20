@@ -33,7 +33,7 @@ public class TileLayerTrees : ITileLayer
 				m_tileMatrix[x, z] = goTile;
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
 				vo.atlasIndex = VoxelObject.kTopLevel;
-				initVoxelObjects(goTile, x, z);
+				initVoxelObjects(goTile);
 				vo.rebuild();
 			}
 		}
@@ -43,20 +43,25 @@ public class TileLayerTrees : ITileLayer
 	{
 		for (int i = 0; i < tilesToMove.Length; ++i) {
 			TileDescription desc = tilesToMove[i];
-			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			Vector3 worldPos = desc.worldPos;
-			worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
-			tileObject.transform.localPosition = worldPos;
+			GameObject goTile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			moveVoxelObjects(goTile, desc);
 		}
 	}
 
-	private void initVoxelObjects(GameObject goTile, int x, int z)
+	private void initVoxelObjects(GameObject goTile)
 	{
-		// TODO: create a bunch of trees based on noise
+		// TODO: create a bunch of voxel objects based on noise
 
 		// Hide prefab so we don't create the voxel objects upon construction
 		m_prefab.SetActive(false);
 		GameObject vo = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity); 
 		vo.transform.parent = goTile.transform;
+	}
+
+	private void moveVoxelObjects(GameObject goTile, TileDescription desc)
+	{
+		Vector3 worldPos = desc.worldPos;
+		worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
+		goTile.transform.localPosition = worldPos;
 	}
 }
