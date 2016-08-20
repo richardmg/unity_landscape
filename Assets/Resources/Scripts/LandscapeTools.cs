@@ -6,6 +6,17 @@ using UnityEngine;
 
 public class LandscapeTools
 {
+
+	public static GameObject createTerrainGameObject()
+	{
+		LandscapeConstructor lc = LandscapeConstructor.m_instance;
+		GameObject gameObject = Terrain.CreateTerrainGameObject(createGroundTerrainData());
+		Terrain terrain = gameObject.GetComponent<Terrain>();
+		terrain.heightmapPixelError = lc.pixelError;
+		terrain.castShadows = false;
+		return gameObject;
+	}
+
 	public static TerrainData createGroundTerrainData()
 	{
 		LandscapeConstructor lc = LandscapeConstructor.m_instance;

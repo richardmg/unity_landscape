@@ -64,7 +64,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		m_tileEngineFar = new TileEngine(tileCountFarObjects, tileSizeFarObjects, transform);
 
 		if (showLandscape)
-			m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground", LandscapeTools.createGroundTerrainData()));
+			m_tileEngineLandscape.addLayer(new TileLayerTerrain("Ground"));
 
 		if (showFarTiles)
 			m_tileEngineFar.addLayer(new TileLayerTrees("Trees", treePrefab));

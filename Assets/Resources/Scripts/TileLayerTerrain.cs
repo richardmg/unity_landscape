@@ -9,25 +9,26 @@ public class TileLayerTerrain : ITileTerrainLayer
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
 
-	public TileLayerTerrain(string name, TerrainData tileTerrainData)
+	public TileLayerTerrain(string name)
 	{
 		m_layerRoot = new GameObject(name);
-		m_terrainData = tileTerrainData;
 	}
 
 	public void initTileLayer(TileEngine engine)
 	{
 		int tileCount = engine.tileCount();
 		m_layerRoot.transform.SetParent(engine.parentTransform(), false);
-		m_heightArray = new float[m_terrainData.heightmapResolution, m_terrainData.heightmapResolution];
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				m_tileMatrix[x, z] = Terrain.CreateTerrainGameObject(LandscapeTools.clone(m_terrainData));
+				m_tileMatrix[x, z] = LandscapeTools.createTerrainGameObject();
 				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform, false);
 			}
 		}
+
+		TerrainData data = m_tileMatrix[0, 0].GetComponent<Terrain>().terrainData;
+		m_heightArray = new float[data.heightmapResolution, data.heightmapResolution];
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
