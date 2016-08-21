@@ -35,7 +35,6 @@ public class TileLayerTrees : ITileLayer
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
 				vo.atlasIndex = VoxelObject.kTopLevel;
 				initVoxelObjects(goTile, engine.tileWorldSize());
-				vo.rebuild();
 			}
 		}
 	}
