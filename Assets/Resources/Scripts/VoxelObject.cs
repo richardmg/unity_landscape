@@ -92,6 +92,30 @@ public class VoxelObject : MonoBehaviour {
 			gameObject.SetActive(true);
 	}
 
+	public void setTopLevel(bool topLevel)
+	{
+		if (topLevel) {
+			int childCount = transform.childCount;
+			if (childCount == 0)
+				return;
+
+			Vector3 firstChildPos = transform.GetChild(0).localPosition;
+			for (int i = 0; i < childCount; ++i)
+				transform.GetChild(i).localPosition -= firstChildPos;
+
+			atlasIndex = -1;
+			setChildrenActive(false);
+		} else {
+			atlasIndex = -2;
+			setChildrenActive(true);
+		}
+	}
+
+	public bool isTopLevel()
+	{
+		return atlasIndex == -1;
+	}
+
 	public Mesh createMesh(Lod lod)
 	{
 		if (atlasIndex < 0)

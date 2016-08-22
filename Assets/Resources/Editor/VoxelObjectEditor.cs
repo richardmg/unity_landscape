@@ -21,29 +21,14 @@ public class VoxelObjectEditor : Editor
 			vo.rebuild();
 		}
 
-		if (vo.atlasIndex != -1 && GUILayout.Button("Make top level")) {
-			Transform transform = vo.transform;
-			int childCount = transform.childCount;
-			if (childCount == 0)
-				return;
-
-			Vector3 firstChildPos = transform.GetChild(0).localPosition;
-			for (int i = 0; i < childCount; ++i)
-				transform.GetChild(i).localPosition -= firstChildPos;
-
-			vo.atlasIndex = -1;
+		if (!vo.isTopLevel() && GUILayout.Button("Make top level")) {
+			vo.setTopLevel(true);
 			vo.rebuild();
-			vo.setChildrenActive(false);
 		}
 
-		if (vo.atlasIndex == -1 && GUILayout.Button("Undo top level")) {
-			VoxelObject[] children = vo.GetComponentsInChildren<VoxelObject>(true);
-			for (int i = 0; i < children.Length; ++i)
-				children[i].gameObject.SetActive(true);
-
-			vo.atlasIndex = -2;
+		if (vo.isTopLevel() && GUILayout.Button("Undo top level")) {
+			vo.setTopLevel(false);
 			vo.rebuild();
-			vo.setChildrenActive(true);
 		}
 	}
 }
