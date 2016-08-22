@@ -32,7 +32,7 @@ public class VoxelObject : MonoBehaviour {
 	void OnValidate()
 	{
 		if (gameObject.scene.name == null) {
-			// Don't create and store mesh for prefabs
+			// Don't modify prefabs
 			readonlyVertexCount = 0;
 			return;
 		}
@@ -77,63 +77,57 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuild()
 	{
-		if (atlasIndex == kTopLevel)
-			rebuildTopLevel();
-		else
-			rebuildObject();
-	}
-
-	public void rebuildObject()
-	{
-		m_meshFilter.sharedMesh.Clear(false);
-		configureFactory();
-
-		if (atlasIndex < 0)
-			readonlyVertexCount = 0;
-		else
-			m_meshFilter.sharedMesh = voxelMeshFactory.createMesh();
-
-		m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
+		m_meshFilter.sharedMesh = createTopLevelMesh(currentLod);
+		m_meshRenderer.sharedMaterial = (currentLod == kLod0) ? materialExact : materialVolume;
 		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
-	public void rebuildTopLevel()
+	public void setChildrenActive(bool active)
+	{
+		bool isActive = gameObject.activeSelf;
+		GameObject[] selfAndchildren = GetComponentsInChildren<GameObject>(true);
+		for (int i = 0; i < selfAndchildren.Length; ++i)
+			selfAndchildren[i].SetActive(active);
+		if (isActive)
+			gameObject.SetActive(true);
+	}
+
+	public Mesh createMesh(Lod lod)
+	{
+		if (atlasIndex < 0)
+			return new Mesh();
+
+		configureFactory(lod);
+		return voxelMeshFactory.createMesh();
+	}
+
+	public Mesh createTopLevelMesh(Lod lod)
 	{
 		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
-		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			VoxelObject vo = selfAndchildren[i];
-			vo.ensureInitialized();
-			vo.setLod(currentLod);
-			vo.rebuildObject();
-		}
-
-		MeshFilter[] meshFilters = GetComponentsInChildren<MeshFilter>(true);
-		CombineInstance[] combine = new CombineInstance[meshFilters.Length];
+		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
 		Matrix4x4 parentTransform = transform.worldToLocalMatrix;
 
-		for (int i = 0; i < meshFilters.Length; ++i) {
-			MeshFilter filter = meshFilters[i];
-			combine[i].mesh = filter.sharedMesh;
-			combine[i].transform = parentTransform * filter.transform.localToWorldMatrix;
-			meshFilters[i].gameObject.SetActive(false);
+		for (int i = 0; i < selfAndchildren.Length; ++i) {
+			VoxelObject vo = selfAndchildren[i];
+//			vo.ensureInitialized();
+			vo.setLod(currentLod);
+			combine[i].mesh = vo.createMesh(lod);
+			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
 		}
 
-		gameObject.SetActive(true);
-
-		m_meshFilter.sharedMesh = new Mesh();
-		m_meshFilter.sharedMesh.CombineMeshes(combine);
-		m_meshRenderer.sharedMaterial = voxelMeshFactory.useVolume ? materialVolume : materialExact;
-		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+		Mesh topLevelMesh = new Mesh();
+		topLevelMesh.CombineMeshes(combine);
+		return topLevelMesh;
 	}
 
-	public void configureFactory()
+	public void configureFactory(Lod lod)
 	{
 		voxelMeshFactory.atlasIndex = atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
 		voxelMeshFactory.yFaces = voxelDepth != 0;
 
-		switch (currentLod) {
+		switch (lod) {
 		case kLod0:
 			voxelMeshFactory.useVolume = false;
 			voxelMeshFactory.simplify = false;
@@ -151,9 +145,6 @@ public class VoxelObject : MonoBehaviour {
 
 	public void initMeshComponents()
 	{
-		if (gameObject.scene.name == null)
-			return;
-		
 		if (!m_meshFilter) {
 			m_meshFilter = gameObject.GetComponent<MeshFilter>();
 			if (!m_meshFilter)

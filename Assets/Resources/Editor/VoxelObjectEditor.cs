@@ -33,6 +33,7 @@ public class VoxelObjectEditor : Editor
 
 			vo.atlasIndex = -1;
 			vo.rebuild();
+			vo.setChildrenActive(false);
 		}
 
 		if (vo.atlasIndex == -1 && GUILayout.Button("Undo top level")) {
@@ -42,6 +43,7 @@ public class VoxelObjectEditor : Editor
 
 			vo.atlasIndex = -2;
 			vo.rebuild();
+			vo.setChildrenActive(true);
 		}
 	}
 }
