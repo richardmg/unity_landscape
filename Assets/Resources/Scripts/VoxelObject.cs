@@ -3,6 +3,7 @@ using System.Collections;
 using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
+	public string shareMeshFromPrefab = System.String.Empty;
 	public int atlasIndex = kNoIndex;
 	public float voxelDepth = 4;
 	public Lod currentLod = kLod0;
@@ -77,8 +78,18 @@ public class VoxelObject : MonoBehaviour {
 
 	public void rebuild()
 	{
-		m_meshFilter.sharedMesh = createTopLevelMesh(currentLod);
-		m_meshRenderer.sharedMaterial = (currentLod == kLod0) ? materialExact : materialVolume;
+		if (shareMeshFromPrefab.Length == 0) {
+			m_meshFilter.sharedMesh = createTopLevelMesh(currentLod);
+		} else {
+			m_meshFilter.sharedMesh = VoxelObjectCache.instance().getSharedMesh(shareMeshFromPrefab, currentLod);
+		}
+
+		if (m_meshFilter.sharedMesh == null) {
+			vertexCount = 0;
+			return;
+		}
+
+		m_meshRenderer.sharedMaterial = (currentLod == VoxelObject.kLod0) ? materialExact : materialVolume;
 		vertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
