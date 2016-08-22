@@ -66,6 +66,7 @@ public class TileLayerTrees : ITileLayer
 			go.transform.parent = goTile.transform;
 			VoxelObject vo = go.AddComponent<VoxelObject>();
 			vo.setIndex(m_prefab.name);
+			vo.gameObject.SetActive(false);
 		}
 	}
 
