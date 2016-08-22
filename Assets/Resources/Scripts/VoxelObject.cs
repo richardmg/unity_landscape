@@ -85,9 +85,9 @@ public class VoxelObject : MonoBehaviour {
 	public void setChildrenActive(bool active)
 	{
 		bool isActive = gameObject.activeSelf;
-		GameObject[] selfAndchildren = GetComponentsInChildren<GameObject>(true);
+		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
 		for (int i = 0; i < selfAndchildren.Length; ++i)
-			selfAndchildren[i].SetActive(active);
+			selfAndchildren[i].gameObject.SetActive(active);
 		if (isActive)
 			gameObject.SetActive(true);
 	}
