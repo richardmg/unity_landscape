@@ -3,14 +3,13 @@ using System.Collections;
 using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
-	public string shareMeshFromPrefab = System.String.Empty;
-	public int atlasIndex = kNoIndex;
+	public string index = System.String.Empty;
 	public float voxelDepth = 4;
 	public Lod currentLod = kLod0;
 
+	int atlasIndex = kIndexUnknown;
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
-	bool meshComponentsInitialized = false;
 
 	static bool staticResourcesInitialized = false;
 	static public Material materialExact;
@@ -21,8 +20,11 @@ public class VoxelObject : MonoBehaviour {
 	public const Lod kLod0 = 0;
 	public const Lod kLod1 = 1;
 
-	public const Lod kTopLevel = -1;
-	public const Lod kNoIndex = -2;
+	public const Lod kIndexTopLevel = -1;
+	public const Lod kIndexReference = -2;
+	public const Lod kIndexUnknown = -3;
+
+	public const string kTopLevelString = "toplevel";
 
 	// Read-only, for editor inspection
 	public int vertexCount = 0;
@@ -40,14 +42,14 @@ public class VoxelObject : MonoBehaviour {
 
 		if (!gameObject.activeSelf)
 			return;
-		
-		ensureInitialized();
-		rebuild();
+
+		initVoxelObject();
+		reconstructGameObject();
 	}
 
 	void Start()
 	{
-		ensureInitialized();
+		initVoxelObject();
 		currentLod = kNoLod;
 		Update();
 	}
@@ -59,16 +61,26 @@ public class VoxelObject : MonoBehaviour {
 
 		if (lod != currentLod) {
 			setLod(lod);
-			rebuild();
+			reconstructGameObject();
 		}
 	}
 
-	public void ensureInitialized()
+	public void initVoxelObject()
 	{
+		initMeshComponents();
+
 		if (!staticResourcesInitialized)
 			initStaticResources();
-		if (!meshComponentsInitialized)
-			initMeshComponents();
+	}
+
+	public void determineAtlasIndex()
+	{
+		if (!System.Int32.TryParse(index, out atlasIndex)) {
+			if (index == kTopLevelString)
+				atlasIndex = kIndexTopLevel;
+			else
+				atlasIndex = kIndexReference;
+		}
 	}
 
 	public void setLod(Lod lod)
@@ -76,14 +88,9 @@ public class VoxelObject : MonoBehaviour {
 		currentLod = lod;
 	}
 
-	public void rebuild()
+	public void reconstructGameObject()
 	{
-		if (shareMeshFromPrefab.Length == 0) {
-			m_meshFilter.sharedMesh = createTopLevelMesh(currentLod);
-		} else {
-			m_meshFilter.sharedMesh = VoxelObjectCache.instance().getSharedMesh(shareMeshFromPrefab, currentLod);
-		}
-
+		m_meshFilter.sharedMesh = createTopLevelMesh(currentLod);
 		if (m_meshFilter.sharedMesh == null) {
 			vertexCount = 0;
 			return;
@@ -114,22 +121,32 @@ public class VoxelObject : MonoBehaviour {
 			for (int i = 0; i < childCount; ++i)
 				transform.GetChild(i).localPosition -= firstChildPos;
 
-			atlasIndex = -1;
+			index = kTopLevelString;
+			atlasIndex = kIndexTopLevel;
 			setChildrenActive(false);
 		} else {
-			atlasIndex = -2;
+			index = "0";
+			atlasIndex = 0;
 			setChildrenActive(true);
 		}
 	}
 
 	public bool isTopLevel()
 	{
-		return atlasIndex == -1;
+		return atlasIndex == kIndexTopLevel;
 	}
 
 	public Mesh createMesh(Lod lod)
 	{
-		if (atlasIndex < 0)
+//		if (atlasIndex == kIndexUnknown)
+			determineAtlasIndex();
+			
+		if (atlasIndex == kIndexReference) {
+			Mesh sharedMesh = VoxelObjectCache.instance().getSharedMesh(index, lod);
+			return (sharedMesh != null) ? sharedMesh : new Mesh();
+		}
+
+		if (atlasIndex == kIndexTopLevel)
 			return new Mesh();
 
 		configureFactory(lod);
@@ -151,6 +168,7 @@ public class VoxelObject : MonoBehaviour {
 
 		Mesh topLevelMesh = new Mesh();
 		topLevelMesh.CombineMeshes(combine);
+
 		return topLevelMesh;
 	}
 
@@ -193,8 +211,6 @@ public class VoxelObject : MonoBehaviour {
 			if (!m_meshRenderer)
 				m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
 		}
-
-		meshComponentsInitialized = true;
 	}
 
 	public void initStaticResources()

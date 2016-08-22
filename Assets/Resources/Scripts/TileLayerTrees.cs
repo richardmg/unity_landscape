@@ -33,7 +33,7 @@ public class TileLayerTrees : ITileLayer
 				goTile.transform.parent = goTileLayer.transform;
 				m_tileMatrix[x, z] = goTile;
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
-				vo.atlasIndex = VoxelObject.kTopLevel;
+				vo.index = VoxelObject.kTopLevelString;
 				initVoxelObjects(goTile, engine.tileWorldSize());
 			}
 		}
@@ -46,7 +46,7 @@ public class TileLayerTrees : ITileLayer
 			GameObject goTile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			goTile.transform.position = desc.worldPos;
 			moveVoxelObjects(goTile, desc.tileWorldSize);
-			goTile.GetComponent<VoxelObject>().rebuild();
+			goTile.GetComponent<VoxelObject>().reconstructGameObject();
 		}
 	}
 
