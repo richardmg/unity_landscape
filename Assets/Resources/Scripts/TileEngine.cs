@@ -127,12 +127,12 @@ public class TileEngine {
 
 				setWorldPosFromGridPos(m_tileMoveDesc[x].gridCoord, ref m_tileMoveDesc[x].worldPos);
 				setNeighbours(m_tileMoveDesc[x].matrixCoord, ref m_tileMoveDesc[x].neighbours);
+			}
 
-				foreach (ITileLayer tileLayer in m_tileLayerList) {
-					tileLayer.moveTiles(m_tileMoveDesc);
-					if (tileLayer is ITileTerrainLayer)
-						((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
-				}
+			foreach (ITileLayer tileLayer in m_tileLayerList) {
+				tileLayer.moveTiles(m_tileMoveDesc);
+				if (tileLayer is ITileTerrainLayer)
+					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
 		}
 	}
