@@ -76,10 +76,9 @@ public class TileLayerTrees : ITileLayer
 
 		for (int z = 0; z < objectsPerRow; ++z) {
 			for (int x = 0; x < objectsPerRow; ++x) {
-				Transform voTransform = goTile.transform.GetChild((int)(z * objectsPerRow) + x);
-				Vector3 localPos = new Vector3(x * m_prefabSize, 0, z * m_prefabSize);
-				Vector3 worldPos = voTransform.TransformPoint(localPos);
+				Vector3 worldPos = goTile.transform.position + new Vector3(x * m_prefabSize, 0, z * m_prefabSize);
 				worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
+				Transform voTransform = goTile.transform.GetChild((int)(z * objectsPerRow) + x);
 				voTransform.position = worldPos;
 			}
 		}
