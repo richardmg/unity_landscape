@@ -22,15 +22,25 @@ public class VoxelObject : MonoBehaviour {
 
 	public const Lod kIndexTopLevel = -1;
 	public const Lod kIndexReference = -2;
+	public const Lod kIndexEmpty = -3;
 	public const Lod kIndexUnknown = -3;
-
-	public const string kTopLevelString = "toplevel";
 
 	// Read-only, for editor inspection
 	public int vertexCount = 0;
 
 	const float lodDistance1 = 200;
 	const float lodDistanceCulled = 100000;
+
+	static public string indexToString(int index)
+	{
+		switch(index) {
+		case kIndexTopLevel: return "toplevel";
+		case kIndexReference: return "reference";
+		case kIndexEmpty: return "empty";
+		}
+
+		return "unknown";
+	}
 
 	void OnValidate()
 	{
@@ -67,6 +77,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public void initVoxelObject()
 	{
+		determineAtlasIndex();
 		initMeshComponents();
 
 		if (!staticResourcesInitialized)
@@ -76,8 +87,10 @@ public class VoxelObject : MonoBehaviour {
 	public void determineAtlasIndex()
 	{
 		if (!System.Int32.TryParse(index, out atlasIndex)) {
-			if (index == kTopLevelString)
+			if (index == indexToString(kIndexTopLevel))
 				atlasIndex = kIndexTopLevel;
+			else if (index == indexToString(kIndexEmpty))
+				atlasIndex = kIndexEmpty;
 			else
 				atlasIndex = kIndexReference;
 		}
@@ -121,13 +134,14 @@ public class VoxelObject : MonoBehaviour {
 			for (int i = 0; i < childCount; ++i)
 				transform.GetChild(i).localPosition -= firstChildPos;
 
-			index = kTopLevelString;
 			atlasIndex = kIndexTopLevel;
+			index = indexToString(atlasIndex);
 			setChildrenActive(false);
 		} else {
-			index = "0";
-			atlasIndex = 0;
+			atlasIndex = kIndexEmpty;
+			index = indexToString(atlasIndex);
 			setChildrenActive(true);
+			m_meshFilter.sharedMesh.Clear();
 		}
 	}
 
@@ -138,7 +152,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public Mesh createMesh(Lod lod)
 	{
-//		if (atlasIndex == kIndexUnknown)
+		if (atlasIndex == kIndexUnknown)
 			determineAtlasIndex();
 			
 		if (atlasIndex == kIndexReference) {

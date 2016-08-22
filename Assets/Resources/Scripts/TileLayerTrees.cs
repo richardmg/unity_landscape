@@ -33,7 +33,7 @@ public class TileLayerTrees : ITileLayer
 				goTile.transform.parent = goTileLayer.transform;
 				m_tileMatrix[x, z] = goTile;
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
-				vo.index = VoxelObject.kTopLevelString;
+				vo.index = VoxelObject.indexToString(VoxelObject.kIndexTopLevel);
 				initVoxelObjects(goTile, engine.tileWorldSize());
 			}
 		}
