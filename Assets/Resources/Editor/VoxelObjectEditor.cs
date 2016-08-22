@@ -13,22 +13,22 @@ public class VoxelObjectEditor : Editor
 
 		if (vo.currentLod == 0 && GUILayout.Button("Use lod 1")) {
 			vo.setLod(VoxelObject.kLod1);
-			vo.reconstructGameObject();
+			vo.rebuildStandAlone();
 		}
 
 		if (vo.currentLod == 1 && GUILayout.Button("Use lod 0")) {
 			vo.setLod(VoxelObject.kLod0);
-			vo.reconstructGameObject();
+			vo.rebuildStandAlone();
 		}
 
 		if (!vo.isTopLevel() && GUILayout.Button("Make top level")) {
 			vo.setTopLevel(true);
-			vo.reconstructGameObject();
+			vo.rebuildStandAlone();
 		}
 
 		if (vo.isTopLevel() && GUILayout.Button("Undo top level")) {
 			vo.setTopLevel(false);
-			vo.reconstructGameObject();
+			vo.rebuildStandAlone();
 		}
 	}
 }

@@ -52,14 +52,14 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		initVoxelObject();
-		reconstructGameObject();
+		initAsStandAlone();
+		rebuildStandAlone();
 	}
 
 	void Start()
 	{
 		determineAtlasIndex();
-		initVoxelObject();
+		initAsStandAlone();
 		currentLod = kNoLod;
 		Update();
 	}
@@ -71,17 +71,23 @@ public class VoxelObject : MonoBehaviour {
 
 		if (lod != currentLod) {
 			setLod(lod);
-			reconstructGameObject();
+			rebuildStandAlone();
 		}
 	}
 
-	public void initVoxelObject()
+	public void initAsStandAlone()
 	{
 		determineAtlasIndex();
 		initMeshComponents();
 
 		if (!staticResourcesInitialized)
 			initStaticResources();
+	}
+
+	public void setIndex(string index)
+	{
+		this.index = index;
+		determineAtlasIndex();
 	}
 
 	public void determineAtlasIndex()
@@ -101,7 +107,7 @@ public class VoxelObject : MonoBehaviour {
 		currentLod = lod;
 	}
 
-	public void reconstructGameObject()
+	public void rebuildStandAlone()
 	{
 		m_meshFilter.sharedMesh = createMesh(currentLod);
 		if (m_meshFilter.sharedMesh == null) {

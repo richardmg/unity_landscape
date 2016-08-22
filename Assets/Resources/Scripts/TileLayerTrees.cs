@@ -33,7 +33,8 @@ public class TileLayerTrees : ITileLayer
 				goTile.transform.parent = goTileLayer.transform;
 				m_tileMatrix[x, z] = goTile;
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
-				vo.index = VoxelObject.indexToString(VoxelObject.kIndexTopLevel);
+				vo.setIndex(VoxelObject.indexToString(VoxelObject.kIndexTopLevel));
+				vo.initAsStandAlone();
 				initVoxelObjects(goTile, engine.tileWorldSize());
 			}
 		}
@@ -46,7 +47,7 @@ public class TileLayerTrees : ITileLayer
 			GameObject goTile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			goTile.transform.position = desc.worldPos;
 			moveVoxelObjects(goTile, desc.tileWorldSize);
-			goTile.GetComponent<VoxelObject>().reconstructGameObject();
+			goTile.GetComponent<VoxelObject>().rebuildStandAlone();
 		}
 	}
 
@@ -61,8 +62,10 @@ public class TileLayerTrees : ITileLayer
 		int objectCount = objectsPerRow * objectsPerRow;
 
 		for (int i = 0; i < objectCount; ++i) {
-			GameObject vo = (GameObject)GameObject.Instantiate(m_prefab, Vector3.zero, Quaternion.identity); 
-			vo.transform.parent = goTile.transform;
+			GameObject go = new GameObject();
+			go.transform.parent = goTile.transform;
+			VoxelObject vo = go.AddComponent<VoxelObject>();
+			vo.setIndex(m_prefab.name);
 		}
 	}
 
