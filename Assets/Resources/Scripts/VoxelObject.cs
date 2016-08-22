@@ -44,14 +44,13 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
-		if (gameObject.scene.name == null) {
-			// Don't modify prefabs
+		determineAtlasIndex();
+
+		if (gameObject.scene.name == null || !gameObject.activeSelf) {
+			// Don't modify prefabs or inactive objects
 			vertexCount = 0;
 			return;
 		}
-
-		if (!gameObject.activeSelf)
-			return;
 
 		initVoxelObject();
 		reconstructGameObject();
@@ -59,6 +58,7 @@ public class VoxelObject : MonoBehaviour {
 
 	void Start()
 	{
+		determineAtlasIndex();
 		initVoxelObject();
 		currentLod = kNoLod;
 		Update();
@@ -103,7 +103,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public void reconstructGameObject()
 	{
-		m_meshFilter.sharedMesh = createTopLevelMesh(currentLod);
+		m_meshFilter.sharedMesh = createMesh(currentLod);
 		if (m_meshFilter.sharedMesh == null) {
 			vertexCount = 0;
 			return;
@@ -134,14 +134,14 @@ public class VoxelObject : MonoBehaviour {
 			for (int i = 0; i < childCount; ++i)
 				transform.GetChild(i).localPosition -= firstChildPos;
 
-			atlasIndex = kIndexTopLevel;
-			index = indexToString(atlasIndex);
+			index = indexToString(kIndexTopLevel);
+			determineAtlasIndex();
 			setChildrenActive(false);
 		} else {
-			atlasIndex = kIndexEmpty;
-			index = indexToString(atlasIndex);
+			index = indexToString(kIndexEmpty);
+			determineAtlasIndex();
 			setChildrenActive(true);
-			m_meshFilter.sharedMesh.Clear();
+			clearMesh();
 		}
 	}
 
@@ -152,15 +152,17 @@ public class VoxelObject : MonoBehaviour {
 
 	public Mesh createMesh(Lod lod)
 	{
-		if (atlasIndex == kIndexUnknown)
-			determineAtlasIndex();
-			
+		return isTopLevel() ? createTopLevelMesh(currentLod) : createChildMesh(currentLod);
+	}
+
+	public Mesh createChildMesh(Lod lod)
+	{
 		if (atlasIndex == kIndexReference) {
 			Mesh sharedMesh = VoxelObjectCache.instance().getSharedMesh(index, lod);
 			return (sharedMesh != null) ? sharedMesh : new Mesh();
 		}
 
-		if (atlasIndex == kIndexTopLevel)
+		if (atlasIndex == kIndexTopLevel || atlasIndex == kIndexEmpty)
 			return new Mesh();
 
 		configureFactory(lod);
@@ -176,7 +178,7 @@ public class VoxelObject : MonoBehaviour {
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
 			VoxelObject vo = selfAndchildren[i];
 			vo.setLod(currentLod);
-			combine[i].mesh = vo.createMesh(lod);
+			combine[i].mesh = vo.createChildMesh(lod);
 			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
 		}
 
@@ -241,5 +243,13 @@ public class VoxelObject : MonoBehaviour {
 		voxelMeshFactory = new VoxelMeshFactory();
 
 		staticResourcesInitialized = true;
+	}
+
+	public void clearMesh()
+	{
+		if (!m_meshFilter)
+			return;
+		m_meshFilter.sharedMesh.Clear();
+		vertexCount = 0;
 	}
 }
