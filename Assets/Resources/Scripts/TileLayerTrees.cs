@@ -7,7 +7,7 @@ public class TileLayerTrees : ITileLayer
 	GameObject m_prefab;
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY = 0;
-	float m_prefabSize = 6;
+	float m_prefabSize = 25;
 
 	const int max_items = 100;
 
