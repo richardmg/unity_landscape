@@ -109,7 +109,6 @@ public class VoxelObject : MonoBehaviour {
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
 			VoxelObject vo = selfAndchildren[i];
-//			vo.ensureInitialized();
 			vo.setLod(currentLod);
 			combine[i].mesh = vo.createMesh(lod);
 			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
