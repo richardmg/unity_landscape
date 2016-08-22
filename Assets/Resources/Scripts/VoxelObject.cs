@@ -24,7 +24,7 @@ public class VoxelObject : MonoBehaviour {
 	public const Lod kNoIndex = -2;
 
 	// Read-only, for editor inspection
-	public int readonlyVertexCount = 0;
+	public int vertexCount = 0;
 
 	const float lodDistance1 = 200;
 	const float lodDistanceCulled = 100000;
@@ -33,7 +33,7 @@ public class VoxelObject : MonoBehaviour {
 	{
 		if (gameObject.scene.name == null) {
 			// Don't modify prefabs
-			readonlyVertexCount = 0;
+			vertexCount = 0;
 			return;
 		}
 
@@ -79,7 +79,7 @@ public class VoxelObject : MonoBehaviour {
 	{
 		m_meshFilter.sharedMesh = createTopLevelMesh(currentLod);
 		m_meshRenderer.sharedMaterial = (currentLod == kLod0) ? materialExact : materialVolume;
-		readonlyVertexCount = m_meshFilter.sharedMesh.vertices.Length;
+		vertexCount = m_meshFilter.sharedMesh.vertices.Length;
 	}
 
 	public void setChildrenActive(bool active)

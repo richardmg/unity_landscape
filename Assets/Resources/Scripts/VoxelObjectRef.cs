@@ -23,7 +23,7 @@ public class VoxelObjectRef : MonoBehaviour {
 	void OnValidate()
 	{
 		if (gameObject.scene.name == null) {
-			// Don't create and store mesh for prefabs
+			// Don't modify prefabs
 			vertexCount = 0;
 			return;
 		}
