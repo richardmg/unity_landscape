@@ -21,7 +21,7 @@ public class Fps : MonoBehaviour
 		style.fontSize = h * 2 / 100;
 		style.normal.textColor = new Color (0.0f, 0.0f, 0.5f, 1.0f);
 		float fps = 1.0f / deltaTime;
-		string text = string.Format("Voxel objects: {0}, Cache size: {1}, FPS: {2:0.}", VoxelObject.voxelObjectCount, VoxelObjectCache.instance().size(), fps);
+		string text = string.Format("Top level: {0}, Cache size: {1}, FPS: {2:0.}", VoxelObject.voxelObjectCount, VoxelObjectCache.instance().size(), fps);
 		GUI.Label(rect, text, style);
 	}
 }
