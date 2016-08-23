@@ -20,9 +20,8 @@ public class Fps : MonoBehaviour
 		style.alignment = TextAnchor.UpperLeft;
 		style.fontSize = h * 2 / 100;
 		style.normal.textColor = new Color (0.0f, 0.0f, 0.5f, 1.0f);
-		float msec = deltaTime * 1000.0f;
 		float fps = 1.0f / deltaTime;
-		string text = string.Format("{0:0.0} ms ({1:0.} fps)", msec, fps);
+		string text = string.Format("Voxel objects: {0}, Cache size: {1}, FPS: {2:0.}", VoxelObject.voxelObjectCount, VoxelObjectCache.instance().size(), fps);
 		GUI.Label(rect, text, style);
 	}
 }

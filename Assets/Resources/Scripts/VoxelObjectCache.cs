@@ -22,7 +22,7 @@ public class VoxelObjectCache {
 
 	public Mesh getSharedMesh(string name, Lod lod)
 	{
-		string cacheId = name + (lod == VoxelObject.kLod0 ? "0" : "1");
+		string cacheId = name.ToLower() + (lod == VoxelObject.kLod0 ? "0" : "1");
 		Mesh mesh = (Mesh)m_hashTable[cacheId];
 
 		if (mesh == null) {
@@ -34,6 +34,12 @@ public class VoxelObjectCache {
 			mesh = vo.createTopLevelMesh(lod);
 			m_hashTable[cacheId] = mesh;
 
+//			if (Application.isPlaying) {
+//				MonoBehaviour.print("Caching " + cacheId);
+//				foreach(string key in m_hashTable.Keys)
+//					MonoBehaviour.print("   " + key);
+//			}
+
 			if (m_hashTable.Count > 10) {
 				// Reminder for later...
 				MonoBehaviour.print("REMEMBER TO CLEAR CACHE FOR UNUSED VOXELOBJECTS! Cache size: " + m_hashTable.Count);
@@ -41,6 +47,11 @@ public class VoxelObjectCache {
 		}
 
 		return mesh;
+	}
+
+	public int size()
+	{
+		return m_hashTable.Count;
 	}
 
 	public void clearCache()

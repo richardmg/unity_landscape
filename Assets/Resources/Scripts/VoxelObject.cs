@@ -15,6 +15,7 @@ public class VoxelObject : MonoBehaviour {
 	static public Material materialExact;
 	static public Material materialVolume;
 	static VoxelMeshFactory voxelMeshFactory;
+	public static int voxelObjectCount = 0;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -40,6 +41,11 @@ public class VoxelObject : MonoBehaviour {
 		}
 
 		return "unknown";
+	}
+
+	void Awake()
+	{
+		voxelObjectCount++;
 	}
 
 	void OnValidate()
