@@ -4,11 +4,12 @@ using System.Collections.Generic;
 
 public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer 
 {
+	public int objectCount = 4;
+	public float paddingBetweenObjects = 25;
 	public GameObject prefab;
 
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY = 0;
-	float m_prefabSize = 25;
 
 	public void initTileLayer(TileEngine engine)
 	{
@@ -52,10 +53,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
 
-		int objectsPerRow = 4;//(int)(tileWorldSize / m_prefabSize);
-		int objectCount = objectsPerRow * objectsPerRow;
+		int count = objectCount * objectCount;
 
-		for (int i = 0; i < objectCount; ++i) {
+		for (int i = 0; i < count; ++i) {
 			GameObject go = new GameObject();
 			go.transform.parent = goTile.transform;
 			VoxelObject vo = go.AddComponent<VoxelObject>();
@@ -67,13 +67,11 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	private void moveVoxelObjects(GameObject goTile, float tileWorldSize)
 	{
-		int objectsPerRow = 4;//(int)(tileWorldSize / m_prefabSize);
-
-		for (int z = 0; z < objectsPerRow; ++z) {
-			for (int x = 0; x < objectsPerRow; ++x) {
-				Vector3 worldPos = goTile.transform.position + new Vector3(x * m_prefabSize, 0, z * m_prefabSize);
+		for (int z = 0; z < objectCount; ++z) {
+			for (int x = 0; x < objectCount; ++x) {
+				Vector3 worldPos = goTile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
 				worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
-				Transform voTransform = goTile.transform.GetChild((int)(z * objectsPerRow) + x);
+				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
 				voTransform.position = worldPos;
 			}
 		}
