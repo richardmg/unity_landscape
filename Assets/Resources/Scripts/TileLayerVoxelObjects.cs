@@ -60,6 +60,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 			go.transform.parent = goTile.transform;
 			VoxelObject vo = go.AddComponent<VoxelObject>();
 			vo.setIndex(prefab.name);
+			vo.transform.localScale = prefab.transform.localScale;
 			vo.gameObject.SetActive(false);
 		}
 	}
