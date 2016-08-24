@@ -2,28 +2,31 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerTerrain : ITileTerrainLayer
+public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 {
-	GameObject m_layerRoot;
+	public Texture2D terrainTexture;
+	public int groundResolution = 33;
+	public int pixelError = 50;
+
 	GameObject[,] m_tileMatrix;
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
 
-	public TileLayerTerrain(string name)
-	{
-		m_layerRoot = new GameObject(name);
-	}
-
 	public void initTileLayer(TileEngine engine)
 	{
-		int tileCount = engine.tileCount();
-		m_layerRoot.transform.SetParent(engine.parentTransform(), false);
+		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
+
+		LandscapeDescription desc = new LandscapeDescription();
+		desc.size = engine.tileSize;
+		desc.pixelError = pixelError;
+		desc.resolution = groundResolution;
+		desc.texture = terrainTexture;
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				m_tileMatrix[x, z] = LandscapeTools.createTerrainGameObject();
-				m_tileMatrix[x, z].transform.SetParent(m_layerRoot.transform, false);
+				m_tileMatrix[x, z] = LandscapeTools.createTerrainGameObject(desc);
+				m_tileMatrix[x, z].transform.SetParent(transform, false);
 			}
 		}
 

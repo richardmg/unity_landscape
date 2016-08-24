@@ -11,18 +11,18 @@ public class LandscapeConstructorEditor : Editor
 
 		LandscapeConstructor lc = (LandscapeConstructor)target;
 		if (GUILayout.Button("Build landscape")) {
-			lc.rebuildLandscape();
+//			lc.rebuildLandscape();
 		}
 
-		if (GUILayout.Button("Clear landscape")) {
-			lc.clear();
-		}
-
-		if (GUILayout.Button("Update landscape")) {
-			Vector3	originalPos = lc.player.transform.position;
-			lc.player.transform.position = SceneView.lastActiveSceneView.camera.transform.position;
-			lc.Update();
-			lc.player.transform.position = originalPos;
-		}
+//		if (GUILayout.Button("Clear landscape")) {
+//			lc.clear();
+//		}
+//
+//		if (GUILayout.Button("Update landscape")) {
+//			Vector3	originalPos = lc.player.transform.position;
+//			lc.player.transform.position = SceneView.lastActiveSceneView.camera.transform.position;
+//			lc.Update();
+//			lc.player.transform.position = originalPos;
+//		}
 	}
 }

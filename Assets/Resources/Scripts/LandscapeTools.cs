@@ -4,20 +4,27 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
+public class LandscapeDescription
+{
+	public float size;
+	public int resolution;
+	public int pixelError;
+	public Texture2D texture;
+}
+
 public class LandscapeTools
 {
 
-	public static GameObject createTerrainGameObject()
+	public static GameObject createTerrainGameObject(LandscapeDescription desc)
 	{
-		LandscapeConstructor lc = LandscapeConstructor.m_instance;
-		GameObject gameObject = Terrain.CreateTerrainGameObject(createGroundTerrainData());
+		GameObject gameObject = Terrain.CreateTerrainGameObject(createGroundTerrainData(desc));
 		Terrain terrain = gameObject.GetComponent<Terrain>();
-		terrain.heightmapPixelError = lc.pixelError;
+		terrain.heightmapPixelError = desc.pixelError;
 		terrain.castShadows = false;
 		return gameObject;
 	}
 
-	public static TerrainData createGroundTerrainData()
+	public static TerrainData createGroundTerrainData(LandscapeDescription desc)
 	{
 		LandscapeConstructor lc = LandscapeConstructor.m_instance;
 
@@ -25,14 +32,14 @@ public class LandscapeTools
 		data.alphamapResolution = 512;
 		data.baseMapResolution = 1024;
 		data.SetDetailResolution(384, 16);
-		data.heightmapResolution = lc.groundResolution;
+		data.heightmapResolution = desc.resolution;
 
 		float tileMaxHeight = lc.tileHeightOct0 + lc.tileHeightOct1 + lc.tileHeightOct2;
-		data.size = new Vector3(lc.tileSizeLandscape, tileMaxHeight, lc.tileSizeLandscape);
+		data.size = new Vector3(desc.size, tileMaxHeight, desc.size);
 
 		SplatPrototype[] splatArray = new SplatPrototype[1]; 
 		splatArray[0] = new SplatPrototype(); 
-		splatArray[0].texture = lc.terrainTexture;
+		splatArray[0].texture = desc.texture;
 //		splatArray[0].texture = (Texture2D)Resources.Load("finaltexture");
 		data.splatPrototypes = splatArray;  
 

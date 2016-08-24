@@ -2,42 +2,36 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerTrees : ITileLayer 
+public class TileLayerTrees : MonoBehaviour, ITileLayer 
 {
-	GameObject m_prefab;
+	public GameObject prefab;
+
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY = 0;
 	float m_prefabSize = 25;
 
-	const int max_items = 100;
-
-	public TileLayerTrees(GameObject prefab)
-	{
-		m_prefab = prefab;
-		PivotAdjustment pa = m_prefab.GetComponent<PivotAdjustment>();
-		if (pa != null)
-			m_pivotAdjustmentY = pa.adjustY;
-	}
-
 	public void initTileLayer(TileEngine engine)
 	{
-		int tileCount = engine.tileCount();
+		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
-		GameObject goTileLayer = new GameObject(m_prefab.name + "Layer");
-		goTileLayer.transform.SetParent(engine.parentTransform(), false);
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject goTile = new GameObject();
 				goTile.name = "Tile " + x + ", " + z;
-				goTile.transform.parent = goTileLayer.transform;
+				goTile.transform.parent = transform;
 				m_tileMatrix[x, z] = goTile;
+
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
 				vo.setIndex(VoxelObject.indexToString(VoxelObject.kIndexTopLevel));
 				vo.initAsStandAlone();
-				initVoxelObjects(goTile, engine.tileWorldSize());
+				initVoxelObjects(goTile, engine.tileSize);
 			}
 		}
+
+		PivotAdjustment pa = prefab.GetComponent<PivotAdjustment>();
+		if (pa != null)
+			m_pivotAdjustmentY = pa.adjustY;
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
@@ -56,7 +50,7 @@ public class TileLayerTrees : ITileLayer
 		// TODO: create a bunch of voxel objects based on noise
 
 		// Hide prefab so we don't create the voxel objects upon construction
-		m_prefab.SetActive(false);
+		prefab.SetActive(false);
 
 		int objectsPerRow = 4;//(int)(tileWorldSize / m_prefabSize);
 		int objectCount = objectsPerRow * objectsPerRow;
@@ -65,7 +59,7 @@ public class TileLayerTrees : ITileLayer
 			GameObject go = new GameObject();
 			go.transform.parent = goTile.transform;
 			VoxelObject vo = go.AddComponent<VoxelObject>();
-			vo.setIndex(m_prefab.name);
+			vo.setIndex(prefab.name);
 			vo.gameObject.SetActive(false);
 		}
 	}
