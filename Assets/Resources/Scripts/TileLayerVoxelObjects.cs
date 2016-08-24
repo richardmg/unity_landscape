@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerTrees : MonoBehaviour, ITileLayer 
+public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer 
 {
 	public GameObject prefab;
 
