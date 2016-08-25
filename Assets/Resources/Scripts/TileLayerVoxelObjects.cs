@@ -50,14 +50,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	public void removeAllTiles()
 	{
-		if (m_tileMatrix == null)
-			return;
-
-		int countX = m_tileMatrix.GetLength(0);
-		int countZ = m_tileMatrix.GetLength(1);
-		for (int z = 0; z < countZ; ++z) {
-			for (int x = 0; x < countX; ++x)
-				DestroyImmediate(m_tileMatrix[x, z]);
+		for (int i = 0; i < transform.childCount; ++i) {
+			GameObject go = transform.GetChild(i).gameObject;
+			UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(go); };
 		}
 	}
 
