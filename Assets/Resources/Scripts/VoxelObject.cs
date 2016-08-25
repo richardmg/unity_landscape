@@ -4,7 +4,9 @@ using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
 	public string index = System.String.Empty;
+	[Range (0f, 20f)]
 	public float voxelDepth = 4;
+	[Range (0, 1)]
 	public Lod currentLod = kLod0;
 
 	int atlasIndex = kIndexUnknown;

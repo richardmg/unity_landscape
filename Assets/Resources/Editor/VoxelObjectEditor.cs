@@ -11,16 +11,6 @@ public class VoxelObjectEditor : Editor
 
 		VoxelObject vo = (VoxelObject)target;
 
-		if (vo.currentLod == 0 && GUILayout.Button("Use lod 1")) {
-			vo.setLod(VoxelObject.kLod1);
-			vo.rebuildStandAlone();
-		}
-
-		if (vo.currentLod == 1 && GUILayout.Button("Use lod 0")) {
-			vo.setLod(VoxelObject.kLod0);
-			vo.rebuildStandAlone();
-		}
-
 		if (!vo.isTopLevel() && GUILayout.Button("Make top level")) {
 			vo.setTopLevel(true);
 			vo.rebuildStandAlone();
