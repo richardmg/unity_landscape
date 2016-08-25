@@ -4,7 +4,9 @@ using System.Collections.Generic;
 
 public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer 
 {
+	[Range (1, 100)]
 	public int objectCount = 4;
+	[Range (0, 100)]
 	public float paddingBetweenObjects = 25;
 	public GameObject prefab;
 
