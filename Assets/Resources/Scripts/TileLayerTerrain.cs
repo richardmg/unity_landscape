@@ -4,9 +4,11 @@ using System.Collections.Generic;
 
 public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 {
-	public Texture2D terrainTexture;
+	[Range (8, 512)]
 	public int groundResolution = 33;
+	[Range (0, 200)]
 	public int pixelError = 50;
+	public Texture2D terrainTexture;
 
 	GameObject[,] m_tileMatrix;
 	TerrainData m_terrainData;
