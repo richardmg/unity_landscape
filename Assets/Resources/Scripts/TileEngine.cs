@@ -31,7 +31,9 @@ public interface ITileTerrainLayer : ITileLayer
 }
 
 public class TileEngine : MonoBehaviour {
+	[Range (2, 10)]
 	public int tileCount = 4;
+	[Range (1, 1000)]
 	public float tileSize = 100;
 	public GameObject player;
 
