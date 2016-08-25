@@ -48,6 +48,19 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		}
 	}
 
+	public void removeAllTiles()
+	{
+		if (m_tileMatrix == null)
+			return;
+
+		int countX = m_tileMatrix.GetLength(0);
+		int countZ = m_tileMatrix.GetLength(1);
+		for (int z = 0; z < countZ; ++z) {
+			for (int x = 0; x < countX; ++x)
+				DestroyImmediate(m_tileMatrix[x, z]);
+		}
+	}
+
 	private void initVoxelObjects(GameObject goTile, float tileWorldSize)
 	{
 		// TODO: create a bunch of voxel objects based on noise

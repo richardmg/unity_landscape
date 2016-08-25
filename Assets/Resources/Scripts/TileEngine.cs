@@ -23,6 +23,7 @@ public interface ITileLayer
 {
 	void initTileLayer(TileEngine engine);
 	void moveTiles(TileDescription[] tilesToMove);
+	void removeAllTiles();
 }
 
 public interface ITileTerrainLayer : ITileLayer
@@ -36,6 +37,7 @@ public class TileEngine : MonoBehaviour {
 	[Range (1, 1000)]
 	public float tileSize = 100;
 	public GameObject player;
+	public bool showInEditor = false;
 
 	int m_tileCountHalf;
 	Vector3 m_gridCenterOffset;
@@ -80,6 +82,16 @@ public class TileEngine : MonoBehaviour {
 
 		if (gridCrossedZ != 0)
 			updateTilesZ(gridCrossedZ);
+	}
+
+	void OnValidate()
+	{
+		ITileLayer[] tileLayers = GetComponentsInChildren<ITileLayer>();
+		foreach (ITileLayer tileLayer in tileLayers)
+			tileLayer.removeAllTiles();
+
+		if (showInEditor)
+			Start();
 	}
 
 	void setWorldPosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)

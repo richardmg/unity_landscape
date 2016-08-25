@@ -60,6 +60,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		}
 	}
 
+	public void removeAllTiles()
+	{
+	}
+
 	public void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours)
 	{
 		for (int i = 0; i < tilesWithNewNeighbours.Length; ++i) {
