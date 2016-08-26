@@ -48,13 +48,17 @@ public class TileEngine : MonoBehaviour {
 
 	public void OnValidate()
 	{
-		if (initialized)
-			rebuild();
+		if (!initialized)
+			return;
+
+		removeAllTiles();
+		updateAllTiles();
 	}
 
 	void Start()
 	{
-		rebuild();
+		removeAllTiles();
+		updateAllTiles();
 	}
 
 	void Update()
@@ -92,12 +96,6 @@ public class TileEngine : MonoBehaviour {
 			tileLayer.initTileLayer(this);
 
 		initialized = true;
-	}
-
-	public void rebuild()
-	{
-		removeAllTiles();
-		updateAllTiles();
 	}
 
 	public void removeAllTiles()

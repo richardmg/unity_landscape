@@ -16,8 +16,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	public void OnValidate()
 	{
 		TileEngine engine = GetComponentInParent<TileEngine>();
-		if (engine && engine.isInitialized())
-			engine.rebuild();
+		if (engine)
+			engine.OnValidate();
 	}
 
 	public void initTileLayer(TileEngine engine)
