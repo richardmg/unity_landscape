@@ -1,11 +1,7 @@
 ﻿#include "UnityCG.cginc"
 #define M_PI 3.1415926535897932384626433832795
 
-float _VoxelateX;
-float _VoxelateY;
-float _VoxelateZ;
-float _VoxelateStrength;
-
+float _Stripes;
 float _Gradient;
 
 float _BaseLight;
@@ -175,9 +171,7 @@ inline fixed4 voxelobject_frag(v2f i)
 	#endif
 		
 	#ifndef NO_VOXELATE
-		int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-		c *= if_else(isFrontOrBackSide, 1,  1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength));
-		c *= if_else(isFrontOrBackSide, 1 + (((voxelate.x + voxelate.y) % 2) * _VoxelateStrength), 1);
+		c *= 1 + if_then(!isFrontOrBackSide, (int)(voxel.z % 2) * _Stripes);
 	#endif
 
 	#ifndef NO_GRADIENT

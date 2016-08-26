@@ -3,10 +3,7 @@
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_VoxelateStrength ("Voxelate strength", Range(0, 0.1)) = 0.05
-		_VoxelateX ("Voxelate X", Range(0, 1)) = 1
-		_VoxelateY ("Voxelate Y", Range(0, 1)) = 1
-		_VoxelateZ ("Voxelate Z", Range(0, 1)) = 1
+		_Stripes ("Stripes", Range(0, 0.1)) = 0.05
 		_BaseLight ("Base light", Range(0, 2)) = 0.85
 		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
