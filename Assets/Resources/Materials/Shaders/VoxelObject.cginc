@@ -86,9 +86,14 @@ inline float if_lt(float x, float y)
 	return max(sign(y - x), 0.0);
 }
 
+inline float if_then(float testValue, float thenExpr)
+{
+	return if_neq(testValue, 0) * thenExpr;
+}
+
 inline float if_else(float testValue, float ifExpr, float elseExpr)
 {
-	return elseExpr + (if_neq(testValue, 0) * (ifExpr - elseExpr));
+	return elseExpr + if_then(testValue, ifExpr - elseExpr);
 }
 
 inline float3 uvClamped(v2f i)
@@ -171,7 +176,8 @@ inline fixed4 voxelobject_frag(v2f i)
 		
 	#ifndef NO_VOXELATE
 		int3 voxelate = int3(voxel * float3(_VoxelateX, _VoxelateY, _VoxelateZ));
-		c *= 1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength);
+		c *= if_else(isFrontOrBackSide, 1,  1 + (((voxelate.x + voxelate.y + voxelate.z) % 2) * _VoxelateStrength));
+		c *= if_else(isFrontOrBackSide, 1 + (((voxelate.x + voxelate.y) % 2) * _VoxelateStrength), 1);
 	#endif
 
 	#ifndef NO_GRADIENT
