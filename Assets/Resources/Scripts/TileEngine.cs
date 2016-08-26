@@ -50,8 +50,6 @@ public class TileEngine : MonoBehaviour {
 	{
 		if (initialized)
 			rebuild();
-		else
-			removeAllTiles();
 	}
 
 	void Start()
