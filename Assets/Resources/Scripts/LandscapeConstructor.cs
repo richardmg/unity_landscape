@@ -28,13 +28,11 @@ public class LandscapeConstructor : MonoBehaviour {
 	void OnValidate()
 	{
 		if (showInEditor) {
-			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>()) {
+			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>())
 				tileEngine.updateAllTiles();
-			}
 		} else {
-			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>(true)) {
+			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>(true))
 				tileEngine.removeAllTiles();
-			}
 		}
 	}
 
