@@ -64,10 +64,10 @@ public class TileEngine : MonoBehaviour {
 		m_matrixTopRight.Set((float)matrixPos((int)m_matrixTopRight.x, gridCrossedX), (float)matrixPos((int)m_matrixTopRight.y, gridCrossedZ));
 
 		if (gridCrossedX != 0)
-			updateTilesX(gridCrossedX);
+			updateXTiles(gridCrossedX);
 
 		if (gridCrossedZ != 0)
-			updateTilesZ(gridCrossedZ);
+			updateZTiles(gridCrossedZ);
 	}
 
 	void init()
@@ -155,7 +155,7 @@ public class TileEngine : MonoBehaviour {
 		}
 	}
 
-	private void updateTilesX(int tilesCrossedX)
+	private void updateXTiles(int tilesCrossedX)
 	{
 		int moveDirection = tilesCrossedX > 0 ? 1 : -1;
 		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedX), tileCount);
@@ -189,7 +189,7 @@ public class TileEngine : MonoBehaviour {
 		}
 	}
 
-	private void updateTilesZ(int tilesCrossedZ)
+	private void updateZTiles(int tilesCrossedZ)
 	{
 		int moveDirection = tilesCrossedZ > 0 ? 1 : -1;
 		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedZ), tileCount);
