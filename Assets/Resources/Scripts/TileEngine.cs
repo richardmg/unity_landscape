@@ -45,11 +45,6 @@ public class TileEngine : MonoBehaviour {
 
 	ITileLayer[] m_tileLayerArray;
 
-	void OnValidate()
-	{
-		rebuild();
-	}
-
 	void Start()
 	{
 		init();
