@@ -9,9 +9,21 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	[Range (0, 100)]
 	public float paddingBetweenObjects = 25;
 	public GameObject prefab;
+	public bool showInEditor = false;
 
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY = 0;
+
+	public void OnValidate()
+	{
+		if (showInEditor) {
+			TileEngine engine = GetComponentInParent<TileEngine>();
+			if (engine)
+				engine.rebuild();
+		} else {
+			removeAllTiles();
+		}
+	}
 
 	public void initTileLayer(TileEngine engine)
 	{
@@ -28,7 +40,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
 				vo.setIndex(VoxelObject.indexToString(VoxelObject.kIndexTopLevel));
 				vo.initAsStandAlone();
-				initVoxelObjects(goTile, engine.tileSize);
+				initVoxelObjects(goTile);
 			}
 		}
 
@@ -43,7 +55,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 			TileDescription desc = tilesToMove[i];
 			GameObject goTile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			goTile.transform.position = desc.worldPos;
-			moveVoxelObjects(goTile, desc.tileWorldSize);
+			moveVoxelObjects(goTile);
 			goTile.GetComponent<VoxelObject>().rebuildStandAlone();
 		}
 	}
@@ -56,7 +68,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		}
 	}
 
-	private void initVoxelObjects(GameObject goTile, float tileWorldSize)
+	private void initVoxelObjects(GameObject goTile)
 	{
 		// TODO: create a bunch of voxel objects based on noise
 
@@ -75,7 +87,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		}
 	}
 
-	private void moveVoxelObjects(GameObject goTile, float tileWorldSize)
+	private void moveVoxelObjects(GameObject goTile)
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {

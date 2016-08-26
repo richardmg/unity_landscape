@@ -15,7 +15,6 @@ public class TileDescription
 	public Vector2 gridCoord = new Vector2();
 	public Vector3 worldPos = new Vector3();
 	public Vector2 matrixCoord = new Vector2();
-	public float tileWorldSize;
 	public TileNeighbours neighbours = new TileNeighbours();
 }
 
@@ -37,7 +36,6 @@ public class TileEngine : MonoBehaviour {
 	[Range (1, 1000)]
 	public float tileSize = 100;
 	public GameObject player;
-	public bool showInEditor = false;
 
 	int m_tileCountHalf;
 	Vector3 m_gridCenterOffset;
@@ -47,22 +45,14 @@ public class TileEngine : MonoBehaviour {
 
 	ITileLayer[] m_tileLayerArray;
 
+	void OnValidate()
+	{
+		rebuild();
+	}
+
 	void Start()
 	{
-		m_tileCountHalf = tileCount / 2;
-		m_gridCenterOffset = new Vector3(tileSize / 2, 0, tileSize / 2);
-		m_tileMoveDesc = new TileDescription[tileCount];
-		for (int i = 0; i < tileCount; ++i)
-			m_tileMoveDesc[i] = new TileDescription();
-
-		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_gridCenter);
-
-		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
-		foreach (ITileLayer tileLayer in m_tileLayerArray)
-			tileLayer.initTileLayer(this);
-
-		updateAllTiles();
+		init();
 	}
 
 	void Update()
@@ -84,14 +74,31 @@ public class TileEngine : MonoBehaviour {
 			updateTilesZ(gridCrossedZ);
 	}
 
-	void OnValidate()
+	void init()
+	{
+		m_tileCountHalf = tileCount / 2;
+		m_gridCenterOffset = new Vector3(tileSize / 2, 0, tileSize / 2);
+		m_tileMoveDesc = new TileDescription[tileCount];
+		for (int i = 0; i < tileCount; ++i)
+			m_tileMoveDesc[i] = new TileDescription();
+
+		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
+		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_gridCenter);
+
+		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
+		foreach (ITileLayer tileLayer in m_tileLayerArray)
+			tileLayer.initTileLayer(this);
+
+		updateAllTiles();
+	}
+
+	public void rebuild()
 	{
 		ITileLayer[] tileLayers = GetComponentsInChildren<ITileLayer>();
 		foreach (ITileLayer tileLayer in tileLayers)
 			tileLayer.removeAllTiles();
 
-		if (showInEditor)
-			Start();
+		init();
 	}
 
 	void setWorldPosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)
@@ -135,7 +142,6 @@ public class TileEngine : MonoBehaviour {
 	{
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				m_tileMoveDesc[x].tileWorldSize = tileSize;
 				m_tileMoveDesc[x].matrixCoord.Set(x, z);
 				m_tileMoveDesc[x].gridCoord.Set(
 					x + (int)m_gridCenter.x - m_tileCountHalf,
