@@ -23,7 +23,6 @@ public interface ITileLayer
 	void initTileLayer(TileEngine engine);
 	void moveTiles(TileDescription[] tilesToMove);
 	void removeAllTiles();
-	void OnLandscapeGeneratorUpdate();
 }
 
 public interface ITileTerrainLayer : ITileLayer
@@ -43,12 +42,21 @@ public class TileEngine : MonoBehaviour {
 	Vector2 m_gridCenter;
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
+	bool initialized = false;
 
 	ITileLayer[] m_tileLayerArray;
 
+	public void OnValidate()
+	{
+		if (initialized)
+			rebuild();
+		else
+			removeAllTiles();
+	}
+
 	void Start()
 	{
-		init();
+		rebuild();
 	}
 
 	void Update()
@@ -85,16 +93,21 @@ public class TileEngine : MonoBehaviour {
 		foreach (ITileLayer tileLayer in m_tileLayerArray)
 			tileLayer.initTileLayer(this);
 
-		updateAllTiles();
+		initialized = true;
 	}
 
 	public void rebuild()
 	{
+		removeAllTiles();
+		updateAllTiles();
+	}
+
+	public void removeAllTiles()
+	{
 		ITileLayer[] tileLayers = GetComponentsInChildren<ITileLayer>();
 		foreach (ITileLayer tileLayer in tileLayers)
 			tileLayer.removeAllTiles();
-
-		init();
+		initialized = false;
 	}
 
 	void setWorldPosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)
@@ -114,6 +127,11 @@ public class TileEngine : MonoBehaviour {
 	int matrixPos(int top, int rows)
 	{
 		return (tileCount + top + (rows % tileCount)) % tileCount;
+	}
+
+	public bool isInitialized()
+	{
+		return initialized;
 	}
 
 	void setNeighbours(Vector2 pos, ref TileNeighbours result)
@@ -136,6 +154,9 @@ public class TileEngine : MonoBehaviour {
 
 	public void updateAllTiles()
 	{
+		if (!initialized)
+			init();
+		
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMoveDesc[x].matrixCoord.Set(x, z);

@@ -9,30 +9,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	[Range (0, 100)]
 	public float paddingBetweenObjects = 25;
 	public GameObject prefab;
-	public bool showInEditor = false;
 
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY = 0;
 
 	public void OnValidate()
 	{
-		if (showInEditor) {
-			TileEngine engine = GetComponentInParent<TileEngine>();
-			if (engine)
-				engine.rebuild();
-		} else {
-			removeAllTiles();
-		}
-	}
-
-	public void OnLandscapeGeneratorUpdate()
-	{
-		if (!showInEditor)
-			return;
-
 		TileEngine engine = GetComponentInParent<TileEngine>();
-		if (engine)
-			engine.updateAllTiles();
+		if (engine && engine.isInitialized())
+			engine.rebuild();
 	}
 
 	public void initTileLayer(TileEngine engine)

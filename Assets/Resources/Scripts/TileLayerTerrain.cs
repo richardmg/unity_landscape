@@ -9,7 +9,6 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	[Range (0, 200)]
 	public int pixelError = 50;
 	public Texture2D terrainTexture;
-	public bool showInEditor = false;
 
 	GameObject[,] m_tileMatrix;
 	TerrainData m_terrainData;
@@ -17,23 +16,9 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public void OnValidate()
 	{
-		if (showInEditor) {
-			TileEngine engine = GetComponentInParent<TileEngine>();
-			if (engine)
-				engine.rebuild();
-		} else {
-			removeAllTiles();
-		}
-	}
-
-	public void OnLandscapeGeneratorUpdate()
-	{
-		if (!showInEditor)
-			return;
-
 		TileEngine engine = GetComponentInParent<TileEngine>();
-		if (engine)
-			engine.updateAllTiles();
+		if (engine && engine.isInitialized())
+			engine.rebuild();
 	}
 
 	public void initTileLayer(TileEngine engine)

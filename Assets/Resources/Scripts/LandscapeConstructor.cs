@@ -10,6 +10,8 @@ public class LandscapeConstructor : MonoBehaviour {
 	[Range (0, 10)]
 	public float tileHeightOct2 = 1;
 
+	public bool showInEditor = false;
+
 	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
 	[HideInInspector]
@@ -25,8 +27,15 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	void OnValidate()
 	{
-		foreach (ITileLayer layer in GetComponentsInChildren<ITileLayer>())
-			layer.OnLandscapeGeneratorUpdate();
+		if (showInEditor) {
+			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>()) {
+				tileEngine.updateAllTiles();
+			}
+		} else {
+			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>()) {
+				tileEngine.removeAllTiles();
+			}
+		}
 	}
 
 	public static float getGroundHeight(float x, float z)
