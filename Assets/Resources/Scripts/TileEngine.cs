@@ -23,6 +23,7 @@ public interface ITileLayer
 	void initTileLayer(TileEngine engine);
 	void moveTiles(TileDescription[] tilesToMove);
 	void removeAllTiles();
+	void OnLandscapeGeneratorUpdate();
 }
 
 public interface ITileTerrainLayer : ITileLayer

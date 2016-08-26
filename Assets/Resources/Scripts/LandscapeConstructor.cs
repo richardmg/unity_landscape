@@ -23,6 +23,12 @@ public class LandscapeConstructor : MonoBehaviour {
 		m_instance = this;
 	}
 
+	void OnValidate()
+	{
+		foreach (ITileLayer layer in GetComponentsInChildren<ITileLayer>())
+			layer.OnLandscapeGeneratorUpdate();
+	}
+
 	public static float getGroundHeight(float x, float z)
 	{
 		float oct0 = Mathf.PerlinNoise(x * m_instance.noiseScaleOct0, z * m_instance.noiseScaleOct0) * m_instance.tileHeightOct0;

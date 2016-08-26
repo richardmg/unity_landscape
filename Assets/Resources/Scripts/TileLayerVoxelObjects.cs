@@ -25,6 +25,16 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		}
 	}
 
+	public void OnLandscapeGeneratorUpdate()
+	{
+		if (!showInEditor)
+			return;
+
+		TileEngine engine = GetComponentInParent<TileEngine>();
+		if (engine)
+			engine.updateAllTiles();
+	}
+
 	public void initTileLayer(TileEngine engine)
 	{
 		int tileCount = engine.tileCount;

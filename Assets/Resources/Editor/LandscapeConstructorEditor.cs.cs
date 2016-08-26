@@ -9,10 +9,10 @@ public class LandscapeConstructorEditor : Editor
 	{
 		DrawDefaultInspector();
 
-		LandscapeConstructor lc = (LandscapeConstructor)target;
-		if (GUILayout.Button("Build landscape")) {
-//			lc.rebuildLandscape();
-		}
+//		LandscapeConstructor lc = (LandscapeConstructor)target;
+//		if (GUILayout.Button("Build landscape")) {
+////			lc.rebuildLandscape();
+//		}
 
 //		if (GUILayout.Button("Clear landscape")) {
 //			lc.clear();
