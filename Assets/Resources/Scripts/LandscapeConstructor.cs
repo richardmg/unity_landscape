@@ -32,7 +32,7 @@ public class LandscapeConstructor : MonoBehaviour {
 				tileEngine.updateAllTiles();
 			}
 		} else {
-			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>()) {
+			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>(true)) {
 				tileEngine.removeAllTiles();
 			}
 		}
