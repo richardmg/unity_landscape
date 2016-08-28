@@ -131,8 +131,16 @@ public class VoxelObject : MonoBehaviour {
 	{
 		bool isActive = gameObject.activeSelf;
 		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
-		for (int i = 0; i < selfAndchildren.Length; ++i)
-			selfAndchildren[i].gameObject.SetActive(active);
+		if (active) {
+			for (int i = 0; i < selfAndchildren.Length; ++i) {
+				selfAndchildren[i].initAsStandAlone();
+				selfAndchildren[i].rebuildStandAlone();
+				selfAndchildren[i].gameObject.SetActive(true);
+			}
+		} else {
+			for (int i = 0; i < selfAndchildren.Length; ++i)
+				selfAndchildren[i].gameObject.SetActive(false);
+		}
 		if (isActive)
 			gameObject.SetActive(true);
 	}
