@@ -3,11 +3,11 @@ using System.Collections;
 
 public class LandscapeConstructor : MonoBehaviour {
 
-	[Range (0, 500)]
+	[Range (0, 700)]
 	public float tileHeightOct0 = 200;
-	[Range (0, 100)]
+	[Range (0, 200)]
 	public float tileHeightOct1 = 10;
-	[Range (0, 10)]
+	[Range (0, 20)]
 	public float tileHeightOct2 = 1;
 
 	public bool showInEditor = false;
