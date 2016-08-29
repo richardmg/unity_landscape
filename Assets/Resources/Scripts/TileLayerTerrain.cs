@@ -62,6 +62,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		for (int i = 0; i < tilesToMove.Length; ++i) {
 			TileDescription desc = tilesToMove[i];
 			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			tileObject.name = "grid: " + desc.gridCoord.x + ", " + desc.gridCoord.y;
 			Terrain terrain = tileObject.GetComponent<Terrain>();
 			TerrainData tdata = terrain.terrainData;
 
@@ -127,7 +128,17 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 		if (terrain)
 			return terrain.SampleHeight(worldPos);
-		else
+		else {
+			print("NO TERRAIN");
 			return getGroundHeight(worldPos.x, worldPos.z);
+		}
 	}
+
+	public Vector2 getGridCoord(Vector3 worldPos)
+	{
+		TileEngine engine = GetComponentInParent<TileEngine>();
+		TileDescription desc = engine.getTileDescription(worldPos);
+		return desc.gridCoord;
+	}
+
 }

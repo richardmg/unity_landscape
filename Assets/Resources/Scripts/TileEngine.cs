@@ -67,7 +67,7 @@ public class TileEngine : MonoBehaviour {
 	void Update()
 	{
 		Vector2 gridCenterPrev = m_gridCenter;
-		setGridPosFromWorldPos(player.transform.position, ref m_gridCenter);
+		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_gridCenter);
 
 		if (m_gridCenter == gridCenterPrev)
 			return;
@@ -86,13 +86,13 @@ public class TileEngine : MonoBehaviour {
 	void init()
 	{
 		m_tileCountHalf = tileCount / 2;
-		m_gridCenterOffset = new Vector3(tileSize / 2, 0, tileSize / 2);
+		m_gridCenterOffset = Vector3.zero;// new Vector3(tileSize / 2, 0, tileSize / 2);
 		m_tileMoveDesc = new TileDescription[tileCount];
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		setGridPosFromWorldPos(player.transform.position, ref m_gridCenter);
+		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_gridCenter);
 
 		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
 		foreach (ITileLayer tileLayer in m_tileLayerArray)
@@ -115,9 +115,8 @@ public class TileEngine : MonoBehaviour {
 
 	void setGridPosFromWorldPos(Vector3 worldPos, ref Vector2 gridCoord)
 	{
-		Vector3 p = worldPos + m_gridCenterOffset;
-		int x = Mathf.FloorToInt(p.x / tileSize);
-		int z = Mathf.FloorToInt(p.z / tileSize);
+		int x = Mathf.FloorToInt(worldPos.x / tileSize);
+		int z = Mathf.FloorToInt(worldPos.z / tileSize);
 		gridCoord.Set(x, z);
 	}
 
@@ -237,17 +236,17 @@ public class TileEngine : MonoBehaviour {
 	{
 		TileDescription desc = m_tileMoveDesc[0];
 
-		setGridPosFromWorldPos(worldPos, ref desc.gridCoord);
-		Vector2 gridOffset = m_gridCenter - desc.gridCoord;
+		setGridPosFromWorldPos(worldPos + m_gridCenterOffset, ref desc.gridCoord);
+		Vector2 gridOffset = desc.gridCoord - m_gridCenter;
 
 		if (Mathf.Abs(gridOffset.x) > tileCount / 2 || Mathf.Abs(gridOffset.y) > tileCount / 2) {
 			desc.matrixCoord.Set(-1, -1);
 			return desc;
 		}
 
-
-		desc.matrixCoord.Set((float)matrixPos((int)m_matrixTopRight.x, (int)gridOffset.x - m_tileCountHalf), matrixPos((int)m_matrixTopRight.y, (int)gridOffset.y - m_tileCountHalf));
-		MonoBehaviour.print(m_gridCenter.x + ", " + m_gridCenter.y);
+		int matrixX = matrixPos((int)m_matrixTopRight.x, (int)gridOffset.x - m_tileCountHalf + 1);
+		int matrixY = matrixPos((int)m_matrixTopRight.y, (int)gridOffset.y - m_tileCountHalf + 1);
+		desc.matrixCoord.Set(matrixX, matrixY);
 		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
 		setNeighbours(desc.matrixCoord, ref desc.neighbours);
 

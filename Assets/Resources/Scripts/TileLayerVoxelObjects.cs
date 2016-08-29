@@ -96,6 +96,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 				worldPos.y = terrainLayer.sampleHeight(worldPos);
 				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
 				voTransform.position = worldPos;
+
+				Vector2 grid = ((TileLayerTerrain)terrainLayer).getGridCoord(worldPos);
+				voTransform.gameObject.name = "Maps to terrain grid: " + grid.x + ", " + grid.y;
 			}
 		}
 	}
