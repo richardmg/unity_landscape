@@ -120,6 +120,12 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public float sampleHeight(Vector3 worldPos)
 	{
-		return getGroundHeight(worldPos.x, worldPos.z);
+		TileEngine engine = GetComponentInParent<TileEngine>();
+		TileDescription desc = engine.getTileDescription(worldPos);
+		Terrain terrain = getTerrainSafe(desc.matrixCoord);
+		if (terrain)
+			return terrain.SampleHeight(worldPos);
+		else
+			return getGroundHeight(worldPos.x, worldPos.z);
 	}
 }

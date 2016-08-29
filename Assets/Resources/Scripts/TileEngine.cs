@@ -232,15 +232,18 @@ public class TileEngine : MonoBehaviour {
 		}
 	}
 
+	public TileDescription getTileDescription(Vector3 worldPos)
+	{
+		TileDescription desc = m_tileMoveDesc[0];
+		desc.gridCoord.Set(-1, -1);
+		desc.matrixCoord.Set(-1, -1);
+		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
+		setNeighbours(desc.matrixCoord, ref desc.neighbours);
+		return desc;
+	}
+
 	public ITileLayer getTileLayer(int index)
 	{
 		return m_tileLayerArray[index];
 	}
-
-//	public ITileLayer getFirstTileLayerAtWorldPos(Vector3 worldPos)
-//	{
-//		Vector2 gridPos;
-//		setGridPosFromWorldPos(worldPos, gridPos);
-//		return m_tileLayerArray[0].getTile();
-//	}
 }
