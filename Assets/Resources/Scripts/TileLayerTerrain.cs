@@ -19,6 +19,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	GameObject[,] m_tileMatrix;
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
+	TileEngine m_tileEngine;
 
 	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
@@ -36,6 +37,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public void initTileLayer(TileEngine engine)
 	{
+		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 
@@ -122,8 +124,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public float sampleHeight(Vector3 worldPos)
 	{
-		TileEngine engine = GetComponentInParent<TileEngine>();
-		TileDescription desc = engine.getTileDescription(worldPos);
+		TileDescription desc = m_tileEngine.getTileDescription(worldPos);
 		Terrain terrain = getTerrainSafe(desc.matrixCoord);
 		return terrain ? terrain.SampleHeight(worldPos) : 0;
 	}
