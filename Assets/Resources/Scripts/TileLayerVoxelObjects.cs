@@ -72,15 +72,16 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
 
-		int count = objectCount * objectCount;
-
-		for (int i = 0; i < count; ++i) {
-			GameObject go = new GameObject();
-			go.transform.parent = goTile.transform;
-			VoxelObject vo = go.AddComponent<VoxelObject>();
-			vo.setIndex(prefab.name);
-			vo.transform.localScale = prefab.transform.localScale;
-			vo.gameObject.SetActive(false);
+		for (int z = 0; z < objectCount; ++z) {
+			for (int x = 0; x < objectCount; ++x) {
+				GameObject go = new GameObject();
+				go.name = "VoxelObject: " + x + ", " + z;
+				go.transform.parent = goTile.transform;
+				VoxelObject vo = go.AddComponent<VoxelObject>();
+				vo.setIndex(prefab.name);
+				vo.transform.localScale = prefab.transform.localScale;
+				vo.gameObject.SetActive(false);
+			}
 		}
 	}
 
