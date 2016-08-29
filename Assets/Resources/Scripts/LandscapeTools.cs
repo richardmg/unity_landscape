@@ -26,15 +26,16 @@ public class LandscapeTools
 
 	public static TerrainData createGroundTerrainData(LandscapeDescription desc)
 	{
-		LandscapeConstructor lc = LandscapeConstructor.m_instance;
-
 		TerrainData data = new TerrainData();
 		data.alphamapResolution = 512;
 		data.baseMapResolution = 1024;
 		data.SetDetailResolution(384, 16);
 		data.heightmapResolution = desc.resolution;
 
-		float maxHeight = lc.tileHeightOct0 + lc.tileHeightOct1 + lc.tileHeightOct2;
+
+//		LandscapeConstructor lc = LandscapeConstructor.m_instance;
+//		float maxHeight = lc.tileHeightOct0 + lc.tileHeightOct1 + lc.tileHeightOct2;
+		float maxHeight = 10000;
 		data.size = new Vector3(desc.size, maxHeight, desc.size);
 
 		SplatPrototype[] splatArray = new SplatPrototype[1]; 
