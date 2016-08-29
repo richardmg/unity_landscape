@@ -67,7 +67,7 @@ public class TileEngine : MonoBehaviour {
 	void Update()
 	{
 		Vector2 gridCenterPrev = m_gridCenter;
-		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_gridCenter);
+		setGridPosFromWorldPos(player.transform.position, ref m_gridCenter);
 
 		if (m_gridCenter == gridCenterPrev)
 			return;
@@ -92,7 +92,7 @@ public class TileEngine : MonoBehaviour {
 			m_tileMoveDesc[i] = new TileDescription();
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_gridCenter);
+		setGridPosFromWorldPos(player.transform.position, ref m_gridCenter);
 
 		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
 		foreach (ITileLayer tileLayer in m_tileLayerArray)
@@ -115,8 +115,9 @@ public class TileEngine : MonoBehaviour {
 
 	void setGridPosFromWorldPos(Vector3 worldPos, ref Vector2 gridCoord)
 	{
-		int x = Mathf.FloorToInt(worldPos.x / tileSize);
-		int z = Mathf.FloorToInt(worldPos.z / tileSize);
+		Vector3 p = worldPos + m_gridCenterOffset;
+		int x = Mathf.FloorToInt(p.x / tileSize);
+		int z = Mathf.FloorToInt(p.z / tileSize);
 		gridCoord.Set(x, z);
 	}
 
