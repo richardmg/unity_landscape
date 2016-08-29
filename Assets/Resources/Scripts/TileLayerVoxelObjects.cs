@@ -17,7 +17,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	public void OnValidate()
 	{
 		// TODO: if objectCount didn't change, we can just call engine.updateAllTiles();
-		GetComponentInParent<TileEngine>().OnValidate();
+		TileEngine engine = (TileEngine)GetComponentInParent<TileEngine>();
+		if (engine)
+			engine.OnValidate();
 	}
 
 	public void initTileLayer(TileEngine engine)
