@@ -49,6 +49,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMatrix[x, z] = LandscapeTools.createTerrainGameObject(desc);
 				m_tileMatrix[x, z].transform.SetParent(transform, false);
+				m_tileMatrix[x, z].name = "Tile " + x + ", " + z;
 			}
 		}
 
@@ -123,6 +124,9 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		TileEngine engine = GetComponentInParent<TileEngine>();
 		TileDescription desc = engine.getTileDescription(worldPos);
 		Terrain terrain = getTerrainSafe(desc.matrixCoord);
+
+		print(m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].name);
+
 		if (terrain)
 			return terrain.SampleHeight(worldPos);
 		else

@@ -236,10 +236,19 @@ public class TileEngine : MonoBehaviour {
 	public TileDescription getTileDescription(Vector3 worldPos)
 	{
 		TileDescription desc = m_tileMoveDesc[0];
-		desc.gridCoord.Set(-1, -1);
-		desc.matrixCoord.Set(-1, -1);
+
+		setGridPosFromWorldPos(worldPos, ref desc.gridCoord);
+		Vector2 gridOffset = m_gridCenter - desc.gridCoord;
+
+		if (Mathf.Abs(gridOffset.x) > tileCount / 2 || Mathf.Abs(gridOffset.y) > tileCount / 2) {
+			desc.matrixCoord.Set(-1, -1);
+			return desc;
+		}
+
+		desc.matrixCoord.Set((float)matrixPos((int)m_gridCenter.x, (int)gridOffset.x), matrixPos((int)m_gridCenter.y, (int)gridOffset.y));
 		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
 		setNeighbours(desc.matrixCoord, ref desc.neighbours);
+
 		return desc;
 	}
 
