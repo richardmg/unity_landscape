@@ -239,7 +239,7 @@ public class TileEngine : MonoBehaviour {
 		setGridPosFromWorldPos(worldPos + m_gridCenterOffset, ref desc.gridCoord);
 		Vector2 gridOffset = desc.gridCoord - m_gridCenter;
 
-		if (Mathf.Abs(gridOffset.x) > tileCount / 2 || Mathf.Abs(gridOffset.y) > tileCount / 2) {
+		if (Mathf.Abs(gridOffset.x) > m_tileCountHalf || Mathf.Abs(gridOffset.y) > m_tileCountHalf) {
 			desc.matrixCoord.Set(-1, -1);
 			return desc;
 		}
@@ -248,7 +248,7 @@ public class TileEngine : MonoBehaviour {
 		int matrixY = matrixPos((int)m_matrixTopRight.y, (int)gridOffset.y - m_tileCountHalf + 1);
 		desc.matrixCoord.Set(matrixX, matrixY);
 		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
-		setNeighbours(desc.matrixCoord, ref desc.neighbours);
+//		setNeighbours(desc.matrixCoord, ref desc.neighbours);
 
 		return desc;
 	}

@@ -125,20 +125,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		TileEngine engine = GetComponentInParent<TileEngine>();
 		TileDescription desc = engine.getTileDescription(worldPos);
 		Terrain terrain = getTerrainSafe(desc.matrixCoord);
-
-		if (terrain)
-			return terrain.SampleHeight(worldPos);
-		else {
-			print("NO TERRAIN");
-			return getGroundHeight(worldPos.x, worldPos.z);
-		}
-	}
-
-	public Vector2 getGridCoord(Vector3 worldPos)
-	{
-		TileEngine engine = GetComponentInParent<TileEngine>();
-		TileDescription desc = engine.getTileDescription(worldPos);
-		return desc.gridCoord;
+		return terrain ? terrain.SampleHeight(worldPos) : 0;
 	}
 
 }
