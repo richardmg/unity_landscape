@@ -245,7 +245,9 @@ public class TileEngine : MonoBehaviour {
 			return desc;
 		}
 
-		desc.matrixCoord.Set((float)matrixPos((int)m_gridCenter.x, (int)gridOffset.x), matrixPos((int)m_gridCenter.y, (int)gridOffset.y));
+
+		desc.matrixCoord.Set((float)matrixPos((int)m_matrixTopRight.x, (int)gridOffset.x - m_tileCountHalf), matrixPos((int)m_matrixTopRight.y, (int)gridOffset.y - m_tileCountHalf));
+		MonoBehaviour.print(m_gridCenter.x + ", " + m_gridCenter.y);
 		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
 		setNeighbours(desc.matrixCoord, ref desc.neighbours);
 

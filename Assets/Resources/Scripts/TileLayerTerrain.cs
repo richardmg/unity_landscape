@@ -125,8 +125,6 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		TileDescription desc = engine.getTileDescription(worldPos);
 		Terrain terrain = getTerrainSafe(desc.matrixCoord);
 
-		print(m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].name);
-
 		if (terrain)
 			return terrain.SampleHeight(worldPos);
 		else
