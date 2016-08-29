@@ -15,7 +15,6 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	[Range (0, 200)]
 	public int pixelError = 50;
 	public Texture2D terrainTexture;
-	public bool showInEditor = false;
 
 	GameObject[,] m_tileMatrix;
 	TerrainData m_terrainData;
@@ -31,10 +30,8 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	public void OnValidate()
 	{
 		TileEngine engine = GetComponentInParent<TileEngine>();
-		if (showInEditor)
+		if (engine.showInEditor)
 			engine.updateAllTiles();
-		else
-			engine.removeAllTiles();
 	}
 
 	public void initTileLayer(TileEngine engine)
@@ -119,5 +116,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		float o1 = Mathf.PerlinNoise(x * noiseScaleOct1, z * noiseScaleOct1) * oct1;
 		float o2 = Mathf.PerlinNoise(x * noiseScaleOct2, z * noiseScaleOct2) * oct3;
 		return o0 + o1 + o2;
+	}
+
+	public float sampleHeight(Vector3 worldPos)
+	{
+		return getGroundHeight(worldPos.x, worldPos.z);
 	}
 }

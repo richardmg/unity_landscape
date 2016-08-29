@@ -9,15 +9,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	[Range (0, 100)]
 	public float paddingBetweenObjects = 25;
 	public GameObject prefab;
+	public GameObject terrainTileEngine;
 
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY = 0;
 
 	public void OnValidate()
 	{
-		TileEngine engine = GetComponentInParent<TileEngine>();
-		if (engine)
-			engine.OnValidate();
+		// TODO: if objectCount didn't change, we can just call engine.updateAllTiles();
+		GetComponentInParent<TileEngine>().OnValidate();
 	}
 
 	public void initTileLayer(TileEngine engine)
@@ -84,10 +84,13 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	private void moveVoxelObjects(GameObject goTile)
 	{
+		TileEngine engine = terrainTileEngine.GetComponent<TileEngine>();
+		ITileTerrainLayer terrainLayer = (ITileTerrainLayer)engine.getTileLayer(0);
+
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
 				Vector3 worldPos = goTile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
-				worldPos.y = LandscapeConstructor.getGroundHeight(worldPos.x, worldPos.z) + m_pivotAdjustmentY;
+				worldPos.y = terrainLayer.sampleHeight(worldPos);
 				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
 				voTransform.position = worldPos;
 			}

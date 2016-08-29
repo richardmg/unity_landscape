@@ -28,6 +28,7 @@ public interface ITileLayer
 public interface ITileTerrainLayer : ITileLayer
 {
 	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours);
+	float sampleHeight(Vector3 worldPos);
 }
 
 public class TileEngine : MonoBehaviour {
@@ -36,28 +37,30 @@ public class TileEngine : MonoBehaviour {
 	[Range (1, 1000)]
 	public float tileSize = 100;
 	public GameObject player;
+	public bool showInEditor = false;
 
 	int m_tileCountHalf;
 	Vector3 m_gridCenterOffset;
 	Vector2 m_gridCenter;
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
-	bool initialized = false;
 
 	ITileLayer[] m_tileLayerArray;
 
 	public void OnValidate()
 	{
-		if (!initialized)
+		removeAllTiles();
+		if (!showInEditor)
 			return;
 
-		removeAllTiles();
+		init();
 		updateAllTiles();
 	}
 
 	void Start()
 	{
 		removeAllTiles();
+		init();
 		updateAllTiles();
 	}
 
@@ -94,8 +97,6 @@ public class TileEngine : MonoBehaviour {
 		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
 		foreach (ITileLayer tileLayer in m_tileLayerArray)
 			tileLayer.initTileLayer(this);
-
-		initialized = true;
 	}
 
 	public void removeAllTiles()
@@ -103,7 +104,6 @@ public class TileEngine : MonoBehaviour {
 		ITileLayer[] tileLayers = GetComponentsInChildren<ITileLayer>();
 		foreach (ITileLayer tileLayer in tileLayers)
 			tileLayer.removeAllTiles();
-		initialized = false;
 	}
 
 	void setWorldPosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)
@@ -123,11 +123,6 @@ public class TileEngine : MonoBehaviour {
 	int matrixPos(int top, int rows)
 	{
 		return (tileCount + top + (rows % tileCount)) % tileCount;
-	}
-
-	public bool isInitialized()
-	{
-		return initialized;
 	}
 
 	void setNeighbours(Vector2 pos, ref TileNeighbours result)
@@ -150,9 +145,6 @@ public class TileEngine : MonoBehaviour {
 
 	public void updateAllTiles()
 	{
-		if (!initialized)
-			init();
-		
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMoveDesc[x].matrixCoord.Set(x, z);
@@ -240,4 +232,15 @@ public class TileEngine : MonoBehaviour {
 		}
 	}
 
+	public ITileLayer getTileLayer(int index)
+	{
+		return m_tileLayerArray[index];
+	}
+
+//	public ITileLayer getFirstTileLayerAtWorldPos(Vector3 worldPos)
+//	{
+//		Vector2 gridPos;
+//		setGridPosFromWorldPos(worldPos, gridPos);
+//		return m_tileLayerArray[0].getTile();
+//	}
 }
