@@ -67,7 +67,6 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		for (int i = 0; i < tilesToMove.Length; ++i) {
 			TileDescription desc = tilesToMove[i];
 			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			tileObject.name = "grid: " + desc.gridCoord.x + ", " + desc.gridCoord.y;
 			Terrain terrain = tileObject.GetComponent<Terrain>();
 			TerrainData tdata = terrain.terrainData;
 
