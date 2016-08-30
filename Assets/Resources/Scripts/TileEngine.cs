@@ -39,9 +39,6 @@ public class TileEngine : MonoBehaviour {
 	public GameObject player;
 	public bool showInEditor = false;
 
-	[HideInInspector]
-	public bool initialized = false;
-
 	int m_tileCountHalf;
 	Vector3 m_gridCenterOffset;
 	Vector2 m_gridCenter;
@@ -88,7 +85,6 @@ public class TileEngine : MonoBehaviour {
 
 	void init()
 	{
-		initialized = true;
 		m_tileCountHalf = tileCount / 2;
 		m_gridCenterOffset = Vector3.zero;// new Vector3(tileSize / 2, 0, tileSize / 2);
 		m_tileMoveDesc = new TileDescription[tileCount];
