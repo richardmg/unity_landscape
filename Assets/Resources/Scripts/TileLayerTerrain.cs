@@ -30,9 +30,14 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public void OnValidate()
 	{
-		TileEngine engine = GetComponentInParent<TileEngine>();
-		if (engine.showInEditor) 
-			engine.updateAllTiles();
+		if (m_tileMatrix == null)
+			return;
+
+		TileEngine engine = (TileEngine)GetComponentInParent<TileEngine>();
+		if (!engine.showInEditor) 
+			return;
+
+		engine.updateAllTiles();
 	}
 
 	public void initTileLayer(TileEngine engine)

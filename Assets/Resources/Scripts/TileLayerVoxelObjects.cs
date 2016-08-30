@@ -16,10 +16,18 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	public void OnValidate()
 	{
-		// TODO: if objectCount didn't change, we can just call engine.updateAllTiles();
+		if (m_tileMatrix == null)
+			return;
+
 		TileEngine engine = (TileEngine)GetComponentInParent<TileEngine>();
-		if (engine.showInEditor) 
+		if (!engine.showInEditor)
+			return;
+
+		int currentObjectCount = (int)Mathf.Sqrt(transform.GetChild(0).childCount);
+		if (currentObjectCount != objectCount)
 			engine.OnValidate();
+		else
+			engine.updateAllTiles();
 	}
 
 	public void initTileLayer(TileEngine engine)
