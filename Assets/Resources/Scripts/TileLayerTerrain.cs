@@ -17,6 +17,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	public Texture2D terrainTexture;
 
 	GameObject[,] m_tileMatrix;
+	Terrain[,] m_terrainMatrix;
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
 	TileEngine m_tileEngine;
@@ -43,6 +44,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
+		m_terrainMatrix = new Terrain[tileCount, tileCount];
 
 		LandscapeDescription desc = new LandscapeDescription();
 		desc.size = engine.tileSize;
@@ -52,9 +54,11 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				m_tileMatrix[x, z] = LandscapeTools.createTerrainGameObject(desc);
-				m_tileMatrix[x, z].transform.SetParent(transform, false);
-				m_tileMatrix[x, z].name = "Tile " + x + ", " + z;
+				GameObject go = LandscapeTools.createTerrainGameObject(desc);
+				go.transform.SetParent(transform, false);
+				go.name = "Tile " + x + ", " + z;
+				m_tileMatrix[x, z] = go;
+				m_terrainMatrix[x, z] = go.GetComponent<Terrain>();
 			}
 		}
 
@@ -66,12 +70,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	{
 		for (int i = 0; i < tilesToMove.Length; ++i) {
 			TileDescription desc = tilesToMove[i];
-			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			Terrain terrain = tileObject.GetComponent<Terrain>();
-			TerrainData tdata = terrain.terrainData;
+			GameObject go = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			go.transform.localPosition = desc.worldPos;
 
-			tileObject.transform.localPosition = desc.worldPos;
-
+			TerrainData tdata = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].terrainData;
 			int res = tdata.heightmapResolution;
 			Vector3 scale = tdata.heightmapScale;
 
@@ -98,8 +100,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	{
 		for (int i = 0; i < tilesWithNewNeighbours.Length; ++i) {
 			TileDescription desc = tilesWithNewNeighbours[i];
-			GameObject tileObject = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			Terrain terrain = tileObject.GetComponent<Terrain>();
+			Terrain terrain = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			TileNeighbours tn = tilesWithNewNeighbours[i].neighbours;
 
 			Terrain top = getTerrainSafe(tn.top);
@@ -113,7 +114,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	Terrain getTerrainSafe(Vector2 matrixPos)
 	{
-		return (int)matrixPos.x == -1 ? null : m_tileMatrix[(int)matrixPos.x, (int)matrixPos.y].GetComponent<Terrain>();
+		return (int)matrixPos.x == -1 ? null : m_terrainMatrix[(int)matrixPos.x, (int)matrixPos.y];
 	}
 
 	public float getGroundHeight(float x, float z)
