@@ -12,6 +12,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	public GameObject terrainTileEngine;
 
 	GameObject[,] m_tileMatrix;
+	VoxelObject[,] m_voxelObjectMatrix;
 	float m_pivotAdjustmentY;
 	TileEngine m_tileEngine;
 	ITileTerrainLayer m_terrainLayer;
@@ -35,6 +36,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
+		m_voxelObjectMatrix = new VoxelObject[tileCount, tileCount];
 		m_terrainLayer = (ITileTerrainLayer)terrainTileEngine.GetComponent<TileEngine>().getTileLayer(0);
 
 		for (int z = 0; z < tileCount; ++z) {
@@ -45,6 +47,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 				m_tileMatrix[x, z] = goTile;
 
 				VoxelObject vo = goTile.AddComponent<VoxelObject>();
+				m_voxelObjectMatrix[x, z] = vo;
 				vo.setIndex(VoxelObject.indexToString(VoxelObject.kIndexTopLevel));
 				vo.initAsStandAlone();
 				initVoxelObjects(goTile);
@@ -60,10 +63,11 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	{
 		for (int i = 0; i < tilesToMove.Length; ++i) {
 			TileDescription desc = tilesToMove[i];
-			GameObject goTile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			goTile.transform.position = desc.worldPos;
-			moveVoxelObjects(goTile);
-			goTile.GetComponent<VoxelObject>().rebuildStandAlone();
+			GameObject go = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			VoxelObject vo = m_voxelObjectMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			go.transform.position = desc.worldPos;
+			moveVoxelObjects(go);
+			vo.rebuildStandAlone();
 		}
 	}
 
