@@ -12,13 +12,13 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	public GameObject terrainTileEngine;
 
 	GameObject[,] m_tileMatrix;
-	float m_pivotAdjustmentY = 0;
+	float m_pivotAdjustmentY;
 
 	public void OnValidate()
 	{
 		// TODO: if objectCount didn't change, we can just call engine.updateAllTiles();
 		TileEngine engine = (TileEngine)GetComponentInParent<TileEngine>();
-		if (engine)
+		if (engine.initialized)
 			engine.OnValidate();
 	}
 
@@ -93,7 +93,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
 				Vector3 worldPos = goTile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
-				worldPos.y = terrainLayer.sampleHeight(worldPos);
+				worldPos.y = terrainLayer.sampleHeight(worldPos) + m_pivotAdjustmentY;
 				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
 				voTransform.position = worldPos;
 			}
