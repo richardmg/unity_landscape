@@ -13,27 +13,29 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY;
+	TileEngine m_tileEngine;
+	ITileTerrainLayer m_terrainLayer;
 
 	public void OnValidate()
 	{
-		if (m_tileMatrix == null)
+		if (m_tileEngine == null)
 			return;
-
-		TileEngine engine = (TileEngine)GetComponentInParent<TileEngine>();
-		if (!engine.showInEditor)
+		if (!m_tileEngine.showInEditor)
 			return;
 
 		int currentObjectCount = (int)Mathf.Sqrt(transform.GetChild(0).childCount);
 		if (currentObjectCount != objectCount)
-			engine.OnValidate();
+			m_tileEngine.OnValidate();
 		else
-			engine.updateAllTiles();
+			m_tileEngine.updateAllTiles();
 	}
 
 	public void initTileLayer(TileEngine engine)
 	{
+		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
+		m_terrainLayer = (ITileTerrainLayer)terrainTileEngine.GetComponent<TileEngine>().getTileLayer(0);
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
@@ -95,13 +97,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	private void moveVoxelObjects(GameObject goTile)
 	{
-		TileEngine engine = terrainTileEngine.GetComponent<TileEngine>();
-		ITileTerrainLayer terrainLayer = (ITileTerrainLayer)engine.getTileLayer(0);
-
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
 				Vector3 worldPos = goTile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
-				worldPos.y = terrainLayer.sampleHeight(worldPos) + m_pivotAdjustmentY;
+				worldPos.y = m_terrainLayer.sampleHeight(worldPos) + m_pivotAdjustmentY;
 				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
 				voTransform.position = worldPos;
 			}
