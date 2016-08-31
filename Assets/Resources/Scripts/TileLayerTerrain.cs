@@ -11,7 +11,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	[Range (0, 20)]
 	public float oct3 = 1;
 	[Range (33, 512)]
-	public int groundResolution = 33;
+	public int heightmapResolution = 33;
 	[Range (0, 200)]
 	public int pixelError = 50;
 	public Texture2D terrainTexture;
@@ -31,7 +31,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public void OnValidate()
 	{
-		groundResolution = 1 + (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(groundResolution, 2)));
+		heightmapResolution = 1 + (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(heightmapResolution, 2)));
 
 		if (m_tileEngine == null)
 			return;
@@ -48,12 +48,12 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		m_terrainMatrix = new Terrain[tileCount, tileCount];
-		m_heightArray = new float[groundResolution, groundResolution];
+		m_heightArray = new float[heightmapResolution, heightmapResolution];
 
 		LandscapeDescription desc = new LandscapeDescription();
 		desc.size = engine.tileSize;
 		desc.pixelError = pixelError;
-		desc.resolution = groundResolution;
+		desc.resolution = heightmapResolution;
 		desc.texture = terrainTexture;
 
 		for (int z = 0; z < tileCount; ++z) {
@@ -77,8 +77,8 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 			TerrainData tdata = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].terrainData;
 			Vector3 scale = tdata.heightmapScale;
 
-			for (int x = 0; x < groundResolution; ++x) {
-				for (int z = 0; z < groundResolution; ++z) {
+			for (int x = 0; x < heightmapResolution; ++x) {
+				for (int z = 0; z < heightmapResolution; ++z) {
 					float height = getGroundHeight(desc.worldPos.x + (x * scale.x), desc.worldPos.z + (z * scale.z));
 					m_heightArray[z, x] = height / scale.y;
 				}
