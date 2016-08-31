@@ -1,3 +1,5 @@
+Name: Biota (or Fauna, Flora)
+
 1.
 - Environment will consist of objects that are flat, but that can have several layers
     E.g a cow would have body, legs, perhaps eyes / ears as separate layers
@@ -21,7 +23,8 @@
 - Crippled versions of the species you
     have added to world will come and haunt at night.
 
-3.
+Game v.0
+---------------
 - Pearly
 - There is no game, only about creating a fantasy world
 - The user is creating everything with pearls 2D.
@@ -50,7 +53,8 @@
     - an important point will be why the user should be tempted to go out into the forrest, and
         why he would need to create species etc.
 
-5. New name: Biota (or Fauna, Flora)
+Game v.1:
+--------------
     - The point is to that you play a farmer that creates a biota
             following your own imagination. It should end up
             balanced somehow, so it will evolve into humanoid
@@ -165,57 +169,86 @@
             tones, but light them up (as if the moon makes them shine), to
             e.g makes the eyes shine etc.
 
-        - Technical:
-            - lodding: it makes sense to use more vertices for a model if it results in less
-                fragments being drawn when an object is near. The amount of fragments "skipped" will
-                be large compared to the number of extra vertices to calulate. But when the object
-                is far away, it might be different. Since then, the number of fragments drawn on screen
-                will anyway be quite small. So then its perhaps better to reduce the number of vertices
-                and "overdraw" fragments instead?
-                Because of this, deciding whether or not to switch to lod1 should depend on how many
-                vertices lod0 contains. If it contains e.g less than 50 (or less than lod0), it
-                will most likely don't give any speed-up.
+Game v.2
+---------------
+    - Instead of evolution, you create an ecosystem
+    - The user can draw whatever organism he wants based on blueprints (e.g all kinds of
+        animals, vegation, humans, cars, etc. Perhaps I can come up with a
+        way to let the user create his own blueprints later, or perhaps combine
+        them, like "add wings, add legs, add head" etc. So in the end, a blueprint
+        is nothing more than either a collection of other blueprints, or a
+        single drawing. Perhaps it can be level based, so when you reach a
+        certain level, you have access to more blueprints (advances could be
+         wheels, humans, planes etc).
+    - The blueprints are basically a set of papers the user will have to draw
+        one by one, that will automatically be assembled into an organism.
+    - For each organism, you will need to specify what it eats, how big it
+        is, and how fast it moves. Based on this, we can calculate how
+        much it needs to eat every day. Additionally, he can give the
+        species a personallity, like hostile - friendly, introvert - extrovert,
+        curious - layedback.
+    - It is therefore important that the world contains enough food for an
+        organism to survive. And here lies the point of the game; to create
+        a balanced eco system that the player can continue to grow. Based
+        on his own drawings and organisms.
+    - In practice, the player will se that species die and rotten if the
+        food supply runs out. He should consider adding animals that eats
+        cadavers to not let them lie around for too long.
+    - At this point, not sure if random mixing of organisms, or evolution,
+        should be a part of the game.
 
-            - for Z faces, ensure we create one large rect instead of one rect per line
+Technical
+---------------
+    - lodding: it makes sense to use more vertices for a model if it results in less
+        fragments being drawn when an object is near. The amount of fragments "skipped" will
+        be large compared to the number of extra vertices to calulate. But when the object
+        is far away, it might be different. Since then, the number of fragments drawn on screen
+        will anyway be quite small. So then its perhaps better to reduce the number of vertices
+        and "overdraw" fragments instead?
+        Because of this, deciding whether or not to switch to lod1 should depend on how many
+        vertices lod0 contains. If it contains e.g less than 50 (or less than lod0), it
+        will most likely don't give any speed-up.
 
-            - remove clamp rect. Instead, store voxel coordinate (atlas pixel pos) in each vertex.
-                - When collapsing vertices, check both vertex position and voxel position. This will
-                    ensure that vertices that are in between two voxels will map to only one of them.
-                - Assign voxel pos to f2s variable. This will then interpolate between the vertices
-                    and automatically create a clamp rect.
-            - far lod: draw quad with six vertices with small bend
-                - fake depth shade in fragment shader, but only
-                    as much so there are no glitches.
-                - If easily possible, try fill in the corner gaps.
-            - Check if I can apply gradient only if the result is going in the same direction
-                as lightning, and skip otherwise
-            - Calculate effective size for objects, and limit shading range to it.
-            - Collapse two adjacent cubes along y-axis in a single object into one.
-            - In each cube, for each vertex on either bottom left or top right, add
-                a color number telling in which direction opaque pixels can be found in
-                all directions around the cube. A color value should be either -1 or 1.
-                Other "unused" vertices uses the number 0. When a triangle is interpolated, only
-                the dominant corner will be used, and I should be able to read out if a
-                color value is above or below 0.
+    - for Z faces, ensure we create one large rect instead of one rect per line
 
-            - send pixel from both scripts. Send uvZ from both scripts. Then they should produce the
-                same data.
-            - Figure out why uv clamping based on pixel is not accurate.
-            - See if I can calculate normals in VC script the same way as in VQ script
+    - remove clamp rect. Instead, store voxel coordinate (atlas pixel pos) in each vertex.
+        - When collapsing vertices, check both vertex position and voxel position. This will
+            ensure that vertices that are in between two voxels will map to only one of them.
+        - Assign voxel pos to f2s variable. This will then interpolate between the vertices
+            and automatically create a clamp rect.
+    - far lod: draw quad with six vertices with small bend
+        - fake depth shade in fragment shader, but only
+            as much so there are no glitches.
+        - If easily possible, try fill in the corner gaps.
+    - Check if I can apply gradient only if the result is going in the same direction
+        as lightning, and skip otherwise
+    - Calculate effective size for objects, and limit shading range to it.
+    - Collapse two adjacent cubes along y-axis in a single object into one.
+    - In each cube, for each vertex on either bottom left or top right, add
+        a color number telling in which direction opaque pixels can be found in
+        all directions around the cube. A color value should be either -1 or 1.
+        Other "unused" vertices uses the number 0. When a triangle is interpolated, only
+        the dominant corner will be used, and I should be able to read out if a
+        color value is above or below 0.
 
-            - Copy atlas to Color32
-            - Change simplified to create several faces when not using volume
+    - send pixel from both scripts. Send uvZ from both scripts. Then they should produce the
+        same data.
+    - Figure out why uv clamping based on pixel is not accurate.
+    - See if I can calculate normals in VC script the same way as in VQ script
+
+    - Copy atlas to Color32
+    - Change simplified to create several faces when not using volume
 
 OPTIMIZATIONS
 -------------
-            - Copy atlas to Color32
-            - Tranform vertices directly when creating mesh, instead of when combining them
-            - Preallocate memory for mesh factory
-            - Preallocate one big chunk of memory, and give it to factory when creating mesh.
-                Use this to combine meshes directly in factory instead of creating many meshes
-                and cominding them in the end. This the factory is static, this allocation could
-                be done only once, at startup.
-            - build meshes in separate thread.
-            - For volume mesh, draw horisontal/vertical quads as minimal as possible (not always 0->subImageWidth)
+    - Copy atlas to Color32
+    - Tranform vertices directly when creating mesh, instead of when combining them
+    - Preallocate memory for mesh factory
+    - Preallocate one big chunk of memory, and give it to factory when creating mesh.
+        Use this to combine meshes directly in factory instead of creating many meshes
+        and cominding them in the end. This the factory is static, this allocation could
+        be done only once, at startup.
+    - build meshes in separate thread.
+    - For volume mesh, draw horisontal/vertical quads as minimal as possible (not always 0->subImageWidth)
 
     
