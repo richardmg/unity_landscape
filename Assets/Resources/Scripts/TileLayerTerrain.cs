@@ -43,8 +43,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	{
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
+
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		m_terrainMatrix = new Terrain[tileCount, tileCount];
+		m_heightArray = new float[groundResolution, groundResolution];
 
 		LandscapeDescription desc = new LandscapeDescription();
 		desc.size = engine.tileSize;
@@ -61,9 +63,6 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 				m_terrainMatrix[x, z] = go.GetComponent<Terrain>();
 			}
 		}
-
-		TerrainData data = m_terrainMatrix[0, 0].terrainData;
-		m_heightArray = new float[data.heightmapResolution, data.heightmapResolution];
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
