@@ -81,8 +81,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	private void initVoxelObjects(GameObject goTile)
 	{
-		// TODO: create a bunch of voxel objects based on noise
-
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
 
