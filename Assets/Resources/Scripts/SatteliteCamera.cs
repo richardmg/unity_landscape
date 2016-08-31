@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SatteliteCamera : MonoBehaviour {
 	public GameObject objectToTrack;
-	public float orbitHeight = 3000;
+	public float orbitHeight = 1000;
 	public bool showCube = true;
 
 	// Use this for initialization
@@ -14,6 +14,8 @@ public class SatteliteCamera : MonoBehaviour {
 			cube.transform.localScale = new Vector3(cubeScale, cubeScale, cubeScale);
 			cube.transform.parent = objectToTrack.transform;
 			cube.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+
+			GetComponent<Camera>().farClipPlane = orbitHeight + 2000;
 		}
 	}
 	
@@ -22,6 +24,6 @@ public class SatteliteCamera : MonoBehaviour {
 		Vector3 pos = objectToTrack.transform.position;
 		pos.y = orbitHeight;
 		transform.position = pos;
-		transform.LookAt(objectToTrack.transform);
+		transform.LookAt(new Vector3(pos.x, 0, pos.z));
 	}
 }
