@@ -183,19 +183,26 @@ Game v.2
     - The blueprints are basically a set of papers the user will have to draw
         one by one, that will automatically be assembled into an organism.
     - For each organism, you will need to specify what it eats, how big it
-        is, and how fast it moves. Based on this, we can calculate how
-        much it needs to eat every day. Additionally, he can give the
+        is, and how fast it movesi (even for grass / flowers). Based on this, we
+        can calculate how much it needs to eat every day.
+        Additionally, he can give the
         species a personallity, like hostile - friendly, introvert - extrovert,
         curious - layedback.
     - It is therefore important that the world contains enough food for an
         organism to survive. And here lies the point of the game; to create
         a balanced eco system that the player can continue to grow. Based
         on his own drawings and organisms.
+    - Its important that not all species can e.g just eat grass. At a certain
+        size, perhaps its required to eat other animals. That way, the game
+        ensures that you need to start with smaller species before you can
+        create bigger ones.
     - In practice, the player will se that species die and rotten if the
         food supply runs out. He should consider adding animals that eats
         cadavers to not let them lie around for too long.
     - At this point, not sure if random mixing of organisms, or evolution,
-        should be a part of the game.
+        should be a part of the game. Perhaps this could be non-creative
+        mode, that (vicious) permutations occur that will eat too much
+        food of its kind, unbalancing the ecosystem. 
 
 Technical
 ---------------
