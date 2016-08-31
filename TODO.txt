@@ -199,6 +199,9 @@ Game v.2
     - In practice, the player will se that species die and rotten if the
         food supply runs out. He should consider adding animals that eats
         cadavers to not let them lie around for too long.
+    - An organism will belong to the teretory (type) where the player
+        creates it. A property can decide to which degree is wanderers
+        from this location / type.
     - At this point, not sure if random mixing of organisms, or evolution,
         should be a part of the game. Perhaps this could be non-creative
         mode, that (vicious) permutations occur that will eat too much
