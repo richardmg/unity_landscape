@@ -100,14 +100,14 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	{
 		for (int i = 0; i < tilesWithNewNeighbours.Length; ++i) {
 			TileDescription desc = tilesWithNewNeighbours[i];
-			Terrain terrain = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			TileNeighbours tn = tilesWithNewNeighbours[i].neighbours;
 
+			TileNeighbours tn = desc.neighbours;
 			Terrain top = getTerrainSafe(tn.top);
 			Terrain bottom = getTerrainSafe(tn.bottom);
 			Terrain left = getTerrainSafe(tn.left);
 			Terrain right = getTerrainSafe(tn.right);
 
+			Terrain terrain = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			terrain.SetNeighbors(left, top, right, bottom);
 		}
 	}
