@@ -6,24 +6,31 @@ public class SatteliteCamera : MonoBehaviour {
 	public float orbitHeight = 1000;
 	public bool showCube = true;
 
+	GameObject m_cube;
+
 	// Use this for initialization
 	void Start () {
-		if (showCube) {
-			float cubeScale = orbitHeight / 100f;
-			GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-			cube.transform.localScale = new Vector3(cubeScale, cubeScale, cubeScale);
-			cube.transform.parent = objectToTrack.transform;
-			cube.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+		GetComponent<Camera>().farClipPlane = orbitHeight + 2000;
 
-			GetComponent<Camera>().farClipPlane = orbitHeight + 2000;
+		if (showCube) {
+			m_cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+			m_cube.transform.parent = transform;
+			float cubeScale = 0.05f;
+			m_cube.transform.localScale = new Vector3(cubeScale, cubeScale, cubeScale);
+
+			m_cube.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+			Destroy(m_cube.GetComponent<Collider>());
 		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		Vector3 pos = objectToTrack.transform.position;
+		Vector3 center = new Vector3(pos.x, 0, pos.z);
 		pos.y = orbitHeight;
 		transform.position = pos;
-		transform.LookAt(new Vector3(pos.x, 0, pos.z));
+		transform.LookAt(center);
+		if (m_cube)
+			m_cube.transform.position = new Vector3(center.x, transform.position.y - 1, center.z);
 	}
 }
