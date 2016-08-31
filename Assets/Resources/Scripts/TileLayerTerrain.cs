@@ -10,7 +10,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	public float oct1 = 10;
 	[Range (0, 20)]
 	public float oct3 = 1;
-	[Range (8, 512)]
+	[Range (33, 512)]
 	public int groundResolution = 33;
 	[Range (0, 200)]
 	public int pixelError = 50;
@@ -31,6 +31,8 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public void OnValidate()
 	{
+		groundResolution = 1 + (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(groundResolution, 2)));
+
 		if (m_tileEngine == null)
 			return;
 		if (!m_tileEngine.showInEditor) 
@@ -73,11 +75,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 			go.transform.localPosition = desc.worldPos;
 
 			TerrainData tdata = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].terrainData;
-			int res = tdata.heightmapResolution;
 			Vector3 scale = tdata.heightmapScale;
 
-			for (int x = 0; x < res; ++x) {
-				for (int z = 0; z < res; ++z) {
+			for (int x = 0; x < groundResolution; ++x) {
+				for (int z = 0; z < groundResolution; ++z) {
 					float height = getGroundHeight(desc.worldPos.x + (x * scale.x), desc.worldPos.z + (z * scale.z));
 					m_heightArray[z, x] = height / scale.y;
 				}
