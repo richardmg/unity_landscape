@@ -62,7 +62,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 			}
 		}
 
-		TerrainData data = m_tileMatrix[0, 0].GetComponent<Terrain>().terrainData;
+		TerrainData data = m_terrainMatrix[0, 0].terrainData;
 		m_heightArray = new float[data.heightmapResolution, data.heightmapResolution];
 	}
 
