@@ -40,7 +40,7 @@ public class TileEngine : MonoBehaviour {
 	public bool showInEditor = false;
 
 	float m_tileCountHalf;
-	Vector3 m_gridCenterOffset;
+	Vector3 m_worldToGridOffset;
 	Vector2 m_playerGridPos;
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
@@ -67,7 +67,7 @@ public class TileEngine : MonoBehaviour {
 	void Update()
 	{
 		Vector2 prevPlayerGridPos = m_playerGridPos;
-		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_playerGridPos);
+		setGridPosFromWorldPos(player.transform.position, ref m_playerGridPos);
 
 		if (m_playerGridPos == prevPlayerGridPos)
 			return;
@@ -85,14 +85,14 @@ public class TileEngine : MonoBehaviour {
 
 	void init()
 	{
-		m_tileCountHalf = tileCount / 2.0f;
-		m_gridCenterOffset = Vector3.zero;// new Vector3(tileSize / 2, 0, tileSize / 2);
+		m_tileCountHalf = tileCount / 2f;
+		m_worldToGridOffset = new Vector3(tileSize / 2f, 0, tileSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		setGridPosFromWorldPos(player.transform.position + m_gridCenterOffset, ref m_playerGridPos);
+		setGridPosFromWorldPos(player.transform.position, ref m_playerGridPos);
 
 		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
 		foreach (ITileLayer tileLayer in m_tileLayerArray)
@@ -115,8 +115,8 @@ public class TileEngine : MonoBehaviour {
 
 	void setGridPosFromWorldPos(Vector3 worldPos, ref Vector2 gridCoord)
 	{
-		int x = Mathf.FloorToInt(worldPos.x / tileSize);
-		int z = Mathf.FloorToInt(worldPos.z / tileSize);
+		int x = Mathf.FloorToInt((worldPos.x + m_worldToGridOffset.x) / tileSize);
+		int z = Mathf.FloorToInt((worldPos.z + m_worldToGridOffset.z) / tileSize);
 		gridCoord.Set(x, z);
 	}
 
@@ -233,7 +233,7 @@ public class TileEngine : MonoBehaviour {
 	{
 		TileDescription desc = m_tileMoveDesc[0];
 
-		setGridPosFromWorldPos(worldPos + m_gridCenterOffset, ref desc.gridCoord);
+		setGridPosFromWorldPos(worldPos, ref desc.gridCoord);
 		Vector2 gridOffset = desc.gridCoord - m_playerGridPos;
 
 		if (Mathf.Abs(gridOffset.x) > m_tileCountHalf || Mathf.Abs(gridOffset.y) > m_tileCountHalf) {
