@@ -247,32 +247,6 @@ public class TileEngine : MonoBehaviour {
 		}
 	}
 
-	public TileDescription getTileDescription(Vector3 worldPos)
-	{
-		TileDescription desc = m_tileMoveDesc[0];
-
-//		gridPosFromWorldPosAsInt(worldPos, ref desc.gridCoord);
-//		Vector2 gridOffset = desc.gridCoord - m_playerGridPos;
-//
-//		if (Mathf.Abs(gridOffset.x) > m_tileCountHalf || Mathf.Abs(gridOffset.y) > m_tileCountHalf) {
-//			desc.matrixCoord.Set(-1, -1);
-//			return desc;
-//		}
-//
-//		// Note that there will be four tiles underneath each grid square, since the grid
-//		// is center aligned onto the world.
-//		matrixCoordFromWorldPos(worldPos - m_worldToGridOffset, ref desc.gridCoord);
-//
-//		int matrixX = matrixPos((int)m_matrixTopRight.x, (int)(gridOffset.x - m_tileCountHalf + 1));
-//		int matrixY = matrixPos((int)m_matrixTopRight.y, (int)(gridOffset.y - m_tileCountHalf + 1));
-//		desc.matrixCoord.Set(matrixX, matrixY);
-//
-////		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
-////		setNeighbours(desc.matrixCoord, ref desc.neighbours);
-
-		return desc;
-	}
-
 	public ITileLayer getTileLayer(int index)
 	{
 		return m_tileLayerArray[index];
