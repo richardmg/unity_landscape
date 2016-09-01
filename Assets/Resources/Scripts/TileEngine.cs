@@ -69,8 +69,8 @@ public class TileEngine : MonoBehaviour {
 	{
 		Vector2 prevPlayerGridPos = m_playerGridPos;
 		gridPosFromWorldPosAsInt(player.transform.position, ref m_playerGridPos);
-		int gridCrossedX = (int)m_playerGridPos.x - (int)prevPlayerGridPos.x;
-		int gridCrossedZ = (int)m_playerGridPos.y - (int)prevPlayerGridPos.y;
+		int gridCrossedX = (int)(m_playerGridPos.x - prevPlayerGridPos.x);
+		int gridCrossedZ = (int)(m_playerGridPos.y - prevPlayerGridPos.y);
 
 		if (gridCrossedX == 0 && gridCrossedZ == 0)
 			return;
