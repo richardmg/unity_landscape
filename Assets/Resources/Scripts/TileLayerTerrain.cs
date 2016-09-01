@@ -128,7 +128,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	public float sampleHeight(Vector3 worldPos)
 	{
 		TileDescription desc = m_tileEngine.getTileDescription(worldPos);
-		Debug.Assert(desc.matrixCoord.x != -1 && desc.matrixCoord.y != -1, "Trying to sample height outside any landscape tile!");
+		Debug.Assert(desc.matrixCoord.x != -1 && desc.matrixCoord.y != -1, "Trying to sample height outside any landscape tile: " + gameObject.name);
 		return m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].SampleHeight(worldPos);
 	}
 

@@ -33,6 +33,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	public void initTileLayer(TileEngine engine)
 	{
+		Debug.Assert(paddingBetweenObjects * (objectCount - 1) < engine.tileSize, "Warning: placing voxel objects outside tile bounds: " + gameObject.name);
+
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
