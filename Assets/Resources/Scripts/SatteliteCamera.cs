@@ -10,12 +10,13 @@ public class SatteliteCamera : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		GetComponent<Camera>().farClipPlane = orbitHeight + 2000;
+		Camera camera = GetComponent<Camera>();
+		camera.farClipPlane = orbitHeight + 2000;
 
 		if (showCube) {
 			m_cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
 			m_cube.transform.parent = transform;
-			float cubeScale = 0.05f;
+			float cubeScale = 0.02f;
 			m_cube.transform.localScale = new Vector3(cubeScale, cubeScale, cubeScale);
 
 			m_cube.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -30,7 +31,9 @@ public class SatteliteCamera : MonoBehaviour {
 		pos.y = orbitHeight;
 		transform.position = pos;
 		transform.LookAt(center);
-		if (m_cube)
+		if (m_cube) {
+			m_cube.transform.rotation = Quaternion.identity;
 			m_cube.transform.position = new Vector3(center.x, transform.position.y - 1, center.z);
+		}
 	}
 }
