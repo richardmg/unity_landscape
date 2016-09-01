@@ -109,10 +109,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 				voTransform.position = worldPos;
 
 //				debug til engine
-//				TileDescription desc = terrainTileEngine.GetComponent<TileEngine>().getTileDescription(worldPos);
-//				Terrain terrain = m_terrainLayer.getTerrainTile(desc);
+//				Vector2 matrixCoord = new Vector3();
+//				terrainTileEngine.GetComponent<TileEngine>().matrixCoordFromWorldPos(worldPos, ref matrixCoord);
+//				Terrain terrain = m_terrainLayer.getTerrainTile(matrixCoord);
 //				voTransform.gameObject.name = "Sample from: " + terrain.gameObject.name;
-//				print(desc.gridCoord + ", " + terrain.gameObject.name + ", " + worldPos);
 			}
 		}
 	}

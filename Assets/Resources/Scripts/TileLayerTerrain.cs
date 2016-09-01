@@ -21,6 +21,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
 	TileEngine m_tileEngine;
+	Vector2 m_vector2 = new Vector2();
 
 	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
@@ -127,14 +128,13 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public float sampleHeight(Vector3 worldPos)
 	{
-		TileDescription desc = m_tileEngine.getTileDescription(worldPos);
-		Debug.Assert(desc.matrixCoord.x != -1 && desc.matrixCoord.y != -1, "Trying to sample height outside any landscape tile: " + gameObject.name);
-		return m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].SampleHeight(worldPos);
+		m_tileEngine.matrixCoordFromWorldPos(worldPos, ref m_vector2);
+		return m_terrainMatrix[(int)m_vector2.x, (int)m_vector2.y].SampleHeight(worldPos);
 	}
 
-	public Terrain getTerrainTile(TileDescription desc)
+	public Terrain getTerrainTile(Vector2 matrixCoord)
 	{
-		return m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+		return m_terrainMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 	}
 
 }

@@ -29,7 +29,7 @@ public interface ITileTerrainLayer : ITileLayer
 {
 	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours);
 	float sampleHeight(Vector3 worldPos);
-	Terrain getTerrainTile(TileDescription desc);
+	Terrain getTerrainTile(Vector2 matrixCoord);
 }
 
 public class TileEngine : MonoBehaviour {
@@ -67,8 +67,9 @@ public class TileEngine : MonoBehaviour {
 
 	void Update()
 	{
+		Vector3 playerWorldPos = player.transform.position;
 		Vector2 prevPlayerGridPos = m_playerGridPos;
-		gridPosFromWorldPosAsInt(player.transform.position, ref m_playerGridPos);
+		gridPosFromWorldPosAsInt(playerWorldPos, ref m_playerGridPos);
 		int gridCrossedX = (int)(m_playerGridPos.x - prevPlayerGridPos.x);
 		int gridCrossedZ = (int)(m_playerGridPos.y - prevPlayerGridPos.y);
 
@@ -115,7 +116,26 @@ public class TileEngine : MonoBehaviour {
 
 	void gridPosFromWorldPosAsInt(Vector3 worldPos, ref Vector2 gridCoord)
 	{
-		gridCoord.Set(Mathf.FloorToInt(worldPos.x / tileSize), Mathf.FloorToInt(worldPos.z / tileSize));
+		// Center align the grid onto the world
+		gridCoord.Set(
+			Mathf.FloorToInt((worldPos.x + m_worldToGridOffset.x) / tileSize),
+			Mathf.FloorToInt((worldPos.z + m_worldToGridOffset.z) / tileSize));
+	}
+
+	public void matrixCoordFromWorldPos(Vector3 worldPos, ref Vector2 matrixCoord)
+	{
+		// Note that there will be four tiles underneath each grid
+		// unit, since the grid is center aligned onto the world.
+		int gridX = Mathf.FloorToInt(worldPos.x / tileSize);
+		int gridY = Mathf.FloorToInt(worldPos.z / tileSize);
+		int gridOffsetX = gridX - (int)m_playerGridPos.x;
+		int gridOffsetY = gridY - (int)m_playerGridPos.y;
+
+		Debug.Assert(Mathf.Abs(gridOffsetX) <= m_tileCountHalf && Mathf.Abs(gridOffsetY) <= m_tileCountHalf, "Worldpos outside current tiles");
+
+		int matrixX = matrixPos((int)m_matrixTopRight.x, (int)(gridOffsetX - m_tileCountHalf + 1));
+		int matrixY = matrixPos((int)m_matrixTopRight.y, (int)(gridOffsetY - m_tileCountHalf + 1));
+		matrixCoord.Set(matrixX, matrixY);
 	}
 
 	int matrixPos(int top, int rows)
@@ -231,20 +251,24 @@ public class TileEngine : MonoBehaviour {
 	{
 		TileDescription desc = m_tileMoveDesc[0];
 
-		gridPosFromWorldPosAsInt(worldPos, ref desc.gridCoord);
-		Vector2 gridOffset = desc.gridCoord - m_playerGridPos;
-
-		if (Mathf.Abs(gridOffset.x) > m_tileCountHalf || Mathf.Abs(gridOffset.y) > m_tileCountHalf) {
-			desc.matrixCoord.Set(-1, -1);
-			return desc;
-		}
-
-		int matrixX = matrixPos((int)m_matrixTopRight.x, (int)(gridOffset.x - m_tileCountHalf + 1));
-		int matrixY = matrixPos((int)m_matrixTopRight.y, (int)(gridOffset.y - m_tileCountHalf + 1));
-		desc.matrixCoord.Set(matrixX, matrixY);
-
-//		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
-//		setNeighbours(desc.matrixCoord, ref desc.neighbours);
+//		gridPosFromWorldPosAsInt(worldPos, ref desc.gridCoord);
+//		Vector2 gridOffset = desc.gridCoord - m_playerGridPos;
+//
+//		if (Mathf.Abs(gridOffset.x) > m_tileCountHalf || Mathf.Abs(gridOffset.y) > m_tileCountHalf) {
+//			desc.matrixCoord.Set(-1, -1);
+//			return desc;
+//		}
+//
+//		// Note that there will be four tiles underneath each grid square, since the grid
+//		// is center aligned onto the world.
+//		matrixCoordFromWorldPos(worldPos - m_worldToGridOffset, ref desc.gridCoord);
+//
+//		int matrixX = matrixPos((int)m_matrixTopRight.x, (int)(gridOffset.x - m_tileCountHalf + 1));
+//		int matrixY = matrixPos((int)m_matrixTopRight.y, (int)(gridOffset.y - m_tileCountHalf + 1));
+//		desc.matrixCoord.Set(matrixX, matrixY);
+//
+////		setWorldPosFromGridPos(desc.gridCoord, ref desc.worldPos);
+////		setNeighbours(desc.matrixCoord, ref desc.neighbours);
 
 		return desc;
 	}
