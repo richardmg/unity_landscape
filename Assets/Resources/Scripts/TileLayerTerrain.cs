@@ -132,4 +132,9 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		return m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y].SampleHeight(worldPos);
 	}
 
+	public Terrain getTerrainTile(TileDescription desc)
+	{
+		return m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+	}
+
 }

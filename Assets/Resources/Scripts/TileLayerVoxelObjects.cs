@@ -107,6 +107,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 				worldPos.y = m_terrainLayer.sampleHeight(worldPos) + m_pivotAdjustmentY;
 				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
 				voTransform.position = worldPos;
+
+//				debug til engine
+//				TileDescription desc = terrainTileEngine.GetComponent<TileEngine>().getTileDescription(worldPos);
+//				Terrain terrain = m_terrainLayer.getTerrainTile(desc);
+//				voTransform.gameObject.name = "Sample from: " + terrain.gameObject.name;
+//				print(desc.gridCoord + ", " + terrain.gameObject.name + ", " + worldPos);
 			}
 		}
 	}

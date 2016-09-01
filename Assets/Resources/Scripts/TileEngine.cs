@@ -29,6 +29,7 @@ public interface ITileTerrainLayer : ITileLayer
 {
 	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours);
 	float sampleHeight(Vector3 worldPos);
+	Terrain getTerrainTile(TileDescription desc);
 }
 
 public class TileEngine : MonoBehaviour {
@@ -88,13 +89,14 @@ public class TileEngine : MonoBehaviour {
 		m_tileCountHalf = tileCount / 2f;
 		m_worldToGridOffset = new Vector3(tileSize / 2f, 0, tileSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
-		for (int i = 0; i < tileCount; ++i)
-			m_tileMoveDesc[i] = new TileDescription();
+		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
 		setGridPosFromWorldPos(player.transform.position, ref m_playerGridPos);
 
-		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
+		for (int i = 0; i < tileCount; ++i)
+			m_tileMoveDesc[i] = new TileDescription();
+
 		foreach (ITileLayer tileLayer in m_tileLayerArray)
 			tileLayer.initTileLayer(this);
 	}
@@ -115,8 +117,8 @@ public class TileEngine : MonoBehaviour {
 
 	void setGridPosFromWorldPos(Vector3 worldPos, ref Vector2 gridCoord)
 	{
-		int x = Mathf.FloorToInt((worldPos.x + m_worldToGridOffset.x) / tileSize);
-		int z = Mathf.FloorToInt((worldPos.z + m_worldToGridOffset.z) / tileSize);
+		int x = Mathf.FloorToInt(worldPos.x / tileSize);
+		int z = Mathf.FloorToInt(worldPos.z / tileSize);
 		gridCoord.Set(x, z);
 	}
 
