@@ -68,7 +68,7 @@ public class TileEngine : MonoBehaviour {
 	void Update()
 	{
 		Vector2 prevPlayerGridPos = m_playerGridPos;
-		gridPosFromWorldPos(player.transform.position, ref m_playerGridPos);
+		gridPosFromWorldPosAsInt(player.transform.position, ref m_playerGridPos);
 		int gridCrossedX = (int)m_playerGridPos.x - (int)prevPlayerGridPos.x;
 		int gridCrossedZ = (int)m_playerGridPos.y - (int)prevPlayerGridPos.y;
 
@@ -92,7 +92,7 @@ public class TileEngine : MonoBehaviour {
 		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		gridPosFromWorldPos(player.transform.position, ref m_playerGridPos);
+		gridPosFromWorldPosAsInt(player.transform.position, ref m_playerGridPos);
 
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
@@ -113,7 +113,7 @@ public class TileEngine : MonoBehaviour {
 		worldPos.Set(gridCoord.x * tileSize, 0, gridCoord.y * tileSize);
 	}
 
-	void gridPosFromWorldPos(Vector3 worldPos, ref Vector2 gridCoord)
+	void gridPosFromWorldPosAsInt(Vector3 worldPos, ref Vector2 gridCoord)
 	{
 		gridCoord.Set(Mathf.FloorToInt(worldPos.x / tileSize), Mathf.FloorToInt(worldPos.z / tileSize));
 	}
@@ -231,7 +231,7 @@ public class TileEngine : MonoBehaviour {
 	{
 		TileDescription desc = m_tileMoveDesc[0];
 
-		gridPosFromWorldPos(worldPos, ref desc.gridCoord);
+		gridPosFromWorldPosAsInt(worldPos, ref desc.gridCoord);
 		Vector2 gridOffset = desc.gridCoord - m_playerGridPos;
 
 		if (Mathf.Abs(gridOffset.x) > m_tileCountHalf || Mathf.Abs(gridOffset.y) > m_tileCountHalf) {
