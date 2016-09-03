@@ -9,13 +9,11 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 	[Range (0, 100)]
 	public float paddingBetweenObjects = 25;
 	public GameObject prefab;
-	public GameObject terrainTileEngine;
 
 	GameObject[,] m_tileMatrix;
 	VoxelObject[,] m_voxelObjectMatrix;
 	float m_pivotAdjustmentY;
 	TileEngine m_tileEngine;
-	ITileTerrainLayer m_terrainLayer;
 
 	public void OnValidate()
 	{
@@ -39,7 +37,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		m_voxelObjectMatrix = new VoxelObject[tileCount, tileCount];
-		m_terrainLayer = (ITileTerrainLayer)terrainTileEngine.GetComponent<TileEngine>().getTileLayer(0);
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
@@ -104,14 +101,13 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
 				Vector3 worldPos = goTile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
-				worldPos.y = m_terrainLayer.sampleHeight(worldPos) + m_pivotAdjustmentY;
+				worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + m_pivotAdjustmentY;
 				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
 				voTransform.position = worldPos;
 
 //				debug til engine
 //				Vector2 matrixCoord = new Vector3();
 //				terrainTileEngine.GetComponent<TileEngine>().matrixCoordFromWorldPos(worldPos, ref matrixCoord);
-//				Terrain terrain = m_terrainLayer.getTerrainTile(matrixCoord);
 //				voTransform.gameObject.name = "Sample from: " + terrain.gameObject.name;
 			}
 		}

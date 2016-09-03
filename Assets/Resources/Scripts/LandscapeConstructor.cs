@@ -60,8 +60,11 @@ public class LandscapeConstructor : MonoBehaviour {
 		return TileLayerTerrain.worldTerrain.sampleHeight(worldPos);
 	}
 
-	public LandscapeType getLandscapeType(float x, float z)
+	public LandscapeType getLandscapeType(Vector3 worldPos)
 	{
-		return kForrest;
+		if (calculateHeight(worldPos.x, worldPos.z) > 5)
+			return kForrest;
+		else
+			return kMeadow;
 	}
 }
