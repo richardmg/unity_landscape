@@ -81,7 +81,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 			for (int x = 0; x < heightmapResolution; ++x) {
 				for (int z = 0; z < heightmapResolution; ++z) {
-					float height = LandscapeConstructor.instance.getGroundHeight(desc.worldPos.x + (x * scale.x), desc.worldPos.z + (z * scale.z));
+					float height = LandscapeConstructor.instance.calculateHeight(desc.worldPos.x + (x * scale.x), desc.worldPos.z + (z * scale.z));
 					m_heightArray[z, x] = height / scale.y;
 				}
 			}

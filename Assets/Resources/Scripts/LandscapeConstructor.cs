@@ -47,7 +47,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		}
 	}
 
-	public float getGroundHeight(float x, float z)
+	public float calculateHeight(float x, float z)
 	{
 		float oct0 = Mathf.PerlinNoise(x * instance.noiseScaleOct0, z * instance.noiseScaleOct0) * instance.tileHeightOct0;
 		float oct1 = Mathf.PerlinNoise(x * instance.noiseScaleOct1, z * instance.noiseScaleOct1) * instance.tileHeightOct1;
@@ -55,7 +55,7 @@ public class LandscapeConstructor : MonoBehaviour {
 		return oct0 + oct1 + oct2;
 	}
 
-	public float getEffectiveGroundHeight(Vector3 worldPos)
+	public float sampleHeight(Vector3 worldPos)
 	{
 		return TileLayerTerrain.worldTerrain.sampleHeight(worldPos);
 	}
