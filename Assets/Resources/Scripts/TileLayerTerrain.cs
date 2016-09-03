@@ -33,6 +33,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public void OnValidate()
 	{
+		TileLayerTerrain.worldTerrain = this;
 		heightmapResolution = 1 + (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(heightmapResolution, 2)));
 
 		if (m_tileEngine == null)

@@ -19,6 +19,9 @@ public class LandscapeConstructor : MonoBehaviour {
 	[Range (0, 20)]
 	public float tileHeightOct2 = 1;
 
+	[Range (0, 1000)]
+	public float treeBorder = 1;
+
 	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
 	[HideInInspector]
@@ -29,9 +32,9 @@ public class LandscapeConstructor : MonoBehaviour {
 	public const LandscapeType kEmpty = 0;
 	public const LandscapeType kSea = 1;
 	public const LandscapeType kGrassLand = 2;
-	public const LandscapeType kMeadow = 2;
-	public const LandscapeType kForrest = 2;
-	public const LandscapeType kLake = 2;
+	public const LandscapeType kMeadow = 3;
+	public const LandscapeType kForrest = 4;
+	public const LandscapeType kLake = 5;
 
 	static public LandscapeConstructor instance;
 	public LandscapeConstructor()
@@ -43,7 +46,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	{
 		foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>()) {
 			if (tileEngine.showInEditor)
-					tileEngine.updateAllTiles();
+				tileEngine.updateAllTiles();
 		}
 	}
 
@@ -62,7 +65,7 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public LandscapeType getLandscapeType(Vector3 worldPos)
 	{
-		if (calculateHeight(worldPos.x, worldPos.z) > 5)
+		if (calculateHeight(worldPos.x, worldPos.z) > treeBorder)
 			return kForrest;
 		else
 			return kMeadow;

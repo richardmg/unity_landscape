@@ -101,9 +101,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
 				Vector3 worldPos = goTile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
-				worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + m_pivotAdjustmentY;
 				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
-				voTransform.position = worldPos;
+				int type = LandscapeConstructor.instance.getLandscapeType(worldPos);
+				if (type == LandscapeConstructor.kForrest) {
+					worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + m_pivotAdjustmentY;
+					voTransform.position = worldPos;
+					voTransform.gameObject.GetComponent<VoxelObject>().setIndex(prefab.name);
+				} else {
+					voTransform.gameObject.GetComponent<VoxelObject>().setIndex("clear");
+				}
 
 //				debug til engine
 //				Vector2 matrixCoord = new Vector3();
