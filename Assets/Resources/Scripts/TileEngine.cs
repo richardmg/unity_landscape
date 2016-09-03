@@ -32,7 +32,6 @@ public interface ITileTerrainLayer : ITileLayer
 {
 	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours);
 	float sampleHeight(Vector3 worldPos);
-	Terrain getTerrainTile(Vector2 matrixCoord);
 }
 
 public class TileEngine : MonoBehaviour {

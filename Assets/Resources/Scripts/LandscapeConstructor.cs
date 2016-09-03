@@ -1,6 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using LandscapeType = System.Int32;
+
+public class LandscapePiece
+{
+	public LandscapeType landscapeType;
+	public float density;
+	public float height;
+}
+
 public class LandscapeConstructor : MonoBehaviour {
 
 	[Range (0, 700)]
@@ -10,8 +19,6 @@ public class LandscapeConstructor : MonoBehaviour {
 	[Range (0, 20)]
 	public float tileHeightOct2 = 1;
 
-	public bool showInEditor = false;
-
 	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
 	[HideInInspector]
@@ -19,28 +26,42 @@ public class LandscapeConstructor : MonoBehaviour {
 	[HideInInspector]
 	public float noiseScaleOct2 = 0.1f;
 
-	static public LandscapeConstructor m_instance;
+	public const LandscapeType kEmpty = 0;
+	public const LandscapeType kSea = 1;
+	public const LandscapeType kGrassLand = 2;
+	public const LandscapeType kMeadow = 2;
+	public const LandscapeType kForrest = 2;
+	public const LandscapeType kLake = 2;
+
+	static public LandscapeConstructor instance;
 	public LandscapeConstructor()
 	{
-		m_instance = this;
+		instance = this;
 	}
 
 	void OnValidate()
 	{
-		if (showInEditor) {
-			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>())
-				tileEngine.updateAllTiles();
-		} else {
-			foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>(true))
-				tileEngine.removeAllTiles();
+		foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>()) {
+			if (tileEngine.showInEditor)
+					tileEngine.updateAllTiles();
 		}
 	}
 
-	public static float getGroundHeight(float x, float z)
+	public float getGroundHeight(float x, float z)
 	{
-		float oct0 = Mathf.PerlinNoise(x * m_instance.noiseScaleOct0, z * m_instance.noiseScaleOct0) * m_instance.tileHeightOct0;
-		float oct1 = Mathf.PerlinNoise(x * m_instance.noiseScaleOct1, z * m_instance.noiseScaleOct1) * m_instance.tileHeightOct1;
-		float oct2 = Mathf.PerlinNoise(x * m_instance.noiseScaleOct2, z * m_instance.noiseScaleOct2) * m_instance.tileHeightOct2;
+		float oct0 = Mathf.PerlinNoise(x * instance.noiseScaleOct0, z * instance.noiseScaleOct0) * instance.tileHeightOct0;
+		float oct1 = Mathf.PerlinNoise(x * instance.noiseScaleOct1, z * instance.noiseScaleOct1) * instance.tileHeightOct1;
+		float oct2 = Mathf.PerlinNoise(x * instance.noiseScaleOct2, z * instance.noiseScaleOct2) * instance.tileHeightOct2;
 		return oct0 + oct1 + oct2;
+	}
+
+	public float getEffectiveGroundHeight(Vector3 worldPos)
+	{
+		return TileLayerTerrain.worldTerrain.sampleHeight(worldPos);
+	}
+
+	public LandscapeType getLandscapeType(float x, float z)
+	{
+		return kForrest;
 	}
 }

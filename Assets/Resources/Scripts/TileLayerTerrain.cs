@@ -4,12 +4,6 @@ using System.Collections.Generic;
 
 public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 {
-	[Range (0, 700)]
-	public float oct0 = 200;
-	[Range (0, 200)]
-	public float oct1 = 10;
-	[Range (0, 20)]
-	public float oct3 = 1;
 	[Range (33, 512)]
 	public int heightmapResolution = 33;
 	[Range (0, 200)]
@@ -23,12 +17,19 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	TileEngine m_tileEngine;
 	Vector2 m_vector2 = new Vector2();
 
+	public static TileLayerTerrain worldTerrain;
+
 	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
 	[HideInInspector]
 	public float noiseScaleOct1 = 0.02f;
 	[HideInInspector]
 	public float noiseScaleOct2 = 0.1f;
+
+	public void Awake()
+	{
+		TileLayerTerrain.worldTerrain = this;
+	}
 
 	public void OnValidate()
 	{
@@ -80,7 +81,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 			for (int x = 0; x < heightmapResolution; ++x) {
 				for (int z = 0; z < heightmapResolution; ++z) {
-					float height = getGroundHeight(desc.worldPos.x + (x * scale.x), desc.worldPos.z + (z * scale.z));
+					float height = LandscapeConstructor.instance.getGroundHeight(desc.worldPos.x + (x * scale.x), desc.worldPos.z + (z * scale.z));
 					m_heightArray[z, x] = height / scale.y;
 				}
 			}
@@ -118,23 +119,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		return (int)matrixPos.x == -1 ? null : m_terrainMatrix[(int)matrixPos.x, (int)matrixPos.y];
 	}
 
-	public float getGroundHeight(float x, float z)
-	{
-		float o0 = Mathf.PerlinNoise(x * noiseScaleOct0, z * noiseScaleOct0) * oct0;
-		float o1 = Mathf.PerlinNoise(x * noiseScaleOct1, z * noiseScaleOct1) * oct1;
-		float o2 = Mathf.PerlinNoise(x * noiseScaleOct2, z * noiseScaleOct2) * oct3;
-		return o0 + o1 + o2;
-	}
-
 	public float sampleHeight(Vector3 worldPos)
 	{
 		m_tileEngine.matrixCoordFromWorldPos(worldPos, ref m_vector2);
 		return m_terrainMatrix[(int)m_vector2.x, (int)m_vector2.y].SampleHeight(worldPos);
-	}
-
-	public Terrain getTerrainTile(Vector2 matrixCoord)
-	{
-		return m_terrainMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 	}
 
 }
