@@ -261,4 +261,30 @@ OPTIMIZATIONS
     - build meshes in separate thread.
     - For volume mesh, draw horisontal/vertical quads as minimal as possible (not always 0->subImageWidth)
 
+LANDSCAPE
+------------
+    - Generate island instead of infinite landscape
+        - I want a closed eco system
+        - I want to keep track of individual organisms
+
+    - Create a 2d array (worldmap) containing all squares on the map. Each square
+        will be a struct describing height and type, and the organisms it
+        contains. And for sure more info later. 
+    - Then populate the worldmap with landscape type. Start with types that are
+        less inclinded to adapt to its surroundings. Subsequent types need to
+        analyze the current worldmap when adding its own layer.
+    - Start with land and sea, this will make out the shape of the island. The
+        land should be completly flat at this point. Other layers will add in
+        heights.
+    - Add a mountain range. I don't want mountains to dominate, so a single
+        mountain should be enough. Perhaps use fractals instead of perlin here.
+    - Add hills to the landscape. Hills can not overwrite moutains, but otherwise
+        they will make out the base heights through out the land. Try to change
+        the scale dynamically, so that some hills will be long and flat, while
+        others will be more bumpy.
+    - Add lakes. A Lake will need to stay within the base height of the hill
+        sourrounding it. So find a spot, analyze it, and fill it with
+        water (alternatively, let everything below a height of 0 be lake).
+    - Add rivers. Only rivers that end up intersecting with a lake will be used.
+        Lakes can only flow downwards or straight, so it takes some analyzing.
     
