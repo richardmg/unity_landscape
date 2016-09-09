@@ -287,4 +287,35 @@ LANDSCAPE
         water (alternatively, let everything below a height of 0 be lake).
     - Add rivers. Only rivers that end up intersecting with a lake will be used.
         Lakes can only flow downwards or straight, so it takes some analyzing.
+
+    2.
+    - A layer will consist of two samples; frequency and detail.
+        - Frequency will specify where in the world the layer will draw.
+            This will typically be a highly scaled perlin where we
+            we only accept high values (close to 1) as being an acceptable.
+            This should scatter the layer out on case we only want to
+            rarily draw the layer, like for mountains.
+        - The second will detail the contents of the individual islands
+            from the first sample. This sample will use a more low scaled
+            perlin that add in detail, like mountain tops etc.
+        - Just be looking the final result of the sampling we know if the
+            layer covers a specic position or not. If it covers it, we can
+            go on finding the height. The height should be a merge of all
+            the layer samples, so that in the end, the layer fades out
+            at the edge of the frequency sample.
+        - Note that using two sampled / octaves will produce layer islands
+            that are smooth and rounded. One could add more samples to
+            break it up even more. One could also use only the first two
+            samples to determine the height, while use more samples to
+            determine the type (in case of subtypes).
+        - If it turns out that the layer does not cover a position, we continue
+            with the next layer in the priority chain. This also means that
+            the next layer in the chain will never be able to overwrite the
+            layers before it.
+        - TODO: create a gameoject "LandscapeLayer" that encompasses the above
+            with sliders etc. And then a parent gameobject that can contain
+            many such layers, with the first child having the highest priority.
+            The parent can also have a scale that all the child layers listen
+            to, to make it easy to scale things as a whole.
+
     
