@@ -207,6 +207,29 @@ Game v.2
         mode, that (vicious) permutations occur that will eat too much
         food of its kind, unbalancing the ecosystem. 
 
+Game v.2.1
+    - Base organisms only need sunlight and water. This is always satisfied.
+        - Such organisms can never move on their own. But they will
+            spread. How fast they spread depends on the size. Any organism
+            can in theory either spread by air, water, dropping or
+            help from other organisms. But perhaps this should be hidden
+            to not make things too complex.
+        - Water should e.g contain plankton (sun+water) before the player
+            can create worms that eat them. Before he creates fish that eats the
+            worms.
+        - The size of an organism will impact how fast it can reproduce / spread.
+            The larger the organism, the slower. Better access to food can
+            speed up the process, so it becomes a relative ratio.
+        - The game could start with letter you create small species, perhaps
+            worms and beetles. He can create as many variants / permutations he wants
+            from an already made organism. As soon as one line of permution reach a
+            certain population, the player can choose to advance it (evolution). E.g
+            make it bigger, add another body part, make it smarter, change food
+            dependecies. Each organism will have its own evolution level and evolution
+            tree. In the end, really high level organisms can be more abstract things
+            like robots, cars, UFOs etc. And they still follow the same rules when
+            it comes to hunt and eat etc.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
