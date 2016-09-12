@@ -214,9 +214,16 @@ Game v.2.1
             can in theory either spread by air, water, dropping or
             help from other organisms. But perhaps this should be hidden
             to not make things too complex.
-        - Water should e.g contain plankton (sun+water) before the player
-            can create worms that eat them. Before he creates fish that eats the
+        - Base organism will belong to either land, water or air. Evolution
+            / level up can change or add more habitats later.
+        - Water should e.g contain plankton/algae before the player
+            can create worms that eat them. Before he creates fish that eat the
             worms.
+        - Note that a fish can only be created by evolving e.g a worm. When a fish
+            gets bigger, it will need more food, and typically eat other organisms.
+            So in order for the eco system to grow, several organisms must evolve
+            in parallell.
+        - Canibalism is allowed, and can create interresting scenarios.
         - The size of an organism will impact how fast it can reproduce / spread.
             The larger the organism, the slower. Better access to food can
             speed up the process, so it becomes a relative ratio.
