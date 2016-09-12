@@ -229,6 +229,12 @@ Game v.2.1
             tree. In the end, really high level organisms can be more abstract things
             like robots, cars, UFOs etc. And they still follow the same rules when
             it comes to hunt and eat etc.
+         - To be able to ride an organism, the organism must have passed a certain
+            brain level (the player must upgrade it several times). At the same time,
+            the organism must be larger than the player / avatar. If the avatar is
+            bigger, the organism will try to move, but will be uncontrollable.
+         - The reason why riding organisms is good, is that this will make the player
+            move quicker around looking for misformed / evil permutations.
 
 Technical
 ---------------
