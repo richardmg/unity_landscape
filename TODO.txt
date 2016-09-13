@@ -244,33 +244,38 @@ Game v.2.1
             move quicker around looking for misformed / evil permutations.
 
 Game v.1.1
+         - Another name suggestion: Nutty
+            - the farmer should look a bit like a nutty professor.
          - There is a farm, which is where you start
             - The player don't build the farm, its there from before.
          - The barn has e.g five 'evolution' containers.
          - The farmer must go into the world to collect organisms and
-            bring them back the farm to evolve them. This part shouldn't
-            be too complex, perhaps it's enough if the farmer can
-            'touch/give a shot' the organism to collect it, or even better,
-            take a cell-sample that can be brought home.
-         - Once a new organism is ready, he needs to decice how to
-            evolve/upgrade it (size, limbs, IQ, he can both add or
+            bring them back the farm to evolve them.
+         - To collect an organism, the farmer needs to take a cell sample
+            that can be brought back to the frame to brew a new egg from.
+         - To be able to take a sample, the farmer must first charm the organism.
+            This can be done in a skyrim lockpicking type of fashing. The
+            higher the players level compared to the IQ of the organims, the
+            easier it is to charm. 
+         - Charmed organisms can also be taken as followers.
+         - Before he starts to brew an egg, he needs to decice how to
+            evolve/upgrade the organism (size, limbs, IQ, he can both add or
             remove to e.g correct earlier mistakes). The higher the
             level of the species, the more advanced limbs/IQ to choose
             from (e.g eyes, wings, able to be ridden etc, more clever
-            at fighting).
-         - He then need to take the new organsims into the world and
-            place them whereever he likes. Perhaps the organisms can
-            be eggs in case of animal (throw and crack). There must
-            be a tradeoff so he can sow e.g many trees and flowers, but
-            not create many big creatures in one go.
-         - If he places an egg (or cracks it), the organism will start
-            as a baby. In case of a dangerous creature, this will let
+            at fighting. Each upgrade type as individual evolution level).
+         - The egg will then start brewing, and the farmer will be
+            noticed when ready. The higher the evolution level, the
+            longer the time.
+         - When done, he can take the egg and crack it wherever he
+            likes in the world. The new organism then starts its life
+            as a docile baby. In case of a dangerous creature, this will let
             the farmer get away. It could also be so that the farmer
             can only collect grown-up species.
          - The farmer must watch out for permutations. He has no guns
             etc (perhaps only a pitchfork). But he can take one or two
             aninmals as followers that will protect him. If one of the
-            followers is KIA, the permutation goes away.
+            followers is KIA, the permutation temporarily runs away. 
 
 Technical
 ---------------
