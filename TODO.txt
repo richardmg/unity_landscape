@@ -284,6 +284,13 @@ Game v.1.1
             etc (perhaps only a pitchfork). But he can take one or two
             aninmals as followers that will protect him. If one of the
             followers is KIA, the permutation temporarily runs away. 
+         - The farmer can work 247, but at night:
+            1. Organisms are easier to sneak up on
+            2. But harder to charm / ride.
+            3. And permutations are stronger and in greater numbers.
+            4. The farmer can skip night by going inside the house, at
+                which it swithces to next day immediatly (and he is
+                healed of any damage, the same with followers).
 
 Technical
 ---------------
