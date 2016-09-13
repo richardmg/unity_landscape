@@ -243,6 +243,30 @@ Game v.2.1
          - The reason why riding organisms is good, is that this will make the player
             move quicker around looking for misformed / evil permutations.
 
+Game 1.1
+         - There is a farm, which is where you start
+            - The player don't build the farm, its there from before.
+         - The barn has e.g five 'evolution' containers.
+         - The farmer must go into the world to collect organisms and
+            bring them back the farm to evolve them. This part shouldn't
+            be too complex, perhaps it's enough if the farmer can
+            'touch' the organism to collect it, regardless of size.
+         - Once a new organism is ready, he needs to decice how to
+            evolve/upgrade it (size, limbs, IQ, he can both add or
+            remove to e.g correct earlier mistakes). The higher the
+            level of the species, the more advanced limbs/IQ to choose
+            from (e.g eyes, wings, able to be ridden etc, more clever
+            at fighting).
+         - He then need to take the new organsims into the world and
+            place them whereever he likes. Perhaps the organisms can
+            be eggs in case of animal (throw and crack). There must
+            be a tradeoff so he can sow e.g many trees and flowers, but
+            not create many big creatures in one go.
+         - The farmer must watch out for permutations. He has no guns
+            etc (perhaps only a pitchfork). But he can take one or two
+            aninmals as followers that will protect him. If one of the
+            followers is KIA, the permutation goes away.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
