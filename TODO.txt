@@ -274,7 +274,15 @@ Game v.1.1
             at fighting. Each upgrade type as individual evolution level).
          - The egg will then start brewing, and the farmer will be
             noticed when ready. The higher the evolution level, the
-            longer the time.
+            longer the time. Two eggs will be produced, one male and
+            one female. If the farmer only chooses one, only one species
+            will ever exists for that exact type. If he chooses two and
+            crack them close, they will spread according to their
+            size and other characteristics.
+         - Plants will become sexless seads instead of eggs. They spread
+            automatically. You don't need to go through the barn/lab
+            to plant them (unless you want to evolve/change them).
+            At a certain EQ level, a plant becomes an animal.
          - When done, he can take the egg and crack it wherever he
             likes in the world. The new organism then starts its life
             as a docile baby. In case of a dangerous creature, this will let
