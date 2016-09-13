@@ -253,10 +253,18 @@ Game v.1.1
             bring them back the farm to evolve them.
          - To collect an organism, the farmer needs to take a cell sample
             that can be brought back to the frame to brew a new egg from.
-         - To be able to take a sample, the farmer must first charm the organism.
-            This can be done in a skyrim lockpicking type of fashing. The
-            higher the players level compared to the IQ of the organims, the
-            easier it is to charm. 
+         - To be able to take a sample, the farmer must either sneak up
+            on the organsim, or chase it down. If he can touch it, he can
+            take a sample.
+         - Upon touching, he can also choose to win him over as a follower.
+            He must then either charm it, which is harder the higher IQ
+            of the organism compared to farmer level. Or he can choose to
+            ride him. Both can be determined using a skyrim lock-picking
+            kind of UI. Strong but dump organisms yields for charmings,
+            Weak but smart yields for riding.
+         - As an alternative, the farmer can choose to sneak up on the
+            organism instead. If successful he can take a sample, but
+            not take it as follower.
          - Charmed organisms can also be taken as followers.
          - Before he starts to brew an egg, he needs to decice how to
             evolve/upgrade the organism (size, limbs, IQ, he can both add or
