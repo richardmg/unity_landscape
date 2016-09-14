@@ -293,22 +293,35 @@ Game v.1.1
             2. grow
             How fast is spreads should be an evolution property. Some trees
             spreads a lot, others more sparse. The higher the IQ, the more
-            it takes to spread it.
-            Grass, flowers, trees should also grow and spread. Perhaps the
-            point in the game is for the player to make sure that he creates
-            organisms that eat another types population to control the
-            spreading; Try to balance the biota.
+            it takes to spread it. Alternatively, how fast it spreads depends
+            on the amount of food available. Some lands can contain more
+            nutrition than others, e.g forrest. Desert would be low.
+            Grass, flowers, trees should also grow and spread.
+         - Perhaps the point in the game is for the player to make sure that he
+            creates organisms that eat another types population to control the
+            spreading; Try to balance the biota. 
             - The spreading can perhaps be contained inside a perlin region
                 expecially for organisms with 0 IQ (grass/trees).
             - You should be able to sow several types, like trees, grass, dogs
                 inside the same perlin region. More massive/intelligent organisms
                 will be preferred (trees should win over grass).
+         - Another point of the game could be that the world is almost a big desert
+            and your first task is to stop the desert from eating up the farm. This
+            gives a nice closure at the start, the farmer cannot wander to far into
+            the desert, or he'll die.
+            So he needs to sow grass, turning desert into grasslands. And then
+            control the growth of the grass, so the grass doesn't overgrow his
+            farm (by e.g adding grass eating mice or spiders). In the end, if an
+            organism becomes to populated, it will start heading towards the farm and
+            threaten it. Overgrown organism will also tend to be too big because of the
+            of the lack of predators, which should act as an indication to the player
+            that something is amiss.
          - The player should be able to explicily add and remove
-            trees/grass/flowers etc wherever he likes. To shape the
-            environment. Just because it becomes more creative that way.
+            trees/grass/flowers etc wherever he likes, if the ground allowes it.
+            To shape the environment. Just because it becomes more creative that way.
          - The farmer must watch out for permutations. He has no guns
             etc (perhaps only a pitchfork). But he can take one or two
-            aninmals as followers that will protect him. If one of the
+            aninals as followers that will protect him. If one of the
             followers is KIA, the permutation temporarily runs away. 
          - The farmer can work 247, but at night:
             1. Organisms are easier to sneak up on
