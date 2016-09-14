@@ -288,6 +288,24 @@ Game v.1.1
             as a docile baby. In case of a dangerous creature, this will let
             the farmer get away. It could also be so that the farmer
             can only collect grown-up species.
+         - Everything the farmer sows should start small, and then 
+            1. spread
+            2. grow
+            How fast is spreads should be an evolution property. Some trees
+            spreads a lot, others more sparse. The higher the IQ, the more
+            it takes to spread it.
+            Grass, flowers, trees should also grow and spread. Perhaps the
+            point in the game is for the player to make sure that he creates
+            organisms that eat another types population to control the
+            spreading; Try to balance the biota.
+            - The spreading can perhaps be contained inside a perlin region
+                expecially for organisms with 0 IQ (grass/trees).
+            - You should be able to sow several types, like trees, grass, dogs
+                inside the same perlin region. More massive/intelligent organisms
+                will be preferred (trees should win over grass).
+         - The player should be able to explicily add and remove
+            trees/grass/flowers etc wherever he likes. To shape the
+            environment. Just because it becomes more creative that way.
          - The farmer must watch out for permutations. He has no guns
             etc (perhaps only a pitchfork). But he can take one or two
             aninmals as followers that will protect him. If one of the
