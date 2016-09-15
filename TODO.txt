@@ -252,6 +252,14 @@ Game v.1.1
          - The barn has e.g five 'evolution' containers.
          - The farmer must go into the world to collect organisms and
             bring them back the farm to evolve them.
+            - He can do two things:
+                1. clone the organism to create a new branch / type
+                2. change / evolve the current organism / type
+            - When the farmer sows the type on a piece of land, an evolved
+                type will replace the old type. A clone will add another
+                type to the land, as if it had nothing todo with the
+                type it was cloned from. And as always, the change will
+                be mirrored to all lands of the same ground type.
          - To collect an organism, the farmer needs to take a cell sample
             that can be brought back to the frame to brew a new egg from.
          - To be able to take a sample, the farmer must either sneak up
