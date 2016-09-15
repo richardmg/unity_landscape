@@ -298,7 +298,7 @@ Game v.1.1
             on the amount of food available. Some lands can contain more
             nutrition than others, e.g forrest. Desert would be low.
             Grass, flowers, trees should also grow and spread.
-         - Perhaps the point in the game is for the player to make sure that he
+         - A point of the game is for the player to make sure that he
             creates organisms that eat another types population to control the
             spreading; Try to balance the biota. 
             - The spreading can perhaps be contained inside a perlin region
@@ -310,6 +310,16 @@ Game v.1.1
                 sheeps, horses, even the farmer. This will cause problems
                 for the eco-system, and will create a negative ripple effect
                 that needs to be stopped.
+                As an organim grow big, they will be fewer. So if an organims
+                becomes big and vicious, the farmer should be able to manually
+                kill them all with the use of a follower. The reason for being
+                able to do this, is to not make the game too hard. Restoring
+                balance after terminating a line of organisms can be difficult
+                enough. If killing all orgaisms on a land type, it will be mirrored
+                for all similar land types. Perhaps the first land type the player
+                encounters that have the big size problem will produce the over
+                grown organism. All other mirrored land types will stay on the
+                level before.
             - You should be able to sow several types, like trees, grass, dogs
                 inside the same perlin region. More massive/intelligent organisms
                 will be preferred (trees should win over grass).
@@ -321,6 +331,13 @@ Game v.1.1
                     the organisms will grow big, if not eaten by predators. If they
                     pass a certain size threshold, they will leave their habitat and
                     start feeding on anything in a vicious manner.
+         - When sowing organisms, in the game you choose a habitat. But the player is
+            actually choosing a land type, so all habitats with the same type
+            will be mirrored. If he wan't a difference, he must evolve different
+            land ground. Default is just plain soil / water / rock / sand.
+         - It should be very visible for the player if a land type is in balance or
+            not. You tap on a land to get the status, and a clear indication if
+            some organisms is not taken care of.
          - A point of the game is that the world is almost a big desert
             and your first task is to stop the desert from eating up the farm. This
             gives a nice closure at the start, the farmer cannot wander to far into
