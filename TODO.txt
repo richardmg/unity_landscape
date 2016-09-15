@@ -249,6 +249,9 @@ Game v.1.1
          - There is a farm, which is where you start
             - The player don't build the farm, its there from before.
             - The farm is sourrounded by desert
+                - desert spreads very slowly, but at the same time, is
+                    also always winning against other kind of lands. So
+                    it cannot be left untreated.
          - The barn has e.g five 'evolution' containers.
          - The farmer must go into the world to collect organisms and
             bring them back the farm to evolve them.
@@ -317,7 +320,7 @@ Game v.1.1
             Grass, flowers, trees should also grow and spread.
          - A point of the game is for the player to make sure that he
             creates organisms that eat another types population to control the
-            spreading; Try to balance the biota. 
+            spreading; Try to balance the biotai so it becomes sustainable (Lotka-volterra). 
             - The spreading can perhaps be contained inside a perlin region
                 expecially for organisms with 0 IQ (grass/trees).
             - If the organism is allowed to grow too big, it will leave its
@@ -327,7 +330,7 @@ Game v.1.1
                 sheeps, horses, even the farmer. This will cause problems
                 for the eco-system, and will create a negative ripple effect
                 that needs to be stopped.
-                As an organim grow big, they will be fewer. So if an organims
+                As an organim grow big, they will be fewer. So if an organism
                 becomes big and vicious, the farmer should be able to manually
                 kill them all with the use of a follower. The reason for being
                 able to do this, is to not make the game too hard. Restoring
@@ -337,6 +340,9 @@ Game v.1.1
                 encounters that have the big size problem will produce the over
                 grown organism. All other mirrored land types will stay on the
                 level before.
+                Update: the farmer should create a virus instead (or perhaps he
+                  always carry such a virus). The virus will, when dropped on
+                    an organism, kill all organisms of the type rather quick.
             - You should be able to sow several types, like trees, grass, dogs
                 inside the same perlin region. More massive/intelligent organisms
                 will be preferred (trees should win over grass).
@@ -366,6 +372,20 @@ Game v.1.1
             grass and come up the farm and attack if big enough. Otherwise they will die
             out (and rotten). The point here is that the player needs to start evolving
             organisms that eat the worms before this happens.
+                Update: The player should put soil on the desert. Dirt will naturally
+                produce grass, flowers, worms.
+         - There needs to be a limit how many
+                types of organsims one type of land / soil can carry. The reason is
+                to force the player to generate different kids of soil, and as such,
+                ecosystems.
+         - Since there is a type count per soil, there will always be some top pray
+            without a predator. The way to accomodate this, is to create a neighbour
+            ecosystem (or animals that crosses ecosystems) that will eat the top
+            preys.
+         - Whenever he puts a certain type of soil onto a land, the whole
+                    ecosystem will follow along. As such, all land that has the
+                    same ground soil will have the same ecosystem mirrored.
+            - He can place soil per land square, or a random splash.
          - The player should be able to explicily add and remove
             trees/grass/flowers etc wherever he likes, if the ground allowes it.
             To shape the environment. Just because it becomes more creative that way.
