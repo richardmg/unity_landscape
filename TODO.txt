@@ -248,6 +248,7 @@ Game v.1.1
             - the farmer should look a bit like a nutty professor.
          - There is a farm, which is where you start
             - The player don't build the farm, its there from before.
+            - The farm is sourrounded by desert
          - The barn has e.g five 'evolution' containers.
          - The farmer must go into the world to collect organisms and
             bring them back the farm to evolve them.
@@ -302,20 +303,35 @@ Game v.1.1
             spreading; Try to balance the biota. 
             - The spreading can perhaps be contained inside a perlin region
                 expecially for organisms with 0 IQ (grass/trees).
+            - If the organism is allowed to grow too big, it will leave its
+                natural habitat, and start to feed on anything around it. And
+                it will prefer sources that are likely
+                to contain much food. E.g a mosquito will start to feed on
+                sheeps, horses, even the farmer. This will cause problems
+                for the eco-system, and will create a negative ripple effect
+                that needs to be stopped.
             - You should be able to sow several types, like trees, grass, dogs
                 inside the same perlin region. More massive/intelligent organisms
                 will be preferred (trees should win over grass).
-         - Another point of the game could be that the world is almost a big desert
+                - living / moving organisms, like animals, will have bigger habitats
+                    that smaller organisms.
+                - If the habitat doesn't have enough food, the organism will not
+                    reproduce. If still not enough food, it will die out.
+                - If the habitat contains too much food, it will reproduce a lot, and
+                    the organisms will grow big, if not eaten by predators. If they
+                    pass a certain size threshold, they will leave their habitat and
+                    start feeding on anything in a vicious manner.
+         - A point of the game is that the world is almost a big desert
             and your first task is to stop the desert from eating up the farm. This
             gives a nice closure at the start, the farmer cannot wander to far into
-            the desert, or he'll die.
-            So he needs to sow grass, turning desert into grasslands. And then
-            control the growth of the grass, so the grass doesn't overgrow his
-            farm (by e.g adding grass eating mice or spiders). In the end, if an
-            organism becomes to populated, it will start heading towards the farm and
-            threaten it. Overgrown organism will also tend to be too big because of the
-            of the lack of predators, which should act as an indication to the player
-            that something is amiss.
+            the desert, or he'll die.  So he needs to sow grass, turning desert into
+            grasslands. The grasslands will introduce the first species, which can be worms
+            beetles, spiders etc. And if not taken care of, they will eat up the grass
+            and take the game back to start (desert). The organisms will now also be
+            big (depending on the amount of food that they had), and perhaps leave the
+            grass and come up the farm and attack if big enough. Otherwise they will die
+            out (and rotten). The point here is that the player needs to start evolving
+            organisms that eat the worms before this happens.
          - The player should be able to explicily add and remove
             trees/grass/flowers etc wherever he likes, if the ground allowes it.
             To shape the environment. Just because it becomes more creative that way.
