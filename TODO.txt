@@ -252,6 +252,23 @@ Game v.1.1
                 - desert spreads very slowly, but at the same time, is
                     also always winning against other kind of lands. So
                     it cannot be left untreated.
+         - The world is divided into many "separate" ecosystems, each
+            being big enough to hold a small forrest. Each system should
+            be irregurarly perlin shaped. The user cannot control the
+            shapes, but can control the contents inside the shapes (like
+              move trees around etc). But the user will need to place
+              the starting soil on a subsystem to convert it from desert.
+              All subsystems with the same base soil will mirror each
+              others ecosystem. Only top predators will be able to
+              move and feed across subsystems. If a subsystem is not
+              sustainable, it will slowly decay back to desert.
+          - Without top predators, the subsystems will produce giant
+            vicious beasts from the systems top predators that will
+            cause trouble if the farmer tries to pass through the
+            subsystem. They will cause trouble for neighbouring
+            systems, that will throw them off balance and cause
+            them to decay to desert.
+              
          - The barn has e.g five 'evolution' containers.
          - The farmer must go into the world to collect organisms and
             bring them back the farm to evolve them.
