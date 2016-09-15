@@ -262,6 +262,21 @@ Game v.1.1
               others ecosystem. Only top predators will be able to
               move and feed across subsystems. If a subsystem is not
               sustainable, it will slowly decay back to desert.
+          - Toppredators
+                - Don't have anyone eating them
+                - But can run into a fight with other toppredators competing
+                    for the same subsystem. They never die from this, but
+                    will run and be gone for a day or two. Which can
+                    cause subsystems to be unstable.
+                - Can only araise from organisms with high IQ, size and speed
+                - The user will need to assign them manually to the
+                    subsystems they should take care of
+                - They will only eat one organim per day, and never
+                    two days in a row from the same system.
+                - The player may therefore need to assing several
+                    top predators to the same systems, to ensure
+                    that the systems are drained from top organisms.
+                - They die from age, but then cubs take over.
           - Without top predators, the subsystems will produce giant
             vicious beasts from the systems top predators that will
             cause trouble if the farmer tries to pass through the
