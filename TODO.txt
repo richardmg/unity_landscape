@@ -260,6 +260,15 @@ Game v.1.1
                 type to the land, as if it had nothing todo with the
                 type it was cloned from. And as always, the change will
                 be mirrored to all lands of the same ground type.
+            - To sow an organism, the player will need to go out in the
+                world, find the prey that the new organism should eat, and
+                release it on it. He can do this on any kind of organism,
+                bigger or smaller. And he can do it several times on
+                differen preys. The latter would mean that the same
+                organism can eat several kinds of food.
+                    - This will create a prey-predator tree. It should be
+                        possible for the user to show the tree to get
+                        a current overview.
          - To collect an organism, the farmer needs to take a cell sample
             that can be brought back to the frame to brew a new egg from.
          - To be able to take a sample, the farmer must either sneak up
