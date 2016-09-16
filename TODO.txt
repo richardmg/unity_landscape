@@ -433,6 +433,73 @@ Game v.1.1
                 which it swithces to next day immediatly (and he is
                 healed of any damage, the same with followers).
 
+v.1.2
+---------------
+    - The farm is mostly sourrounded by desert. And out in the world lies many
+        perils; dark woods, swamps, mountains etc. And they contain dangerous
+        creatures. The desert is mostly just around the farm, and a few spots
+        here and there in the world. It needs to be taken care of otherwise it
+        will overtake the farm, which ends the game early.
+    - For this to be a game, the other perils in the world needs to evolve too.
+        They start off slow, but will create big and vicious organisms that
+        comes out at night and attack the farm. The farm can stand smaller attacks
+        (end heal in the morning), but will not stand hordes of beasts.
+    - A first, the player needs to create small ecosystems where there is desert.
+        He puts soil on the ground, and create/sow grass, trees, flowers etc.
+    - But the real point of the ecosystems are to create a breeding ground for
+        animals that can be used to protect the farm from the perils in
+        the world. And important here is that a single ecosystem can either
+        end up with a specie that has high IQ, is fast or is big and strong.
+        But not all at the same time. In pratice the player will control
+        the ecosystem from which organisms he breed there. It will become a
+        hierarchy where each level will be either a bit smarter, stronger, contain
+        more eyes or limbs, or be faster than the level below. There can be a
+        lot to choose from. And at the top of the food chain there will be a
+        top predator (level 0 - p0).
+    - The hierarchy can only be a fixed
+        number of levels high (e.g five). Some perks might require a lot of
+        different vegetables, other will have few. Some might need very colorful
+        bugs, big trees, small bushes etc. None of the species will ever leave
+        the subsystem. When an ecosystem has filled up the hierarchy, the desert
+        cannot overrun it.
+    - At the level above the ecosystems comes predators (p1) that can wander around and
+        feed on toppreys from several different ecosystems. Those animals will inherit the
+        perks of the prey the feed. The user must therefore choose which subsystems
+        the animals belong to, and how they mix the perks from the toppredators
+        in the ecosystems.
+    - In theory, the player can create more layers on top of this again
+        that feeds on p2 etc. Since a p1 requires e.g three ecosystems to exist, it
+        means that a p3, if he needs three p2s to exist, you need nine
+        ecosystems. 
+
+v.3
+    - The game begins with the farm being sourrounded by a world filled with different
+        kinds of beatiful lands; forrests, swamps, meadows, waters, etc. And each piece
+        of land (not too big) contains a new varity of bugs and organisms.
+    - The challende is that all those small species will grow bigger and bigger. And
+        become dangerous and attack the farmers animals that wanders around feeding.
+        The farmers animals will reproduce, but at some point the rate of attacks will
+        outnumber the reproduction. And the game will move to an end.
+    - The farmer will therefore need to take advantage of the different ecosystems already
+        out there, and produce new organisms that can live side by side with the
+        preditors, and take them out.
+    - He can produce new kind of organisms in his farm by taking cell samples from any
+        kind of species out there and mix them, two and two. He can choose which
+        parts to mix, but only one thing at a time (legs, teeth, eyes, IQ, size, etc).
+        And he also needs to choose what pray the new specious predates. The new species
+        will turn into an egg he can crack wherever he likes, but of course it makes most
+        sense to do it in the habitat of the species he needs to conquer. After a new
+        specious is created, the samples will be used up, and he will need to go out and
+        get new ones (including the one he just created, to further evolve it).
+    - To take a cell sample, he will need to sneak up on the organism.
+    - The fun part of the game will be to walk around in the world, sneak up on species,
+        take samples, and mix new species from the samples back at the farm. And then
+        redraw their appearance, and later release them back into the world.
+    - If a new species completly removes its prey, they will take over the role of the
+        prey and become a new threat that grows and becomes vicious. So the farmer should
+        not create predators that becomes too strong, or otherwise he'll bring the
+        ecosystem out of balance and just create new and more dangerous threats.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
