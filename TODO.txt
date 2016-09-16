@@ -500,6 +500,32 @@ v.3
         not create predators that becomes too strong, or otherwise he'll bring the
         ecosystem out of balance and just create new and more dangerous threats.
 
+Game v.4
+---------------
+    - The game is only about creativety. No ecosystems.
+    - Still, the game has a house that acts as a staring point. The game will let you
+        create other houses as well.
+    - Genereate a prebuild world with grass, flowers, trees etc. The player can walk
+        around and add or remove anything he sees.
+    - Perhaps he should be able to raise or lower the ground, and specify ground type; mud, grass, stone, water, moutainrock.
+        - The player walks around and draws the flora and fauna. No restrictions regarding size etc. 
+        - The user can draw any kind of drawings, which should be "body" parts.
+        - He can then compose a character by putting together body / construction parts freely.
+        - Then he spesifies what the character is most like; human, dog, bird, balloon, car,
+            cloud, house, fence, spider, grass, tree, etc.
+            - note that specifying the type should be independent of how it is composed. Altough
+                the game can by default suggest the releated character template.
+                This means that you can have a charater that looks like a shark, but acts as a balloon.
+        - Then he specifies a few charaterisics; nice-agressive, restless-lazy, fast-slow, etc.
+            This goes for all types, even trees or houses.
+        - He can then spawn the character in the world wherever he likes, or do an auto spread.
+        - And thats it. This way the player can build his own dream world consisting
+            of his own trees, flowers and animals, perhaps even fences, houses, cars etc.
+        - The player can interact with all character types. Cars can be driven, houses can be
+            slept in, birds, horses, any kind of animal can be ridden if its big enough, dogs
+            will be charming and playful, guns can be fired, trees and grass will sway in the wind.
+        - The player can tell characters to stay together; an agressive monkey can have a pig as a pet, and carry a banana or a gun.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
