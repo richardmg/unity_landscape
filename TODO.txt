@@ -545,8 +545,12 @@ Game v4.1
     ----------
     - The player must find a real instance of a template in the landscape
         (sneak/attack, and take a sample) before he can create his own variants.
-    - All new organisms must have a prey assigned. They user chooses a prey by
-        finding it in the world, and place the egg nearby.
+    - All new organisms must have a preferred food source. They can be either vegan or
+        non-vegan. The player go out in the world where he wants the organism to
+        live, and place the egg. An non-vegan organism will only attack smaller
+        organims, but always prefer one than is almost as big as itself.
+     - If a predator runs out of food, it will turn agressive, and will start eating
+        non-vegan food and also do canibalism. And the world will slowly decay.
     - An organism feeds and reproduces according to his size. Small organism have
         a high rate, large a low rate. If there is not a balance of predators and
         preys, a specie will reproduce too much, and cause the land to overflow
@@ -555,6 +559,15 @@ Game v4.1
         more agressive will dominate a bit more.
     - The game is balanced at start, and the user starts by sampling an organism
         and creaing his first permutation.
+    - When creating a template permuation, he can choose to increase or decrease
+        size a tiny bit. That way, organims can grow huge after hours of playtime.
+        After creating a new species, it will become a new template that needs to
+        be sampled to be able to further increase it's size.
+    - Other metrics, such as personality settings, can also be adjusted a bit for
+        each permutation. That is, an organism cannot be converted from evil to nice
+        in just one permutation.
+    - Also flowers and trees can be agressive. They will try to hit the farmer when
+        he walks by. A flower that is nice will instead lean forward for a hug.
 
 Technical
 ---------------
