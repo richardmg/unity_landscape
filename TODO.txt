@@ -551,6 +551,11 @@ Game v4.1
         organims, but always prefer one than is almost as big as itself.
      - If a predator runs out of food, it will turn agressive, and will start eating
         non-vegan food and also do canibalism. And the world will slowly decay.
+     - The bigger the organism, the more space it needs (that is, two organisms
+        can stay close as long as there is some free room sourrounding them).
+        Otherwise they start to fight. E.g a hurd of horses can be close, but
+        they need a lot of space around them. The more agressive, the more
+        space they need.
     - An organism feeds and reproduces according to his size. Small organism have
         a high rate, large a low rate. If there is not a balance of predators and
         preys, a specie will reproduce too much, and cause the land to overflow
