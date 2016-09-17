@@ -526,6 +526,36 @@ Game v.4
             will be charming and playful, guns can be fired, trees and grass will sway in the wind.
         - The player can tell characters to stay together; an agressive monkey can have a pig as a pet, and carry a banana or a gun.
 
+Game v4.1
+-----------------
+    - The game consist of a premade world
+    Creative mode:
+    ---------------
+    - The player can create organisms at will, no restrictions
+    - But, all available organisms has a template with a set of
+        drawings the user must draw. E.g a dog will have four
+        drawings; Head, body leg, tail. Each drawing is prefilled
+        with default drawing, making it easy to change. He can
+        just flick and draw between the drawings until he is satisfied.
+        - And the user will give all new organisms a personality.
+    - I can generate a whole lot of such templates, orgnaisms with one
+        leg, two legs, four legs, eight legs etc. Trees, flowers...
+    - In creative, the user creates individual organisms, no reproduction or predators.
+    Game mode:
+    ----------
+    - The player must find a real instance of a template in the landscape
+        (sneak/attack, and take a sample) before he can create his own variants.
+    - All new organisms must have a prey assigned. They user chooses a prey by
+        finding it in the world, and place the egg nearby.
+    - An organism feeds and reproduces according to his size. Small organism have
+        a high rate, large a low rate. If there is not a balance of predators and
+        preys, a specie will reproduce too much, and cause the land to overflow
+        with it like a virus.
+    - If two organisms feed on the same pray (e.g grass, trees), organims that are
+        more agressive will dominate a bit more.
+    - The game is balanced at start, and the user starts by sampling an organism
+        and creaing his first permutation.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
