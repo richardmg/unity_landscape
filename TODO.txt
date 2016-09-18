@@ -538,7 +538,7 @@ Game v4.1
         with default drawing, making it easy to change. He can
         just flick and draw between the drawings until he is satisfied.
         - And the user will give all new organisms a personality.
-    - I can generate a whole lot of such templates, orgnaisms with one
+    - I can generate a whole lot of such templates, orgnisms with one
         leg, two legs, four legs, eight legs etc. Trees, flowers...
     - In creative, the user creates individual organisms, no reproduction or predators.
     Game mode:
@@ -573,6 +573,8 @@ Game v4.1
         in just one permutation.
     - Also flowers and trees can be agressive. They will try to hit the farmer when
         he walks by. A flower that is nice will instead lean forward for a hug.
+    - Some organisms/templates are only available at certain times. E.g zombies comes
+        up from the ground close to swamps only at full moon etc.
 
 Technical
 ---------------
