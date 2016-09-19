@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 using LandscapeType = System.Int32;
 
@@ -8,6 +9,17 @@ public class LandscapePiece
 	public LandscapeType landscapeType;
 	public float density;
 	public float height;
+}
+
+public class WorldObject
+{
+	public Vector2 pos;
+	public string index;
+}
+
+public class WorldTile
+{
+	public List<WorldObject> objects = new List<WorldObject>();
 }
 
 public class LandscapeConstructor : MonoBehaviour {
@@ -35,6 +47,8 @@ public class LandscapeConstructor : MonoBehaviour {
 	public const LandscapeType kMeadow = 3;
 	public const LandscapeType kForrest = 4;
 	public const LandscapeType kLake = 5;
+
+	private WorldTile[,] worldMatrix = new WorldTile[10, 10];
 
 	static public LandscapeConstructor instance;
 	public LandscapeConstructor()
