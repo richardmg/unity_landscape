@@ -576,6 +576,49 @@ Game v4.1
     - Some organisms/templates are only available at certain times. E.g zombies comes
         up from the ground close to swamps only at full moon etc.
 
+Game 5.
+    - Drawing game
+    - The user can choose from premade templates, and draw objects that he can place
+        in the world and interact with.
+    - This way he can draw his own world consisting of his own flora, fauna and objects.
+    - He should be able to create annotations in the landscape for use as memory map, which
+        is a bit hidden point; being able to create a virutal world where you can store
+        and organize information.
+    - All objects, plants or animals, will have a personality and a strength. Agressive
+        objects will attack other objects (that can move, including the player), and perhaps
+        kill them if they are agressive enough, and their strength is greater. In that case, the
+        killed object will just respawn some minutes later at the place where the player
+        first created them. The player is by default quite strong, but can also pick up
+        weapons and armour.
+
+    - This system should in place first, before I even consider more about evolution and
+        game aspects.
+
+    Technical approach:
+        - Each tile in the world has a list of objects in contains. When drawing the tile
+            it should just draw the objects. Adding or removing objects would be as simple
+            as adding removing objects from the list.
+         - I need three lists, one with dynamic objects that needs to be ticked, and
+            one with static objects. The third is for pregenerated objects that has been removed. 
+                - Tiles that are left behind from the tile engine needs to be persisted
+                    somehow, the same way tiles that enter the engine must be loaded.
+                - This means that I need a separate world-tile matrix that keeps track
+                    of all objects, with embedded loading/saving mechanisms. The tiles that
+                    are drawn will just fetch the list of objects from this structure.
+                - This will be the UI independend data model. The UI tile engine should
+                    have the same tile size as the data model, so the list of objects is
+                    1-1. If needed, object culling should be done in the UI tile.
+                - An object in the list can also be a "remove" instuction. So we don't have
+                    to prefill the object list with auto generated trees and grass, but
+                    instead just mark them as removed when the user removes them.
+        - Implement point and spawn functionallity for trees from within the game.
+        - Implement save and restore functionallity early on. This will for sure save me
+            time later.
+        - Hardcode dog template.
+        - Because of behaviour differences, it might be worthwile to let animals
+            that looks similar but act different be different templates. E.g a stag will
+            use his antlers while fighting, a dog will not.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
