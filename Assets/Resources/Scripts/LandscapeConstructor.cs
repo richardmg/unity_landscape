@@ -11,15 +11,20 @@ public class LandscapePiece
 	public float height;
 }
 
-public class WorldObject
+public class Thing
 {
-	public Vector2 pos;
+	public Vector2 worldPos;
 	public string index;
+}
+
+public interface ThingSubscriber
+{
+	void newThingAdded(Thing thing);
 }
 
 public class WorldTile
 {
-	public List<WorldObject> objects = new List<WorldObject>();
+	public List<Thing> things = new List<Thing>();
 }
 
 public class LandscapeConstructor : MonoBehaviour {
@@ -48,12 +53,25 @@ public class LandscapeConstructor : MonoBehaviour {
 	public const LandscapeType kForrest = 4;
 	public const LandscapeType kLake = 5;
 
-	private WorldTile[,] worldMatrix = new WorldTile[10, 10];
+	private WorldTile[,] worldMatrix;
+	private List<ThingSubscriber> thingSubscribers;
 
 	static public LandscapeConstructor instance;
-	public LandscapeConstructor()
+
+	void Awake()
 	{
 		instance = this;
+
+		thingSubscribers = new List<ThingSubscriber>();
+		foreach (ThingSubscriber subscriber in GetComponentsInChildren<ThingSubscriber>())
+			thingSubscribers.Add(subscriber);
+
+		worldMatrix = new WorldTile[10, 10];
+		for (int x = 0; x < worldMatrix.GetLength(0); ++x) {
+			for (int y = 0; y < worldMatrix.GetLength(1); ++y) {
+				worldMatrix[x, y] = new WorldTile();
+			}
+		}
 	}
 
 	void OnValidate()
@@ -83,5 +101,12 @@ public class LandscapeConstructor : MonoBehaviour {
 			return kForrest;
 		else
 			return kMeadow;
+	}
+
+	public void addThing(Thing thing)
+	{
+		worldMatrix[0, 0].things.Add(thing);
+		foreach (ThingSubscriber subscriber in thingSubscribers)
+			subscriber.newThingAdded(thing);	
 	}
 }

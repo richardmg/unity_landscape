@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer 
+public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber 
 {
 	[Range (1, 100)]
 	public int objectCount = 4;
@@ -38,6 +38,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		m_voxelObjectMatrix = new VoxelObject[tileCount, tileCount];
 
+		// Hide prefab so we don't create the voxel objects upon construction
+		prefab.SetActive(false);
+
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject goTile = new GameObject();
@@ -56,6 +59,19 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 		PivotAdjustment pa = prefab.GetComponent<PivotAdjustment>();
 		if (pa != null)
 			m_pivotAdjustmentY = pa.adjustY;
+	}
+
+	public void newThingAdded(Thing thing)
+	{
+		Vector2 matrixCoord = new Vector2();
+		m_tileEngine.matrixCoordFromWorldPos(thing.worldPos, ref matrixCoord);
+
+		GameObject goTile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+		GameObject newThing = createVoxelObject(goTile, "Created on the fly!");	
+		newThing.transform.position = thing.worldPos;
+
+		VoxelObject vo = m_voxelObjectMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+		vo.rebuildStandAlone();
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
@@ -80,20 +96,22 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer
 
 	private void initVoxelObjects(GameObject goTile)
 	{
-		// Hide prefab so we don't create the voxel objects upon construction
-		prefab.SetActive(false);
-
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				GameObject go = new GameObject();
-				go.name = "VoxelObject: " + x + ", " + z;
-				go.transform.parent = goTile.transform;
-				VoxelObject vo = go.AddComponent<VoxelObject>();
-				vo.setIndex(prefab.name);
-				vo.transform.localScale = prefab.transform.localScale;
-				vo.gameObject.SetActive(false);
+				createVoxelObject(goTile, "VoxelObject: " + x + ", " + z);
 			}
 		}
+	}
+
+	private GameObject createVoxelObject(GameObject goTile, string name)
+	{
+		GameObject go = new GameObject(name);
+		go.transform.parent = goTile.transform;
+		VoxelObject vo = go.AddComponent<VoxelObject>();
+		vo.setIndex(prefab.name);
+		vo.transform.localScale = prefab.transform.localScale;
+		vo.gameObject.SetActive(false);
+		return go;
 	}
 
 	private void moveVoxelObjects(GameObject goTile)
