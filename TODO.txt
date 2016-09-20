@@ -584,14 +584,21 @@ Game 5.
     - He should be able to create annotations in the landscape for use as memory map, which
         is a bit hidden point; being able to create a virutal world where you can store
         and organize information.
-    - All objects, plants or animals, will have a personality and a strength. Agressive
-        objects will attack other objects (that can move, including the player), and perhaps
+    - All objects, plants, animals, cars, will have a
+        1. personality
+        2. strength
+        3. life
+        4. Type. The type is by default the same as the template. But it would be fun
+            if you could e.g draw a car template, but use a bird type. Then you have
+            flying cars (the spin their weels when flying instead of flapping their wings).
+        Agressive objects will attack other objects (that can move, including the player), and perhaps
         kill them if they are agressive enough, and their strength is greater. In that case, the
         killed object will just respawn some minutes later at the place where the player
         first created them. The player is by default quite strong, but can also pick up
-        weapons and armour.
+        weapons and armour. How fast an object dies depends on its life. Each time the object
+        gets hit by something, some life will drain depending on the impact.
 
-    - This system should in place first, before I even consider more about evolution and
+    - This system should be in place first, before I even consider more about evolution and
         game aspects.
 
     Technical approach:
