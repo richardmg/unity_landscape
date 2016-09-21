@@ -43,16 +43,16 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				GameObject goTile = new GameObject();
-				goTile.name = "Tile " + x + ", " + z;
-				goTile.transform.parent = transform;
-				m_tileMatrix[x, z] = goTile;
+				GameObject tile = new GameObject();
+				tile.name = "Tile " + x + ", " + z;
+				tile.transform.parent = transform;
+				m_tileMatrix[x, z] = tile;
 
-				VoxelObject vo = goTile.AddComponent<VoxelObject>();
+				VoxelObject vo = tile.AddComponent<VoxelObject>();
 				m_voxelObjectMatrix[x, z] = vo;
 				vo.setIndex(VoxelObject.indexToString(VoxelObject.kIndexTopLevel));
 				vo.initAsStandAlone();
-				initVoxelObjects(goTile);
+				initVoxelObjects(tile);
 			}
 		}
 
@@ -66,17 +66,17 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		// Find out which tile is currently under the new things position
 		Vector2 matrixCoord = new Vector2();
 		m_tileEngine.matrixCoordFromWorldPos(thing.worldPos, ref matrixCoord);
-		GameObject goTile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 
 		// Create and position an instance of the thing as a child of the tile
-		GameObject newThing = createVoxelObject(goTile, "Created on the fly!");	
+		GameObject newThing = createVoxelObject(tile, "Created on the fly!");	
 		newThing.transform.position = thing.worldPos;
 
 		// Now that the tile has a new child, rebuild it
 		VoxelObject vo = m_voxelObjectMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 		vo.rebuildStandAlone();
 
-//		Debug.Log("Added " + thing.index + " in tile " + goTile.name + " at world pos " + thing.worldPos);
+//		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
@@ -99,19 +99,19 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		}
 	}
 
-	private void initVoxelObjects(GameObject goTile)
+	private void initVoxelObjects(GameObject tile)
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createVoxelObject(goTile, "VoxelObject: " + x + ", " + z);
+				createVoxelObject(tile, "VoxelObject: " + x + ", " + z);
 			}
 		}
 	}
 
-	private GameObject createVoxelObject(GameObject goTile, string name)
+	private GameObject createVoxelObject(GameObject tile, string name)
 	{
 		GameObject go = new GameObject(name);
-		go.transform.parent = goTile.transform;
+		go.transform.parent = tile.transform;
 		VoxelObject vo = go.AddComponent<VoxelObject>();
 		vo.setIndex(prefab.name);
 		vo.transform.localScale = prefab.transform.localScale;
@@ -119,12 +119,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		return go;
 	}
 
-	private void moveVoxelObjects(GameObject goTile)
+	private void moveVoxelObjects(GameObject tile)
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				Vector3 worldPos = goTile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
-				Transform voTransform = goTile.transform.GetChild((int)(z * objectCount) + x);
+				Vector3 worldPos = tile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
+				Transform voTransform = tile.transform.GetChild((int)(z * objectCount) + x);
 				int type = LandscapeConstructor.instance.getLandscapeType(worldPos);
 				if (type == LandscapeConstructor.kForrest) {
 					worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + m_pivotAdjustmentY;
