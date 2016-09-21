@@ -63,15 +63,20 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 
 	public void newThingAdded(Thing thing)
 	{
+		// Find out which tile is currently under the new things position
 		Vector2 matrixCoord = new Vector2();
 		m_tileEngine.matrixCoordFromWorldPos(thing.worldPos, ref matrixCoord);
-
 		GameObject goTile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+
+		// Create and position an instance of the thing as a child of the tile
 		GameObject newThing = createVoxelObject(goTile, "Created on the fly!");	
 		newThing.transform.position = thing.worldPos;
 
+		// Now that the tile has a new child, rebuild it
 		VoxelObject vo = m_voxelObjectMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 		vo.rebuildStandAlone();
+
+		Debug.Log("Added " + thing.index + " in tile " + goTile.name);
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)

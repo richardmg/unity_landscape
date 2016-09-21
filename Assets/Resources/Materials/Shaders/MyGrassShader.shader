@@ -1,4 +1,6 @@
-﻿ Shader"Custom/MyGrassShader" {
+﻿// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
+
+ Shader"Custom/MyGrassShader" {
  
  Properties {
 	 _Color ("Main Color",Color ) = (1, 1, 1, 1)
@@ -83,7 +85,7 @@
 		 waveMove.x = dot(s, _waveXmove * _WindDirectionx);
 		 waveMove.z = dot(s, _waveZmove * _WindDirectionz);
 
-		 v.vertex.xz -= mul((float3x3) _World2Object, waveMove).xz;
+		 v.vertex.xz -= mul((float3x3) unity_WorldToObject, waveMove).xz;
 	 }
 
 	 void surf (Input IN ,inout SurfaceOutputStandard o) {

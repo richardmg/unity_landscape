@@ -1,4 +1,6 @@
-﻿#include "UnityCG.cginc"
+﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+
+#include "UnityCG.cginc"
 #define M_PI 3.1415926535897932384626433832795
 
 float _Stripes;
@@ -106,7 +108,7 @@ inline float3 uvClamped(v2f i)
 
 inline int isBackface(float4 vertex, float3 worldNormal)
 {
-	float3 worldPos = mul(_Object2World, vertex).xyz;
+	float3 worldPos = mul(unity_ObjectToWorld, vertex).xyz;
 	float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
     return if_else(if_gt(dot(worldNormal, worldViewDir), 0), 0, 1); 
 }
@@ -118,7 +120,7 @@ inline v2f voxelobject_vert(appdata v)
 
 	v2f o;
 	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
-	o.normal = mul(_Object2World, float4(v.normal, 0)).xyz;
+	o.normal = mul(unity_ObjectToWorld, float4(v.normal, 0)).xyz;
 	o.objNormal = normalForCode[normalCode];
 	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
