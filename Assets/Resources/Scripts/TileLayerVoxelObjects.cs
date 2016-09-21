@@ -76,7 +76,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		VoxelObject vo = m_voxelObjectMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 		vo.rebuildStandAlone();
 
-		Debug.Log("Added " + thing.index + " in tile " + goTile.name);
+//		Debug.Log("Added " + thing.index + " in tile " + goTile.name + " at world pos " + thing.worldPos);
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)

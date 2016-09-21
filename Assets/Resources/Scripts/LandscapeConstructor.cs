@@ -13,7 +13,7 @@ public class LandscapePiece
 
 public class Thing
 {
-	public Vector2 worldPos;
+	public Vector3 worldPos;
 	public string index;
 }
 
