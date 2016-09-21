@@ -60,7 +60,7 @@ public class TileEngine : MonoBehaviour {
 		updateAllTiles();
 	}
 
-	void Start()
+	void Awake()
 	{
 		removeAllTiles();
 		init();

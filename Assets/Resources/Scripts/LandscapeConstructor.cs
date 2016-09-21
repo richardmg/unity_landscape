@@ -58,10 +58,13 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	static public LandscapeConstructor instance;
 
-	void Awake()
+	public LandscapeConstructor()
 	{
 		instance = this;
+	}
 
+	void Awake()
+	{
 		thingSubscribers = new List<ThingSubscriber>();
 		foreach (ThingSubscriber subscriber in GetComponentsInChildren<ThingSubscriber>())
 			thingSubscribers.Add(subscriber);
