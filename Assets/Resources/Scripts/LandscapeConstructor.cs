@@ -65,10 +65,12 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	void Awake()
 	{
+		// Find all decendants that wants to know when things change
 		thingSubscribers = new List<ThingSubscriber>();
 		foreach (ThingSubscriber subscriber in GetComponentsInChildren<ThingSubscriber>())
 			thingSubscribers.Add(subscriber);
 
+		// Create a matrix that holds all explicit things
 		worldMatrix = new WorldTile[10, 10];
 		for (int x = 0; x < worldMatrix.GetLength(0); ++x) {
 			for (int y = 0; y < worldMatrix.GetLength(1); ++y) {
