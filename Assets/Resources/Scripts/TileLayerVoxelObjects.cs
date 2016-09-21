@@ -69,7 +69,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 
 		// Create and position an instance of the thing as a child of the tile
-		GameObject newThing = createVoxelObject(tile, "Created on the fly!");	
+		GameObject newThing = createVoxelObject(tile, thing.index, "Created on the fly!");
 		newThing.transform.position = thing.worldPos;
 
 		// Now that the tile has a new child, rebuild it
@@ -103,17 +103,17 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createVoxelObject(tile, "VoxelObject: " + x + ", " + z);
+				createVoxelObject(tile, prefab.name, "VoxelObject: " + x + ", " + z);
 			}
 		}
 	}
 
-	private GameObject createVoxelObject(GameObject tile, string name)
+	private GameObject createVoxelObject(GameObject tile, string index, string name)
 	{
 		GameObject go = new GameObject(name);
 		go.transform.parent = tile.transform;
 		VoxelObject vo = go.AddComponent<VoxelObject>();
-		vo.setIndex(prefab.name);
+		vo.setIndex(index);
 		vo.transform.localScale = prefab.transform.localScale;
 		vo.gameObject.SetActive(false);
 		return go;
