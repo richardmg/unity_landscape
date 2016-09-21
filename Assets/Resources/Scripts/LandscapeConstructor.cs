@@ -60,6 +60,8 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	public LandscapeConstructor()
 	{
+		// Other gameobjects will need to use this object in their Awake
+		// functions. So make sure that we store the instance as early as possible
 		instance = this;
 	}
 
