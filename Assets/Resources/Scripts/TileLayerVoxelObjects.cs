@@ -83,9 +83,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	{
 		for (int i = 0; i < tilesToMove.Length; ++i) {
 			TileDescription desc = tilesToMove[i];
-			GameObject go = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			go.transform.position = desc.worldPos;
-			moveVoxelObjects(go);
+			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			tile.transform.position = desc.worldPos;
+			moveVoxelObjects(tile);
 			VoxelObject vo = m_voxelObjectMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			vo.rebuildStandAlone();
 		}
