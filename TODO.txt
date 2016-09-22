@@ -576,7 +576,7 @@ Game v4.1
     - Some organisms/templates are only available at certain times. E.g zombies comes
         up from the ground close to swamps only at full moon etc.
 
-Game 5.
+Game v5.
     - Drawing game
     - The user can choose from premade templates, and draw objects that he can place
         in the world and interact with.
@@ -625,6 +625,47 @@ Game 5.
         - Because of behaviour differences, it might be worthwile to let animals
             that looks similar but act different be different templates. E.g a stag will
             use his antlers while fighting, a dog will not.
+
+Game v6
+---------------
+    - Dumb farmer, or crashed space ship (or perhaps noahs spaceship ark)
+    - He has a set of blueprints (makes sense with noahs ark)
+    - He has some food and water in the beginning, but he will run out of
+        this after some time. So the initial point of the game is to start
+        create basic blueprints which can grow vegetables and worms for
+        him to eat. But this will attract foes from the forrest, which
+        will compete for the food. So he will need to create better
+        shelter and animals that can protect him.
+    - Either: each blueprint requires has a required dna. Noah needs to
+        go out on the planet and take cell samples of everything
+        he sees to find missing dna parts so he can reconstruct
+        a blueprint. The dna parts can be colors, so its easy to
+        spot which dna it contains.
+    - Or more simple: Each blueprint requires a set of diffedent colors.
+        The more advanced an organism is, the more colors needed.
+    - But animals created will need to feed, so he will need to start
+        lower in the food chain. Otherwise the animal will die out (or
+        perhaps he should not be allowed to create one in the first
+        place).
+    - So:
+        - all templates available in the farm / ship.
+        - he need to start at the bottom of the food chain. He cannot change prey / predator
+            relationships, but he can change personality.
+        - go around sample cells / dna / colors. A sample can only be used once.
+    - The world is filled with perils. Some colors are only carried by
+        big / dangerous creatures, and he needs help from created animals to
+        take them out (by growing them bigger than the prey. Perhaps the amount
+          of food available can determine the size in the end).
+    - He can farm colors. E.g create grass flowers with different sampled colors and
+        sow them close to the farm for easy access.
+    - every blueprint instance becomes either a seed or an egg that will grow when
+        sowed. At any time ha can harwest it and use it
+            - animals become followers
+            - trees, grass etc can be used to build shelter. Note that a tree is
+                abstract. It will look like whatever the player draws it to be
+                when fully grown. So it might end up looking like a door or a
+                bus sign. But also a tree is the food chain, and will depend on
+                e.g grass, dirt, beetles, worms, which is at the bottom.
 
 Technical
 ---------------
