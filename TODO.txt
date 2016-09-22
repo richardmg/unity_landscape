@@ -685,7 +685,8 @@ Game v7
     - The world is full of perils and mutants, so it will be hard to move
         too far without companion animals he creates that can do the fighting, or
         hold them at a distance while the player escapes. The mutants can be
-        random permutation of fossils and the species drawn by the user.
+        random permutation of fossils and the species drawn by the user. A mutant
+        without legs will just lie there "screaming".
     - If the player places an egg in an uncleared habitat, it will become a zombie.
     - The player can also find destroyed objects, like cars, baloons, torches
         in the world. They all contain one piece that is not broken out of many. As
@@ -706,18 +707,24 @@ Game v7
         will compete for the food. So he will need to create better
         shelter and animals that can protect him and other animals he creates.
     - The sky is clouded, except where the player has planted living organisms and
-        reach a certain level that has produces a sustaining ecosystem (trees, worms etc).
+        reach a certain level that has produces a sustainable ecosystem (trees, worms etc).
         This will make the skye blue, be a source of food and water, and the sun will shine trough.
-    - Whereever the sky is blue, it will be safe to linger and sleep.
+    - Whereever the sky is clear blue, it will be safe to linger and sleep.
     - The lower a species is on the food chain, the more ofter you will find them
         as "fossils" in the landscape.
     - The farmer will need to recreate the food chain for an animal to survive.
         Otherwise it will die. But in that case, sampling dna from the dead animal
-        is simple, so he should be up'n'running quite quick.
-    - When sampling a dna, you will know it's prey. But perhaps only one level. So
+        will contain all dna parts, so he should be up'n'running quite quick.
+    - When sampling a dna, you will also know it's prey. But perhaps only one level. So
         it becomes a puzzle on its own to recreate the food chain hierarchy.
     - Bigger animals (horses, cows etc) need it's own territory to force the player
         to clear more land. Perhaps this can be ensured through the food chain.
+    - Extra: the player can also sample dna from zombies / mutants and create eggs
+        with them. They naturally become a new instance of the same zombie. But
+        this time the egg can be placed behind fences as a freak show. Since a
+        zombie is alive, you get the full dna in one sample. There would otherwise
+        not be two mutants looking the same in the world, since they are always a
+        random mix of other species.
 
 Technical
 ---------------
