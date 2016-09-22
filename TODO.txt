@@ -635,13 +635,13 @@ Game v6
         create basic blueprints which can grow vegetables and worms for
         him to eat. But this will attract foes from the forrest, which
         will compete for the food. So he will need to create better
-        shelter and animals that can protect him.
+        shelter and animals that can protect him and other animals he creates.
     - Either: each blueprint requires has a required dna. Noah needs to
         go out on the planet and take cell samples of everything
         he sees to find missing dna parts so he can reconstruct
-        a blueprint. The dna parts can be colors, so its easy to
+        a blueprint. The dna parts are colors, so its easy to
         spot which dna it contains.
-    - Or more simple: Each blueprint requires a set of diffedent colors.
+    - Or more simple: Each blueprint requires a set of different colors.
         The more advanced an organism is, the more colors needed.
     - But animals created will need to feed, so he will need to start
         lower in the food chain. Otherwise the animal will die out (or
@@ -666,6 +666,42 @@ Game v6
                 when fully grown. So it might end up looking like a door or a
                 bus sign. But also a tree is the food chain, and will depend on
                 e.g grass, dirt, beetles, worms, which is at the bottom.
+
+Game v7
+    - Mancave
+    - Your'e (probably) the only one left after earth being hit by a meteor
+    - You have an mancave/lab where you can do gene manipulation
+    - He has some food and water in the beginning, but he will run out of this after some time.
+    - The world is burned and destoryed, and dead organisms lies spread here
+        and there. Each organism contains a part of the original dna that
+        the player can sample. When he has collected the full dna, he can
+        go back to the lab and recreate the organism.
+    - The world is full of perils and mutants, so it will be hard to move
+        too far without companion animals he creates that can do the fighting, or
+        hold them at a distance while the player escapes.
+    - The game is about restoring the world in general, and the area around the
+        mancave/farm in particular. He will convert an ashgray and dead world
+        into something colorful and alive.
+    - The more complex the organism, the more parts the dna consist of. And one
+        dead organism contains only one part of it (which is random).
+    - It should be easy to recreate grass and flowers, their dna should be only
+        a handful parts. And then he can sow them around the farm. This can be
+        the starting ground for more complex organisms, like worms, beetles, trees etc.
+    - So the initial point of the game is to start
+        create basic food which can grow vegetables and worms for
+        him to eat. But this will attract foes from the world, which
+        will compete for the food. So he will need to create better
+        shelter and animals that can protect him and other animals he creates.
+    - The sky is clouded, except where the player has planted living organisms. This
+        will make the skye blue, and the sun will shine trough.
+    - Whereever the sky is blue, it will be safe to linger and sleep.
+    - The lower a species is on the food chain, the more ofter you will find them
+        as "fossils" in the landscape.
+    - The farmer will need to recreate the food chain for an animal to survive.
+        Otherwise it will die. But in that case, sampling dna from the dead animal
+        is simple, so he should be up'n'running quite quick.
+    - When sampling a dna, you will know it's prey. But perhaps only one level. So
+        it becomes a puzzle on its own to recreate the food chain hierarchy.
 
 Technical
 ---------------
