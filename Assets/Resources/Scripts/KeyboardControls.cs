@@ -36,6 +36,7 @@ public class KeyboardControls : MonoBehaviour {
 	{
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane));
+//		Debug.DrawRay(ray.origin, ray.direction, Color.red, 5f);
         if (Physics.Raycast(ray, out hit)) {
 			worldPos = hit.point;
 			return true;
