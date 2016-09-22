@@ -677,14 +677,15 @@ Game v7
         the player can sample. When he has collected the full dna, he can
         go back to the lab and recreate the organism.
     - But he also need eggs where the dna can be insaminated. The player will need
-        to catch a chicken each time he wants an egg. Later he can choose to
-        farm a chicken garden for more easy access. Bigger animals might require
+        to catch a chicken (and kill it) each time he wants an egg cell. Later he
+        can choose to farm a chicken garden for more easy access. Bigger animals might require
         e.g ostrich eggs, but an ostrich is much harder to catch.
     - For an animal to reproduce, the player will need to create a male and a female.
     - The world is full of perils and mutants, so it will be hard to move
         too far without companion animals he creates that can do the fighting, or
         hold them at a distance while the player escapes. The mutants can be
         random permutation of fossils and the species drawn by the user.
+    - If the player places an egg in an uncleared habitat, it will become a zombie.
     - The game is about restoring the world in general, and the area around the
         mancave/farm in particular. He will convert an ashgray and dead world
         into something colorful and alive.
