@@ -686,6 +686,9 @@ Game v7
         hold them at a distance while the player escapes. The mutants can be
         random permutation of fossils and the species drawn by the user.
     - If the player places an egg in an uncleared habitat, it will become a zombie.
+    - The player can also find destroyed objects, like cars, baloons, torches, (guns?)
+        in the world. They all contain one piece that is not broken out of many. As
+        soon as he have all pieces, he can assemble it.
     - The game is about restoring the world in general, and the area around the
         mancave/farm in particular. He will convert an ashgray and dead world
         into something colorful and alive.
