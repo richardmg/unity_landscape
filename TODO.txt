@@ -668,22 +668,23 @@ Game v6
                 e.g grass, dirt, beetles, worms, which is at the bottom.
 
 Game v7
-    - Mancave
-    - Your'e (probably) the only one left after earth being hit by a meteor
-    - You have an mancave/lab where you can do gene manipulation
+    - You're (probably) the only one left after earth being hit by a meteor
+    - You have an farm/mancave/lab where you can do gene manipulation
+    - chickens and ostriches are running around, but perhaps as mutants.
     - He has some food and water in the beginning, but he will run out of this after some time.
     - The world is burned and destoryed, and dead organisms lies spread here
         and there. Each organism contains a part of the original dna that
         the player can sample. When he has collected the full dna, he can
         go back to the lab and recreate the organism.
-    - But he also need eggs where the dna can be insaminated. Only some of
-        the fossils have eggs (females), and he would need to collect those too.
-        It should be easy to find eggs, but the point here is to ensure that the
-        player cannot mass produce an animal.
+    - But he also need eggs where the dna can be insaminated. The player will need
+        to catch a chicken each time he wants an egg. Later he can choose to
+        farm a chicken garden for more easy access. Bigger animals might require
+        e.g ostrich eggs, but an ostrich is much harder to catch.
     - For an animal to reproduce, the player will need to create a male and a female.
     - The world is full of perils and mutants, so it will be hard to move
         too far without companion animals he creates that can do the fighting, or
-        hold them at a distance while the player escapes.
+        hold them at a distance while the player escapes. The mutants can be
+        random permutation of fossils and the species drawn by the user.
     - The game is about restoring the world in general, and the area around the
         mancave/farm in particular. He will convert an ashgray and dead world
         into something colorful and alive.
