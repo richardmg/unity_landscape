@@ -29,6 +29,11 @@ public class KeyboardControls : MonoBehaviour {
 			thing.worldPos = worldPos;
 			thing.index = c;
 			LandscapeConstructor.instance.addThing(thing);
+		} else if (Input.GetKeyDown(KeyCode.X)) {
+//			CharacterController controller = player.GetComponent<CharacterController>();
+//			Vector3 worldPos = player.transform.position;
+//			worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + 1;
+//			player.transform.position = worldPos;
 		}
 	}
 
