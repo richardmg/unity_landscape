@@ -149,7 +149,7 @@ fixed4 frag(v2f i) : SV_Target
 	float3 uvSubImageBottomLeft = subImageIndex * uvAtlasSubImageSize;
 
 	float3 uvSubImage = (i.uvAtlas - uvSubImageBottomLeft) / uvAtlasSubImageSize;
-	float3 voxel = min(uvSubImage * subImageSize, subImageSize - 1);
+	float3 voxel = min(uvSubImage * subImageSize, subImageSize - _ClampOffset);
 	float3 uvVoxel = frac(voxel);
 
  	float isLeftOrRightSide = if_neq(i.objNormal.x, 0);
@@ -160,6 +160,8 @@ fixed4 frag(v2f i) : SV_Target
 	fixed4 c = 0;
 	if (isFrontOrBackSide)
 		c = tex2Dlod(_DetailTex, float4(uvVoxel.xy, 0, 0));
+	else if (isLeftOrRightSide)
+		c = tex2Dlod(_DetailTex, float4(uvVoxel.zy, 0, 0));
 	else
 		c = tex2Dlod(_DetailTex, float4(uvVoxel.xz, 0, 0));
 
