@@ -115,7 +115,7 @@ inline int isBackface(float4 vertex, float3 worldNormal)
     return if_else(if_gt(dot(worldNormal, worldViewDir), 0), 0, 1); 
 }
 
-inline v2f voxelobject_vert(appdata v)
+v2f vert(appdata v)
 {
 	int normalCode = round(v.cubeDesc.b * _NormalCodeMaxValue);
 	float voxelDepth = round(v.cubeDesc.a * _VoxelDepthMaxValue);
@@ -137,7 +137,7 @@ inline v2f voxelobject_vert(appdata v)
 	return o;
 }
 
-inline fixed4 voxelobject_frag(v2f i)
+fixed4 frag(v2f i) : SV_Target
 {
 	float3 uvAtlasClamped = uvClamped(i);
 

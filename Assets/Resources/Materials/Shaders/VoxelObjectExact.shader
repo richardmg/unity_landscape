@@ -32,16 +32,6 @@
 			#define NO_DISCARD
 			#include "VoxelObject.cginc"
 
-			v2f vert(appdata v)
-			{
-				return voxelobject_vert(v);
-			}
-			
-			fixed4 frag(v2f i) : SV_Target
-			{
-				return voxelobject_frag(i);
-			}
-
 			ENDCG
 		}
 	}
