@@ -4,7 +4,6 @@
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_DetailTex ("Detail Texture", 2D) = "white" {}
-		_Stripes ("Stripes", Range(0, 0.1)) = 0.05
 		_BaseLight ("Base light", Range(0, 2)) = 0.85
 		_AmbientLight ("Ambient", Range(0, 2)) = 1.1
 		_Sunshine ("Sunshine", Range(0, 3)) = 1.6
