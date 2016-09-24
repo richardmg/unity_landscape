@@ -696,6 +696,10 @@ Game v7
     - The game is about restoring the world in general, and the area around the
         mancave/farm in particular. He will convert an ashgray and dead world
         into something colorful and alive.
+    - The part of the world that is dead, where the player can sample dna, will
+        be foggy and creepy, and contain zombies and oversized animals.
+    - The part of the world that the player has rebuildt will be sunny and
+        bright.
     - The more complex the organism, the more parts the dna consist of. And one
         dead organism contains only one part of it (which is random).
     - It should be easy to recreate grass and flowers, their dna should be only
