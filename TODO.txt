@@ -697,7 +697,9 @@ Game v7
         mancave/farm in particular. He will convert an ashgray and dead world
         into something colorful and alive.
     - The part of the world that is dead, where the player can sample dna, will
-        be foggy and creepy, and contain zombies and oversized animals.
+        be foggy and creepy, and contain zombies and oversized animals. Perhaps
+        everything should be black and white for artistic purposes (with red eyed
+          zombies as one of few exceptions).
     - The part of the world that the player has rebuildt will be sunny and
         bright.
     - The more complex the organism, the more parts the dna consist of. And one
