@@ -89,8 +89,7 @@ public class VoxelMeshFactory {
 
 	public void buildMesh()
 	{
-		startPixelX = (atlasIndex * Global.kSubImageWidth) % texture.width;
-		startPixelY = (int)((atlasIndex * Global.kSubImageWidth) / texture.width) * Global.kSubImageHeight;
+		Global.startPixelForIndex(atlasIndex, out startPixelX, out startPixelY);
 		cropRect = calculatecropRect();
 
 		if (useVolume && !kDisableVolume) {

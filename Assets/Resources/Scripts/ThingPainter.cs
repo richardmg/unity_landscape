@@ -10,8 +10,9 @@ public class ThingPainter : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		int startPixelX = (atlasIndex * Global.kSubImageWidth) % Global.kAtlasWidth;
-		int startPixelY = (int)((atlasIndex * Global.kSubImageWidth) / Global.kAtlasHeight) * Global.kSubImageHeight;
+		int startPixelX;
+		int startPixelY;
+		Global.startPixelForIndex(atlasIndex, out startPixelX, out startPixelY);
 
 		m_texture = new Texture2D(Global.kSubImageWidth, Global.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
