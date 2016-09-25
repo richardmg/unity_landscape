@@ -10,13 +10,13 @@ public class ThingPainter : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		int startPixelX;
-		int startPixelY;
-		Global.startPixelForIndex(atlasIndex, out startPixelX, out startPixelY);
+		int atlasPixelX;
+		int atlasPixelY;
+		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
 
 		m_texture = new Texture2D(Global.kSubImageWidth, Global.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
-		var pixels = atlas.GetPixels(startPixelX, startPixelY, Global.kSubImageWidth, Global.kSubImageHeight);
+		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight);
 		m_texture.SetPixels(pixels);
 //
 //		texture.SetPixel(0, 0, new Color(1.0f, 1.0f, 1.0f, 0.5f));

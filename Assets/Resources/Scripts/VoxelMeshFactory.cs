@@ -89,7 +89,7 @@ public class VoxelMeshFactory {
 
 	public void buildMesh()
 	{
-		Global.startPixelForIndex(atlasIndex, out startPixelX, out startPixelY);
+		Global.atlasPixelForIndex(atlasIndex, out startPixelX, out startPixelY);
 		cropRect = calculatecropRect();
 
 		if (useVolume && !kDisableVolume) {
