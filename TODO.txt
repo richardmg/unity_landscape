@@ -700,8 +700,7 @@ Game v7
         be foggy and creepy, and contain zombies and oversized animals. Perhaps
         everything should be black and white for artistic purposes (with red eyed
           zombies as one of few exceptions).
-    - The part of the world that the player has rebuildt will be sunny and
-        bright.
+    - The part of the world that the player has rebuildt will be sunny and bright.
     - The more complex the organism, the more parts the dna consist of. And one
         dead organism contains only one part of it (which is random).
     - It should be easy to recreate grass and flowers, their dna should be only
@@ -712,10 +711,12 @@ Game v7
         him to eat. But this will attract foes from the world, which
         will compete for the food. So he will need to create better
         shelter and animals that can protect him and other animals he creates.
-    - The sky is clouded, except where the player has planted living organisms and
+    - The world is foggy, except where the player has planted living organisms and
         reach a certain level that has produces a sustainable ecosystem (trees, worms etc).
-        This will make the skye blue, be a source of food and water, and the sun will shine trough.
+        This will make the world bright and sunny, be a source of food and water, and
+        the sun will shine trough.
     - Whereever the sky is clear blue, it will be safe to linger and sleep.
+        - The player will heal here, but can be attacked by normal animals.
     - The lower a species is on the food chain, the more ofter you will find them
         as "fossils" in the landscape.
     - The farmer will need to recreate the food chain for an animal to survive.
