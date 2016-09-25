@@ -8,19 +8,14 @@ public class ThingPainter : MonoBehaviour {
 
 	Texture2D m_texture;
 
-	const int kAtlasWidth = 64;
-	const int kAtlasHeight = 64;
-	const int kSubImageWidth = 16;
-	const int kSubImageHeight = 8;
-
 	// Use this for initialization
 	void Start () {
-		int startPixelX = (atlasIndex * kSubImageWidth) % kAtlasWidth;
-		int startPixelY = (int)((atlasIndex * kSubImageWidth) / kAtlasHeight) * kSubImageHeight;
+		int startPixelX = (atlasIndex * Global.kSubImageWidth) % Global.kAtlasWidth;
+		int startPixelY = (int)((atlasIndex * Global.kSubImageWidth) / Global.kAtlasHeight) * Global.kSubImageHeight;
 
-		m_texture = new Texture2D(kSubImageWidth, kSubImageHeight, TextureFormat.ARGB32, false);
+		m_texture = new Texture2D(Global.kSubImageWidth, Global.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
-		var pixels = atlas.GetPixels(startPixelX, startPixelY, kSubImageWidth, kSubImageHeight);
+		var pixels = atlas.GetPixels(startPixelX, startPixelY, Global.kSubImageWidth, Global.kSubImageHeight);
 		m_texture.SetPixels(pixels);
 //
 //		texture.SetPixel(0, 0, new Color(1.0f, 1.0f, 1.0f, 0.5f));
