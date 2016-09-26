@@ -700,6 +700,10 @@ Game v7
         be foggy and creepy, and contain zombies and oversized animals. Perhaps
         everything should be black and white for artistic purposes (with red eyed
           zombies as one of few exceptions).
+    - The further you go away from cleared areas, the more foggy it becomes. And
+        hence, more dangerous and easy to be suprised by foes.
+    - The player can find torches that will lit for a short while. A lit torch
+        will keep foes on a distance.
     - The part of the world that the player has rebuildt will be sunny and bright.
     - The more complex the organism, the more parts the dna consist of. And one
         dead organism contains only one part of it (which is random).
