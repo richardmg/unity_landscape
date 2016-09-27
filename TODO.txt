@@ -698,6 +698,9 @@ Game v7
     - The game is about restoring the world in general, and the area around the
         mancave/farm in particular. He will convert an ashgray and dead world
         into something colorful and alive.
+    - To clear an area, the player need to burn it. When doing so, everything
+        will be removed from the ground, and fresh soil will appear. But unless
+        he collect all objects and animal dna first, they will be gone too.
     - The part of the world that is dead, where the player can sample dna, will
         be foggy and creepy, and contain zombies and oversized animals. Perhaps
         everything should be black and white for artistic purposes (with red eyed
@@ -730,6 +733,12 @@ Game v7
         will contain all dna parts, so he should be up'n'running quite quick.
     - He can also sample from already created animals, and create a clone using a
         new egg. This is for easy modifications of existing animals.
+    - Perhaps creating variations of a collected animals should require no more than
+        just "create new" -> "choose animal/object" -> draw. Its suppose to be 
+        creative.
+    - But each type, regardless of how many variations created, will only eat one
+        other type. That way, he will need to balance the food chain. This is to
+        not make it to easy to cheat, e.g create a horse from a cow template etc.
     - For playability reasons, the user should also be allowed to redraw and polish
         animals that are already living. This is where the creative part wins over whats logical.
     - When sampling a dna, you will also know it's prey. But perhaps only one level. So
