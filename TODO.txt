@@ -731,6 +731,15 @@ Game v7
     - The farmer will need to recreate the food chain for an animal to survive.
         Otherwise it will die. But in that case, sampling dna from the dead animal
         will contain all dna parts, so he should be up'n'running quite quick.
+    - Perhaps a type eats x number of y each day. So to create that type, he
+        will also need to create x number of y first for it to live. Creating
+        two types will need twize as much. Whats missing can be easily listed
+        for the player.
+    - What an animal eats can perhaps be a food category that the prey is part
+        of. To not make it too hard.
+    - The animals don't really ever reproduce. If a prey is eaten, it will just
+        respawned somewhere else. In the end, as long as the math goes up, the
+        ecosystem will blossom.
     - He can also sample from already created animals, and create a clone using a
         new egg. This is for easy modifications of existing animals.
     - Perhaps creating variations of a collected animals should require no more than
