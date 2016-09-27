@@ -4,7 +4,8 @@ using UnityStandardAssets.Characters.FirstPerson;
 
 public class KeyboardControls : MonoBehaviour {
 	public GameObject player;
-	public GameObject thingPainter;
+	public GameObject uiFirstPerson;
+	public GameObject uiThingPainter;
 	public string t;
 	public string c;
 
@@ -36,7 +37,9 @@ public class KeyboardControls : MonoBehaviour {
 			controller.enabled = !controller.enabled;
 			Cursor.visible = !controller.enabled;
 			Cursor.lockState = CursorLockMode.None;
-			thingPainter.SetActive(!controller.enabled);
+
+			uiFirstPerson.SetActive(controller.enabled);
+			uiThingPainter.SetActive(!controller.enabled);
 		} else if (Input.GetKeyDown(KeyCode.X)) {
 //			CharacterController controller = player.GetComponent<CharacterController>();
 //			Vector3 worldPos = player.transform.position;
