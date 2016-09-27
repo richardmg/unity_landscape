@@ -684,9 +684,11 @@ Game v7
     - For an animal to reproduce, the player will need to create a male and a female.
     - The world is full of perils and mutants, so it will be hard to move
         too far without companion animals he creates that can do the fighting, or
-        hold them at a distance while the player escapes. The mutants can be
-        random permutation of fossils and the species drawn by the user. A mutant
-        without legs will just lie there "screaming".
+        hold them at a distance while the player escapes. He can also reconstruct
+        loads of objects that can help out. So the longer you play, the easier it
+        will be to wander in the fog.
+    - Mutants can be random permutation of fossils and the species drawn by the user.
+        A mutant without legs will just lie there "screaming".
     - If the player places an egg in an uncleared habitat, it will become a zombie.
     - The player can also find destroyed objects, like cars, baloons, torches
         in the world. They all contain one piece that is not broken out of many. As
@@ -726,6 +728,10 @@ Game v7
     - The farmer will need to recreate the food chain for an animal to survive.
         Otherwise it will die. But in that case, sampling dna from the dead animal
         will contain all dna parts, so he should be up'n'running quite quick.
+    - He can also sample from already created animals, and create a clone using a
+        new egg. This is for easy modifications of existing animals.
+    - For playability reasons, the user should also be allowed to redraw and polish
+        animals that are already living. This is where the creative part wins over whats logical.
     - When sampling a dna, you will also know it's prey. But perhaps only one level. So
         it becomes a puzzle on its own to recreate the food chain hierarchy.
     - Bigger animals (horses, cows etc) need it's own territory to force the player
