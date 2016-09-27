@@ -33,6 +33,16 @@ public class ThingPainter : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		Vector3[] corners = new Vector3[4];
+		RawImage image = GetComponent<RawImage>();
+		image.rectTransform.GetWorldCorners(corners);
+
+		Rect newRect = new Rect(corners[0], corners[2] - corners[0]);
+
+		//Get the pixel offset amount from the current mouse position to the left edge of the minimap
+		//rect transform.  And likewise for the y offset position.
+		float x = Input.mousePosition.x - newRect.x;
+		float y = Input.mousePosition.y - newRect.y;
+		print(x + ", " + y);
 	}
 }
