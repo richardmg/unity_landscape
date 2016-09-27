@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class KeyboardControls : MonoBehaviour {
 	public GameObject player;
+	public GameObject thingPainter;
 	public string t;
 	public string c;
 
@@ -29,6 +31,12 @@ public class KeyboardControls : MonoBehaviour {
 			thing.worldPos = worldPos;
 			thing.index = c;
 			LandscapeConstructor.instance.addThing(thing);
+		} else if (Input.GetKeyDown(KeyCode.Tab)) {
+			FirstPersonController controller = player.GetComponent<FirstPersonController>();
+			controller.enabled = !controller.enabled;
+			Cursor.visible = !controller.enabled;
+			Cursor.lockState = CursorLockMode.None;
+			thingPainter.SetActive(!controller.enabled);
 		} else if (Input.GetKeyDown(KeyCode.X)) {
 //			CharacterController controller = player.GetComponent<CharacterController>();
 //			Vector3 worldPos = player.transform.position;
