@@ -699,12 +699,23 @@ Game v7
         mancave/farm in particular. He will convert an ashgray and dead world
         into something colorful and alive.
     - To clear an area, the player need to burn it. When doing so, everything
-        will be removed from the ground, and fresh soil will appear. But unless
-        he collect all objects and animal dna first, they will be gone too.
+        will be removed from the ground, and fresh soil will appear underneath a
+        dim layer of fog (until grass etc is sowed). But unless
+        he collect all objects and animal dna first, they will be gone in the
+        fire too. Since the player wants to have many objects and animals to
+        draw and construct, he will prefer to explore the wasteland at irregular
+        times when he needs more stuff rather than burn it immediatly.
     - The part of the world that is dead, where the player can sample dna, will
         be foggy and creepy, and contain zombies and oversized animals. Perhaps
         everything should be black and white for artistic purposes (with red eyed
           zombies as one of few exceptions).
+    - If you are "killed", what should happend is:
+        - the farmer gets really dizzy, and hard to keep on a straigth line (like he's drunk).
+        - he looses all the gear collected since entering the wasteland.
+        - he cannot collect anything new before returning home.
+        - perhaps collectable things are almost impossible to spot as well.
+            (they don't "light" up like normal, and will be more or less hidden in
+             the black and white scene).
     - The further you go away from cleared areas, the more foggy it becomes. And
         hence, more dangerous and easy to be suprised by foes.
     - The player can find torches that will lit for a short while. A lit torch
