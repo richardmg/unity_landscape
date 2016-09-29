@@ -13,10 +13,10 @@ public class ThingPainter : MonoBehaviour {
 		int atlasPixelX;
 		int atlasPixelY;
 		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
+		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight);
 
 		m_texture = new Texture2D(Global.kSubImageWidth, Global.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
-		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight);
 		m_texture.SetPixels(pixels);
 //
 //		texture.SetPixel(0, 0, new Color(1.0f, 1.0f, 1.0f, 0.5f));
@@ -24,10 +24,7 @@ public class ThingPainter : MonoBehaviour {
 //		texture.SetPixel(0, 1, Color.white);
 //		texture.SetPixel(1, 1, Color.black);
 
-		// Apply all SetPixel calls
 		m_texture.Apply();
-
-		// connect texture to material of GameObject this script is attached to
 		GetComponent<RawImage>().texture = m_texture;
 	}
 	
