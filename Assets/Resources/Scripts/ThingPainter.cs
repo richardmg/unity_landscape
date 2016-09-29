@@ -34,12 +34,12 @@ public class ThingPainter : MonoBehaviour {
 		RawImage image = GetComponent<RawImage>();
 		image.rectTransform.GetWorldCorners(corners);
 
-		Rect newRect = new Rect(corners[0], corners[2] - corners[0]);
+		float uvx = (Input.mousePosition.x - corners[0].x) / (corners[2].x - corners[0].x);
+		float uvy = (Input.mousePosition.y - corners[0].y) / (corners[2].y - corners[0].y);
 
-		//Get the pixel offset amount from the current mouse position to the left edge of the minimap
-		//rect transform.  And likewise for the y offset position.
-		float x = Input.mousePosition.x - newRect.x;
-		float y = Input.mousePosition.y - newRect.y;
-		print(x + ", " + y);
+        int pixelX = (int)(uvx * Global.kSubImageWidth);
+        int pixelY = (int)(uvy * Global.kSubImageHeight);
+
+		print(pixelX + ", " + pixelY);
 	}
 }
