@@ -41,5 +41,8 @@ public class ThingPainter : MonoBehaviour {
         int pixelY = (int)(uvy * Global.kSubImageHeight);
 
 		print(pixelX + ", " + pixelY);
+
+		m_texture.SetPixel(pixelX, pixelY, Color.black);
+		m_texture.Apply();
 	}
 }
