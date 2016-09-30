@@ -765,12 +765,13 @@ Game v7
         it becomes a puzzle on its own to recreate the food chain hierarchy.
     - Bigger animals (horses, cows etc) need it's own territory to force the player
         to clear more land. Perhaps this can be ensured through the food chain.
-    - Extra: the player can also sample dna from zombies / mutants and create eggs
-        with them. They naturally become a new instance of the same zombie. But
-        this time the egg can be placed behind fences as a freak show. Since a
-        zombie is alive, you get the full dna in one sample. There would otherwise
-        not be two mutants looking the same in the world, since they are always a
-        random mix of other species.
+    - Some species are never found dead, but only as attacking zombies (in the wasteland).
+        E.g humans, lions, etc, bigger animals. So the player cannot sample from them until
+        he has weapons/traps that can be used to kill/catch them.
+    - Even tough the user can instance as many variations of a discovered species as he
+        wants, he will still be motivated to go looking for new ones, since the will
+        differ in size, part count and placement, behaviour, food, habitat (high, low,
+          among trees, in the open, in the grass, etc).
 
 Technical
 ---------------
