@@ -28,6 +28,9 @@ public class ThingPainter : MonoBehaviour {
 	}
 	
 	void Update () {
+		if (!Input.GetMouseButton(0))
+			return;
+
 		Vector3[] corners = new Vector3[4];
 		RawImage image = GetComponent<RawImage>();
 		image.rectTransform.GetWorldCorners(corners);
