@@ -38,6 +38,8 @@ public class ThingPainter : MonoBehaviour {
 
 		float uvx = (Input.mousePosition.x - corners[0].x) / (corners[2].x - corners[0].x);
 		float uvy = (Input.mousePosition.y - corners[0].y) / (corners[2].y - corners[0].y);
+		if (uvx < 0 || uvx > 1 || uvy < 0 || uvy > 1)
+			return;
 
         int pixelX = (int)(uvx * Global.kSubImageWidth);
         int pixelY = (int)(uvy * Global.kSubImageHeight);
@@ -45,4 +47,13 @@ public class ThingPainter : MonoBehaviour {
 		m_texture.SetPixel(pixelX, pixelY, Color.black);
 		m_texture.Apply();
 	}
+
+    public void save()
+    {
+		int atlasPixelX;
+		int atlasPixelY;
+		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
+		atlas.SetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight, m_texture.GetPixels());
+		atlas.Apply();
+    }
 }
