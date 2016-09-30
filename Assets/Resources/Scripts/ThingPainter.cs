@@ -8,8 +8,7 @@ public class ThingPainter : MonoBehaviour {
 
 	Texture2D m_texture;
 
-	// Use this for initialization
-	void Start () {
+	void OnEnable () {
 		int atlasPixelX;
 		int atlasPixelY;
 		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -28,7 +27,6 @@ public class ThingPainter : MonoBehaviour {
 		GetComponent<RawImage>().texture = m_texture;
 	}
 	
-	// Update is called once per frame
 	void Update () {
 		Vector3[] corners = new Vector3[4];
 		RawImage image = GetComponent<RawImage>();
