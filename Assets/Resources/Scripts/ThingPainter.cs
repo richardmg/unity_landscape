@@ -8,7 +8,8 @@ public class ThingPainter : MonoBehaviour {
 
 	Texture2D m_texture;
 
-	void OnEnable () {
+	void OnEnable ()
+    {
 		int atlasPixelX;
 		int atlasPixelY;
 		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -17,17 +18,13 @@ public class ThingPainter : MonoBehaviour {
 		m_texture = new Texture2D(Global.kSubImageWidth, Global.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
 		m_texture.SetPixels(pixels);
-//
-//		texture.SetPixel(0, 0, new Color(1.0f, 1.0f, 1.0f, 0.5f));
-//		texture.SetPixel(1, 0, Color.clear);
-//		texture.SetPixel(0, 1, Color.white);
-//		texture.SetPixel(1, 1, Color.black);
 
 		m_texture.Apply();
 		GetComponent<RawImage>().texture = m_texture;
 	}
 	
-	void Update () {
+	void Update ()
+    {
 		if (!Input.GetMouseButton(0))
 			return;
 
@@ -40,8 +37,6 @@ public class ThingPainter : MonoBehaviour {
 
         int pixelX = (int)(uvx * Global.kSubImageWidth);
         int pixelY = (int)(uvy * Global.kSubImageHeight);
-
-		print(pixelX + ", " + pixelY);
 
 		m_texture.SetPixel(pixelX, pixelY, Color.black);
 		m_texture.Apply();
