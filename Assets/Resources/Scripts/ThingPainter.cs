@@ -10,6 +10,10 @@ public class ThingPainter : MonoBehaviour {
 
 	void OnEnable ()
     {
+		// Use scale to enlarge the UI instead of the rect. At least not both.
+		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Global.kSubImageWidth);
+		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Global.kSubImageHeight);
+
 		int atlasPixelX;
 		int atlasPixelY;
 		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
