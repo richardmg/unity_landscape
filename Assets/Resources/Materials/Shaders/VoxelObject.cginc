@@ -156,14 +156,14 @@ fixed4 frag(v2f i) : SV_Target
  	float isBottomOrTopSide = if_neq(i.objNormal.y, 0);
  	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
 
-//	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
-	fixed4 c = 0;
-	if (isFrontOrBackSide)
-		c = tex2Dlod(_DetailTex, float4(uvVoxel.xy, 0, 0));
-	else if (isLeftOrRightSide)
-		c = tex2Dlod(_DetailTex, float4(uvVoxel.zy, 0, 0));
-	else
-		c = tex2Dlod(_DetailTex, float4(uvVoxel.xz, 0, 0));
+	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+//	fixed4 c = 0;
+//	if (isFrontOrBackSide)
+//		c = tex2Dlod(_DetailTex, float4(uvVoxel.xy, 0, 0));
+//	else if (isLeftOrRightSide)
+//		c = tex2Dlod(_DetailTex, float4(uvVoxel.zy, 0, 0));
+//	else
+//		c = tex2Dlod(_DetailTex, float4(uvVoxel.xz, 0, 0));
 
 	#ifndef NO_DISCARD
 		if (c.a == 0) {

@@ -5,6 +5,7 @@ using System.Collections;
 public class ThingPainter : MonoBehaviour {
 	public int atlasIndex = 0;
 	public Texture2D atlas;
+	public Color color = Color.black;
 
 	Texture2D m_texture;
 
@@ -26,7 +27,7 @@ public class ThingPainter : MonoBehaviour {
 		m_texture.Apply();
 		GetComponent<RawImage>().texture = m_texture;
 	}
-	
+
 	void Update ()
     {
 		if (!Input.GetMouseButton(0))
@@ -44,7 +45,7 @@ public class ThingPainter : MonoBehaviour {
         int pixelX = (int)(uvx * Global.kSubImageWidth);
         int pixelY = (int)(uvy * Global.kSubImageHeight);
 
-		m_texture.SetPixel(pixelX, pixelY, Color.black);
+		m_texture.SetPixel(pixelX, pixelY, color);
 		m_texture.Apply();
 	}
 
