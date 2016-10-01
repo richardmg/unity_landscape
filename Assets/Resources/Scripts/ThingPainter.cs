@@ -7,7 +7,9 @@ public class ThingPainter : MonoBehaviour {
 	public Color color = Color.black;
 
 	Texture2D m_texture;
-	int m_atlasIndex = VoxelObject.kUnknown;
+	int m_atlasStartIndex = VoxelObject.kUnknown;
+	int m_atlasEditIndex = VoxelObject.kUnknown;
+	VoxelObject[] m_voxelObjects;
 
 	void OnEnable ()
     {
@@ -18,6 +20,8 @@ public class ThingPainter : MonoBehaviour {
 
 	void Update ()
     {
+		if (m_atlasStartIndex < 0)
+			return;
 		if (!Input.GetMouseButton(0))
 			return;
 
@@ -37,9 +41,9 @@ public class ThingPainter : MonoBehaviour {
 		m_texture.Apply();
 	}
 
-	void setIndex(int atlasIndex)
+	void setEditIndex(int atlasIndex)
     {
-		m_atlasIndex = atlasIndex;
+		m_atlasEditIndex = atlasIndex;
 
 		int atlasPixelX, atlasPixelY;
 		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -53,40 +57,55 @@ public class ThingPainter : MonoBehaviour {
 		GetComponent<RawImage>().texture = m_texture;
 	}
 
-	public void thingToEditChanged(InputField thingNameField)
+	public void onIndexFieldEndInput(InputField indexField)
     {
-		GameObject prefab = VoxelObjectCache.instance().getPrefab(thingNameField.text);
+		GameObject prefab = VoxelObjectCache.instance().getPrefab(indexField.text);
 		if (prefab == null) {
 			print("Could not find prefab!");
 			return;
 		}
 
-		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
-		if (voxelObjects.Length == 0) {
+		m_voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
+		if (m_voxelObjects.Length == 0) {
 			print("Could not find any voxel objects in prefab!");
 			return;
 		}
 
-		for (int i = 0; i < voxelObjects.Length; ++i) {
-			string index = voxelObjects[0].index;
-			int atlasIndex = voxelObjects[i].atlasIndex();
-			print("found index: " + index + ", " + atlasIndex);
+		for (int i = 0; i < m_voxelObjects.Length; ++i) {
+			int atlasIndex = m_voxelObjects[i].atlasIndex();
 			if (atlasIndex < 0)
 				continue;
 
-			setIndex(atlasIndex);
+			m_atlasStartIndex = atlasIndex;
+			setEditIndex(atlasIndex);
 			break;
 		}
     }
 
-    public void save()
+	public void onPrevButtonClicked()
+	{
+		int index = m_atlasEditIndex - 1;
+		if (index < m_atlasStartIndex)
+			index = m_atlasStartIndex + m_voxelObjects.Length - 1;
+		setEditIndex(index);
+	}
+
+	public void onNextButtonClicked()
+	{
+		int index = m_atlasEditIndex + 1;
+		if (index >= m_atlasStartIndex + m_voxelObjects.Length - 1)
+			index = m_atlasStartIndex;
+		setEditIndex(index);
+	}
+
+	public void onSaveButtonClicked()
     {
-		if (m_atlasIndex < 0)
+		if (m_atlasStartIndex < 0)
 			return;
 		
 		int atlasPixelX;
 		int atlasPixelY;
-		Global.atlasPixelForIndex(m_atlasIndex, out atlasPixelX, out atlasPixelY);
+		Global.atlasPixelForIndex(m_atlasEditIndex, out atlasPixelX, out atlasPixelY);
 		atlas.SetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight, m_texture.GetPixels());
 		atlas.Apply();
     }
