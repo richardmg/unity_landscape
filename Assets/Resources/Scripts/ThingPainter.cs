@@ -49,9 +49,13 @@ public class ThingPainter : MonoBehaviour {
 		m_texture.Apply();
 	}
 
-    public void thingToEditChanged()
+	public void thingToEditChanged(InputField thingNameField)
     {
-//        GameObject prefab
+		GameObject prefab = VoxelObjectCache.instance().getPrefab(thingNameField.text);
+		if (prefab == null) {
+			print("Could not find prefab!");
+			return;
+		}
     }
 
     public void save()
