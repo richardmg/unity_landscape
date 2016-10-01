@@ -49,6 +49,11 @@ public class ThingPainter : MonoBehaviour {
 		m_texture.Apply();
 	}
 
+    public void thingToEditChanged()
+    {
+//        GameObject prefab
+    }
+
     public void save()
     {
 		int atlasPixelX;

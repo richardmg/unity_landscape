@@ -7,6 +7,8 @@ public class VoxelObjectCache {
 	static VoxelObjectCache s_instance;
 	Hashtable m_hashTable = new Hashtable();
 
+    const int maxLod = 1;
+
 	private VoxelObjectCache()
 	{
 		s_instance = null;
@@ -19,13 +21,25 @@ public class VoxelObjectCache {
 		return s_instance;
 	}
 
+	string getCacheID(string name, Lod lod)
+    {
+		return name.ToLower() + (lod == VoxelObject.kLod0 ? "0" : "1");
+    }
+
+	public GameObject getPrefab(string name)
+    {
+		return (GameObject)Resources.Load("Prefabs/" + name, typeof(GameObject));
+    }
+
 	public Mesh getSharedMesh(string name, Lod lod)
 	{
-		string cacheId = name.ToLower() + (lod == VoxelObject.kLod0 ? "0" : "1");
+        Debug.Assert(lod <= maxLod);
+
+		string cacheId = getCacheID(name, lod);
 		Mesh mesh = (Mesh)m_hashTable[cacheId];
 
 		if (mesh == null) {
-			GameObject prefab = (GameObject)Resources.Load("Prefabs/" + name, typeof(GameObject));
+			GameObject prefab = getPrefab(name);
 			if (prefab == null)
 				return null;
 
@@ -52,6 +66,12 @@ public class VoxelObjectCache {
 	{
 		return m_hashTable.Count;
 	}
+
+	public void clearCache(string name)
+    {
+        for (int i = 0; i <= maxLod; ++i)
+		    m_hashTable.Remove(getCacheID(name, i));
+    }
 
 	public void clearCache()
 	{
