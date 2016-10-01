@@ -3,13 +3,15 @@ using System.Collections;
 using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
+
 	public string index = System.String.Empty;
+
 	[Range (0f, 20f)]
 	public float voxelDepth = 4;
 	[Range (0, 1)]
 	public Lod currentLod = kLod0;
 
-	int atlasIndex = kIndexUnknown;
+	int m_atlasIndex = kUnknown;
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
 
@@ -23,10 +25,10 @@ public class VoxelObject : MonoBehaviour {
 	public const Lod kLod0 = 0;
 	public const Lod kLod1 = 1;
 
-	public const Lod kIndexTopLevel = -1;
-	public const Lod kIndexReference = -2;
-	public const Lod kIndexEmpty = -3;
-	public const Lod kIndexUnknown = -3;
+	public const Lod kTopLevel = -1;
+	public const Lod kAtlasIndex = -2;
+	public const Lod kEmpty = -3;
+	public const Lod kUnknown = -4;
 
 	// Read-only, for editor inspection
 	public int vertexCount = 0;
@@ -34,12 +36,18 @@ public class VoxelObject : MonoBehaviour {
 	const float lodDistance1 = 200;
 	const float lodDistanceCulled = 100000;
 
+	public int atlasIndex()
+	{
+		Debug.Assert(m_atlasIndex != kUnknown);
+		return m_atlasIndex;
+	}
+
 	static public string indexToString(int index)
 	{
 		switch(index) {
-		case kIndexTopLevel: return "toplevel";
-		case kIndexReference: return "reference";
-		case kIndexEmpty: return "empty";
+		case kTopLevel: return "toplevel";
+		case kAtlasIndex: return "atlasindex";
+		case kEmpty: return "empty";
 		}
 
 		return "unknown";
@@ -52,7 +60,7 @@ public class VoxelObject : MonoBehaviour {
 
 	void OnValidate()
 	{
-		determineAtlasIndex();
+		resolveAtlasIndex();
 
 		if (gameObject.scene.name == null || !gameObject.activeSelf) {
 			// Don't modify prefabs or inactive objects
@@ -66,7 +74,7 @@ public class VoxelObject : MonoBehaviour {
 
 	void Start()
 	{
-		determineAtlasIndex();
+		resolveAtlasIndex();
 		initAsStandAlone();
 		currentLod = kNoLod;
 		Update();
@@ -85,7 +93,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public void initAsStandAlone()
 	{
-		determineAtlasIndex();
+		resolveAtlasIndex();
 		initMeshComponents();
 
 		if (!staticResourcesInitialized)
@@ -95,18 +103,18 @@ public class VoxelObject : MonoBehaviour {
 	public void setIndex(string index)
 	{
 		this.index = index;
-		determineAtlasIndex();
+		resolveAtlasIndex();
 	}
 
-	public void determineAtlasIndex()
+	public void resolveAtlasIndex()
 	{
-		if (!System.Int32.TryParse(index, out atlasIndex)) {
-			if (index == indexToString(kIndexTopLevel))
-				atlasIndex = kIndexTopLevel;
-			else if (index == indexToString(kIndexEmpty))
-				atlasIndex = kIndexEmpty;
+		if (!System.Int32.TryParse(index, out m_atlasIndex)) {
+			if (index == indexToString(kTopLevel))
+				m_atlasIndex = kTopLevel;
+			else if (index == indexToString(kEmpty))
+				m_atlasIndex = kEmpty;
 			else
-				atlasIndex = kIndexReference;
+				m_atlasIndex = kAtlasIndex;
 		}
 	}
 
@@ -156,12 +164,12 @@ public class VoxelObject : MonoBehaviour {
 			for (int i = 0; i < childCount; ++i)
 				transform.GetChild(i).localPosition -= firstChildPos;
 
-			index = indexToString(kIndexTopLevel);
-			determineAtlasIndex();
+			index = indexToString(kTopLevel);
+			resolveAtlasIndex();
 			setChildrenActive(false);
 		} else {
-			index = indexToString(kIndexEmpty);
-			determineAtlasIndex();
+			index = indexToString(kEmpty);
+			resolveAtlasIndex();
 			setChildrenActive(true);
 			clearMesh();
 		}
@@ -169,7 +177,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public bool isTopLevel()
 	{
-		return atlasIndex == kIndexTopLevel;
+		return m_atlasIndex == kTopLevel;
 	}
 
 	public Mesh createMesh(Lod lod)
@@ -179,12 +187,12 @@ public class VoxelObject : MonoBehaviour {
 
 	public Mesh createChildMesh(Lod lod)
 	{
-		if (atlasIndex == kIndexReference) {
+		if (m_atlasIndex == kAtlasIndex) {
 			Mesh sharedMesh = VoxelObjectCache.instance().getSharedMesh(index, lod);
 			return (sharedMesh != null) ? sharedMesh : new Mesh();
 		}
 
-		if (atlasIndex == kIndexTopLevel || atlasIndex == kIndexEmpty)
+		if (m_atlasIndex == kTopLevel || m_atlasIndex == kEmpty)
 			return new Mesh();
 
 		configureFactory(lod);
@@ -212,7 +220,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public void configureFactory(Lod lod)
 	{
-		voxelMeshFactory.atlasIndex = atlasIndex;
+		voxelMeshFactory.atlasIndex = m_atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
 		voxelMeshFactory.yFaces = voxelDepth != 0;

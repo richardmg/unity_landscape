@@ -50,7 +50,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 
 				VoxelObject vo = tile.AddComponent<VoxelObject>();
 				m_voxelObjectMatrix[x, z] = vo;
-				vo.setIndex(VoxelObject.indexToString(VoxelObject.kIndexTopLevel));
+				vo.setIndex(VoxelObject.indexToString(VoxelObject.kTopLevel));
 				vo.initAsStandAlone();
 				initVoxelObjects(tile);
 			}
