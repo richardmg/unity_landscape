@@ -72,8 +72,18 @@ public class ThingPainter : MonoBehaviour {
 
 		for (int i = 0; i < voxelObjects.Length; ++i) {
 			int atlasIndex = voxelObjects[i].atlasIndex();
-			if (atlasIndex >= 0)
-				m_voxelObjectsWithAtlasIndexList.Add(voxelObjects[i]);
+			if (atlasIndex >= 0) {
+				// Only add unique faces
+				bool unique = true;
+				for (int v = 0; v < m_voxelObjectsWithAtlasIndexList.Count; ++v) {
+					if (m_voxelObjectsWithAtlasIndexList[v].atlasIndex() == atlasIndex) {
+						unique = false;
+						break;
+					}
+				}
+				if (unique)
+					m_voxelObjectsWithAtlasIndexList.Add(voxelObjects[i]);
+			}
 		}
 
 		if (m_voxelObjectsWithAtlasIndexList.Count == 0) {
