@@ -61,7 +61,7 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onIndexFieldEndInput(InputField indexField)
     {
-		GameObject prefab = VoxelObjectCache.instance().getPrefab(indexField.text);
+		GameObject prefab = Global.getPrefab(indexField.text);
 		if (prefab == null) {
 			print("Could not find prefab!");
 			return;

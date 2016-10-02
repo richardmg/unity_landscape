@@ -26,11 +26,6 @@ public class VoxelObjectCache {
 		return name.ToLower() + (lod == VoxelObject.kLod0 ? "0" : "1");
     }
 
-	public GameObject getPrefab(string name)
-    {
-		return (GameObject)Resources.Load("Prefabs/" + name, typeof(GameObject));
-    }
-
 	public Mesh getSharedMesh(string name, Lod lod)
 	{
         Debug.Assert(lod <= maxLod);
@@ -39,7 +34,7 @@ public class VoxelObjectCache {
 		Mesh mesh = (Mesh)m_hashTable[cacheId];
 
 		if (mesh == null) {
-			GameObject prefab = getPrefab(name);
+			GameObject prefab = Global.getPrefab(name);
 			if (prefab == null)
 				return null;
 
