@@ -129,5 +129,7 @@ public class ThingPainter : MonoBehaviour {
 		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
 		atlas.SetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight, m_texture.GetPixels());
 		atlas.Apply();
+
+		VoxelObjectCache.instance().clearCache(m_topLevelVoxelObject.name);
     }
 }
