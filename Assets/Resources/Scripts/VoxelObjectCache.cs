@@ -4,21 +4,12 @@ using Lod = System.Int32;
 
 public class VoxelObjectCache {
 
-	static VoxelObjectCache s_instance;
 	Hashtable m_hashTable = new Hashtable();
 
     const int maxLod = 1;
 
-	private VoxelObjectCache()
+	public VoxelObjectCache()
 	{
-		s_instance = null;
-	}
-
-	static public VoxelObjectCache instance()
-	{
-		if (s_instance == null)
-			s_instance = new VoxelObjectCache();
-		return s_instance;
 	}
 
 	string getCacheID(string name, Lod lod)
@@ -34,7 +25,7 @@ public class VoxelObjectCache {
 		Mesh mesh = (Mesh)m_hashTable[cacheId];
 
 		if (mesh == null) {
-			GameObject prefab = Global.getPrefab(name);
+			GameObject prefab = Root.getPrefab(name);
 			if (prefab == null)
 				return null;
 

@@ -188,7 +188,7 @@ public class VoxelObject : MonoBehaviour {
 	public Mesh createChildMesh(Lod lod)
 	{
 		if (m_atlasIndex == kAtlasIndex) {
-			Mesh sharedMesh = VoxelObjectCache.instance().getSharedMesh(index, lod);
+			Mesh sharedMesh = Root.instance.meshCache.getSharedMesh(index, lod);
 			return (sharedMesh != null) ? sharedMesh : new Mesh();
 		}
 

@@ -17,12 +17,6 @@ public class Thing
 	public string index;
 }
 
-public interface ThingSubscriber
-{
-	void onThingAdded(Thing thing);
-	void onPrefabChanged(GameObject prefab);
-}
-
 public class WorldTile
 {
 	public List<Thing> things = new List<Thing>();
@@ -55,7 +49,6 @@ public class LandscapeConstructor : MonoBehaviour {
 	public const LandscapeType kLake = 5;
 
 	private WorldTile[,] worldMatrix;
-	private List<ThingSubscriber> thingSubscribers;
 
 	static public LandscapeConstructor instance;
 
@@ -68,11 +61,6 @@ public class LandscapeConstructor : MonoBehaviour {
 
 	void Awake()
 	{
-		// Find all decendants that wants to know when things change
-		thingSubscribers = new List<ThingSubscriber>();
-		foreach (ThingSubscriber subscriber in GetComponentsInChildren<ThingSubscriber>())
-			thingSubscribers.Add(subscriber);
-
 		// Create a matrix that holds all explicit things
 		worldMatrix = new WorldTile[10, 10];
 		for (int x = 0; x < worldMatrix.GetLength(0); ++x) {
@@ -114,14 +102,7 @@ public class LandscapeConstructor : MonoBehaviour {
 	public void addThing(Thing thing)
 	{
 		worldMatrix[0, 0].things.Add(thing);
-		foreach (ThingSubscriber subscriber in thingSubscribers)
-			subscriber.onThingAdded(thing);	
-	}
-
-	public void notifyPrefabChanged(GameObject prefab)
-	{
-		foreach (ThingSubscriber subscriber in thingSubscribers)
-			subscriber.onPrefabChanged(prefab);	
+		Root.instance.notificationCenter.notifyThingAdded(thing);
 	}
 
 }

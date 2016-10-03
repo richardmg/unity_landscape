@@ -16,8 +16,8 @@ public class ThingPainter : MonoBehaviour {
 	void OnEnable ()
     {
 		// Use scale to enlarge the UI instead of the rect. At least not both.
-		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Global.kSubImageWidth);
-		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Global.kSubImageHeight);
+		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
+		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
 	}
 
 	void Update ()
@@ -36,8 +36,8 @@ public class ThingPainter : MonoBehaviour {
 		if (uvx < 0 || uvx > 1 || uvy < 0 || uvy > 1)
 			return;
 
-        int pixelX = (int)(uvx * Global.kSubImageWidth);
-        int pixelY = (int)(uvy * Global.kSubImageHeight);
+        int pixelX = (int)(uvx * Root.kSubImageWidth);
+        int pixelY = (int)(uvy * Root.kSubImageHeight);
 
 		m_texture.SetPixel(pixelX, pixelY, color);
 		m_texture.Apply();
@@ -49,10 +49,10 @@ public class ThingPainter : MonoBehaviour {
 		int atlasIndex = m_voxelObjectsWithAtlasIndexList[listIndex].atlasIndex();
 
 		int atlasPixelX, atlasPixelY;
-		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
-		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight);
+		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
+		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
 
-		m_texture = new Texture2D(Global.kSubImageWidth, Global.kSubImageHeight, TextureFormat.ARGB32, false);
+		m_texture = new Texture2D(Root.kSubImageWidth, Root.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
 		m_texture.SetPixels(pixels);
 
@@ -62,7 +62,7 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onIndexFieldEndInput(InputField indexField)
     {
-		m_prefab = Global.getPrefab(indexField.text);
+		m_prefab = Root.getPrefab(indexField.text);
 		if (m_prefab == null) {
 			print("Could not find prefab!");
 			return;
@@ -127,11 +127,11 @@ public class ThingPainter : MonoBehaviour {
 
 		int atlasPixelX;
 		int atlasPixelY;
-		Global.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
-		atlas.SetPixels(atlasPixelX, atlasPixelY, Global.kSubImageWidth, Global.kSubImageHeight, m_texture.GetPixels());
+		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
+		atlas.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
 		atlas.Apply();
 
-		VoxelObjectCache.instance().clearCache(m_topLevelVoxelObject.name);
-		LandscapeConstructor.instance.notifyPrefabChanged(m_prefab);
+		Root.instance.meshCache.clearCache(m_topLevelVoxelObject.name);
+		Root.instance.notificationCenter.notifyPrefabChanged(m_prefab);
     }
 }
