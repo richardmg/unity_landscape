@@ -19,7 +19,7 @@ public class Thing
 
 public interface ThingSubscriber
 {
-	void newThingAdded(Thing thing);
+	void thingAdded(Thing thing);
 }
 
 public class WorldTile
@@ -114,6 +114,6 @@ public class LandscapeConstructor : MonoBehaviour {
 	{
 		worldMatrix[0, 0].things.Add(thing);
 		foreach (ThingSubscriber subscriber in thingSubscribers)
-			subscriber.newThingAdded(thing);	
+			subscriber.thingAdded(thing);	
 	}
 }

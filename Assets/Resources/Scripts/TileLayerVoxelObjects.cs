@@ -61,7 +61,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			m_pivotAdjustmentY = pa.adjustY;
 	}
 
-	public void newThingAdded(Thing thing)
+	public void thingAdded(Thing thing)
 	{
 		// Find out which tile is currently under the new things position
 		Vector2 matrixCoord = new Vector2();
