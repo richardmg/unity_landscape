@@ -134,4 +134,10 @@ public class ThingPainter : MonoBehaviour {
 		Root.instance.meshCache.clearCache(m_topLevelVoxelObject.name);
 		Root.instance.notificationCenter.notifyPrefabChanged(m_prefab);
     }
+
+	public void onColorButtonClicked()
+	{
+		Root.instance.hideUI();
+		Root.instance.uiPaintEditor.SetActive(true);
+	}
 }

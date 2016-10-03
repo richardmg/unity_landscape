@@ -8,6 +8,13 @@ public class Root : MonoBehaviour {
 	public static readonly int kSubImageWidth = 16;
 	public static readonly int kSubImageHeight = 8;
 
+	public GameObject player;
+
+	public GameObject uiBackground;
+	public GameObject uiFirstPerson;
+	public GameObject uiColorPicker;
+	public GameObject uiPaintEditor;
+
 	[HideInInspector]
 	public static Root instance;
 
@@ -25,6 +32,20 @@ public class Root : MonoBehaviour {
 	{
 		notificationCenter = new NotificationCenter();
 		meshCache = new VoxelObjectCache();
+	}
+
+	void Start()
+	{
+		hideUI();
+		uiFirstPerson.SetActive(true);
+	}
+
+	public void hideUI()
+	{
+		uiBackground.SetActive(false);
+		uiFirstPerson.SetActive(false);
+		uiColorPicker.SetActive(false);
+		uiPaintEditor.SetActive(false);
 	}
 
 	public static void atlasPixelForIndex(int atlasIndex, out int x, out int y)
