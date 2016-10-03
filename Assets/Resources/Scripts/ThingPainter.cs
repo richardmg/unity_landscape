@@ -8,6 +8,7 @@ public class ThingPainter : MonoBehaviour {
 	public Color color = Color.black;
 
 	Texture2D m_texture;
+	GameObject m_prefab;
 	VoxelObject m_topLevelVoxelObject;
 	int m_currentListIndex;
 	List<VoxelObject> m_voxelObjectsWithAtlasIndexList;
@@ -61,14 +62,14 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onIndexFieldEndInput(InputField indexField)
     {
-		GameObject prefab = Global.getPrefab(indexField.text);
-		if (prefab == null) {
+		m_prefab = Global.getPrefab(indexField.text);
+		if (m_prefab == null) {
 			print("Could not find prefab!");
 			return;
 		}
 
 		m_voxelObjectsWithAtlasIndexList = new List<VoxelObject>();
-		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
+		VoxelObject[] voxelObjects = m_prefab.GetComponentsInChildren<VoxelObject>(true);
 
 		for (int i = 0; i < voxelObjects.Length; ++i) {
 			int atlasIndex = voxelObjects[i].atlasIndex();
@@ -131,5 +132,6 @@ public class ThingPainter : MonoBehaviour {
 		atlas.Apply();
 
 		VoxelObjectCache.instance().clearCache(m_topLevelVoxelObject.name);
+		LandscapeConstructor.instance.notifyPrefabChanged(m_prefab);
     }
 }

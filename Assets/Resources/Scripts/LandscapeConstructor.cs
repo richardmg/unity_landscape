@@ -19,7 +19,8 @@ public class Thing
 
 public interface ThingSubscriber
 {
-	void thingAdded(Thing thing);
+	void onThingAdded(Thing thing);
+	void onPrefabChanged(GameObject prefab);
 }
 
 public class WorldTile
@@ -114,6 +115,13 @@ public class LandscapeConstructor : MonoBehaviour {
 	{
 		worldMatrix[0, 0].things.Add(thing);
 		foreach (ThingSubscriber subscriber in thingSubscribers)
-			subscriber.thingAdded(thing);	
+			subscriber.onThingAdded(thing);	
 	}
+
+	public void notifyPrefabChanged(GameObject prefab)
+	{
+		foreach (ThingSubscriber subscriber in thingSubscribers)
+			subscriber.onPrefabChanged(prefab);	
+	}
+
 }

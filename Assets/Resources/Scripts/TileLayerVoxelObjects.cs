@@ -61,7 +61,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			m_pivotAdjustmentY = pa.adjustY;
 	}
 
-	public void thingAdded(Thing thing)
+	public void onThingAdded(Thing thing)
 	{
 		// Find out which tile is currently under the new things position
 		Vector2 matrixCoord = new Vector2();
@@ -77,6 +77,17 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		vo.rebuildStandAlone();
 
 //		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);
+	}
+
+	public void onPrefabChanged(GameObject prefab)
+	{
+		// Rebuild all tiles, since we don't keep track which tiles contains which objects
+		int tileCount = m_tileEngine.tileCount;
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
+				m_voxelObjectMatrix[x, z].rebuildStandAlone();
+			}
+		}
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
