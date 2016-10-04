@@ -24,20 +24,25 @@ public class UIManager : MonoBehaviour {
 		paintEditor.SetActive(false);
 	}
 
-	public void showUI(GameObject ui)
+	public void showColorPicker()
 	{
 		hideUI();
-		if (ui == firstPerson) {
-			firstPerson.SetActive(true);
-		} else if (ui == paintEditor) {
-			background.SetActive(true);
-			paintEditor.SetActive(true);
-		} else if (ui == colorPicker) {
-			background.SetActive(true);
-			colorPicker.SetActive(true);
-		} else {
-			Debug.Assert(false, "No such UI: " + ui);
-		}
+		background.SetActive(true);
+		colorPicker.SetActive(true);
+	}
+
+	public void showFirstPerson()
+	{
+		hideUI();
+		background.SetActive(false);
+		firstPerson.SetActive(true);
+	}
+
+	public void showPaintEditor()
+	{
+		hideUI();
+		background.SetActive(true);
+		paintEditor.SetActive(true);
 	}
 
 	void Update () {
@@ -51,7 +56,10 @@ public class UIManager : MonoBehaviour {
 		Cursor.visible = !enableFps;
 		Cursor.lockState = CursorLockMode.None;
 
-		Root.instance.uiManager.showUI(enableFps ? firstPerson : paintEditor);
+		if (enableFps)
+			showFirstPerson();
+		else
+			showPaintEditor();
 	}
 
 }
