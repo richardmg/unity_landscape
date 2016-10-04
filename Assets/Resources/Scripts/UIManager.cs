@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityStandardAssets.Characters.FirstPerson;
 using UnityEngine.UI;
 
@@ -11,13 +12,15 @@ public class UIManager : MonoBehaviour {
 
 	public KeyCode uiOnOffKey;
 
+	List<GameObject> stack = new List<GameObject>();
+
 	void Start()
 	{
 		hideUI();
 		firstPerson.SetActive(true);
 	}
 
-	public void hideUI()
+	void hideUI()
 	{
 		background.SetActive(false);
 		firstPerson.SetActive(false);
@@ -25,25 +28,39 @@ public class UIManager : MonoBehaviour {
 		paintEditor.SetActive(false);
 	}
 
-	public void showColorPicker()
+	public void show(GameObject ui)
 	{
-		hideUI();
-		background.SetActive(true);
-		colorPicker.SetActive(true);
+		stack = new List<GameObject>();
+		showUI(ui);
 	}
 
-	public void showFirstPerson()
+	public void push(GameObject ui)
 	{
-		hideUI();
-		background.SetActive(false);
-		firstPerson.SetActive(true);
+		stack.Add(ui);
+		showUI(ui);
 	}
 
-	public void showPaintEditor()
+	public void pop()
+	{
+		Debug.Assert(stack.Count > 0);
+		stack.RemoveAt(stack.Count - 1);
+		GameObject ui = stack[stack.Count - 1];
+		showUI(ui);
+	}
+
+	public void showUI(GameObject ui)
 	{
 		hideUI();
-		background.SetActive(true);
-		paintEditor.SetActive(true);
+		if (ui == firstPerson) {
+			background.SetActive(false);
+			firstPerson.SetActive(true);
+		} else if (ui == paintEditor) {
+			background.SetActive(true);
+			paintEditor.SetActive(true);
+		} else if (ui == colorPicker) {
+			background.SetActive(true);
+			colorPicker.SetActive(true);
+		}
 	}
 
 	void Update () {
@@ -58,9 +75,9 @@ public class UIManager : MonoBehaviour {
 		Cursor.lockState = CursorLockMode.None;
 
 		if (enableFps)
-			showFirstPerson();
+			show(firstPerson);
 		else
-			showPaintEditor();
+			push(paintEditor);
 	}
 
 	static public Vector2 getMousePosOnImage(RawImage image)

@@ -132,6 +132,6 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onColorButtonClicked()
 	{
-		Root.instance.uiManager.showColorPicker();
+		Root.instance.uiManager.push(Root.instance.uiManager.colorPicker);
 	}
 }
