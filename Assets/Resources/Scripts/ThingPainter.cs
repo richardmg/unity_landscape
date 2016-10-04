@@ -20,6 +20,20 @@ public class ThingPainter : MonoBehaviour {
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
 	}
 
+	static Vector2 getMousePosOnImage(RawImage image)
+	{
+		Vector3[] corners = new Vector3[4];
+		image.rectTransform.GetWorldCorners(corners);
+		float uvx = (Input.mousePosition.x - corners[0].x) / (corners[2].x - corners[0].x);
+		float uvy = (Input.mousePosition.y - corners[0].y) / (corners[2].y - corners[0].y);
+		return new Vector2(uvx, uvy);
+	}
+
+	static bool insideImage(Vector2 uv)
+	{
+		return (uv.x > 0 && uv.x <= 1 && uv.y > 0 && uv.y <= 1);
+	}
+
 	void Update ()
     {
 		if (m_topLevelVoxelObject == null)
@@ -27,17 +41,12 @@ public class ThingPainter : MonoBehaviour {
 		if (!Input.GetMouseButton(0))
 			return;
 
-		Vector3[] corners = new Vector3[4];
-		RawImage image = GetComponent<RawImage>();
-		image.rectTransform.GetWorldCorners(corners);
-
-		float uvx = (Input.mousePosition.x - corners[0].x) / (corners[2].x - corners[0].x);
-		float uvy = (Input.mousePosition.y - corners[0].y) / (corners[2].y - corners[0].y);
-		if (uvx < 0 || uvx > 1 || uvy < 0 || uvy > 1)
+		Vector2 uv = getMousePosOnImage(GetComponent<RawImage>());
+		if (!insideImage(uv))
 			return;
 
-        int pixelX = (int)(uvx * Root.kSubImageWidth);
-        int pixelY = (int)(uvy * Root.kSubImageHeight);
+        int pixelX = (int)(uv.x * Root.kSubImageWidth);
+        int pixelY = (int)(uv.y * Root.kSubImageHeight);
 
 		m_texture.SetPixel(pixelX, pixelY, color);
 		m_texture.Apply();
