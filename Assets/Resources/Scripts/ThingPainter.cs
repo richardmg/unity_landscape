@@ -131,7 +131,7 @@ public class ThingPainter : MonoBehaviour {
 		atlas.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
 		atlas.Apply();
 
-		Root.instance.meshCache.clearCache(m_topLevelVoxelObject.name);
+		Root.instance.meshManager.clearCache(m_topLevelVoxelObject.name);
 		Root.instance.notificationManager.notifyPrefabChanged(m_prefab);
     }
 
