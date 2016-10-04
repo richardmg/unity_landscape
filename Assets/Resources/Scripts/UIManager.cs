@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityStandardAssets.Characters.FirstPerson;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour {
 	public GameObject background;
@@ -60,6 +61,20 @@ public class UIManager : MonoBehaviour {
 			showFirstPerson();
 		else
 			showPaintEditor();
+	}
+
+	static public Vector2 getMousePosOnImage(RawImage image)
+	{
+		Vector3[] corners = new Vector3[4];
+		image.rectTransform.GetWorldCorners(corners);
+		float uvx = (Input.mousePosition.x - corners[0].x) / (corners[2].x - corners[0].x);
+		float uvy = (Input.mousePosition.y - corners[0].y) / (corners[2].y - corners[0].y);
+		return new Vector2(uvx, uvy);
+	}
+
+	static public bool isInside(Vector2 uv)
+	{
+		return (uv.x > 0 && uv.x <= 1 && uv.y > 0 && uv.y <= 1);
 	}
 
 }
