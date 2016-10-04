@@ -132,7 +132,7 @@ public class ThingPainter : MonoBehaviour {
 		atlas.Apply();
 
 		Root.instance.meshCache.clearCache(m_topLevelVoxelObject.name);
-		Root.instance.notificationCenter.notifyPrefabChanged(m_prefab);
+		Root.instance.notificationManager.notifyPrefabChanged(m_prefab);
     }
 
 	public void onColorButtonClicked()

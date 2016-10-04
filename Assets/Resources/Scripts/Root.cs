@@ -16,7 +16,7 @@ public class Root : MonoBehaviour {
 	public static Root instance;
 
 	[HideInInspector]
-	public NotificationCenter notificationCenter;
+	public NotificationManager notificationManager;
 	[HideInInspector]
 	public VoxelObjectCache meshCache;
 	[HideInInspector]
@@ -31,7 +31,7 @@ public class Root : MonoBehaviour {
 
 	void Awake()
 	{
-		notificationCenter = new NotificationCenter();
+		notificationManager = new NotificationManager();
 		meshCache = new VoxelObjectCache();
 		uiManager = ui.GetComponent<UIManager>();
 		landscapeManager = landscape.GetComponent<LandscapeManager>();
