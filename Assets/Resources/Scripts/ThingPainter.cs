@@ -137,7 +137,6 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onColorButtonClicked()
 	{
-		Root.instance.hideUI();
-		Root.instance.uiPaintEditor.SetActive(true);
+		Root.instance.uiManager.showUI(Root.instance.uiManager.colorPicker);
 	}
 }
