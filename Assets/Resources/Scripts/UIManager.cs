@@ -32,6 +32,8 @@ public class UIManager : MonoBehaviour {
 		} else if (ui == colorPicker) {
 			background.SetActive(true);
 			colorPicker.SetActive(true);
+		} else {
+			Debug.Assert(false, "No such UI: " + ui);
 		}
 	}
 
