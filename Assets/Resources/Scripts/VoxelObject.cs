@@ -11,7 +11,7 @@ public class VoxelObject : MonoBehaviour {
 	[Range (0, 1)]
 	public Lod currentLod = kLod0;
 
-	int m_atlasIndex = kUnknown;
+	int m_resolvedIndex = kUnknown;
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
 
@@ -26,7 +26,7 @@ public class VoxelObject : MonoBehaviour {
 	public const Lod kLod1 = 1;
 
 	public const Lod kTopLevel = -1;
-	public const Lod kAtlasIndex = -2;
+	public const Lod kPrefab = -2;
 	public const Lod kEmpty = -3;
 	public const Lod kUnknown = -4;
 
@@ -36,17 +36,17 @@ public class VoxelObject : MonoBehaviour {
 	const float lodDistance1 = 200;
 	const float lodDistanceCulled = 100000;
 
-	public int atlasIndex()
+	public int resolvedIndex()
 	{
-		Debug.Assert(m_atlasIndex != kUnknown);
-		return m_atlasIndex;
+		Debug.Assert(m_resolvedIndex != kUnknown);
+		return m_resolvedIndex;
 	}
 
 	static public string indexToString(int index)
 	{
 		switch(index) {
 		case kTopLevel: return "toplevel";
-		case kAtlasIndex: return "atlasindex";
+		case kPrefab: return "prefab";
 		case kEmpty: return "empty";
 		}
 
@@ -108,13 +108,14 @@ public class VoxelObject : MonoBehaviour {
 
 	public void resolveAtlasIndex()
 	{
-		if (!System.Int32.TryParse(index, out m_atlasIndex)) {
+		// if index is a number >= 0, then it's an index to a sub image in the texture atlas.
+		if (!System.Int32.TryParse(index, out m_resolvedIndex)) {
 			if (index == indexToString(kTopLevel))
-				m_atlasIndex = kTopLevel;
+				m_resolvedIndex = kTopLevel;
 			else if (index == indexToString(kEmpty))
-				m_atlasIndex = kEmpty;
+				m_resolvedIndex = kEmpty;
 			else
-				m_atlasIndex = kAtlasIndex;
+				m_resolvedIndex = kPrefab;
 		}
 	}
 
@@ -177,7 +178,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public bool isTopLevel()
 	{
-		return m_atlasIndex == kTopLevel;
+		return m_resolvedIndex == kTopLevel;
 	}
 
 	public Mesh createMesh(Lod lod)
@@ -187,14 +188,19 @@ public class VoxelObject : MonoBehaviour {
 
 	public Mesh createChildMesh(Lod lod)
 	{
-		if (m_atlasIndex == kAtlasIndex) {
+		if (m_resolvedIndex == kPrefab) {
+			// Prefabs are top level objects that we want to cache, so we fetch
+			// it from the mesh manager. The mesh manager will, if not found in the
+			// cache, create the prefab and call createTopLevelMesh on it.
 			Mesh sharedMesh = Root.instance.meshManager.getSharedMesh(index, lod);
 			return (sharedMesh != null) ? sharedMesh : new Mesh();
 		}
 
-		if (m_atlasIndex == kTopLevel || m_atlasIndex == kEmpty)
+		if (m_resolvedIndex == kTopLevel || m_resolvedIndex == kEmpty)
 			return new Mesh();
 
+		// INVARIANT: m_resolvedIndex points to a sub image in the texture atlas.
+		// We don't cache sub image meshes since they are not likely reused across different prefabs
 		configureFactory(lod);
 		return voxelMeshFactory.createMesh();
 	}
@@ -220,7 +226,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public void configureFactory(Lod lod)
 	{
-		voxelMeshFactory.atlasIndex = m_atlasIndex;
+		voxelMeshFactory.atlasIndex = m_resolvedIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
 		voxelMeshFactory.yFaces = voxelDepth != 0;

@@ -46,7 +46,7 @@ public class ThingPainter : MonoBehaviour {
 	void setCurrentListIndex(int listIndex)
     {
 		m_currentListIndex = listIndex;
-		int atlasIndex = m_voxelObjectsWithAtlasIndexList[listIndex].atlasIndex();
+		int atlasIndex = m_voxelObjectsWithAtlasIndexList[listIndex].resolvedIndex();
 
 		int atlasPixelX, atlasPixelY;
 		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -72,12 +72,12 @@ public class ThingPainter : MonoBehaviour {
 		VoxelObject[] voxelObjects = m_prefab.GetComponentsInChildren<VoxelObject>(true);
 
 		for (int i = 0; i < voxelObjects.Length; ++i) {
-			int atlasIndex = voxelObjects[i].atlasIndex();
+			int atlasIndex = voxelObjects[i].resolvedIndex();
 			if (atlasIndex >= 0) {
 				// Only add unique faces
 				bool unique = true;
 				for (int v = 0; v < m_voxelObjectsWithAtlasIndexList.Count; ++v) {
-					if (m_voxelObjectsWithAtlasIndexList[v].atlasIndex() == atlasIndex) {
+					if (m_voxelObjectsWithAtlasIndexList[v].resolvedIndex() == atlasIndex) {
 						unique = false;
 						break;
 					}
@@ -123,7 +123,7 @@ public class ThingPainter : MonoBehaviour {
 		if (m_topLevelVoxelObject == null)
 			return;
 
-		int atlasIndex = m_voxelObjectsWithAtlasIndexList[m_currentListIndex].atlasIndex();
+		int atlasIndex = m_voxelObjectsWithAtlasIndexList[m_currentListIndex].resolvedIndex();
 
 		int atlasPixelX;
 		int atlasPixelY;
