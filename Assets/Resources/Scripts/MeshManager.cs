@@ -30,7 +30,7 @@ public class MeshManager {
 				return null;
 
 			VoxelObject vo = prefab.GetComponent<VoxelObject>();
-			mesh = vo.createTopLevelMesh(lod);
+			mesh = vo.createMesh(lod);
 			m_hashTable[cacheId] = mesh;
 
 //			if (Application.isPlaying) {
