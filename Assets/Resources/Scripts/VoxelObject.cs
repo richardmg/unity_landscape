@@ -183,30 +183,13 @@ public class VoxelObject : MonoBehaviour {
 
 	public Mesh createMesh(Lod lod)
 	{
-		return isTopLevel() ? createTopLevelMesh(currentLod) : createChildMesh(currentLod);
-	}
-
-	public Mesh createChildMesh(Lod lod)
-	{
-		if (m_resolvedIndex == kPrefab) {
-			// Prefabs are top level objects that we want to cache, so we fetch
-			// it from the mesh manager. The mesh manager will, if not found in the
-			// cache, create the prefab and call createTopLevelMesh on it.
-			Mesh sharedMesh = Root.instance.meshManager.getSharedMesh(index, lod);
-			return (sharedMesh != null) ? sharedMesh : new Mesh();
-		}
-
-		if (m_resolvedIndex == kTopLevel || m_resolvedIndex == kEmpty)
-			return new Mesh();
-
-		// INVARIANT: m_resolvedIndex points to a sub image in the texture atlas.
-		// We don't cache sub image meshes since they are not likely reused across different prefabs
-		configureFactory(lod);
-		return voxelMeshFactory.createMesh();
+		return isTopLevel() ? createTopLevelMesh(currentLod) : createMeshNonRecursive(currentLod);
 	}
 
 	public Mesh createTopLevelMesh(Lod lod)
 	{
+		// Return a mesh that is a combination of this object and all its children
+
 		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
 		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
 		Matrix4x4 parentTransform = transform.worldToLocalMatrix;
@@ -214,7 +197,7 @@ public class VoxelObject : MonoBehaviour {
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
 			VoxelObject vo = selfAndchildren[i];
 			vo.setLod(currentLod);
-			combine[i].mesh = vo.createChildMesh(lod);
+			combine[i].mesh = vo.createMeshNonRecursive(lod);
 			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
 		}
 
@@ -222,6 +205,30 @@ public class VoxelObject : MonoBehaviour {
 		topLevelMesh.CombineMeshes(combine);
 
 		return topLevelMesh;
+	}
+
+	Mesh createMeshNonRecursive(Lod lod)
+	{
+		// Return a mesh that represents this object only
+
+		if (m_resolvedIndex == kPrefab) {
+			// This object is just a "copy" of a prefab.
+			// Prefabs are reusable objects that we want to cache, so we fetch
+			// it from the mesh manager. The mesh manager will, if not found in the
+			// cache, create the prefab and call createMesh on it.
+			Mesh sharedMesh = Root.instance.meshManager.getSharedMesh(index, lod);
+			return (sharedMesh != null) ? sharedMesh : new Mesh();
+		}
+
+		if (m_resolvedIndex == kTopLevel || m_resolvedIndex == kEmpty) {
+			// Return empty mesh since we don't recurse
+			return new Mesh();
+		}
+
+		// Invariant: m_resolvedIndex points to a sub image in the texture atlas.
+		// We don't cache sub image meshes since they are not likely reused across different prefabs
+		configureFactory(lod);
+		return voxelMeshFactory.createMesh();
 	}
 
 	public void configureFactory(Lod lod)
