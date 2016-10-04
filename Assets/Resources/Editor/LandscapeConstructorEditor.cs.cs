@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEditor;
 
-[CustomEditor(typeof(LandscapeConstructor))]
+[CustomEditor(typeof(LandscapeManager))]
 public class LandscapeConstructorEditor : Editor
 {
 	public override void OnInspectorGUI()

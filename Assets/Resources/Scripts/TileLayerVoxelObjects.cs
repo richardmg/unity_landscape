@@ -136,9 +136,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			for (int x = 0; x < objectCount; ++x) {
 				Vector3 worldPos = tile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
 				Transform voTransform = tile.transform.GetChild((int)(z * objectCount) + x);
-				int type = LandscapeConstructor.instance.getLandscapeType(worldPos);
-				if (type == LandscapeConstructor.kForrest) {
-					worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + m_pivotAdjustmentY;
+				int type = Root.instance.landscapeManager.getLandscapeType(worldPos);
+				if (type == LandscapeManager.kForrest) {
+					worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + m_pivotAdjustmentY;
 					voTransform.position = worldPos;
 					voTransform.gameObject.GetComponent<VoxelObject>().setIndex(prefab.name);
 				} else {

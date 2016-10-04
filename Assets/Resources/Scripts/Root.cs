@@ -10,6 +10,7 @@ public class Root : MonoBehaviour {
 
 	public GameObject player;
 	public GameObject ui;
+	public GameObject landscape;
 
 	[HideInInspector]
 	public static Root instance;
@@ -20,6 +21,8 @@ public class Root : MonoBehaviour {
 	public VoxelObjectCache meshCache;
 	[HideInInspector]
 	public UIManager uiManager;
+	[HideInInspector]
+	public LandscapeManager landscapeManager;
 
 	Root()
 	{
@@ -31,6 +34,7 @@ public class Root : MonoBehaviour {
 		notificationCenter = new NotificationCenter();
 		meshCache = new VoxelObjectCache();
 		uiManager = ui.GetComponent<UIManager>();
+		landscapeManager = landscape.GetComponent<LandscapeManager>();
 	}
 
 	public static void atlasPixelForIndex(int atlasIndex, out int x, out int y)

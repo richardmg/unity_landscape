@@ -18,7 +18,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 			thing.worldPos = worldPos;
 			//			thing.worldPos.y = LandscapeConstructor.instance.sampleHeight(thing.worldPos);
 			thing.index = t;
-			LandscapeConstructor.instance.addThing(thing);
+			Root.instance.landscapeManager.addThing(thing);
 		} else if (Input.GetKeyDown(KeyCode.C)) {
 			Vector3 worldPos;
 			if (!getRayWorldPos(out worldPos))
@@ -27,7 +27,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 			Thing thing = new Thing();
 			thing.worldPos = worldPos;
 			thing.index = c;
-			LandscapeConstructor.instance.addThing(thing);
+			Root.instance.landscapeManager.addThing(thing);
 		} else if (Input.GetKeyDown(KeyCode.X)) {
 			//			CharacterController controller = player.GetComponent<CharacterController>();
 			//			Vector3 worldPos = player.transform.position;
