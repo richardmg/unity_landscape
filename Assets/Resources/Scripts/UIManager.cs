@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour {
 	public KeyCode uiOnOffKey;
 
 	List<UIManagerStackItem> stack = new List<UIManagerStackItem>();
+	MonoBehaviour m_mouseGrab = null;
 
 	void Start()
 	{
@@ -36,6 +37,8 @@ public class UIManager : MonoBehaviour {
 		firstPerson.SetActive(false);
 		colorPicker.SetActive(false);
 		paintEditor.SetActive(false);
+
+		m_mouseGrab = null;
 	}
 
 	public void show(GameObject ui)
@@ -107,4 +110,14 @@ public class UIManager : MonoBehaviour {
 		return (uv.x > 0 && uv.x <= 1 && uv.y > 0 && uv.y <= 1);
 	}
 
+	public bool grabMouse(MonoBehaviour ui)
+	{
+		if (m_mouseGrab == ui)
+			return true;
+		if (!Input.GetMouseButtonDown(0))
+			return false;
+
+		m_mouseGrab = ui;
+		return true;
+	}
 }

@@ -20,8 +20,11 @@ public class ThingPainter : MonoBehaviour {
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
 	}
 
-	void Update ()
+	void Update()
     {
+		if (!Root.instance.uiManager.grabMouse(this))
+			return;
+
 		if (m_topLevelVoxelObject == null)
 			return;
 		if (!Input.GetMouseButton(0))
