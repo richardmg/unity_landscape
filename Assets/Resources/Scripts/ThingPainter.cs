@@ -14,6 +14,7 @@ public class ThingPainter : MonoBehaviour {
 	int m_currentListIndex;
 	List<VoxelObject> m_voxelObjectsWithAtlasIndexList;
 	EditMode m_currentMode = kPaintMode;
+	bool m_textureDirty = false;
 
 	const EditMode kPaintMode = 0;
 	const EditMode kColorSelectMode = 1;
@@ -56,6 +57,8 @@ public class ThingPainter : MonoBehaviour {
 		int pixelY = (int)(uv.y * m_texture.height);
 		m_texture.SetPixel(pixelX, pixelY, color);
 		m_texture.Apply();
+
+		m_textureDirty = true;
 	}
 
 	void updateColorSelect(Vector2 uv)
@@ -156,7 +159,7 @@ public class ThingPainter : MonoBehaviour {
 
 	public void saveChanges()
     {
-		if (m_texture == null)
+		if (m_texture == null || !m_textureDirty)
 			return;
 
 		int atlasIndex = m_voxelObjectsWithAtlasIndexList[m_currentListIndex].resolvedIndex();
@@ -166,6 +169,8 @@ public class ThingPainter : MonoBehaviour {
 		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
 		atlas.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
 		atlas.Apply();
+
+		m_textureDirty = false;
 
 		Root.instance.meshManager.clearCache(m_topLevelVoxelObject.name);
 		Root.instance.notificationManager.notifyPrefabChanged(m_prefab);
