@@ -18,7 +18,6 @@ public class ThingPainter : MonoBehaviour {
 		// Use scale to enlarge the UI instead of the rect. At least not both.
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
-		color = Root.instance.uiManager.colorPicker.GetComponentInChildren<ColorPicker>().selectedColor;
 	}
 
 	void Update ()
@@ -133,7 +132,9 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onColorButtonClicked()
 	{
-		// TODO: use lambda callback
-		Root.instance.uiManager.push(Root.instance.uiManager.colorPicker, (bool accepted) => { print("color selected"); });
+		Root.instance.uiManager.push(Root.instance.uiManager.colorPicker, (bool accepted) => {
+			if (accepted)
+				color = Root.instance.uiManager.colorPicker.GetComponentInChildren<ColorPicker>().selectedColor;
+		});
 	}
 }
