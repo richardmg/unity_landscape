@@ -21,6 +21,6 @@ public class ColorPicker : MonoBehaviour {
 		int pixelY = (int)(uv.y * texture.height);
 
 		selectedColor = texture.GetPixel(pixelX, pixelY);
-		Root.instance.uiManager.pop();
+		Root.instance.uiManager.pop(true);
 	}
 }

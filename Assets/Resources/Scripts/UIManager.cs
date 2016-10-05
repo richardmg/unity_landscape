@@ -51,14 +51,14 @@ public class UIManager : MonoBehaviour {
 		showUI(ui);
 	}
 
-	public void pop()
+	public void pop(bool accepted)
 	{
 		Debug.Assert(stack.Count > 0);	
 		UIManagerStackItem itemToPopOff = stack[stack.Count - 1];
 		stack.RemoveAt(stack.Count - 1);	
 		UIManagerStackItem itemToShow = stack[stack.Count - 1];
 		showUI(itemToShow.ui);
-		itemToShow.callback(true);
+		itemToShow.callback(accepted);
 	}
 
 	public void showUI(GameObject ui)
