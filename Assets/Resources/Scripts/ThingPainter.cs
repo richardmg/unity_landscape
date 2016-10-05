@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using EditMode = System.Int32;
 
 public class ThingPainter : MonoBehaviour {
 	public Texture2D atlas;
@@ -12,6 +13,10 @@ public class ThingPainter : MonoBehaviour {
 	VoxelObject m_topLevelVoxelObject;
 	int m_currentListIndex;
 	List<VoxelObject> m_voxelObjectsWithAtlasIndexList;
+	EditMode m_currentMode = kPaintMode;
+
+	const EditMode kPaintMode = 0;
+	const EditMode kColorSelectMode = 1;
 
 	void OnEnable ()
     {
@@ -24,21 +29,41 @@ public class ThingPainter : MonoBehaviour {
     {
 		if (!Root.instance.uiManager.grabMouse(this))
 			return;
-
 		if (m_topLevelVoxelObject == null)
 			return;
 		if (!Input.GetMouseButton(0))
 			return;
 
 		Vector2 uv = UIManager.getMousePosOnImage(GetComponent<RawImage>());
+
+		if (m_currentMode == kPaintMode)
+			updatePaint(uv);
+		else
+			updateColorSelect(uv);	
+	}
+
+	void updatePaint(Vector2 uv)
+	{
 		if (!UIManager.isInside(uv))
 			return;
 
-        int pixelX = (int)(uv.x * Root.kSubImageWidth);
-        int pixelY = (int)(uv.y * Root.kSubImageHeight);
-
+		int pixelX = (int)(uv.x * m_texture.width);
+		int pixelY = (int)(uv.y * m_texture.height);
 		m_texture.SetPixel(pixelX, pixelY, color);
 		m_texture.Apply();
+	}
+
+	void updateColorSelect(Vector2 uv)
+	{
+		if (!UIManager.isInside(uv)) {
+			color = Color.clear;
+		} else {
+			int pixelX = (int)(uv.x * m_texture.width);
+			int pixelY = (int)(uv.y * m_texture.height);
+			color = m_texture.GetPixel(pixelX, pixelY);
+		}
+
+		m_currentMode = kPaintMode;
 	}
 
 	void setCurrentListIndex(int listIndex)
@@ -140,5 +165,11 @@ public class ThingPainter : MonoBehaviour {
 			if (accepted)
 				color = colorPicker.GetComponentInChildren<ColorPicker>().selectedColor;
 		});
+	}
+
+	public void onColorSamplerButtonClicked()
+	{
+		m_currentMode = kColorSelectMode;
+		Root.instance.uiManager.clearMouseGrab();
 	}
 }

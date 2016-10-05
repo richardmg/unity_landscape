@@ -120,4 +120,9 @@ public class UIManager : MonoBehaviour {
 		m_mouseGrab = ui;
 		return true;
 	}
+
+	public void clearMouseGrab()
+	{
+		m_mouseGrab = null;
+	}	
 }
