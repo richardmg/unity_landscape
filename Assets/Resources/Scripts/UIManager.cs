@@ -5,6 +5,16 @@ using System.Collections.Generic;
 using UnityStandardAssets.Characters.FirstPerson;
 using UnityEngine.UI;
 
+class UIManagerStackItem {
+	public GameObject ui;
+	public Action<bool> callback;
+	public UIManagerStackItem(GameObject ui, Action<bool> callback)
+	{
+		this.ui = ui;
+		this.callback = callback;
+	}
+}
+
 public class UIManager : MonoBehaviour {
 	public GameObject background;
 	public GameObject firstPerson;
@@ -13,7 +23,7 @@ public class UIManager : MonoBehaviour {
 
 	public KeyCode uiOnOffKey;
 
-	List<GameObject> stack = new List<GameObject>();
+	List<UIManagerStackItem> stack = new List<UIManagerStackItem>();
 
 	void Start()
 	{
@@ -31,27 +41,24 @@ public class UIManager : MonoBehaviour {
 
 	public void show(GameObject ui)
 	{
-		stack = new List<GameObject>();
+		stack = new List<UIManagerStackItem>();
 		showUI(ui);
 	}
 
-	public void push(GameObject ui)
+	public void push(GameObject ui, Action<bool> callback)
 	{
-		stack.Add(ui);
+		stack.Add(new UIManagerStackItem(ui, callback));
 		showUI(ui);
-	}
-
-	public void push(GameObject ui, Action<MonoBehaviour> callback)
-	{
-		print("pushing: " + ui + ", callback: " + callback);
 	}
 
 	public void pop()
 	{
-		Debug.Assert(stack.Count > 0);
-		stack.RemoveAt(stack.Count - 1);
-		GameObject ui = stack[stack.Count - 1];
-		showUI(ui);
+		Debug.Assert(stack.Count > 0);	
+		UIManagerStackItem itemToPopOff = stack[stack.Count - 1];
+		stack.RemoveAt(stack.Count - 1);	
+		UIManagerStackItem itemToShow = stack[stack.Count - 1];
+		showUI(itemToShow.ui);
+		itemToShow.callback(true);
 	}
 
 	public void showUI(GameObject ui)
@@ -83,7 +90,7 @@ public class UIManager : MonoBehaviour {
 		if (enableFps)
 			show(firstPerson);
 		else
-			push(paintEditor);
+			push(paintEditor, (bool accepted) => {});
 	}
 
 	static public Vector2 getMousePosOnImage(RawImage image)
