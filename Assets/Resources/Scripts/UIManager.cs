@@ -27,8 +27,7 @@ public class UIManager : MonoBehaviour {
 
 	void Start()
 	{
-		hideUI();
-		firstPerson.SetActive(true);
+		show(firstPerson);
 	}
 
 	void hideUI()
@@ -47,21 +46,22 @@ public class UIManager : MonoBehaviour {
 
 	public void push(GameObject ui, Action<bool> callback)
 	{
+		callback(true);
 		stack.Add(new UIManagerStackItem(ui, callback));
 		showUI(ui);
 	}
 
 	public void pop(bool accepted)
 	{
-		Debug.Assert(stack.Count > 0);	
+		Debug.Assert(stack.Count > 1);	
 		UIManagerStackItem itemToPopOff = stack[stack.Count - 1];
 		stack.RemoveAt(stack.Count - 1);	
 		UIManagerStackItem itemToShow = stack[stack.Count - 1];
 		showUI(itemToShow.ui);
-		itemToShow.callback(accepted);
+		itemToPopOff.callback(accepted);
 	}
 
-	public void showUI(GameObject ui)
+	void showUI(GameObject ui)
 	{
 		hideUI();
 		if (ui == firstPerson) {
