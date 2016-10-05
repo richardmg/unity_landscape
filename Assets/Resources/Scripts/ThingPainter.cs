@@ -18,11 +18,16 @@ public class ThingPainter : MonoBehaviour {
 	const EditMode kPaintMode = 0;
 	const EditMode kColorSelectMode = 1;
 
-	void OnEnable ()
+	void OnEnable()
     {
 		// Use scale to enlarge the UI instead of the rect. At least not both.
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
+	}
+
+	void OnDisable()
+	{
+		saveChanges();
 	}
 
 	void Update()
@@ -116,6 +121,7 @@ public class ThingPainter : MonoBehaviour {
 		}
 
 		m_topLevelVoxelObject = voxelObjects[0];
+		saveChanges();
 		setCurrentListIndex(0);
     }
 
@@ -127,6 +133,7 @@ public class ThingPainter : MonoBehaviour {
 		int index = m_currentListIndex - 1;
 		if (index < 0)
 			index = m_voxelObjectsWithAtlasIndexList.Count - 1;
+		saveChanges();
 		setCurrentListIndex(index);
 	}
 
@@ -138,12 +145,18 @@ public class ThingPainter : MonoBehaviour {
 		int index = m_currentListIndex + 1;
 		if (index >= m_voxelObjectsWithAtlasIndexList.Count)
 			index = 0;
+		saveChanges();
 		setCurrentListIndex(index);
 	}
 
-	public void onSaveButtonClicked()
+	public void onDiscardButtonClicked()
+	{
+		setCurrentListIndex(m_currentListIndex);
+	}
+
+	public void saveChanges()
     {
-		if (m_topLevelVoxelObject == null)
+		if (m_texture == null)
 			return;
 
 		int atlasIndex = m_voxelObjectsWithAtlasIndexList[m_currentListIndex].resolvedIndex();

@@ -70,27 +70,31 @@ public class UIManager : MonoBehaviour {
 		if (ui == firstPerson) {
 			background.SetActive(false);
 			firstPerson.SetActive(true);
+			enableCursorMode(false);
 		} else if (ui == paintEditor) {
 			background.SetActive(true);
 			paintEditor.SetActive(true);
+			enableCursorMode(true);
 		} else if (ui == colorPicker) {
 			background.SetActive(true);
 			colorPicker.SetActive(true);
+			enableCursorMode(true);
 		}
+	}
+
+	public void enableCursorMode(bool on)
+	{
+		FirstPersonController controller = Root.instance.player.GetComponent<FirstPersonController>();
+		controller.enabled = !on;
+		Cursor.visible = on;
+		Cursor.lockState = CursorLockMode.None;
 	}
 
 	void Update () {
 		if (!Input.GetKeyDown(uiOnOffKey))
 			return;
 
-		bool enableFps = !firstPerson.activeSelf;
-
-		FirstPersonController controller = Root.instance.player.GetComponent<FirstPersonController>();
-		controller.enabled = enableFps;
-		Cursor.visible = !enableFps;
-		Cursor.lockState = CursorLockMode.None;
-
-		if (enableFps)
+		if (!firstPerson.activeSelf)
 			show(firstPerson);
 		else
 			push(paintEditor, (bool accepted) => {});
