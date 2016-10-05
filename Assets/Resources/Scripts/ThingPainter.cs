@@ -89,10 +89,14 @@ public class ThingPainter : MonoBehaviour {
 
 		m_texture.Apply();
 		GetComponent<RawImage>().texture = m_texture;
+
+		m_textureDirty = false;
 	}
 
 	public void onIndexFieldEndInput(InputField indexField)
     {
+		saveChanges();
+
 		m_prefab = Root.getPrefab(indexField.text);
 		if (m_prefab == null) {
 			print("Could not find prefab!");
@@ -124,7 +128,6 @@ public class ThingPainter : MonoBehaviour {
 		}
 
 		m_topLevelVoxelObject = voxelObjects[0];
-		saveChanges();
 		setCurrentListIndex(0);
     }
 
