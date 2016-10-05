@@ -133,6 +133,11 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onColorButtonClicked()
 	{
-		Root.instance.uiManager.push(Root.instance.uiManager.colorPicker);
+		// TODO: use lambda callback
+		Root.instance.uiManager.push(Root.instance.uiManager.colorPicker, onColorPickerClosed);
+	}
+
+	public void onColorPickerClosed(MonoBehaviour caller)
+	{
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityStandardAssets.Characters.FirstPerson;
@@ -38,6 +39,11 @@ public class UIManager : MonoBehaviour {
 	{
 		stack.Add(ui);
 		showUI(ui);
+	}
+
+	public void push(GameObject ui, Action<MonoBehaviour> callback)
+	{
+		print("pushing: " + ui + ", callback: " + callback);
 	}
 
 	public void pop()
