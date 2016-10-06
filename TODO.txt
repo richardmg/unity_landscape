@@ -777,6 +777,27 @@ Game v7
         differ in size, part count and placement, behaviour, food, habitat (high, low,
           among trees, in the open, in the grass, etc).
 
+Game v7.1
+---------------
+    - There is no wasteland
+    - The player is free to draw any kind of animal and plants
+    - But to be able to draw a new species, he must select one of the existing ones
+        as prey. The predator can be slightly bigger that its prey.
+        - He can create as many instances as he wants. But if not the eco system ends
+            up balanced, they will die out or turn evil and attack the player.
+    - This means that the player will need to start small, and build up
+    - Species that end up bigger than the player, will hunt on the player as prey as well.
+        - This is why the player will need shelter etc, and it the app converts from
+            being a 3d drawing app to be more of a survival game.
+        - The more food / prey available for a predator, the less likely it will attack
+            the player. But too many instances of an organism will unbalance the food chain.
+    - There is no limit to hierarchy size. Big fantasy animals are fun! But dangerous.
+        - but the bigger the predator, the more prepared land / ecosystem it needs.
+            - This will ensure that the player needs to expand and grow the land.
+    - The land is initially sourrounded by a dark, foggy, and dead forrest that contains
+        evil permutations. The only reason to go there is to clear new land, or to just
+            watch the "fun" permutations.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
