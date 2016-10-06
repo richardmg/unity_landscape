@@ -780,11 +780,13 @@ Game v7
 Game v7.1
 ---------------
     - There is no wasteland
+    - The game is all about drawing animals and nature in a free, creative and fun
+        fashion, but and at the same time, balance the ecosystem he creates.
     - The player is free to draw any kind of animal and plants
     - But to be able to draw a new species, he must select one of the existing ones
-        as prey. The predator can be slightly bigger that its prey.
+        as prey. The predator will be slightly bigger than its prey.
         - He can create as many instances as he wants. But if not the eco system ends
-            up balanced, they will die out or turn evil and attack the player.
+            up balanced, the ecosystem will decay back to evil land.
     - This means that the player will need to start small, and build up
     - Species that end up bigger than the player, will hunt on the player as prey as well.
         - This is why the player will need shelter etc, and it the app converts from
@@ -798,8 +800,13 @@ Game v7.1
         evil permutations. The only reason to go there is to clear new land, or to just
             watch the "fun" permutations.
     - The player clears land by chopping down trees. If the new land doesn't gain a new
-        ecosystem within reasonable time, it will just become a breeding ground for
-        evil permuations. The more ecosystem, the longer it will take to decay.
+        ecosystem within reasonable time, evil trees/weed/fog will start to grow back
+        inbetween the grass/flowers. Only when an ecosystem has reached a certain level
+        (e.g when there is a "top" predator) this stops. If an ecosystem if torned apart
+        and evil land is back, evil permutations will show up as well.
+    - A top predator is a predator that is big enough to also attack the player. When an
+        ecosystem as a top predator, the player can choose to leave the sub-ecosystem as
+        done, or just for fun, continue creating bigger and more vicious organisms.
 
 Technical
 ---------------
