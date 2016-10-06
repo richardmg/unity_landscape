@@ -797,6 +797,9 @@ Game v7.1
     - The land is initially sourrounded by a dark, foggy, and dead forrest that contains
         evil permutations. The only reason to go there is to clear new land, or to just
             watch the "fun" permutations.
+    - The player clears land by chopping down trees. If the new land doesn't gain a new
+        ecosystem within reasonable time, it will just become a breeding ground for
+        evil permuations. The more ecosystem, the longer it will take to decay.
 
 Technical
 ---------------
