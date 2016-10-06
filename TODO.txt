@@ -782,17 +782,24 @@ Game v7.1
     - There is no wasteland
     - The game is all about drawing animals and nature in a free, creative and fun
         fashion, but and at the same time, balance the ecosystem he creates.
-    - The player is free to draw any kind of animal and plants
-    - But to be able to draw a new species, he must select one of the existing ones
-        as prey. The predator will be slightly bigger than its prey.
+    - The player is free to draw any kind of animal and plants from a book of templates
+    - But to be able to draw a new species, he must select one of the existing ones on
+        the subsystem as prey. The predator will be slightly bigger than its prey.
         - He can create as many instances as he wants. But if not the eco system ends
             up balanced, the ecosystem will decay back to evil land.
+    - The closer in the hierarcy a predator is to its prey, the less they need to eat.
+        But the more aggressive it will be as well, and dangerous to the player.
+        - A Tiger eats one gnu a day, and is dangerous to the player. A horse eats
+            grass, which is at the bottom of the chain. Hence he needs to eat a lot, but
+            will be very docile.
     - This means that the player will need to start small, and build up
     - Species that end up bigger than the player, will hunt on the player as prey as well.
         - This is why the player will need shelter etc, and it the app converts from
             being a 3d drawing app to be more of a survival game.
-        - The more food / prey available for a predator, the less likely it will attack
-            the player. But too many instances of an organism will unbalance the food chain.
+    - The more food / prey available for a predator, the less likely it will attack
+        the player. But too many instances of an organism will unbalance the food chain.
+        - Even small species like ants and mice will attack the player when hungry (even
+          if they only eat grass).
     - There is no limit to hierarchy size. Big fantasy animals are fun! But dangerous.
         - but the bigger the predator, the more prepared land / ecosystem it needs.
             - This will ensure that the player needs to expand and grow the land.
@@ -807,6 +814,18 @@ Game v7.1
     - A top predator is a predator that is big enough to also attack the player. When an
         ecosystem as a top predator, the player can choose to leave the sub-ecosystem as
         done, or just for fun, continue creating bigger and more vicious organisms.
+
+Game 7.2
+    - There is a foggy, wasteland
+    - The player must go there to discover new species that he can draw
+    - A discovered species can be drawn once (but modified), but instanciated as many
+        times as wanted.
+    - Some species are naturally hostile. Instanciating them in the friendly world will
+        make it more dangerous there. Hence, the player need to watch out what he brings back
+        and in what numbers.
+    - To help out for protection, the player can find stuff in the wasteland, like walls,
+        doors, cars, weapons. Sometimes he will need to assemble parts for get a fully functional
+        item (e.g one part per face). It can all be repainted.
 
 Technical
 ---------------
