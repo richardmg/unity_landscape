@@ -827,6 +827,18 @@ Game 7.2
         doors, cars, weapons. Sometimes he will need to assemble parts for get a fully functional
         item (e.g one part per face). It can all be repainted.
 
+Game 7.1.1
+---------------
+    - It's a drawing game.
+    - The player starts with a complete book of templates he can use to draw animals and things
+        of any shape and (scaled) size.
+    - But to get paper to draw on, he need to go out into the forrest and collect already
+        existing trees and flowers. They will convert into paper and colors he can use for drawing.
+    - But the forrest contains evil permuations. The bigger and more dangerous animals the
+        player draws, the more dangerous the permutations will naturally be.
+    - If taken by a mutant, he will feel dizzy for a few minutes.
+    - The player can choose any animal as follower that can help out.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
