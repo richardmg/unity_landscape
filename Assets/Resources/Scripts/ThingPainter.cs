@@ -193,4 +193,10 @@ public class ThingPainter : MonoBehaviour {
 		m_currentMode = kColorSelectMode;
 		Root.instance.uiManager.clearMouseGrab();
 	}
+
+	public void onEraserButtonClicked()
+	{
+		color = Color.clear;
+	}
+
 }
