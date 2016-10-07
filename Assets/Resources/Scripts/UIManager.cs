@@ -20,6 +20,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject firstPerson;
 	public GameObject colorPicker;
 	public GameObject paintEditor;
+	public GameObject prefabVariantPicker;
 
 	public KeyCode uiOnOffKey;
 
@@ -37,6 +38,7 @@ public class UIManager : MonoBehaviour {
 		firstPerson.SetActive(false);
 		colorPicker.SetActive(false);
 		paintEditor.SetActive(false);
+		prefabVariantPicker.SetActive(false);
 
 		m_mouseGrab = null;
 	}
@@ -79,6 +81,10 @@ public class UIManager : MonoBehaviour {
 			background.SetActive(true);
 			colorPicker.SetActive(true);
 			enableCursorMode(true);
+		} else if (ui == prefabVariantPicker) {
+			background.SetActive(true);
+			prefabVariantPicker.SetActive(true);
+			enableCursorMode(true);
 		}
 	}
 
@@ -96,7 +102,7 @@ public class UIManager : MonoBehaviour {
 		if (!firstPerson.activeSelf)
 			show(firstPerson);
 		else
-			push(paintEditor, (bool accepted) => {});
+			push(prefabVariantPicker, (bool accepted) => {});
 	}
 
 	static public Vector2 getMousePosOnImage(RawImage image)
