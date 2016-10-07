@@ -199,4 +199,16 @@ public class ThingPainter : MonoBehaviour {
 		color = Color.clear;
 	}
 
+	public void onClearButtonClicked()
+	{
+		for (int x = 0; x < m_texture.width; ++x) {
+			for (int y = 0; y < m_texture.height; ++y) {
+				m_texture.SetPixel(x, y, Color.clear);
+			}
+		}
+
+		m_texture.Apply();
+		m_textureDirty = true;
+	}
+
 }
