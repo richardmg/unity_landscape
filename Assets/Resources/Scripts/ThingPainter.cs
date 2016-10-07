@@ -59,7 +59,7 @@ public class ThingPainter : MonoBehaviour {
 		int pixelX = (int)(uv.x * m_texture.width);
 		int pixelY = (int)(uv.y * m_texture.height);
 
-		if (m_clearToggleOn)
+		if (m_clearToggleOn || Input.GetKey(KeyCode.LeftShift))
 			m_texture.SetPixel(pixelX, pixelY, Color.clear);
 		else
 			m_texture.SetPixel(pixelX, pixelY, color);
