@@ -45,10 +45,10 @@ public class ThingPainter : MonoBehaviour {
 
 		Vector2 uv = UIManager.getMousePosOnImage(GetComponent<RawImage>());
 
-		if (m_currentMode == kPaintMode)
+		if (Input.GetKey(KeyCode.C) || m_currentMode == kColorSelectMode)
+			updateColorSelect(uv);
+		else if (m_currentMode == kPaintMode)
 			updatePaint(uv);
-		else
-			updateColorSelect(uv);	
 	}
 
 	void updatePaint(Vector2 uv)
@@ -70,13 +70,12 @@ public class ThingPainter : MonoBehaviour {
 
 	void updateColorSelect(Vector2 uv)
 	{
-		if (!UIManager.isInside(uv)) {
-			color = Color.clear;
-		} else {
-			int pixelX = (int)(uv.x * m_texture.width);
-			int pixelY = (int)(uv.y * m_texture.height);
-			color = m_texture.GetPixel(pixelX, pixelY);
-		}
+		if (!UIManager.isInside(uv))
+			return;
+
+		int pixelX = (int)(uv.x * m_texture.width);
+		int pixelY = (int)(uv.y * m_texture.height);
+		color = m_texture.GetPixel(pixelX, pixelY);
 
 		m_currentMode = kPaintMode;
 	}
