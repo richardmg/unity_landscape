@@ -18,6 +18,7 @@ public class ThingPainter : MonoBehaviour {
 
 	const EditMode kPaintMode = 0;
 	const EditMode kColorSelectMode = 1;
+	const EditMode kEraseMode = 2;
 
 	void OnEnable()
     {
@@ -46,6 +47,8 @@ public class ThingPainter : MonoBehaviour {
 
 		if (m_currentMode == kPaintMode)
 			updatePaint(uv);
+		else if (m_currentMode == kEraseMode)
+			updateErase(uv);
 		else
 			updateColorSelect(uv);	
 	}
@@ -58,6 +61,19 @@ public class ThingPainter : MonoBehaviour {
 		int pixelX = (int)(uv.x * m_texture.width);
 		int pixelY = (int)(uv.y * m_texture.height);
 		m_texture.SetPixel(pixelX, pixelY, color);
+		m_texture.Apply();
+
+		m_textureDirty = true;
+	}
+
+	void updateErase(Vector2 uv)
+	{
+		if (!UIManager.isInside(uv))
+			return;
+
+		int pixelX = (int)(uv.x * m_texture.width);
+		int pixelY = (int)(uv.y * m_texture.height);
+		m_texture.SetPixel(pixelX, pixelY, Color.clear);
 		m_texture.Apply();
 
 		m_textureDirty = true;
@@ -200,9 +216,12 @@ public class ThingPainter : MonoBehaviour {
 		Root.instance.uiManager.clearMouseGrab();
 	}
 
-	public void onEraserButtonClicked()
+	public void onEraseToggleClicked(Toggle toggle)
 	{
-		color = Color.clear;
+		if (toggle.isOn)
+			m_currentMode = kEraseMode;
+		else
+			m_currentMode = kPaintMode;
 	}
 
 	public void onClearButtonClicked()
