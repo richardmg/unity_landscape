@@ -8,9 +8,9 @@ public class Root : MonoBehaviour {
 	public static readonly int kSubImageWidth = 16;
 	public static readonly int kSubImageHeight = 8;
 
-	public GameObject player;
-	public GameObject ui;
-	public GameObject landscape;
+	public GameObject playerGO;
+	public GameObject uiGO;
+	public GameObject landscapeGO;
 
 	[HideInInspector]
 	public static Root instance;
@@ -23,6 +23,8 @@ public class Root : MonoBehaviour {
 	public UIManager uiManager;
 	[HideInInspector]
 	public LandscapeManager landscapeManager;
+	[HideInInspector]
+	public PlayerStartupScript player;
 
 	Root()
 	{
@@ -32,9 +34,10 @@ public class Root : MonoBehaviour {
 	void Awake()
 	{
 		meshManager = new MeshManager();
-		uiManager = ui.GetComponent<UIManager>();
+		uiManager = uiGO.GetComponent<UIManager>();
 		notificationManager = new NotificationManager();
-		landscapeManager = landscape.GetComponent<LandscapeManager>();
+		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
+		player = playerGO.GetComponent<PlayerStartupScript>();
 	}
 
 	public static void atlasPixelForIndex(int atlasIndex, out int x, out int y)

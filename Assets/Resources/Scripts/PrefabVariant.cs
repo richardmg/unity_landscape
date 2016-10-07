@@ -2,11 +2,12 @@
 using System.Collections;
 
 public class PrefabVariant {
-	GameObject m_prefab;
-	int[] m_atlasIndices;
+	public string prefabName;
+	public int[] atlasIndices;
 
 	public PrefabVariant(string prefabName)
 	{
+		this.prefabName = prefabName;
 	}
 
 	PrefabVariant()
@@ -20,8 +21,8 @@ public class PrefabVariant {
 	public PrefabVariant clone()
 	{
 		PrefabVariant clone = new PrefabVariant();
-		clone.m_prefab = m_prefab;
-		clone.m_atlasIndices = m_atlasIndices;
+		clone.prefabName = prefabName;
+		clone.atlasIndices = atlasIndices;
 		return clone;
 	}
 }

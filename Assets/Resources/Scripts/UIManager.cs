@@ -84,8 +84,7 @@ public class UIManager : MonoBehaviour {
 
 	public void enableCursorMode(bool on)
 	{
-		FirstPersonController controller = Root.instance.player.GetComponent<FirstPersonController>();
-		controller.enabled = !on;
+		Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = !on;
 		Cursor.visible = on;
 		Cursor.lockState = CursorLockMode.None;
 	}

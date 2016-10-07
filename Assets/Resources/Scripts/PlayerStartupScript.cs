@@ -4,6 +4,8 @@ using System.Collections;
 public class PlayerStartupScript : MonoBehaviour {
 	public bool moveToGround = true;
 
+	public PrefabVariant currentPrefabVariant = new PrefabVariant("GameObject");
+
 	// Use this for initialization
 	void Start () {
 		if (moveToGround) {

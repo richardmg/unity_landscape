@@ -33,6 +33,15 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 			//			Vector3 worldPos = player.transform.position;
 			//			worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + 1;
 			//			player.transform.position = worldPos;
+		} else if (Input.GetMouseButtonDown(0)) {
+			Vector3 worldPos;
+			if (!getRayWorldPos(out worldPos))
+				return;
+
+			Thing thing = new Thing();
+			thing.worldPos = worldPos;
+			thing.index = Root.instance.player.currentPrefabVariant.prefabName;
+			Root.instance.landscapeManager.addThing(thing);
 		}
 	}
 

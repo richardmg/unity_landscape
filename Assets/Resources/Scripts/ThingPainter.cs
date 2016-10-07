@@ -24,6 +24,8 @@ public class ThingPainter : MonoBehaviour {
 		// Use scale to enlarge the UI instead of the rect. At least not both.
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
+
+		setCurrentPrefabVariant(Root.instance.player.currentPrefabVariant);
 	}
 
 	void OnDisable()
@@ -74,30 +76,9 @@ public class ThingPainter : MonoBehaviour {
 		m_currentMode = kPaintMode;
 	}
 
-	void setCurrentListIndex(int listIndex)
-    {
-		m_currentListIndex = listIndex;
-		int atlasIndex = m_voxelObjectsWithAtlasIndexList[listIndex].resolvedIndex();
-
-		int atlasPixelX, atlasPixelY;
-		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
-		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
-
-		m_texture = new Texture2D(Root.kSubImageWidth, Root.kSubImageHeight, TextureFormat.ARGB32, false);
-		m_texture.filterMode = FilterMode.Point;
-		m_texture.SetPixels(pixels);
-
-		m_texture.Apply();
-		GetComponent<RawImage>().texture = m_texture;
-
-		m_textureDirty = false;
-	}
-
-	public void onIndexFieldEndInput(InputField indexField)
-    {
-		saveChanges();
-
-		m_prefab = Root.getPrefab(indexField.text);
+	void setCurrentPrefabVariant(PrefabVariant prefabVariant)
+	{
+		m_prefab = Root.getPrefab(prefabVariant.prefabName);
 		if (m_prefab == null) {
 			print("Could not find prefab!");
 			return;
@@ -129,6 +110,31 @@ public class ThingPainter : MonoBehaviour {
 
 		m_topLevelVoxelObject = voxelObjects[0];
 		setCurrentListIndex(0);
+	}
+
+	void setCurrentListIndex(int listIndex)
+    {
+		m_currentListIndex = listIndex;
+		int atlasIndex = m_voxelObjectsWithAtlasIndexList[listIndex].resolvedIndex();
+
+		int atlasPixelX, atlasPixelY;
+		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
+		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
+
+		m_texture = new Texture2D(Root.kSubImageWidth, Root.kSubImageHeight, TextureFormat.ARGB32, false);
+		m_texture.filterMode = FilterMode.Point;
+		m_texture.SetPixels(pixels);
+
+		m_texture.Apply();
+		GetComponent<RawImage>().texture = m_texture;
+
+		m_textureDirty = false;
+	}
+
+	public void onIndexFieldEndInput(InputField indexField)
+    {
+		saveChanges();
+		setCurrentPrefabVariant(new PrefabVariant(indexField.text));
     }
 
 	public void onPrevButtonClicked()
