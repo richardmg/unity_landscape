@@ -14,15 +14,13 @@ public class ColorPicker : MonoBehaviour {
 		RawImage image = GetComponent<RawImage>();
 		Vector2 uv = UIManager.getMousePosOnImage(image);
 
-		if (!UIManager.isInside(uv)) {
-			selectedColor = Color.clear;
-		} else {
-			Texture2D texture = (Texture2D)image.texture;
-			int pixelX = (int)(uv.x * texture.width);
-			int pixelY = (int)(uv.y * texture.height);
-			selectedColor = texture.GetPixel(pixelX, pixelY);
-		}
-
+		if (!UIManager.isInside(uv))
+			return;
+		
+		Texture2D texture = (Texture2D)image.texture;
+		int pixelX = (int)(uv.x * texture.width);
+		int pixelY = (int)(uv.y * texture.height);
+		selectedColor = texture.GetPixel(pixelX, pixelY);
 		Root.instance.uiManager.pop(true);
 	}
 }
