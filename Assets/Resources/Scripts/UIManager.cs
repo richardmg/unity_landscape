@@ -24,6 +24,8 @@ public class UIManager : MonoBehaviour {
 
 	public KeyCode uiOnOffKey;
 
+	GameObject m_currentMenu;
+
 	[HideInInspector]
 	public UIPrefabVariantPicker prefabVariantPicker;
 
@@ -37,7 +39,9 @@ public class UIManager : MonoBehaviour {
 
 	void Start()
 	{
-		show(firstPersonGO);
+		hideUI();
+		m_currentMenu = prefabVariantPickerGO;
+		showFirstPersonUI();
 	}
 
 	void hideUI()
@@ -51,17 +55,11 @@ public class UIManager : MonoBehaviour {
 		m_mouseGrab = null;
 	}
 
-	public void show(GameObject ui)
-	{
-		stack = new List<UIManagerStackItem>();
-		showUI(ui);
-	}
-
 	public void push(GameObject ui, Action<bool> callback)
 	{
-		callback(true);
 		stack.Add(new UIManagerStackItem(ui, callback));
-		showUI(ui);
+		m_currentMenu = ui;
+		showCurrentMenu();
 	}
 
 	public void pop(bool accepted)
@@ -70,31 +68,36 @@ public class UIManager : MonoBehaviour {
 		UIManagerStackItem itemToPopOff = stack[stack.Count - 1];
 		stack.RemoveAt(stack.Count - 1);	
 		UIManagerStackItem itemToShow = stack[stack.Count - 1];
-		showUI(itemToShow.ui);
+		m_currentMenu = itemToShow.ui;
+		showCurrentMenu();
 		itemToPopOff.callback(accepted);
 	}
 
-	void showUI(GameObject ui)
+	public void showFirstPersonUI()
 	{
 		hideUI();
-		if (ui == firstPersonGO) {
-			backgroundGO.SetActive(false);
-			firstPersonGO.SetActive(true);
-			enableCursorMode(false);
-		} else if (ui == paintEditorGO) {
+		backgroundGO.SetActive(false);
+		firstPersonGO.SetActive(true);
+		enableCursorMode(false);
+	}
+
+	public void showCurrentMenu()
+	{
+		hideUI();
+		if (m_currentMenu == paintEditorGO) {
 			backgroundGO.SetActive(true);
 			paintEditorGO.SetActive(true);
 			enableCursorMode(true);
-		} else if (ui == colorPickerGO) {
+		} else if (m_currentMenu == colorPickerGO) {
 			backgroundGO.SetActive(true);
 			colorPickerGO.SetActive(true);
 			enableCursorMode(true);
-		} else if (ui == prefabVariantPickerGO) {
+		} else if (m_currentMenu == prefabVariantPickerGO) {
 			backgroundGO.SetActive(true);
 			prefabVariantPickerGO.SetActive(true);
 			enableCursorMode(true);
 		} else {
-			Debug.Assert(false, "Unknown UI to show: " + ui);
+			Debug.Assert(false, "Unknown UI to show: " + m_currentMenu);
 		}
 	}
 
@@ -109,10 +112,10 @@ public class UIManager : MonoBehaviour {
 		if (!Input.GetKeyDown(uiOnOffKey))
 			return;
 
-		if (!firstPersonGO.activeSelf)
-			show(firstPersonGO);
+		if (firstPersonGO.activeSelf)
+			showCurrentMenu();
 		else
-			push(prefabVariantPickerGO, (bool accepted) => {});
+			showFirstPersonUI();
 	}
 
 	static public Vector2 getMousePosOnImage(RawImage image)
