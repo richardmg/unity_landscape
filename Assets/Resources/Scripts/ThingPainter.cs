@@ -191,7 +191,7 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onColorButtonClicked()
 	{
-		GameObject colorPicker = Root.instance.uiManager.colorPicker;
+		GameObject colorPicker = Root.instance.uiManager.colorPickerGO;
 		Root.instance.uiManager.push(colorPicker, (bool accepted) => {
 			if (accepted)
 				color = colorPicker.GetComponentInChildren<ColorPicker>().selectedColor;

@@ -16,29 +16,37 @@ class UIManagerStackItem {
 }
 
 public class UIManager : MonoBehaviour {
-	public GameObject background;
-	public GameObject firstPerson;
-	public GameObject colorPicker;
-	public GameObject paintEditor;
-	public GameObject prefabVariantPicker;
+	public GameObject backgroundGO;
+	public GameObject firstPersonGO;
+	public GameObject colorPickerGO;
+	public GameObject paintEditorGO;
+	public GameObject prefabVariantPickerGO;
 
 	public KeyCode uiOnOffKey;
+
+	[HideInInspector]
+	public UIPrefabVariantPicker prefabVariantPicker;
 
 	List<UIManagerStackItem> stack = new List<UIManagerStackItem>();
 	MonoBehaviour m_mouseGrab = null;
 
+	void Awake()
+	{
+		prefabVariantPicker = prefabVariantPickerGO.GetComponent<UIPrefabVariantPicker>();
+	}
+
 	void Start()
 	{
-		show(firstPerson);
+		show(firstPersonGO);
 	}
 
 	void hideUI()
 	{
-		background.SetActive(false);
-		firstPerson.SetActive(false);
-		colorPicker.SetActive(false);
-		paintEditor.SetActive(false);
-		prefabVariantPicker.SetActive(false);
+		backgroundGO.SetActive(false);
+		firstPersonGO.SetActive(false);
+		colorPickerGO.SetActive(false);
+		paintEditorGO.SetActive(false);
+		prefabVariantPickerGO.SetActive(false);
 
 		m_mouseGrab = null;
 	}
@@ -69,22 +77,24 @@ public class UIManager : MonoBehaviour {
 	void showUI(GameObject ui)
 	{
 		hideUI();
-		if (ui == firstPerson) {
-			background.SetActive(false);
-			firstPerson.SetActive(true);
+		if (ui == firstPersonGO) {
+			backgroundGO.SetActive(false);
+			firstPersonGO.SetActive(true);
 			enableCursorMode(false);
-		} else if (ui == paintEditor) {
-			background.SetActive(true);
-			paintEditor.SetActive(true);
+		} else if (ui == paintEditorGO) {
+			backgroundGO.SetActive(true);
+			paintEditorGO.SetActive(true);
 			enableCursorMode(true);
-		} else if (ui == colorPicker) {
-			background.SetActive(true);
-			colorPicker.SetActive(true);
+		} else if (ui == colorPickerGO) {
+			backgroundGO.SetActive(true);
+			colorPickerGO.SetActive(true);
 			enableCursorMode(true);
-		} else if (ui == prefabVariantPicker) {
-			background.SetActive(true);
-			prefabVariantPicker.SetActive(true);
+		} else if (ui == prefabVariantPickerGO) {
+			backgroundGO.SetActive(true);
+			prefabVariantPickerGO.SetActive(true);
 			enableCursorMode(true);
+		} else {
+			Debug.Assert(false, "Unknown UI to show: " + ui);
 		}
 	}
 
@@ -99,10 +109,10 @@ public class UIManager : MonoBehaviour {
 		if (!Input.GetKeyDown(uiOnOffKey))
 			return;
 
-		if (!firstPerson.activeSelf)
-			show(firstPerson);
+		if (!firstPersonGO.activeSelf)
+			show(firstPersonGO);
 		else
-			push(prefabVariantPicker, (bool accepted) => {});
+			push(prefabVariantPickerGO, (bool accepted) => {});
 	}
 
 	static public Vector2 getMousePosOnImage(RawImage image)
