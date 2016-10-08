@@ -40,7 +40,7 @@ public class UIManager : MonoBehaviour {
 	void Start()
 	{
 		hideUI();
-		m_currentMenu = prefabVariantPickerGO;
+		push(prefabVariantPickerGO, (bool accepted) => {});
 		showFirstPersonUI();
 	}
 
