@@ -25,6 +25,8 @@ public class Root : MonoBehaviour {
 	public LandscapeManager landscapeManager;
 	[HideInInspector]
 	public PlayerStartupScript player;
+	[HideInInspector]
+	public AtlasManager atlasManager;
 
 	Root()
 	{
@@ -36,6 +38,7 @@ public class Root : MonoBehaviour {
 		meshManager = new MeshManager();
 		uiManager = uiGO.GetComponent<UIManager>();
 		notificationManager = new NotificationManager();
+		atlasManager = new AtlasManager();
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
 	}
