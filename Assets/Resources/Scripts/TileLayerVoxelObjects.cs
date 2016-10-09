@@ -79,7 +79,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 //		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);
 	}
 
-	public void onPrefabChanged(GameObject prefab)
+	public void onPrefabVariantChanged(PrefabVariant prefabVariant)
 	{
 		// Rebuild all tiles, since we don't keep track which tiles contains which objects
 		int tileCount = m_tileEngine.tileCount;

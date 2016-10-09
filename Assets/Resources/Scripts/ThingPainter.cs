@@ -151,8 +151,8 @@ public class ThingPainter : MonoBehaviour {
 
 		// TODO: each variant will have different mesh!
 
-		Root.instance.meshManager.clearCache(m_prefabVariant.prefabName);
-		Root.instance.notificationManager.notifyPrefabChanged(m_prefabVariant.prefab);
+		Root.instance.meshManager.clearCache(m_prefabVariant);
+		Root.instance.notificationManager.notifyPrefabVariantChanged(m_prefabVariant);
     }
 
 	public void onColorButtonClicked()

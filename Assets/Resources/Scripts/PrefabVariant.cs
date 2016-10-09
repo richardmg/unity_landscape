@@ -3,12 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class PrefabVariant {
+	public int id;
 	public string prefabName;
 	public int[] atlasIndices;
 	public GameObject prefab;
 
+	static int nextID = 0;
+
 	public PrefabVariant(string prefabName)
 	{
+		id = nextID++;
 		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();

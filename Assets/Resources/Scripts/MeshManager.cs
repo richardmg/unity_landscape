@@ -12,12 +12,12 @@ public class MeshManager {
 	{
 	}
 
-	string getCacheID(string name, Lod lod)
+	string getCacheID(PrefabVariant prefabVariant, Lod lod)
     {
 		return name.ToLower() + (lod == VoxelObject.kLod0 ? "0" : "1");
     }
 
-	public Mesh getSharedMesh(string name, Lod lod)
+	public Mesh getSharedMesh(PrefabVariant prefabVariant, Lod lod)
 	{
         Debug.Assert(lod <= maxLod);
 
@@ -53,10 +53,10 @@ public class MeshManager {
 		return m_hashTable.Count;
 	}
 
-	public void clearCache(string name)
+	public void clearCache(PrefabVariant prefabVariant)
     {
         for (int i = 0; i <= maxLod; ++i)
-		    m_hashTable.Remove(getCacheID(name, i));
+			m_hashTable.Remove(getCacheID(prefabVariant, i));
     }
 
 	public void clearCache()
