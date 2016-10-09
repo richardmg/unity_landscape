@@ -11,10 +11,12 @@ public class PrefabVariant {
 	{
 		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);
-		List<VoxelObject> unique = getUniqueVoxelObjects();
+		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
 
-		MonoBehaviour.print("unique: " + unique.Count);
-		// Allocate faces in atlas (does not need to be trailing), and assign to atlasIndices
+		atlasIndices = new int[uniqueVoxelObjects.Count];
+
+		for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
+			atlasIndices[i] = Root.instance.atlasManager.acquireIndex();
 	}
 
 	PrefabVariant()

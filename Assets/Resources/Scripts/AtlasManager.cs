@@ -3,8 +3,14 @@ using System.Collections;
 
 public class AtlasManager {
 
-	int acquireFreeIndex()
+	int currentIndex = 0;
+
+	public int acquireIndex()
 	{
-		return 0;
+		return currentIndex++;
+	}
+
+	public void releaseIndex(int index)
+	{
 	}
 }
