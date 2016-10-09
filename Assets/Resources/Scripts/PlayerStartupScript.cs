@@ -4,10 +4,12 @@ using System.Collections;
 public class PlayerStartupScript : MonoBehaviour {
 	public bool moveToGround = true;
 
-	public PrefabVariant currentPrefabVariant = new PrefabVariant("GameObject");
+	public PrefabVariant currentPrefabVariant;
 
 	// Use this for initialization
 	void Start () {
+		currentPrefabVariant = new PrefabVariant("GameObject");
+
 		if (moveToGround) {
 			Vector3 worldPos = transform.position;
 			worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + 1;

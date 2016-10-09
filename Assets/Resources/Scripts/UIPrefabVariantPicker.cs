@@ -3,16 +3,11 @@ using System.Collections;
 
 public class UIPrefabVariantPicker : MonoBehaviour {
 
-	public void newVariantButtonClicked()
-	{
-		Root.instance.uiManager.push(Root.instance.uiManager.paintEditorGO, (bool accepted) => {});
-	}
-
-	public void newTreeButtonClicked()
+	public void onNewTreeButtonClicked()
 	{
 		// Redirect button click here
-		// Create PrefabVariant, make it current
-		// Open paint editor
+		PrefabVariant variant = new PrefabVariant("TreeFilled");
+		Root.instance.player.currentPrefabVariant = variant;
 		Root.instance.uiManager.push(Root.instance.uiManager.paintEditorGO, (bool accepted) => {});
 	}
 }
