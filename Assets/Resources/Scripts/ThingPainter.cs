@@ -9,10 +9,9 @@ public class ThingPainter : MonoBehaviour {
 	public Color color = Color.black;
 
 	Texture2D m_texture;
-	GameObject m_prefab;
-	VoxelObject m_topLevelVoxelObject;
+	PrefabVariant m_prefabVariant;
 	int m_currentListIndex;
-	List<VoxelObject> m_voxelObjectsWithAtlasIndexList;
+	List<VoxelObject> m_uniqueVoxelObjects;
 	EditMode m_currentMode = kPaintMode;
 	bool m_textureDirty = false;
 	bool m_clearToggleOn = false;
@@ -38,7 +37,7 @@ public class ThingPainter : MonoBehaviour {
     {
 		if (!Root.instance.uiManager.grabMouse(this))
 			return;
-		if (m_topLevelVoxelObject == null)
+		if (m_prefabVariant == null)
 			return;
 		if (!Input.GetMouseButton(0))
 			return;
@@ -82,44 +81,15 @@ public class ThingPainter : MonoBehaviour {
 
 	void setCurrentPrefabVariant(PrefabVariant prefabVariant)
 	{
-		m_prefab = Root.getPrefab(prefabVariant.prefabName);
-		if (m_prefab == null) {
-			print("Could not find prefab!");
-			return;
-		}
-
-		m_voxelObjectsWithAtlasIndexList = new List<VoxelObject>();
-		VoxelObject[] voxelObjects = m_prefab.GetComponentsInChildren<VoxelObject>(true);
-
-		for (int i = 0; i < voxelObjects.Length; ++i) {
-			int atlasIndex = voxelObjects[i].resolvedIndex();
-			if (atlasIndex >= 0) {
-				// Only add unique faces
-				bool unique = true;
-				for (int v = 0; v < m_voxelObjectsWithAtlasIndexList.Count; ++v) {
-					if (m_voxelObjectsWithAtlasIndexList[v].resolvedIndex() == atlasIndex) {
-						unique = false;
-						break;
-					}
-				}
-				if (unique)
-					m_voxelObjectsWithAtlasIndexList.Add(voxelObjects[i]);
-			}
-		}
-
-		if (m_voxelObjectsWithAtlasIndexList.Count == 0) {
-			print("Could not find any non-toplevel voxel objects in prefab!");
-			return;
-		}
-
-		m_topLevelVoxelObject = voxelObjects[0];
+		m_prefabVariant = prefabVariant;
+		m_uniqueVoxelObjects = prefabVariant.getUniqueVoxelObjects();
 		setCurrentListIndex(0);
 	}
 
 	void setCurrentListIndex(int listIndex)
     {
 		m_currentListIndex = listIndex;
-		int atlasIndex = m_voxelObjectsWithAtlasIndexList[listIndex].resolvedIndex();
+		int atlasIndex = m_uniqueVoxelObjects[listIndex].resolvedIndex();
 
 		int atlasPixelX, atlasPixelY;
 		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -143,23 +113,17 @@ public class ThingPainter : MonoBehaviour {
 
 	public void onPrevButtonClicked()
 	{
-		if (m_topLevelVoxelObject == null)
-			return;
-
 		int index = m_currentListIndex - 1;
 		if (index < 0)
-			index = m_voxelObjectsWithAtlasIndexList.Count - 1;
+			index = m_uniqueVoxelObjects.Count - 1;
 		saveChanges();
 		setCurrentListIndex(index);
 	}
 
 	public void onNextButtonClicked()
 	{
-		if (m_topLevelVoxelObject == null)
-			return;
-
 		int index = m_currentListIndex + 1;
-		if (index >= m_voxelObjectsWithAtlasIndexList.Count)
+		if (index >= m_uniqueVoxelObjects.Count)
 			index = 0;
 		saveChanges();
 		setCurrentListIndex(index);
@@ -175,7 +139,7 @@ public class ThingPainter : MonoBehaviour {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
-		int atlasIndex = m_voxelObjectsWithAtlasIndexList[m_currentListIndex].resolvedIndex();
+		int atlasIndex = m_uniqueVoxelObjects[m_currentListIndex].resolvedIndex();
 
 		int atlasPixelX;
 		int atlasPixelY;
@@ -185,8 +149,10 @@ public class ThingPainter : MonoBehaviour {
 
 		m_textureDirty = false;
 
-		Root.instance.meshManager.clearCache(m_topLevelVoxelObject.name);
-		Root.instance.notificationManager.notifyPrefabChanged(m_prefab);
+		// TODO: each variant will have different mesh!
+
+		Root.instance.meshManager.clearCache(m_prefabVariant.prefabName);
+		Root.instance.notificationManager.notifyPrefabChanged(m_prefabVariant.prefab);
     }
 
 	public void onColorButtonClicked()

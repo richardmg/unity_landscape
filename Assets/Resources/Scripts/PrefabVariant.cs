@@ -23,7 +23,7 @@ public class PrefabVariant {
 	{
 	}
 
-	List<VoxelObject> getUniqueVoxelObjects()
+	public List<VoxelObject> getUniqueVoxelObjects()
 	{
 		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
 		List<VoxelObject> uniqueVoxelObjects = new List<VoxelObject>();
