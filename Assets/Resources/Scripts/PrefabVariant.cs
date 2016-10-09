@@ -8,6 +8,9 @@ public class PrefabVariant {
 	public PrefabVariant(string prefabName)
 	{
 		this.prefabName = prefabName;
+		// Get prefab
+		// Count number of faces
+		// Allocate faces in atlas (does not need to be trailing), and assign to atlasIndices
 	}
 
 	PrefabVariant()

@@ -7,4 +7,12 @@ public class UIPrefabVariantPicker : MonoBehaviour {
 	{
 		Root.instance.uiManager.push(Root.instance.uiManager.paintEditorGO, (bool accepted) => {});
 	}
+
+	public void newTreeButtonClicked()
+	{
+		// Redirect button click here
+		// Create PrefabVariant, make it current
+		// Open paint editor
+		Root.instance.uiManager.push(Root.instance.uiManager.paintEditorGO, (bool accepted) => {});
+	}
 }
