@@ -18,7 +18,7 @@ public class VoxelObject : MonoBehaviour {
 	static bool staticResourcesInitialized = false;
 	static public Material materialExact;
 	static public Material materialVolume;
-	static VoxelMeshFactory voxelMeshFactory;
+	static VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
 	public static int voxelObjectCount = 0;
 
 	public const Lod kNoLod = -1;
