@@ -43,10 +43,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
 
+		VoxelObject.initStaticResources();
+
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = new GameObject();
-				MeshFilter meshFilter = (MeshFilter)tile.AddComponent<MeshFilter>();
+				tile.AddComponent<MeshFilter>();
 				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
 				meshRenderer.sharedMaterial = VoxelObject.materialExact;
 
@@ -101,7 +103,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveVoxelObjects(tile);
-			Mesh mesh = Root.instance.meshManager.createCombinedMesh(tile, Root.kLod0, null);
+			Mesh mesh = MeshManager.createCombinedMesh(tile, Root.kLod0, null);
 			tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 		}
 	}

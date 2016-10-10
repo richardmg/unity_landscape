@@ -74,7 +74,7 @@ public class PrefabVariant {
 		Mesh mesh = m_mesh[lod];
 		if (!mesh) {
 			Dictionary<int, int> atlasIndexSubstitutions = new Dictionary<int, int>();
-			mesh = Root.instance.meshManager.createCombinedMesh(prefab, Root.kLod0, atlasIndexSubstitutions);
+			mesh = MeshManager.createCombinedMesh(prefab, Root.kLod0, atlasIndexSubstitutions);
 			m_mesh[lod] = mesh;
 		}
 			

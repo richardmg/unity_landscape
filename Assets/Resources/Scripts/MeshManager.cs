@@ -6,7 +6,7 @@ using Lod = System.Int32;
 public class MeshManager {
 
 	Hashtable m_hashTable = new Hashtable();
-	VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
+	static VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
 
     const int maxLod = 1;
 
@@ -74,16 +74,16 @@ public class MeshManager {
 		m_hashTable.Clear();
 	}
 
-	public Mesh createCombinedMesh(GameObject root, Lod lod, Dictionary<int, int> atlasIndexSubstitutions)
+	public static Mesh createCombinedMesh(GameObject root, Lod lod, Dictionary<int, int> atlasIndexSubstitutions)
 	{
-		VoxelObject[] selfAndchildren = root.GetComponentsInChildren<VoxelObject>(true);
+		MeshFilter[] selfAndchildren = root.GetComponentsInChildren<MeshFilter>(true);
 		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
 		Matrix4x4 parentTransform = root.transform.worldToLocalMatrix;
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			VoxelObject vo = selfAndchildren[i];
-			combine[i].mesh = createMeshFromAtlasIndex(vo.resolvedIndex(), lod, vo.voxelDepth);
-			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
+			MeshFilter meshFilter = selfAndchildren[i];
+			combine[i].mesh = meshFilter.sharedMesh;
+			combine[i].transform = parentTransform * meshFilter.transform.localToWorldMatrix;
 		}
 
 		Mesh topLevelMesh = new Mesh();
@@ -92,7 +92,7 @@ public class MeshManager {
 		return topLevelMesh;
 	}
 
-	Mesh createMeshFromAtlasIndex(int atlasIndex, Lod lod, float voxelDepth)
+	public static Mesh createMeshFromAtlasIndex(int atlasIndex, Lod lod, float voxelDepth)
 	{
 		voxelMeshFactory.atlasIndex = atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;

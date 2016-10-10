@@ -66,7 +66,8 @@ public class VoxelObject : MonoBehaviour {
 		if (!staticResourcesInitialized)
 			initStaticResources();
 
-		m_meshFilter.sharedMesh = Root.instance.meshManager.createCombinedMesh(this.gameObject, Root.kLod0, null);
+		m_meshFilter.sharedMesh = MeshManager.createMeshFromAtlasIndex(resolvedIndex(), Root.kLod0, voxelDepth);
+		print("size: " + m_meshFilter.sharedMesh.vertexCount);
 		m_meshRenderer.sharedMaterial = materialExact;
 	}
 
@@ -108,7 +109,7 @@ public class VoxelObject : MonoBehaviour {
 		}
 	}
 
-	public void initStaticResources()
+	public static void initStaticResources()
 	{
 		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
 		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
