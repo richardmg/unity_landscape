@@ -8,7 +8,7 @@ public class PlayerStartupScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		currentPrefabVariant = new PrefabVariant();
+//		currentPrefabVariant = new PrefabVariant();
 
 		if (moveToGround) {
 			Vector3 worldPos = transform.position;

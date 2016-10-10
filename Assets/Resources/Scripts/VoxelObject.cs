@@ -18,7 +18,7 @@ public class VoxelObject : MonoBehaviour {
 	static bool staticResourcesInitialized = false;
 	static public Material materialExact;
 	static public Material materialVolume;
-	static VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
+	static VoxelMeshFactory voxelMeshFactory;
 	public static int voxelObjectCount = 0;
 
 	public const Lod kNoLod = -1;
@@ -272,7 +272,7 @@ public class VoxelObject : MonoBehaviour {
 		}
 	}
 
-	public void initStaticResources()
+	public static void initStaticResources()
 	{
 		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
 		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
