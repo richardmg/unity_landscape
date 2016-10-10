@@ -12,16 +12,22 @@ public class PrefabVariant {
 	Mesh[] m_mesh = new Mesh[2];
 
 	static int nextID = 0;
+	static bool staticResourcesInitialized = false;
+	static public Material materialExact;
+	static public Material materialVolume;
 
 	public PrefabVariant(string prefabName)
 	{
+		if (!staticResourcesInitialized)
+			initStaticResources();
+
 		id = nextID++;
 		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);
+
+		// Allocate indices in the TextureAtlas for this prefab variant
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
-
 		atlasIndices = new int[uniqueVoxelObjects.Count];
-
 		for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
 			atlasIndices[i] = Root.instance.atlasManager.acquireIndex();
 	}
@@ -65,22 +71,22 @@ public class PrefabVariant {
 		MeshFilter meshFilter = (MeshFilter)go.AddComponent<MeshFilter>();
 		MeshRenderer meshRenderer = (MeshRenderer)go.AddComponent<MeshRenderer>();
 		meshFilter.sharedMesh = mesh;
-		m_meshRenderer.sharedMaterial = (lod == VoxelObject.kLod0) ? materialExact : materialVolume;
+		meshRenderer.sharedMaterial = (lod == Root.kLod0) ? materialExact : materialVolume;
 
 		return go;
 	}
 
 	Mesh createMesh(Lod lod)
 	{
-		// Return a mesh that is a combination of this object and all its children
-
-		VoxelObject[] selfAndchildren = prefab.GetComponentsInChildren<VoxelObject>(true);
-		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
+		// Return a mesh that is a combination of all the voxel objects in the prefab
+		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
+		CombineInstance[] combine = new CombineInstance[voxelObjects.Length];
 		Matrix4x4 parentTransform = prefab.transform.worldToLocalMatrix;
 
-		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			VoxelObject vo = selfAndchildren[i];
+		for (int i = 0; i < voxelObjects.Length; ++i) {
+			VoxelObject vo = voxelObjects[i];
 			vo.setLod(lod);
+			// TODO: give atlas index as argument to createMeshNonRecursive
 			combine[i].mesh = vo.createMeshNonRecursive(lod);
 			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
 		}
@@ -90,11 +96,23 @@ public class PrefabVariant {
 		return topLevelMesh;
 	}
 
-	public PrefabVariant clone()
+	public PrefabVariant copy()
 	{
-		PrefabVariant clone = new PrefabVariant();
-		clone.prefabName = prefabName;
-		clone.atlasIndices = atlasIndices;
+		PrefabVariant clone = new PrefabVariant(prefabName);
 		return clone;
+	}
+
+	public void initStaticResources()
+	{
+		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
+		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
+
+		Debug.Assert(materialExact != null);
+		Debug.Assert(materialVolume != null);
+		Debug.Assert(materialExact.mainTexture != null);
+		Debug.Assert(materialVolume.mainTexture != null);
+
+		materialVolume.CopyPropertiesFromMaterial(materialExact);
+		staticResourcesInitialized = true;
 	}
 }

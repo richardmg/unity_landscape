@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Lod = System.Int32;
 
 public class Root : MonoBehaviour {
 	public static readonly int kAtlasWidth = 64;
@@ -27,6 +28,10 @@ public class Root : MonoBehaviour {
 	public PlayerStartupScript player;
 	[HideInInspector]
 	public AtlasManager atlasManager;
+
+	public const Lod kNoLod = -1;
+	public const Lod kLod0 = 0;
+	public const Lod kLod1 = 1;
 
 	Root()
 	{

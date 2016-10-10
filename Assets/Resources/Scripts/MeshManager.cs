@@ -16,7 +16,7 @@ public class MeshManager {
     {
 		// TODO: fix name
 		string name = prefabVariant.prefabName;
-		return name.ToLower() + (lod == VoxelObject.kLod0 ? "0" : "1");
+		return name.ToLower() + (lod == Root.kLod0 ? "0" : "1");
     }
 
 	public Mesh getSharedMesh(PrefabVariant prefabVariant, Lod lod)
