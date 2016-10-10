@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Lod = System.Int32;
 
 public class PrefabVariant {
-	public int id;
+	public int id { get; private set; }
 	public string prefabName;
 	public int[] atlasIndices;
 	public GameObject prefab;
+
+	Mesh[] m_mesh = new Mesh[2];
 
 	static int nextID = 0;
 
@@ -21,10 +24,6 @@ public class PrefabVariant {
 
 		for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
 			atlasIndices[i] = Root.instance.atlasManager.acquireIndex();
-	}
-
-	PrefabVariant()
-	{
 	}
 
 	public List<VoxelObject> getUniqueVoxelObjects()
@@ -54,8 +53,41 @@ public class PrefabVariant {
 		return uniqueVoxelObjects;
 	}
 
-	public void setIndex(int childIndex, int atlasIndex)
+	public GameObject createInstance(Lod lod)
 	{
+		Mesh mesh = m_mesh[lod];
+		if (!mesh) {
+			mesh = createMesh(lod);
+			m_mesh[lod] = mesh;
+		}
+			
+		GameObject go = new GameObject();
+		MeshFilter meshFilter = (MeshFilter)go.AddComponent<MeshFilter>();
+		MeshRenderer meshRenderer = (MeshRenderer)go.AddComponent<MeshRenderer>();
+		meshFilter.sharedMesh = mesh;
+		m_meshRenderer.sharedMaterial = (lod == VoxelObject.kLod0) ? materialExact : materialVolume;
+
+		return go;
+	}
+
+	Mesh createMesh(Lod lod)
+	{
+		// Return a mesh that is a combination of this object and all its children
+
+		VoxelObject[] selfAndchildren = prefab.GetComponentsInChildren<VoxelObject>(true);
+		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
+		Matrix4x4 parentTransform = prefab.transform.worldToLocalMatrix;
+
+		for (int i = 0; i < selfAndchildren.Length; ++i) {
+			VoxelObject vo = selfAndchildren[i];
+			vo.setLod(lod);
+			combine[i].mesh = vo.createMeshNonRecursive(lod);
+			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
+		}
+
+		Mesh topLevelMesh = new Mesh();
+		topLevelMesh.CombineMeshes(combine);
+		return topLevelMesh;
 	}
 
 	public PrefabVariant clone()

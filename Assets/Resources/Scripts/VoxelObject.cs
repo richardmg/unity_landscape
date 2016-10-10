@@ -207,7 +207,7 @@ public class VoxelObject : MonoBehaviour {
 		return topLevelMesh;
 	}
 
-	Mesh createMeshNonRecursive(Lod lod)
+	public Mesh createMeshNonRecursive(Lod lod)
 	{
 		// Return a mesh that represents this object only
 

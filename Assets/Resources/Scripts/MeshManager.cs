@@ -14,6 +14,8 @@ public class MeshManager {
 
 	string getCacheID(PrefabVariant prefabVariant, Lod lod)
     {
+		// TODO: fix name
+		string name = prefabVariant.prefabName;
 		return name.ToLower() + (lod == VoxelObject.kLod0 ? "0" : "1");
     }
 
@@ -21,7 +23,10 @@ public class MeshManager {
 	{
         Debug.Assert(lod <= maxLod);
 
-		string cacheId = getCacheID(name, lod);
+		// TODO: fix name
+		string name = prefabVariant.prefabName;
+
+		string cacheId = getCacheID(prefabVariant, lod);
 		Mesh mesh = (Mesh)m_hashTable[cacheId];
 
 		if (mesh == null) {
