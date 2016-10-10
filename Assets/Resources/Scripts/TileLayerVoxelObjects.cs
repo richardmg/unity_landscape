@@ -43,8 +43,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
 
-		VoxelObject.initStaticResources();
-
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = new GameObject();
