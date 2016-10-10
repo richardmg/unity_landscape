@@ -11,23 +11,21 @@ public class PrefabVariant : MonoBehaviour {
 	public int[] atlasIndices;
 	public GameObject prefab;
 
-	static PrefabVariantID nextID = 0;
-	static bool staticResourcesInitialized = false;
-	static public Material materialExact;
-	static public Material materialVolume;
-
-	Mesh[] m_mesh = new Mesh[Root.kLodCount];
-
 	public PrefabVariant() {}
 
 	public void setPrefab(string prefabName)
 	{
-		if (!staticResourcesInitialized)
-			initStaticResources();
-
 		Debug.Assert(prefab == null, "Don't call setPrefab twize!");
 
-		id = nextID++;
+		// TODO: Since I never assign a prefab name to a voxel object index, they
+		// will never be of type kPrefab, and hence, never be cached. But a better
+		// idea all together is to not rely on the prefab cache at at all, but instead
+		// let all gameobjects that share PrefabVariant actually share it (rather than
+		// each creating their own instance, like now). This means that I need one extra
+		// level of indirection; tile -> gameobject -> PrefabVariantPointer -> prefabVariant -> voxelobject.
+		// then prefabvariant can go back to be a normal object instead of MonoBehaviour as well.
+		// A prefabvariant will then cache the mesh making voxel object cache superfluos (which
+		// it will be anyway, since voxel objects will be configured)
 		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);
 
@@ -68,19 +66,5 @@ public class PrefabVariant : MonoBehaviour {
 	public Mesh createMesh(Lod lod)
 	{
 		return prefab.GetComponent<VoxelObject>().createMesh(lod);
-	}
-
-	public void initStaticResources()
-	{
-		materialExact = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
-		materialVolume = (Material)Resources.Load("Materials/VoxelObjectVolume", typeof(Material));
-
-		Debug.Assert(materialExact != null);
-		Debug.Assert(materialVolume != null);
-		Debug.Assert(materialExact.mainTexture != null);
-		Debug.Assert(materialVolume.mainTexture != null);
-
-		materialVolume.CopyPropertiesFromMaterial(materialExact);
-		staticResourcesInitialized = true;
 	}
 }

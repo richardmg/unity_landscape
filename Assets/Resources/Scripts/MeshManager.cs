@@ -6,9 +6,6 @@ using Lod = System.Int32;
 public class MeshManager {
 
 	Hashtable m_hashTable = new Hashtable();
-	static VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
-
-    const int maxLod = 1;
 
 	public MeshManager()
 	{
@@ -21,12 +18,13 @@ public class MeshManager {
 
 	public Mesh getSharedMesh(string name, Lod lod)
 	{
-        Debug.Assert(lod <= maxLod);
+		Debug.Assert(lod < Root.kLodCount);
 
 		string cacheId = getCacheID(name, lod);
 		Mesh mesh = (Mesh)m_hashTable[cacheId];
 
 		if (mesh == null) {
+			MonoBehaviour.print("create in cache: " + cacheId);
 			GameObject prefab = Root.getPrefab(name);
 			if (prefab == null)
 				return null;
@@ -45,6 +43,8 @@ public class MeshManager {
 				// Reminder for later...
 				MonoBehaviour.print("REMEMBER TO CLEAR CACHE FOR UNUSED VOXELOBJECTS! Cache size: " + m_hashTable.Count);
 			}
+		} else {
+			MonoBehaviour.print("Found in cache: " + cacheId);
 		}
 
 		return mesh;
@@ -57,7 +57,7 @@ public class MeshManager {
 
 	public void clearCache(PrefabVariant prefabVariant)
     {
-        for (int i = 0; i <= maxLod; ++i)
+		for (int i = 0; i < Root.kLodCount; ++i)
 			m_hashTable.Remove(getCacheID(prefabVariant.prefabName, i));
     }
 
