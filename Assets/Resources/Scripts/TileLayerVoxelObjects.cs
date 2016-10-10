@@ -52,6 +52,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 				tile.transform.parent = transform;
 				m_tileMatrix[x, z] = tile;
 
+				// TODO: Here I'm abusing VoxelObject to contain many separate
+				// VoxelObjects. From now on, a tile will contain GameObjects made
+				// from PrefabVariants. So I should only need to combine the meshes
+				// found on the GameObjects (no need to recreate them). But the tile
+				// will need material as well, same as VoxelObject and the GameObjects
+				// from PrefabVariant. Is there a way to specify the material in on place?
+				// Perhaps the correct thing is to let this common script be VoxelObject and
+				// just let PrefabVariant objects contain it....
+
 				VoxelObject vo = tile.AddComponent<VoxelObject>();
 				m_voxelObjectMatrix[x, z] = vo;
 				vo.setIndex(VoxelObject.indexToString(VoxelObject.kTopLevel));
