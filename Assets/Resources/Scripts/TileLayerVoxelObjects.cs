@@ -125,7 +125,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 
 	private GameObject createPrefabVariantInstance(GameObject tile, PrefabVariant prefabVariant, string name)
 	{
-		GameObject go = prefabVariant.createInstance();
+		GameObject go = new GameObject();
+		PrefabVariant pv = go.AddComponent<PrefabVariant>();
+		pv.setPrefab(prefab.name);
 		go.name = name;
 		go.transform.parent = tile.transform;
 		go.SetActive(false);

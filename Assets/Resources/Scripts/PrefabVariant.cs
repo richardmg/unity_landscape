@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using Lod = System.Int32;
 using PrefabVariantID = System.Int32;
 
-public class PrefabVariant {
+public class PrefabVariant : MonoBehaviour {
 	public PrefabVariantID id { get; private set; }
 	public string prefabName;
 	public int[] atlasIndices;
@@ -18,10 +18,14 @@ public class PrefabVariant {
 
 	Mesh[] m_mesh = new Mesh[Root.kLodCount];
 
-	public PrefabVariant(string prefabName)
+	public PrefabVariant() {}
+
+	public void setPrefab(string prefabName)
 	{
 		if (!staticResourcesInitialized)
 			initStaticResources();
+
+		Debug.Assert(prefab == null, "Don't call setPrefab twize!");
 
 		id = nextID++;
 		this.prefabName = prefabName;
@@ -61,36 +65,9 @@ public class PrefabVariant {
 		return uniqueVoxelObjects;
 	}
 
-	public GameObject createInstance()
+	public Mesh createMesh(Lod lod)
 	{
-		// TODO: which lod to actually use run-time will change for
-		// the GameObject we create. So we need to inject a script into it
-		// that can ask this PrefabVariant for e.g getMesh(Lod lod). Once
-		// this script is ready, perhaps most of the code in this function
-		// can be refactored into it (like creating MeshFilter etc). It
-		// will basically look a lot like VoxelObject.
-		Lod lod = Root.kLod0;
-
-		Mesh mesh = m_mesh[lod];
-		if (!mesh) {
-			Dictionary<int, int> atlasIndexSubstitutions = new Dictionary<int, int>();
-			mesh = MeshManager.createCombinedMesh(prefab, Root.kLod0, atlasIndexSubstitutions);
-			m_mesh[lod] = mesh;
-		}
-			
-		GameObject go = new GameObject();
-		MeshFilter meshFilter = (MeshFilter)go.AddComponent<MeshFilter>();
-		MeshRenderer meshRenderer = (MeshRenderer)go.AddComponent<MeshRenderer>();
-		meshFilter.sharedMesh = mesh;
-		meshRenderer.sharedMaterial = (lod == Root.kLod0) ? materialExact : materialVolume;
-
-		return go;
-	}
-
-	public PrefabVariant copy()
-	{
-		PrefabVariant clone = new PrefabVariant(prefabName);
-		return clone;
+		return prefab.GetComponent<VoxelObject>().createMesh(lod);
 	}
 
 	public void initStaticResources()

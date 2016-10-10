@@ -108,7 +108,7 @@ public class ThingPainter : MonoBehaviour {
 	public void onIndexFieldEndInput(InputField indexField)
     {
 		saveChanges();
-		setCurrentPrefabVariant(new PrefabVariant(indexField.text));
+//		setCurrentPrefabVariant(new PrefabVariant(indexField.text));
     }
 
 	public void onPrevButtonClicked()
