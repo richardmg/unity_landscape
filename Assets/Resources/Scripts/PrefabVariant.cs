@@ -1,20 +1,22 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
 using Lod = System.Int32;
+using PrefabVariantID = System.Int32;
 
 public class PrefabVariant {
-	public int id { get; private set; }
+	public PrefabVariantID id { get; private set; }
 	public string prefabName;
 	public int[] atlasIndices;
 	public GameObject prefab;
 
-	Mesh[] m_mesh = new Mesh[2];
-
-	static int nextID = 0;
+	static PrefabVariantID nextID = 0;
 	static bool staticResourcesInitialized = false;
 	static public Material materialExact;
 	static public Material materialVolume;
+
+	Mesh[] m_mesh = new Mesh[Root.kLodCount];
 
 	public PrefabVariant(string prefabName)
 	{
@@ -59,8 +61,16 @@ public class PrefabVariant {
 		return uniqueVoxelObjects;
 	}
 
-	public GameObject createInstance(Lod lod)
+	public GameObject createInstance()
 	{
+		// TODO: which lod to actually use run-time will change for
+		// the GameObject we create. So we need to inject a script into it
+		// that can ask this PrefabVariant for e.g getMesh(Lod lod). Once
+		// this script is ready, perhaps most of the code in this function
+		// can be refactored into it (like creating MeshFilter etc). It
+		// will basically look a lot like VoxelObject.
+		Lod lod = Root.kLod0;
+
 		Mesh mesh = m_mesh[lod];
 		if (!mesh) {
 			mesh = createMesh(lod);

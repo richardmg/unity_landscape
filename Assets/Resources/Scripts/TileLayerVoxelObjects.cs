@@ -15,6 +15,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	float m_pivotAdjustmentY;
 	TileEngine m_tileEngine;
 
+	PrefabVariant m_prefabVariant;
+
 	public void OnValidate()
 	{
 		if (m_tileEngine == null)
@@ -38,6 +40,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		m_voxelObjectMatrix = new VoxelObject[tileCount, tileCount];
 
+		// Create one prefab variant that we can create many GameObject instances from
+		m_prefabVariant = new PrefabVariant(prefab.name);
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
 
@@ -63,18 +67,20 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 
 	public void onThingAdded(Thing thing)
 	{
+// TODO: add PrefabVariant into thing
+
 		// Find out which tile is currently under the new things position
-		Vector2 matrixCoord = new Vector2();
-		m_tileEngine.matrixCoordFromWorldPos(thing.worldPos, ref matrixCoord);
-		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
-
-		// Create and position an instance of the thing as a child of the tile
-		GameObject newThing = createVoxelObject(tile, thing.index, "Created on the fly!");
-		newThing.transform.position = thing.worldPos;
-
-		// Now that the tile has a new child, rebuild it
-		VoxelObject vo = m_voxelObjectMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
-		vo.rebuildStandAlone();
+//		Vector2 matrixCoord = new Vector2();
+//		m_tileEngine.matrixCoordFromWorldPos(thing.worldPos, ref matrixCoord);
+//		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+//
+//		// Create and position an instance of the thing as a child of the tile
+//		GameObject newThing = createPrefabVariantInstance(tile, thing.index, "Created on the fly!");
+//		newThing.transform.position = thing.worldPos;
+//
+//		// Now that the tile has a new child, rebuild it
+//		VoxelObject vo = m_voxelObjectMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+//		vo.rebuildStandAlone();
 
 //		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);
 	}
@@ -114,19 +120,17 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createVoxelObject(tile, prefab.name, "VoxelObject: " + x + ", " + z);
+				createPrefabVariantInstance(tile, m_prefabVariant, "VoxelObject: " + x + ", " + z);
 			}
 		}
 	}
 
-	private GameObject createVoxelObject(GameObject tile, string index, string name)
+	private GameObject createPrefabVariantInstance(GameObject tile, PrefabVariant prefabVariant, string name)
 	{
-		GameObject go = new GameObject(name);
+		GameObject go = prefabVariant.createInstance();
+		go.name = name;
 		go.transform.parent = tile.transform;
-		VoxelObject vo = go.AddComponent<VoxelObject>();
-		vo.setIndex(index);
-		vo.transform.localScale = prefab.transform.localScale;
-		vo.gameObject.SetActive(false);
+		go.SetActive(false);
 		return go;
 	}
 
@@ -140,9 +144,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 				if (type == LandscapeManager.kForrest) {
 					worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + m_pivotAdjustmentY;
 					voTransform.position = worldPos;
-					voTransform.gameObject.GetComponent<VoxelObject>().setIndex(prefab.name);
+//					voTransform.gameObject.GetComponent<VoxelObject>().setIndex(prefab.name);
 				} else {
-					voTransform.gameObject.GetComponent<VoxelObject>().setIndex("clear");
+//					voTransform.gameObject.GetComponent<VoxelObject>().setIndex("clear");
 				}
 
 //				debug til engine

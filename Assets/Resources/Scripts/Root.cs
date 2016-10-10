@@ -32,6 +32,7 @@ public class Root : MonoBehaviour {
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
 	public const Lod kLod1 = 1;
+	public const Lod kLodCount = 2;
 
 	Root()
 	{
