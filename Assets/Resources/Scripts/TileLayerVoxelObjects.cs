@@ -11,7 +11,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	public GameObject prefab;
 
 	GameObject[,] m_tileMatrix;
-	VoxelObject[,] m_voxelObjectMatrix;
 	float m_pivotAdjustmentY;
 	TileEngine m_tileEngine;
 
@@ -38,7 +37,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
-		m_voxelObjectMatrix = new VoxelObject[tileCount, tileCount];
 
 		// Create one prefab variant that we can create many GameObject instances from
 		m_prefabVariant = new PrefabVariant(prefab.name);
@@ -48,23 +46,14 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = new GameObject();
+				MeshFilter meshFilter = (MeshFilter)tile.AddComponent<MeshFilter>();
+				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
+				meshRenderer.sharedMaterial = VoxelObject.materialExact;
+
 				tile.name = "Tile " + x + ", " + z;
 				tile.transform.parent = transform;
 				m_tileMatrix[x, z] = tile;
 
-				// TODO: Here I'm abusing VoxelObject to contain many separate
-				// VoxelObjects. From now on, a tile will contain GameObjects made
-				// from PrefabVariants. So I should only need to combine the meshes
-				// found on the GameObjects (no need to recreate them). But the tile
-				// will need material as well, same as VoxelObject and the GameObjects
-				// from PrefabVariant. Is there a way to specify the material in on place?
-				// Perhaps the correct thing is to let this common script be VoxelObject and
-				// just let PrefabVariant objects contain it....
-
-				VoxelObject vo = tile.AddComponent<VoxelObject>();
-				m_voxelObjectMatrix[x, z] = vo;
-				vo.setIndex(VoxelObject.indexToString(VoxelObject.kTopLevel));
-				vo.initAsStandAlone();
 				initVoxelObjects(tile);
 			}
 		}
@@ -96,13 +85,13 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 
 	public void onPrefabVariantChanged(PrefabVariant prefabVariant)
 	{
-		// Rebuild all tiles, since we don't keep track which tiles contains which objects
-		int tileCount = m_tileEngine.tileCount;
-		for (int z = 0; z < tileCount; ++z) {
-			for (int x = 0; x < tileCount; ++x) {
-				m_voxelObjectMatrix[x, z].rebuildStandAlone();
-			}
-		}
+//		// Rebuild all tiles, since we don't keep track which tiles contains which objects
+//		int tileCount = m_tileEngine.tileCount;
+//		for (int z = 0; z < tileCount; ++z) {
+//			for (int x = 0; x < tileCount; ++x) {
+//				m_voxelObjectMatrix[x, z].rebuildStandAlone();
+//			}
+//		}
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
@@ -112,8 +101,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveVoxelObjects(tile);
-			VoxelObject vo = m_voxelObjectMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			vo.rebuildStandAlone();
+			Mesh mesh = Root.instance.meshManager.createCombinedMesh(tile, Root.kLod0, null);
+			tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 		}
 	}
 

@@ -73,7 +73,8 @@ public class PrefabVariant {
 
 		Mesh mesh = m_mesh[lod];
 		if (!mesh) {
-			mesh = createMesh(lod);
+			Dictionary<int, int> atlasIndexSubstitutions = new Dictionary<int, int>();
+			mesh = Root.instance.meshManager.createCombinedMesh(prefab, Root.kLod0, atlasIndexSubstitutions);
 			m_mesh[lod] = mesh;
 		}
 			
@@ -84,26 +85,6 @@ public class PrefabVariant {
 		meshRenderer.sharedMaterial = (lod == Root.kLod0) ? materialExact : materialVolume;
 
 		return go;
-	}
-
-	Mesh createMesh(Lod lod)
-	{
-		// Return a mesh that is a combination of all the voxel objects in the prefab
-		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
-		CombineInstance[] combine = new CombineInstance[voxelObjects.Length];
-		Matrix4x4 parentTransform = prefab.transform.worldToLocalMatrix;
-
-		for (int i = 0; i < voxelObjects.Length; ++i) {
-			VoxelObject vo = voxelObjects[i];
-			vo.setLod(lod);
-			// TODO: give atlas index as argument to createMeshNonRecursive
-			combine[i].mesh = vo.createMeshNonRecursive(lod);
-			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
-		}
-
-		Mesh topLevelMesh = new Mesh();
-		topLevelMesh.CombineMeshes(combine);
-		return topLevelMesh;
 	}
 
 	public PrefabVariant copy()

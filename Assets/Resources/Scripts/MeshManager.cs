@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Lod = System.Int32;
 
 public class MeshManager {
 
 	Hashtable m_hashTable = new Hashtable();
+	VoxelMeshFactory voxelMeshFactory = new VoxelMeshFactory();
 
     const int maxLod = 1;
 
@@ -21,36 +23,39 @@ public class MeshManager {
 
 	public Mesh getSharedMesh(PrefabVariant prefabVariant, Lod lod)
 	{
-        Debug.Assert(lod <= maxLod);
+		Debug.Assert(false, "Needs to change!");
+		return null;
 
-		// TODO: fix name
-		string name = prefabVariant.prefabName;
-
-		string cacheId = getCacheID(prefabVariant, lod);
-		Mesh mesh = (Mesh)m_hashTable[cacheId];
-
-		if (mesh == null) {
-			GameObject prefab = Root.getPrefab(name);
-			if (prefab == null)
-				return null;
-
-			VoxelObject vo = prefab.GetComponent<VoxelObject>();
-			mesh = vo.createMesh(lod);
-			m_hashTable[cacheId] = mesh;
-
-//			if (Application.isPlaying) {
-//				MonoBehaviour.print("Caching " + cacheId);
-//				foreach(string key in m_hashTable.Keys)
-//					MonoBehaviour.print("   " + key);
+//        Debug.Assert(lod <= maxLod);
+//
+//		// TODO: fix name
+//		string name = prefabVariant.prefabName;
+//
+//		string cacheId = getCacheID(prefabVariant, lod);
+//		Mesh mesh = (Mesh)m_hashTable[cacheId];
+//
+//		if (mesh == null) {
+//			GameObject prefab = Root.getPrefab(name);
+//			if (prefab == null)
+//				return null;
+//
+//			VoxelObject vo = prefab.GetComponent<VoxelObject>();
+//			mesh = vo.createMesh(lod);
+//			m_hashTable[cacheId] = mesh;
+//
+////			if (Application.isPlaying) {
+////				MonoBehaviour.print("Caching " + cacheId);
+////				foreach(string key in m_hashTable.Keys)
+////					MonoBehaviour.print("   " + key);
+////			}
+//
+//			if (m_hashTable.Count > 10) {
+//				// Reminder for later...
+//				MonoBehaviour.print("REMEMBER TO CLEAR CACHE FOR UNUSED VOXELOBJECTS! Cache size: " + m_hashTable.Count);
 //			}
-
-			if (m_hashTable.Count > 10) {
-				// Reminder for later...
-				MonoBehaviour.print("REMEMBER TO CLEAR CACHE FOR UNUSED VOXELOBJECTS! Cache size: " + m_hashTable.Count);
-			}
-		}
-
-		return mesh;
+//		}
+//
+//		return mesh;
 	}
 
 	public int size()
@@ -67,5 +72,44 @@ public class MeshManager {
 	public void clearCache()
 	{
 		m_hashTable.Clear();
+	}
+
+	public Mesh createCombinedMesh(GameObject root, Lod lod, Dictionary<int, int> atlasIndexSubstitutions)
+	{
+		VoxelObject[] selfAndchildren = root.GetComponentsInChildren<VoxelObject>(true);
+		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
+		Matrix4x4 parentTransform = root.transform.worldToLocalMatrix;
+
+		for (int i = 0; i < selfAndchildren.Length; ++i) {
+			VoxelObject vo = selfAndchildren[i];
+			combine[i].mesh = createMeshFromAtlasIndex(vo.resolvedIndex(), lod, vo.voxelDepth);
+			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
+		}
+
+		Mesh topLevelMesh = new Mesh();
+		topLevelMesh.CombineMeshes(combine);
+
+		return topLevelMesh;
+	}
+
+	Mesh createMeshFromAtlasIndex(int atlasIndex, Lod lod, float voxelDepth)
+	{
+		voxelMeshFactory.atlasIndex = atlasIndex;
+		voxelMeshFactory.voxelDepth = voxelDepth;
+		voxelMeshFactory.xFaces = voxelDepth != 0;
+		voxelMeshFactory.yFaces = voxelDepth != 0;
+
+		switch (lod) {
+		case Root.kLod0:
+			voxelMeshFactory.useVolume = false;
+			voxelMeshFactory.simplify = false;
+			break;
+		case Root.kLod1:
+			voxelMeshFactory.useVolume = true;
+			voxelMeshFactory.simplify = true;
+			break;
+		}
+
+		return voxelMeshFactory.createMesh();
 	}
 }
