@@ -13,7 +13,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY;
 	TileEngine m_tileEngine;
-
+	PrefabVariant m_prefabVariant;
 
 	public void OnValidate()
 	{
@@ -36,6 +36,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
+
+		m_prefabVariant = new PrefabVariant(prefab.name);
 
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
@@ -117,16 +119,16 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createPrefabVariantInstance(tile, prefab.name, "VoxelObject: " + x + ", " + z);
+				createPrefabVariantRef(tile, prefab.name, "VoxelObject: " + x + ", " + z);
 			}
 		}
 	}
 
-	private GameObject createPrefabVariantInstance(GameObject tile, string prefabName, string name)
+	private GameObject createPrefabVariantRef(GameObject tile, string prefabName, string name)
 	{
 		GameObject go = new GameObject();
-		PrefabVariant pv = go.AddComponent<PrefabVariant>();
-		pv.setPrefab(prefabName);
+		PrefabVariantRef pvr = go.AddComponent<PrefabVariantRef>();
+		pvr.prefabVariant = m_prefabVariant;
 		go.name = name;
 		go.transform.parent = tile.transform;
 		go.SetActive(false);

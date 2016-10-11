@@ -5,29 +5,19 @@ using System.Collections.Generic;
 using Lod = System.Int32;
 using PrefabVariantID = System.Int32;
 
-public class PrefabVariant : MonoBehaviour {
+public class PrefabVariant {
 	public PrefabVariantID id { get; private set; }
 	public string prefabName;
 	public int[] atlasIndices;
 	public GameObject prefab;
 
-	public PrefabVariant() {}
+	Mesh[] m_mesh = new Mesh[Root.kLodCount];
 
-	public void setPrefab(string prefabName)
+	public PrefabVariant(string prefabName)
 	{
-		Debug.Assert(prefab == null, "Don't call setPrefab twize!");
-
-		// TODO: Since I never assign a prefab name to a voxel object index, they
-		// will never be of type kPrefab, and hence, never be cached. But a better
-		// idea all together is to not rely on the prefab cache at at all, but instead
-		// let all gameobjects that share PrefabVariant actually share it (rather than
-		// each creating their own instance, like now). This means that I need one extra
-		// level of indirection; tile -> gameobject -> PrefabVariantPointer -> prefabVariant -> voxelobject.
-		// then prefabvariant can go back to be a normal object instead of MonoBehaviour as well.
-		// A prefabvariant will then cache the mesh making voxel object cache superfluos (which
-		// it will be anyway, since voxel objects will be configured)
 		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);
+		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 
 		// Allocate indices in the TextureAtlas for this prefab variant
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
@@ -63,8 +53,14 @@ public class PrefabVariant : MonoBehaviour {
 		return uniqueVoxelObjects;
 	}
 
-	public Mesh createMesh(Lod lod)
+	public Mesh getMesh(Lod lod)
 	{
-		return prefab.GetComponent<VoxelObject>().createMesh(lod);
+		Mesh mesh = m_mesh[lod];
+		if (mesh == null) {
+			mesh = prefab.GetComponent<VoxelObject>().createMesh(lod);
+			m_mesh[lod] = mesh;
+		}
+
+		return mesh;
 	}
 }

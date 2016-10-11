@@ -68,14 +68,14 @@ public class MeshManager {
 
 	public static Mesh createCombinedMesh(GameObject root, Lod lod, Dictionary<int, int> atlasIndexSubstitutions)
 	{
-		PrefabVariant[] selfAndchildren = root.GetComponentsInChildren<PrefabVariant>(true);
+		PrefabVariantRef[] selfAndchildren = root.GetComponentsInChildren<PrefabVariantRef>(true);
 		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
 		Matrix4x4 parentTransform = root.transform.worldToLocalMatrix;
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			PrefabVariant prefabVariant = selfAndchildren[i];
-			combine[i].mesh = prefabVariant.createMesh(lod);
-			combine[i].transform = parentTransform * prefabVariant.transform.localToWorldMatrix;
+			PrefabVariantRef prefabVariantRef = selfAndchildren[i];
+			combine[i].mesh = prefabVariantRef.prefabVariant.getMesh(lod);
+			combine[i].transform = parentTransform * prefabVariantRef.transform.localToWorldMatrix;
 		}
 
 		Mesh topLevelMesh = new Mesh();
