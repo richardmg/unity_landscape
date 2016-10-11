@@ -151,7 +151,8 @@ public class ThingPainter : MonoBehaviour {
 
 		// TODO: each variant will have different mesh!
 
-		Root.instance.meshManager.clearCache(m_prefabVariant);
+		Debug.Assert(false, "no way yet to clear cache!");
+//		Root.instance.meshManager.clearCache(m_prefabVariant);
 		Root.instance.notificationManager.notifyPrefabVariantChanged(m_prefabVariant);
     }
 

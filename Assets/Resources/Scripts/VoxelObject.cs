@@ -26,7 +26,6 @@ public class VoxelObject : MonoBehaviour {
 	public const Lod kLod1 = 1;
 
 	public const Lod kTopLevel = -1;
-	public const Lod kPrefab = -2;
 	public const Lod kEmpty = -3;
 	public const Lod kUnknown = -4;
 
@@ -46,7 +45,6 @@ public class VoxelObject : MonoBehaviour {
 	{
 		switch(index) {
 		case kTopLevel: return "toplevel";
-		case kPrefab: return "prefab";
 		case kEmpty: return "empty";
 		}
 
@@ -114,8 +112,6 @@ public class VoxelObject : MonoBehaviour {
 				m_resolvedIndex = kTopLevel;
 			else if (index == indexToString(kEmpty))
 				m_resolvedIndex = kEmpty;
-			else
-				m_resolvedIndex = kPrefab;
 		}
 	}
 
@@ -210,15 +206,6 @@ public class VoxelObject : MonoBehaviour {
 	Mesh createMeshNonRecursive(Lod lod)
 	{
 		// Return a mesh that represents this object only
-
-		if (m_resolvedIndex == kPrefab) {
-			// This object is just a "copy" of a prefab.
-			// Prefabs are reusable objects that we want to cache, so we fetch
-			// it from the mesh manager. The mesh manager will, if not found in the
-			// cache, create the prefab and call createMesh on it.
-			Mesh sharedMesh = Root.instance.meshManager.getSharedMesh(index, lod);
-			return (sharedMesh != null) ? sharedMesh : new Mesh();
-		}
 
 		if (m_resolvedIndex == kTopLevel || m_resolvedIndex == kEmpty) {
 			// Return empty mesh since we don't recurse
