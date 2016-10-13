@@ -37,7 +37,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 
-		m_entityClass = new EntityClass(prefab.name);
+		m_entityClass = Root.instance.player.currentEntityClass;
 
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
