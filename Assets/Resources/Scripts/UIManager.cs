@@ -20,27 +20,27 @@ public class UIManager : MonoBehaviour {
 	public GameObject firstPersonGO;
 	public GameObject colorPickerGO;
 	public GameObject paintEditorGO;
-	public GameObject prefabVariantPickerGO;
+	public GameObject entityClassPickerGO;
 
 	public KeyCode uiOnOffKey;
 
 	GameObject m_currentMenu;
 
 	[HideInInspector]
-	public UIPrefabVariantPicker prefabVariantPicker;
+	public UIEntityClassPicker entityClassPicker;
 
 	List<UIManagerStackItem> stack = new List<UIManagerStackItem>();
 	MonoBehaviour m_mouseGrab = null;
 
 	void Awake()
 	{
-		prefabVariantPicker = prefabVariantPickerGO.GetComponent<UIPrefabVariantPicker>();
+		entityClassPicker = entityClassPickerGO.GetComponent<UIEntityClassPicker>();
 	}
 
 	void Start()
 	{
 		hideUI();
-		push(prefabVariantPickerGO, (bool accepted) => {});
+		push(entityClassPickerGO, (bool accepted) => {});
 		showFirstPersonUI();
 	}
 
@@ -50,7 +50,7 @@ public class UIManager : MonoBehaviour {
 		firstPersonGO.SetActive(false);
 		colorPickerGO.SetActive(false);
 		paintEditorGO.SetActive(false);
-		prefabVariantPickerGO.SetActive(false);
+		entityClassPickerGO.SetActive(false);
 
 		m_mouseGrab = null;
 	}
@@ -92,9 +92,9 @@ public class UIManager : MonoBehaviour {
 			backgroundGO.SetActive(true);
 			colorPickerGO.SetActive(true);
 			enableCursorMode(true);
-		} else if (m_currentMenu == prefabVariantPickerGO) {
+		} else if (m_currentMenu == entityClassPickerGO) {
 			backgroundGO.SetActive(true);
-			prefabVariantPickerGO.SetActive(true);
+			entityClassPickerGO.SetActive(true);
 			enableCursorMode(true);
 		} else {
 			Debug.Assert(false, "Unknown UI to show: " + m_currentMenu);

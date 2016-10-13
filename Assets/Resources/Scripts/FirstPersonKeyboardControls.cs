@@ -40,7 +40,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 
 			Thing thing = new Thing();
 			thing.worldPos = worldPos;
-			thing.index = Root.instance.player.currentPrefabVariant.prefabName;
+			thing.index = Root.instance.player.currentEntityClass.prefabName;
 			Root.instance.landscapeManager.addThing(thing);
 		}
 	}

@@ -13,7 +13,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY;
 	TileEngine m_tileEngine;
-	PrefabVariant m_prefabVariant;
+	EntityClass m_entityClass;
 
 	public void OnValidate()
 	{
@@ -37,7 +37,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 
-		m_prefabVariant = new PrefabVariant(prefab.name);
+		m_entityClass = new EntityClass(prefab.name);
 
 		// Hide prefab so we don't create the voxel objects upon construction
 		prefab.SetActive(false);
@@ -66,7 +66,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 
 	public void onThingAdded(Thing thing)
 	{
-// TODO: add PrefabVariant into thing
+// TODO: add EntityClass into thing
 
 		// Find out which tile is currently under the new things position
 //		Vector2 matrixCoord = new Vector2();
@@ -74,7 +74,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 //		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 //
 //		// Create and position an instance of the thing as a child of the tile
-//		GameObject newThing = createPrefabVariantInstance(tile, thing.index, "Created on the fly!");
+//		GameObject newThing = createEntityClassInstance(tile, thing.index, "Created on the fly!");
 //		newThing.transform.position = thing.worldPos;
 //
 //		// Now that the tile has a new child, rebuild it
@@ -84,14 +84,14 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 //		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);
 	}
 
-	public void onPrefabVariantChanged(PrefabVariant prefabVariant)
+	public void onEntityClassChanged(EntityClass entityClass)
 	{
 		// Rebuild all tiles, since we don't keep track which tiles contains which objects
 		int tileCount = m_tileEngine.tileCount;
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = m_tileMatrix[x, z];
-				Mesh mesh = PrefabVariantInstance.createCombinedMesh(tile, Root.kLod0);
+				Mesh mesh = EntityClassInstance.createCombinedMesh(tile, Root.kLod0);
 				tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 			}
 		}
@@ -104,7 +104,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveVoxelObjects(tile);
-			Mesh mesh = PrefabVariantInstance.createCombinedMesh(tile, Root.kLod0);
+			Mesh mesh = EntityClassInstance.createCombinedMesh(tile, Root.kLod0);
 			tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 		}
 	}
@@ -121,14 +121,14 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createPrefabVariantInstance(tile, prefab.name, "VoxelObject: " + x + ", " + z);
+				createEntityClassInstance(tile, prefab.name, "VoxelObject: " + x + ", " + z);
 			}
 		}
 	}
 
-	private GameObject createPrefabVariantInstance(GameObject tile, string prefabName, string name)
+	private GameObject createEntityClassInstance(GameObject tile, string prefabName, string name)
 	{
-		GameObject go = PrefabVariantInstance.create(m_prefabVariant);
+		GameObject go = EntityClassInstance.create(m_entityClass);
 		go.name = name;
 		go.transform.parent = tile.transform;
 		go.SetActive(false);

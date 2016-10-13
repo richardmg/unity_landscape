@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UIPrefabVariantPicker : MonoBehaviour {
+public class UIEntityClassPicker : MonoBehaviour {
 
 	public void onNewTreeButtonClicked()
 	{

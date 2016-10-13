@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 
 using Lod = System.Int32;
-using PrefabVariantID = System.Int32;
+using EntityClassID = System.Int32;
 
-public class PrefabVariant {
-	public PrefabVariantID id { get; private set; }
+public class EntityClass {
+	public EntityClassID id { get; private set; }
 	public string prefabName;
 	public int[] atlasIndices;
 	public GameObject prefab;
 
 	Mesh[] m_mesh = new Mesh[Root.kLodCount];
 
-	public PrefabVariant(string prefabName)
+	public EntityClass(string prefabName)
 	{
 		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);

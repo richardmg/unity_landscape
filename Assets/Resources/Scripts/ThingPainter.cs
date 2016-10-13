@@ -9,7 +9,7 @@ public class ThingPainter : MonoBehaviour {
 	public Color color = Color.black;
 
 	Texture2D m_texture;
-	PrefabVariant m_prefabVariant;
+	EntityClass m_entityClass;
 	int m_currentListIndex;
 	List<VoxelObject> m_uniqueVoxelObjects;
 	EditMode m_currentMode = kPaintMode;
@@ -25,7 +25,7 @@ public class ThingPainter : MonoBehaviour {
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
 
-		setCurrentPrefabVariant(Root.instance.player.currentPrefabVariant);
+		setCurrentEntityClass(Root.instance.player.currentEntityClass);
 	}
 
 	void OnDisable()
@@ -37,7 +37,7 @@ public class ThingPainter : MonoBehaviour {
     {
 		if (!Root.instance.uiManager.grabMouse(this))
 			return;
-		if (m_prefabVariant == null)
+		if (m_entityClass == null)
 			return;
 		if (!Input.GetMouseButton(0))
 			return;
@@ -79,10 +79,10 @@ public class ThingPainter : MonoBehaviour {
 		m_currentMode = kPaintMode;
 	}
 
-	void setCurrentPrefabVariant(PrefabVariant prefabVariant)
+	void setCurrentEntityClass(EntityClass entityClass)
 	{
-		m_prefabVariant = prefabVariant;
-		m_uniqueVoxelObjects = prefabVariant.getUniqueVoxelObjects();
+		m_entityClass = entityClass;
+		m_uniqueVoxelObjects = entityClass.getUniqueVoxelObjects();
 		setCurrentListIndex(0);
 	}
 
@@ -108,7 +108,7 @@ public class ThingPainter : MonoBehaviour {
 	public void onIndexFieldEndInput(InputField indexField)
     {
 		saveChanges();
-//		setCurrentPrefabVariant(new PrefabVariant(indexField.text));
+//		setCurrentEntityClass(new EntityClass(indexField.text));
     }
 
 	public void onPrevButtonClicked()
@@ -152,8 +152,8 @@ public class ThingPainter : MonoBehaviour {
 		// TODO: each variant will have different mesh!
 
 		Debug.Assert(false, "no way yet to clear cache!");
-//		Root.instance.meshManager.clearCache(m_prefabVariant);
-		Root.instance.notificationManager.notifyPrefabVariantChanged(m_prefabVariant);
+//		Root.instance.meshManager.clearCache(m_entityClass);
+		Root.instance.notificationManager.notifyEntityClassChanged(m_entityClass);
     }
 
 	public void onColorButtonClicked()

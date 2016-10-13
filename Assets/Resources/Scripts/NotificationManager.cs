@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public interface ThingSubscriber
 {
 	void onThingAdded(Thing thing);
-	void onPrefabVariantChanged(PrefabVariant prefabVariant);
+	void onEntityClassChanged(EntityClass entityClass);
 }
 
 public class NotificationManager {
@@ -26,10 +26,10 @@ public class NotificationManager {
 			subscriber.onThingAdded(thing);	
 	}
 
-	public void notifyPrefabVariantChanged(PrefabVariant prefab)
+	public void notifyEntityClassChanged(EntityClass prefab)
 	{
 		foreach (ThingSubscriber subscriber in thingSubscribers)
-			subscriber.onPrefabVariantChanged(prefab);	
+			subscriber.onEntityClassChanged(prefab);	
 	}
 
 }

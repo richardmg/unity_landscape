@@ -4,11 +4,11 @@ using System.Collections;
 public class PlayerStartupScript : MonoBehaviour {
 	public bool moveToGround = true;
 
-	public PrefabVariant currentPrefabVariant;
+	public EntityClass currentEntityClass;
 
 	// Use this for initialization
 	void Start () {
-		currentPrefabVariant = new PrefabVariant("treefilled");
+		currentEntityClass = new EntityClass("treefilled");
 
 		if (moveToGround) {
 			Vector3 worldPos = transform.position;
