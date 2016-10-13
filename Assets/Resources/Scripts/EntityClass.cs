@@ -13,6 +13,12 @@ public class EntityClass {
 
 	Mesh[] m_mesh = new Mesh[Root.kLodCount];
 
+	DirtyFlags m_dirtyFlag;
+
+	public enum DirtyFlags {
+		Mesh = 1
+	}
+
 	public EntityClass(string prefabName)
 	{
 		this.prefabName = prefabName;
@@ -61,10 +67,22 @@ public class EntityClass {
 		return uniqueVoxelObjects;
 	}
 
+	public void markDirty(DirtyFlags flags)
+	{
+		m_dirtyFlag &= flags;
+	}
+
+	public bool unmarkDirty(DirtyFlags flags)
+	{
+		bool dirty = (m_dirtyFlag & flags) != 0;
+		m_dirtyFlag = m_dirtyFlag & ~flags;
+		return dirty;
+	}
+
 	public Mesh getMesh(Lod lod)
 	{
 		Mesh mesh = m_mesh[lod];
-		if (mesh == null) {
+		if (mesh == null || unmarkDirty(DirtyFlags.Mesh)) {
 			mesh = prefab.GetComponent<VoxelObject>().createMesh(lod);
 			m_mesh[lod] = mesh;
 		}

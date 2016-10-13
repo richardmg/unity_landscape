@@ -149,10 +149,7 @@ public class ThingPainter : MonoBehaviour {
 
 		m_textureDirty = false;
 
-		// TODO: each variant will have different mesh!
-
-		Debug.Assert(false, "no way yet to clear cache!");
-//		Root.instance.meshManager.clearCache(m_entityClass);
+		m_entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
 		Root.instance.notificationManager.notifyEntityClassChanged(m_entityClass);
     }
 
