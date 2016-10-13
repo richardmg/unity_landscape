@@ -6,6 +6,14 @@ using Lod = System.Int32;
 public class PrefabVariantInstance : MonoBehaviour {
 	public PrefabVariant prefabVariant;
 
+	public static GameObject create(PrefabVariant prefabVariant)
+	{
+		GameObject go = new GameObject();
+		PrefabVariantInstance instance = go.AddComponent<PrefabVariantInstance>();
+		instance.prefabVariant = prefabVariant;
+		return go;
+	}
+
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
 	{
 		PrefabVariantInstance[] selfAndchildren = root.GetComponentsInChildren<PrefabVariantInstance>(true);
