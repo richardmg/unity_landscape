@@ -26,6 +26,14 @@ public class EntityClass {
 			atlasIndices[i] = Root.instance.atlasManager.acquireIndex();
 	}
 
+	public GameObject createInstance(string name = "")
+	{
+		GameObject go = new GameObject(name);
+		EntityClassInstance instance = go.AddComponent<EntityClassInstance>();
+		instance.entityClass = this;
+		return go;
+	}
+
 	public List<VoxelObject> getUniqueVoxelObjects()
 	{
 		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);

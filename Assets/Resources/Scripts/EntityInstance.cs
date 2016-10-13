@@ -6,14 +6,6 @@ using Lod = System.Int32;
 public class EntityClassInstance : MonoBehaviour {
 	public EntityClass entityClass;
 
-	public static GameObject create(EntityClass entityClass)
-	{
-		GameObject go = new GameObject();
-		EntityClassInstance instance = go.AddComponent<EntityClassInstance>();
-		instance.entityClass = entityClass;
-		return go;
-	}
-
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
 	{
 		EntityClassInstance[] selfAndchildren = root.GetComponentsInChildren<EntityClassInstance>(true);

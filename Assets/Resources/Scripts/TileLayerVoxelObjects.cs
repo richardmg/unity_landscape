@@ -121,16 +121,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createEntityClassInstance(tile, prefab.name, "VoxelObject: " + x + ", " + z);
+				createEntityInstance(tile, m_entityClass, "VoxelObject: " + x + ", " + z);
 			}
 		}
 	}
 
-	private GameObject createEntityClassInstance(GameObject tile, string prefabName, string name)
+	private GameObject createEntityInstance(GameObject parent, EntityClass entityClass, string name = "")
 	{
-		GameObject go = EntityClassInstance.create(m_entityClass);
-		go.name = name;
-		go.transform.parent = tile.transform;
+		GameObject go = m_entityClass.createInstance(name);
+		go.transform.parent = parent.transform;
 		go.SetActive(false);
 		return go;
 	}
