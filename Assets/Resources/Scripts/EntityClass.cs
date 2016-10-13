@@ -6,7 +6,6 @@ using Lod = System.Int32;
 using EntityClassID = System.Int32;
 
 public class EntityClass {
-	public EntityClassID id { get; private set; }
 	public string prefabName;
 	public int[] atlasIndices;
 	public GameObject prefab;
@@ -69,13 +68,13 @@ public class EntityClass {
 
 	public void markDirty(DirtyFlags flags)
 	{
-		m_dirtyFlags &= flags;
+		m_dirtyFlags |= flags;
 	}
 
 	public bool unmarkDirty(DirtyFlags flags)
 	{
 		bool dirty = (m_dirtyFlags & flags) != 0;
-		m_dirtyFlags = m_dirtyFlags & ~flags;
+		m_dirtyFlags &= ~flags;
 		return dirty;
 	}
 
