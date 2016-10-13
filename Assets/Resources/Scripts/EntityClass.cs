@@ -29,7 +29,7 @@ public class EntityClass {
 	public GameObject createInstance(string name = "")
 	{
 		GameObject go = new GameObject(name);
-		EntityClassInstance instance = go.AddComponent<EntityClassInstance>();
+		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
 		return go;
 	}

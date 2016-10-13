@@ -91,7 +91,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = m_tileMatrix[x, z];
-				Mesh mesh = EntityClassInstance.createCombinedMesh(tile, Root.kLod0);
+				Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
 				tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 			}
 		}
@@ -104,7 +104,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveVoxelObjects(tile);
-			Mesh mesh = EntityClassInstance.createCombinedMesh(tile, Root.kLod0);
+			Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
 			tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 		}
 	}
@@ -144,9 +144,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 				if (type == LandscapeManager.kForrest) {
 					worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + m_pivotAdjustmentY;
 					voTransform.position = worldPos;
-//					voTransform.gameObject.GetComponent<VoxelObject>().setIndex(prefab.name);
+					voTransform.gameObject.GetComponent<EntityInstance>().instanceHidden = false;
 				} else {
-//					voTransform.gameObject.GetComponent<VoxelObject>().setIndex("clear");
+					voTransform.gameObject.GetComponent<EntityInstance>().instanceHidden = true;
 				}
 
 //				debug til engine

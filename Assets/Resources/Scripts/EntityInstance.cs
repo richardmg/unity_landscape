@@ -3,18 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
 
-public class EntityClassInstance : MonoBehaviour {
+public class EntityInstance : MonoBehaviour {
 	public EntityClass entityClass;
+	public bool instanceHidden = false;
 
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
 	{
-		EntityClassInstance[] selfAndchildren = root.GetComponentsInChildren<EntityClassInstance>(true);
+		EntityInstance[] selfAndchildren = root.GetComponentsInChildren<EntityInstance>(true);
 		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
 		Matrix4x4 parentTransform = root.transform.worldToLocalMatrix;
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			EntityClassInstance entityClassInstance = selfAndchildren[i];
-			combine[i].mesh = entityClassInstance.entityClass.getMesh(lod);
+			EntityInstance entityClassInstance = selfAndchildren[i];
+			combine[i].mesh = entityClassInstance.instanceHidden ? new Mesh() : entityClassInstance.entityClass.getMesh(lod);
 			combine[i].transform = parentTransform * entityClassInstance.transform.localToWorldMatrix;
 		}
 
