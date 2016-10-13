@@ -91,7 +91,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = m_tileMatrix[x, z];
-				Mesh mesh = PrefabVariantRef.createCombinedMesh(tile, Root.kLod0);
+				Mesh mesh = PrefabVariantInstance.createCombinedMesh(tile, Root.kLod0);
 				tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 			}
 		}
@@ -104,7 +104,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveVoxelObjects(tile);
-			Mesh mesh = PrefabVariantRef.createCombinedMesh(tile, Root.kLod0);
+			Mesh mesh = PrefabVariantInstance.createCombinedMesh(tile, Root.kLod0);
 			tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 		}
 	}
@@ -121,15 +121,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createPrefabVariantRef(tile, prefab.name, "VoxelObject: " + x + ", " + z);
+				createPrefabVariantInstance(tile, prefab.name, "VoxelObject: " + x + ", " + z);
 			}
 		}
 	}
 
-	private GameObject createPrefabVariantRef(GameObject tile, string prefabName, string name)
+	private GameObject createPrefabVariantInstance(GameObject tile, string prefabName, string name)
 	{
 		GameObject go = new GameObject();
-		PrefabVariantRef pvr = go.AddComponent<PrefabVariantRef>();
+		PrefabVariantInstance pvr = go.AddComponent<PrefabVariantInstance>();
 		pvr.prefabVariant = m_prefabVariant;
 		go.name = name;
 		go.transform.parent = tile.transform;

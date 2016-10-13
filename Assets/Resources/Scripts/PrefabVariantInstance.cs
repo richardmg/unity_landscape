@@ -3,19 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
 
-public class PrefabVariantRef : MonoBehaviour {
+public class PrefabVariantInstance : MonoBehaviour {
 	public PrefabVariant prefabVariant;
 
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
 	{
-		PrefabVariantRef[] selfAndchildren = root.GetComponentsInChildren<PrefabVariantRef>(true);
+		PrefabVariantInstance[] selfAndchildren = root.GetComponentsInChildren<PrefabVariantInstance>(true);
 		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
 		Matrix4x4 parentTransform = root.transform.worldToLocalMatrix;
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			PrefabVariantRef prefabVariantRef = selfAndchildren[i];
-			combine[i].mesh = prefabVariantRef.prefabVariant.getMesh(lod);
-			combine[i].transform = parentTransform * prefabVariantRef.transform.localToWorldMatrix;
+			PrefabVariantInstance prefabVariantInstance = selfAndchildren[i];
+			combine[i].mesh = prefabVariantInstance.prefabVariant.getMesh(lod);
+			combine[i].transform = parentTransform * prefabVariantInstance.transform.localToWorldMatrix;
 		}
 
 		Mesh topLevelMesh = new Mesh();
