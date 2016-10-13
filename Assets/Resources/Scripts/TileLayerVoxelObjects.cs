@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber 
+public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber 
 {
 	[Range (1, 100)]
 	public int objectCount = 4;
@@ -64,22 +64,17 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			m_pivotAdjustmentY = pa.adjustY;
 	}
 
-	public void onThingAdded(Thing thing)
+	public void onEntityInstanceAdded(GameObject entityInstance)
 	{
-// TODO: add EntityClass into thing
-
 		// Find out which tile is currently under the new things position
-//		Vector2 matrixCoord = new Vector2();
-//		m_tileEngine.matrixCoordFromWorldPos(thing.worldPos, ref matrixCoord);
-//		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
-//
-//		// Create and position an instance of the thing as a child of the tile
-//		GameObject newThing = createEntityClassInstance(tile, thing.index, "Created on the fly!");
-//		newThing.transform.position = thing.worldPos;
-//
-//		// Now that the tile has a new child, rebuild it
-//		VoxelObject vo = m_voxelObjectMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
-//		vo.rebuildStandAlone();
+		Vector2 matrixCoord = new Vector2();
+		m_tileEngine.matrixCoordFromWorldPos(entityInstance.transform.position, ref matrixCoord);
+		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+
+		// Create and position an instance of the thing as a child of the tile
+		entityInstance.transform.parent = tile.transform;
+		entityInstance.SetActive(false);
+		rebuildTileMesh(tile);
 
 //		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);
 	}
@@ -104,9 +99,14 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, ThingSubscriber
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveVoxelObjects(tile);
-			Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
-			tile.GetComponent<MeshFilter>().sharedMesh = mesh;
+			rebuildTileMesh(tile);
 		}
+	}
+
+	public void rebuildTileMesh(GameObject tile)
+	{
+		Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
+		tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 	}
 
 	public void removeAllTiles()

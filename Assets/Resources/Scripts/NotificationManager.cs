@@ -2,34 +2,34 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public interface ThingSubscriber
+public interface EntitySubscriber
 {
-	void onThingAdded(Thing thing);
+	void onEntityInstanceAdded(GameObject entityInstance);
 	void onEntityClassChanged(EntityClass entityClass);
 }
 
 public class NotificationManager {
 
-	private List<ThingSubscriber> thingSubscribers;
+	private List<EntitySubscriber> entitySubscribers;
 
 	public NotificationManager()
 	{
 		// Find all decendants that wants to know when things change
-		thingSubscribers = new List<ThingSubscriber>();
-		foreach (ThingSubscriber subscriber in Root.instance.GetComponentsInChildren<ThingSubscriber>())
-			thingSubscribers.Add(subscriber);
+		entitySubscribers = new List<EntitySubscriber>();
+		foreach (EntitySubscriber subscriber in Root.instance.GetComponentsInChildren<EntitySubscriber>())
+			entitySubscribers.Add(subscriber);
 	}
 
-	public void notifyThingAdded(Thing thing)
+	public void notifyEntityInstanceAdded(GameObject entityInstance)
 	{
-		foreach (ThingSubscriber subscriber in thingSubscribers)
-			subscriber.onThingAdded(thing);	
+		foreach (EntitySubscriber subscriber in entitySubscribers)
+			subscriber.onEntityInstanceAdded(entityInstance);	
 	}
 
-	public void notifyEntityClassChanged(EntityClass prefab)
+	public void notifyEntityClassChanged(EntityClass entityClass)
 	{
-		foreach (ThingSubscriber subscriber in thingSubscribers)
-			subscriber.onEntityClassChanged(prefab);	
+		foreach (EntitySubscriber subscriber in entitySubscribers)
+			subscriber.onEntityClassChanged(entityClass);	
 	}
 
 }

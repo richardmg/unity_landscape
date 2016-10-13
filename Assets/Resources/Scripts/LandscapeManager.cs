@@ -11,15 +11,9 @@ public class LandscapePiece
 	public float height;
 }
 
-public class Thing
-{
-	public Vector3 worldPos;
-	public string index;
-}
-
 public class WorldTile
 {
-	public List<Thing> things = new List<Thing>();
+	public List<GameObject> entityInstances = new List<GameObject>();
 }
 
 public class LandscapeManager : MonoBehaviour {
@@ -90,10 +84,10 @@ public class LandscapeManager : MonoBehaviour {
 			return kMeadow;
 	}
 
-	public void addThing(Thing thing)
+	public void addEntityInstance(GameObject entityInstance)
 	{
-		worldMatrix[0, 0].things.Add(thing);
-		Root.instance.notificationManager.notifyThingAdded(thing);
+		worldMatrix[0, 0].entityInstances.Add(entityInstance);
+		Root.instance.notificationManager.notifyEntityInstanceAdded(entityInstance);
 	}
 
 }

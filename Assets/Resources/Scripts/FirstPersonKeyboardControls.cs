@@ -6,42 +6,17 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 	public string c;
 
 	void Update () {
-		if (!Input.anyKeyDown)
-			return;
+//		if (!Input.anyKeyDown)
+//			return;
 
-		if (Input.GetKeyDown(KeyCode.T)) {
+		if (Input.GetMouseButtonDown(0)) {
 			Vector3 worldPos;
 			if (!getRayWorldPos(out worldPos))
 				return;
 
-			Thing thing = new Thing();
-			thing.worldPos = worldPos;
-			//			thing.worldPos.y = LandscapeConstructor.instance.sampleHeight(thing.worldPos);
-			thing.index = t;
-			Root.instance.landscapeManager.addThing(thing);
-		} else if (Input.GetKeyDown(KeyCode.C)) {
-			Vector3 worldPos;
-			if (!getRayWorldPos(out worldPos))
-				return;
-
-			Thing thing = new Thing();
-			thing.worldPos = worldPos;
-			thing.index = c;
-			Root.instance.landscapeManager.addThing(thing);
-		} else if (Input.GetKeyDown(KeyCode.X)) {
-			//			CharacterController controller = player.GetComponent<CharacterController>();
-			//			Vector3 worldPos = player.transform.position;
-			//			worldPos.y = LandscapeConstructor.instance.sampleHeight(worldPos) + 1;
-			//			player.transform.position = worldPos;
-		} else if (Input.GetMouseButtonDown(0)) {
-			Vector3 worldPos;
-			if (!getRayWorldPos(out worldPos))
-				return;
-
-			Thing thing = new Thing();
-			thing.worldPos = worldPos;
-			thing.index = Root.instance.player.currentEntityClass.prefabName;
-			Root.instance.landscapeManager.addThing(thing);
+			GameObject go = Root.instance.player.currentEntityClass.createInstance("added by user");
+			go.transform.position = worldPos;
+			Root.instance.landscapeManager.addEntityInstance(go);
 		}
 	}
 
