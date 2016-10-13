@@ -13,7 +13,7 @@ public class EntityClass {
 
 	Mesh[] m_mesh = new Mesh[Root.kLodCount];
 
-	DirtyFlags m_dirtyFlag;
+	DirtyFlags m_dirtyFlags;
 
 	public enum DirtyFlags {
 		Mesh = 1
@@ -69,13 +69,13 @@ public class EntityClass {
 
 	public void markDirty(DirtyFlags flags)
 	{
-		m_dirtyFlag &= flags;
+		m_dirtyFlags &= flags;
 	}
 
 	public bool unmarkDirty(DirtyFlags flags)
 	{
-		bool dirty = (m_dirtyFlag & flags) != 0;
-		m_dirtyFlag = m_dirtyFlag & ~flags;
+		bool dirty = (m_dirtyFlags & flags) != 0;
+		m_dirtyFlags = m_dirtyFlags & ~flags;
 		return dirty;
 	}
 
