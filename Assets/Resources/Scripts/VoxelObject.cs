@@ -28,6 +28,11 @@ public class VoxelObject : MonoBehaviour {
 	const float lodDistance1 = 200;
 	const float lodDistanceCulled = 100000;
 
+	public void Start()
+	{
+		Debug.Assert(false, "Don't add VoxelObjects (" + name + ") directly to scene. Use EntityClass/Instance instead");
+	}
+
 	public int resolvedIndex()
 	{
 		Debug.Assert(m_resolvedIndex != kUnknown);
