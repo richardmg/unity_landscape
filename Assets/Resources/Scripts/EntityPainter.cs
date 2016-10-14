@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using EditMode = System.Int32;
 
 public class EntityPainter : MonoBehaviour {
-	Color color = Color.black;
+	Color color = Color.white;
 	Texture2D m_texture;
 	EntityClass m_entityClass;
 	int m_currentListIndex;
