@@ -21,6 +21,9 @@ public class ThingPainter : MonoBehaviour {
 
 	void OnEnable()
     {
+		if (m_entityClass != null)
+			return;
+
 		// Use scale to enlarge the UI instead of the rect. At least not both.
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
