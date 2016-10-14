@@ -80,8 +80,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = m_tileMatrix[x, z];
-				Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
-				tile.GetComponent<MeshFilter>().sharedMesh = mesh;
+				rebuildTileMesh(tile);
 			}
 		}
 	}
