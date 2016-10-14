@@ -68,46 +68,6 @@ public class VoxelObject : MonoBehaviour {
 
 	public Mesh createMesh(Lod lod)
 	{
-		return m_resolvedIndex == kTopLevel ? createTopLevelMesh(lod) : createMeshNonRecursive(lod);
-	}
-
-	public Mesh createTopLevelMesh(Lod lod)
-	{
-		// Return a mesh that is a combination of this object and all its children
-
-		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
-		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
-		Matrix4x4 parentTransform = transform.worldToLocalMatrix;
-
-		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			VoxelObject vo = selfAndchildren[i];
-			combine[i].mesh = vo.createMeshNonRecursive(lod);
-			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
-		}
-
-		Mesh topLevelMesh = new Mesh();
-		topLevelMesh.CombineMeshes(combine);
-
-		return topLevelMesh;
-	}
-
-	Mesh createMeshNonRecursive(Lod lod)
-	{
-		// Return a mesh that represents this object only
-
-		if (m_resolvedIndex == kTopLevel || m_resolvedIndex == kEmpty) {
-			// Return empty mesh since we don't recurse
-			return new Mesh();
-		}
-
-		// Invariant: m_resolvedIndex points to a sub image in the texture atlas.
-		// We don't cache sub image meshes since they are not likely reused across different prefabs
-		configureFactory(lod);
-		return voxelMeshFactory.createMesh();
-	}
-
-	public void configureFactory(Lod lod)
-	{
 		voxelMeshFactory.atlasIndex = m_resolvedIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
@@ -123,10 +83,10 @@ public class VoxelObject : MonoBehaviour {
 			voxelMeshFactory.simplify = true;
 			break;
 		case Root.kNoLod:
-		default:
-			// TODO: toggle visibility?
-			return;
+			break;
 		}
+
+		return voxelMeshFactory.createMesh();
 	}
 
 	// **************************** editor code ************************

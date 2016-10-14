@@ -10,7 +10,7 @@ public class EntityClass {
 	public int[] atlasIndices;
 	public GameObject prefab;
 
-	VoxelObject m_voxelObject;
+	VoxelObjectRoot m_voxelObjectRoot;
 
 	Mesh[] m_mesh = new Mesh[Root.kLodCount];
 
@@ -25,7 +25,7 @@ public class EntityClass {
 		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
-		m_voxelObject = prefab.GetComponent<VoxelObject>();
+		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 
 		// Allocate indices in the TextureAtlas for this prefab variant
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
@@ -85,7 +85,7 @@ public class EntityClass {
 	{
 		Mesh mesh = m_mesh[lod];
 		if (mesh == null || unmarkDirty(DirtyFlags.Mesh)) {
-			mesh = m_voxelObject.createMesh(lod);
+			mesh = m_voxelObjectRoot.createMesh(lod);
 			m_mesh[lod] = mesh;
 		}
 
