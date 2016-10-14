@@ -9,9 +9,6 @@ public class VoxelObject : MonoBehaviour {
 	[Range (0f, 20f)]
 	public float voxelDepth = 4;
 
-	MeshFilter m_meshFilter;
-	MeshRenderer m_meshRenderer;
-
 	static public Material materialExact;
 	static public Material materialVolume;
 	static VoxelMeshFactory voxelMeshFactory;
@@ -60,18 +57,18 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		m_meshFilter = gameObject.GetComponent<MeshFilter>();
-		if (!m_meshFilter)
-			m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		if (materialExact == null)
+			initStaticResources();
 
-		m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
-		if (!m_meshRenderer)
-			m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		if (!meshFilter)
+			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		meshFilter.sharedMesh = createMesh(Root.kLod0);
 
-		initStaticResources();
-
-		m_meshFilter.sharedMesh = createMesh(Root.kLod0);
-		m_meshRenderer.sharedMaterial = materialExact;
+		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+		if (!meshRenderer)
+			meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		meshRenderer.sharedMaterial = materialExact;
 	}
 
 	public static void initStaticResources()
