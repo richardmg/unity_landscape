@@ -26,7 +26,7 @@ public class EntityPainter : MonoBehaviour {
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
 
-		setCurrentEntityClass(Root.instance.player.currentEntityClass);
+		setEntityClass(Root.instance.player.currentEntityClass);
 	}
 
 	void OnDisable()
@@ -80,15 +80,15 @@ public class EntityPainter : MonoBehaviour {
 		m_currentMode = kPaintMode;
 	}
 
-	void setCurrentEntityClass(EntityClass entityClass)
+	void setEntityClass(EntityClass entityClass)
 	{
 		m_entityClass = entityClass;
-		setCurrentListIndex(0);
+		m_atlasIndexList = m_entityClass.atlasIndexList();
+		setListIndex(0);
 	}
 
-	void setCurrentListIndex(int listIndex)
+	void setListIndex(int listIndex)
     {
-		m_atlasIndexList = m_entityClass.atlasIndexList();
 		m_currentListIndex = listIndex;
 		int atlasIndex = m_atlasIndexList[listIndex];
 
@@ -118,7 +118,7 @@ public class EntityPainter : MonoBehaviour {
 		if (index < 0)
 			index = m_atlasIndexList.Count - 1;
 		saveChanges();
-		setCurrentListIndex(index);
+		setListIndex(index);
 	}
 
 	public void onNextButtonClicked()
@@ -127,12 +127,12 @@ public class EntityPainter : MonoBehaviour {
 		if (index >= m_atlasIndexList.Count)
 			index = 0;
 		saveChanges();
-		setCurrentListIndex(index);
+		setListIndex(index);
 	}
 
 	public void onDiscardButtonClicked()
 	{
-		setCurrentListIndex(m_currentListIndex);
+		setListIndex(m_currentListIndex);
 	}
 
 	public void saveChanges()
