@@ -42,7 +42,14 @@ public class EntityClass {
 		return go;
 	}
 
-	public List<VoxelObject> getUniqueVoxelObjects()
+	public List<int> atlasIndexList()
+	{
+		var list = new List<int>();
+		list.AddRange(indexSubstitutions.Values);
+		return list;
+	}
+
+	List<VoxelObject> getUniqueVoxelObjects()
 	{
 		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
 		List<VoxelObject> uniqueVoxelObjects = new List<VoxelObject>();

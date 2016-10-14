@@ -11,7 +11,7 @@ public class ThingPainter : MonoBehaviour {
 	Texture2D m_texture;
 	EntityClass m_entityClass;
 	int m_currentListIndex;
-	List<VoxelObject> m_uniqueVoxelObjects;
+	List<int> m_atlasIndexList;
 	EditMode m_currentMode = kPaintMode;
 	bool m_textureDirty = false;
 	bool m_clearToggleOn = false;
@@ -85,14 +85,14 @@ public class ThingPainter : MonoBehaviour {
 	void setCurrentEntityClass(EntityClass entityClass)
 	{
 		m_entityClass = entityClass;
-		m_uniqueVoxelObjects = entityClass.getUniqueVoxelObjects();
 		setCurrentListIndex(0);
 	}
 
 	void setCurrentListIndex(int listIndex)
     {
+		m_atlasIndexList = m_entityClass.atlasIndexList();
 		m_currentListIndex = listIndex;
-		int atlasIndex = m_uniqueVoxelObjects[listIndex].atlasIndex;
+		int atlasIndex = m_atlasIndexList[listIndex];
 
 		int atlasPixelX, atlasPixelY;
 		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -118,7 +118,7 @@ public class ThingPainter : MonoBehaviour {
 	{
 		int index = m_currentListIndex - 1;
 		if (index < 0)
-			index = m_uniqueVoxelObjects.Count - 1;
+			index = m_atlasIndexList.Count - 1;
 		saveChanges();
 		setCurrentListIndex(index);
 	}
@@ -126,7 +126,7 @@ public class ThingPainter : MonoBehaviour {
 	public void onNextButtonClicked()
 	{
 		int index = m_currentListIndex + 1;
-		if (index >= m_uniqueVoxelObjects.Count)
+		if (index >= m_atlasIndexList.Count)
 			index = 0;
 		saveChanges();
 		setCurrentListIndex(index);
@@ -142,7 +142,7 @@ public class ThingPainter : MonoBehaviour {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
-		int atlasIndex = m_uniqueVoxelObjects[m_currentListIndex].atlasIndex;
+		int atlasIndex = m_atlasIndexList[m_currentListIndex];
 
 		int atlasPixelX;
 		int atlasPixelY;
