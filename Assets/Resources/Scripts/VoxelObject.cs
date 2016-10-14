@@ -15,7 +15,6 @@ public class VoxelObject : MonoBehaviour {
 	MeshFilter m_meshFilter;
 	MeshRenderer m_meshRenderer;
 
-	static bool staticResourcesInitialized = false;
 	static public Material materialExact;
 	static public Material materialVolume;
 	static VoxelMeshFactory voxelMeshFactory;
@@ -66,32 +65,11 @@ public class VoxelObject : MonoBehaviour {
 		rebuildStandAlone();
 	}
 
-	void Start()
-	{
-		resolveAtlasIndex();
-		initAsStandAlone();
-		currentLod = Root.kNoLod;
-		Update();
-	}
-
-	void Update()
-	{
-		float d = Vector3.Distance(transform.position, Camera.main.transform.position);
-		Lod lod = d < lodDistance1 ? Root.kLod0 : d < lodDistanceCulled ? Root.kLod1 : Root.kNoLod;
-
-		if (lod != currentLod) {
-			setLod(lod);
-			rebuildStandAlone();
-		}
-	}
-
 	public void initAsStandAlone()
 	{
 		resolveAtlasIndex();
 		initMeshComponents();
-
-		if (!staticResourcesInitialized)
-			initStaticResources();
+		initStaticResources();
 	}
 
 	public void setIndex(string index)
@@ -267,8 +245,6 @@ public class VoxelObject : MonoBehaviour {
 
 		materialVolume.CopyPropertiesFromMaterial(materialExact);
 		voxelMeshFactory = new VoxelMeshFactory();
-
-		staticResourcesInitialized = true;
 	}
 
 	public void clearMesh()
