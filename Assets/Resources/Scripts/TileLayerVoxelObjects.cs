@@ -114,17 +114,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				createEntityInstance(tile, m_entityClass, "VoxelObject: " + x + ", " + z);
+				m_entityClass.createInstance(tile.transform, "VoxelObject: " + x + ", " + z);
 			}
 		}
-	}
-
-	private GameObject createEntityInstance(GameObject parent, EntityClass entityClass, string name = "")
-	{
-		GameObject go = m_entityClass.createInstance(name);
-		go.transform.parent = parent.transform;
-		go.SetActive(false);
-		return go;
 	}
 
 	private void moveVoxelObjects(GameObject tile)

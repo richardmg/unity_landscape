@@ -14,7 +14,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 			if (!getRayWorldPos(out worldPos))
 				return;
 
-			GameObject go = Root.instance.player.currentEntityClass.createInstance("added by user");
+			GameObject go = Root.instance.player.currentEntityClass.createInstance(null, "added by user");
 			go.transform.position = worldPos;
 			Root.instance.landscapeManager.addEntityInstance(go);
 		}

@@ -32,9 +32,11 @@ public class EntityClass {
 			atlasIndices[i] = Root.instance.atlasManager.acquireIndex();
 	}
 
-	public GameObject createInstance(string name = "")
+	public GameObject createInstance(Transform parent = null, string name = "")
 	{
 		GameObject go = new GameObject(name);
+		go.transform.parent = parent;
+		go.SetActive(false);
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
 		return go;
