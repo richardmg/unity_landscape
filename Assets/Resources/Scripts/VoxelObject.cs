@@ -9,7 +9,6 @@ public class VoxelObject : MonoBehaviour {
 	[Range (0f, 20f)]
 	public float voxelDepth = 4;
 	[Range (0, 1)]
-	public Lod currentLod = Root.kLod0;
 
 	int m_resolvedIndex = kUnknown;
 	MeshFilter m_meshFilter;
@@ -20,12 +19,11 @@ public class VoxelObject : MonoBehaviour {
 	static VoxelMeshFactory voxelMeshFactory;
 	public static int voxelObjectCount = 0;
 
-	public const Lod kTopLevel = -1;
-	public const Lod kEmpty = -3;
-	public const Lod kUnknown = -4;
+	public const int kTopLevel = -1;
+	public const int kEmpty = -3;
+	public const int kUnknown = -4;
 
 	// Read-only, for editor inspection
-	public int vertexCount = 0;
 
 	const float lodDistance1 = 200;
 	const float lodDistanceCulled = 100000;
@@ -68,14 +66,9 @@ public class VoxelObject : MonoBehaviour {
 		}
 	}
 
-	public void setLod(Lod lod)
-	{
-		currentLod = lod;
-	}
-
 	public Mesh createMesh(Lod lod)
 	{
-		return isTopLevel() ? createTopLevelMesh(lod) : createMeshNonRecursive(lod);
+		return m_resolvedIndex == kTopLevel ? createTopLevelMesh(lod) : createMeshNonRecursive(lod);
 	}
 
 	public Mesh createTopLevelMesh(Lod lod)
@@ -88,7 +81,6 @@ public class VoxelObject : MonoBehaviour {
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
 			VoxelObject vo = selfAndchildren[i];
-			vo.setLod(currentLod);
 			combine[i].mesh = vo.createMeshNonRecursive(lod);
 			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
 		}
@@ -145,94 +137,23 @@ public class VoxelObject : MonoBehaviour {
 
 		if (gameObject.scene.name == null || !gameObject.activeSelf) {
 			// Don't modify prefabs or inactive objects
-			vertexCount = 0;
 			return;
 		}
 
-		initAsStandAlone();
-		rebuildStandAlone();
-	}
-
-	public void rebuildStandAlone()
-	{
-		m_meshFilter.sharedMesh = createMesh(currentLod);
-		if (m_meshFilter.sharedMesh == null) {
-			vertexCount = 0;
-			return;
-		}
-
-		m_meshRenderer.sharedMaterial = (currentLod == Root.kLod0) ? materialExact : materialVolume;
-		vertexCount = m_meshFilter.sharedMesh.vertices.Length;
-	}
-
-	public bool isTopLevel()
-	{
-		return m_resolvedIndex == kTopLevel;
-	}
-
-	public void setChildrenActive(bool active)
-	{
-		bool isActive = gameObject.activeSelf;
-		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
-		if (active) {
-			for (int i = 0; i < selfAndchildren.Length; ++i) {
-				selfAndchildren[i].initAsStandAlone();
-				selfAndchildren[i].rebuildStandAlone();
-				selfAndchildren[i].gameObject.SetActive(true);
-			}
-		} else {
-			for (int i = 0; i < selfAndchildren.Length; ++i)
-				selfAndchildren[i].gameObject.SetActive(false);
-		}
-		if (isActive)
-			gameObject.SetActive(true);
-	}
-
-	public void setTopLevel(bool topLevel)
-	{
-		if (topLevel) {
-			int childCount = transform.childCount;
-			if (childCount == 0)
-				return;
-
-			Vector3 firstChildPos = transform.GetChild(0).localPosition;
-			for (int i = 0; i < childCount; ++i)
-				transform.GetChild(i).localPosition -= firstChildPos;
-
-			index = indexToString(kTopLevel);
-			resolveAtlasIndex();
-			setChildrenActive(false);
-		} else {
-			index = indexToString(kEmpty);
-			resolveAtlasIndex();
-			setChildrenActive(true);
-			clearMesh();
-		}
-	}
-
-	public void initAsStandAlone()
-	{
 		resolveAtlasIndex();
-		initMeshComponents();
+
+		m_meshFilter = gameObject.GetComponent<MeshFilter>();
+		if (!m_meshFilter)
+			m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+
+		m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
+		if (!m_meshRenderer)
+			m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+
 		initStaticResources();
-	}
 
-	public void initMeshComponents()
-	{
-		if (!m_meshFilter) {
-			m_meshFilter = gameObject.GetComponent<MeshFilter>();
-			if (!m_meshFilter)
-				m_meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		}
-
-		if (!m_meshFilter.sharedMesh)
-			m_meshFilter.sharedMesh = new Mesh();
-
-		if (!m_meshRenderer) {
-			m_meshRenderer = gameObject.GetComponent<MeshRenderer>();
-			if (!m_meshRenderer)
-				m_meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-		}
+		m_meshFilter.sharedMesh = createMesh(Root.kLod0);
+		m_meshRenderer.sharedMaterial = materialExact;
 	}
 
 	public static void initStaticResources()
@@ -247,13 +168,5 @@ public class VoxelObject : MonoBehaviour {
 
 		materialVolume.CopyPropertiesFromMaterial(materialExact);
 		voxelMeshFactory = new VoxelMeshFactory();
-	}
-
-	public void clearMesh()
-	{
-		if (!m_meshFilter)
-			return;
-		m_meshFilter.sharedMesh.Clear();
-		vertexCount = 0;
 	}
 }
