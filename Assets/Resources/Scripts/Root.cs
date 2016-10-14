@@ -13,6 +13,9 @@ public class Root : MonoBehaviour {
 	public GameObject uiGO;
 	public GameObject landscapeGO;
 
+	public Material voxelMaterialExact;
+	public Material voxelMaterialVolume;
+
 	[HideInInspector]
 	public static Root instance;
 
@@ -47,6 +50,9 @@ public class Root : MonoBehaviour {
 		atlasManager = new AtlasManager();
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
+
+		Debug.Assert(voxelMaterialExact.mainTexture.width == kAtlasWidth);
+		Debug.Assert(voxelMaterialExact.mainTexture.height == kAtlasHeight);
 	}
 
 	public static void atlasPixelForIndex(int atlasIndex, out int x, out int y)

@@ -68,14 +68,8 @@ public class VoxelMeshFactory {
 
 	public VoxelMeshFactory()
 	{
-		// TODO: Change out with Color32 matrix, which should be faster access to pixels.
-		// And, need to fetch texture from other place than MeshRenderer.
-		// TODO: Use fixed sized arrays when creating vertices to avoid uneccessart memory allocations.
-		Material m = (Material)Resources.Load("Materials/VoxelObjectExact", typeof(Material));
-		texture = (Texture2D)m.mainTexture;
-		// Ensure that sizes are synced with shader code
-		Debug.Assert(texture.width == Root.kAtlasWidth);
-		Debug.Assert(texture.height == Root.kAtlasHeight);
+		// TODO: Change out texture with Color32 matrix
+		texture = (Texture2D)Root.instance.voxelMaterialExact.mainTexture;
 	}
 
 	public void beginMesh()

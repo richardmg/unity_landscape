@@ -38,14 +38,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 
 		m_entityClass = Root.instance.player.currentEntityClass;
 
-		VoxelObject.initStaticResources();
-
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = new GameObject();
 				tile.AddComponent<MeshFilter>();
 				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
-				meshRenderer.sharedMaterial = VoxelObject.materialExact;
+				meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
 
 				tile.name = "Tile " + x + ", " + z;
 				tile.transform.parent = transform;
