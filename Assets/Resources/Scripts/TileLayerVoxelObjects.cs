@@ -8,7 +8,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 	public int objectCount = 4;
 	[Range (0, 100)]
 	public float paddingBetweenObjects = 25;
-	public GameObject prefab;
 
 	GameObject[,] m_tileMatrix;
 	float m_pivotAdjustmentY;
@@ -39,9 +38,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 
 		m_entityClass = Root.instance.player.currentEntityClass;
 
-		// Hide prefab so we don't create the voxel objects upon construction
-		prefab.SetActive(false);
-
 		VoxelObject.initStaticResources();
 
 		for (int z = 0; z < tileCount; ++z) {
@@ -59,9 +55,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 			}
 		}
 
-		PivotAdjustment pa = prefab.GetComponent<PivotAdjustment>();
-		if (pa != null)
-			m_pivotAdjustmentY = pa.adjustY;
+//		PivotAdjustment pa = prefab.GetComponent<PivotAdjustment>();
+//		if (pa != null)
+//			m_pivotAdjustmentY = pa.adjustY;
 	}
 
 	public void onEntityInstanceAdded(GameObject entityInstance)

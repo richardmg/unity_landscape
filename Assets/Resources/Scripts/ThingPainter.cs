@@ -92,7 +92,7 @@ public class ThingPainter : MonoBehaviour {
 	void setCurrentListIndex(int listIndex)
     {
 		m_currentListIndex = listIndex;
-		int atlasIndex = m_uniqueVoxelObjects[listIndex].resolvedIndex();
+		int atlasIndex = m_uniqueVoxelObjects[listIndex].atlasIndex;
 
 		int atlasPixelX, atlasPixelY;
 		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -142,7 +142,7 @@ public class ThingPainter : MonoBehaviour {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
-		int atlasIndex = m_uniqueVoxelObjects[m_currentListIndex].resolvedIndex();
+		int atlasIndex = m_uniqueVoxelObjects[m_currentListIndex].atlasIndex;
 
 		int atlasPixelX;
 		int atlasPixelY;

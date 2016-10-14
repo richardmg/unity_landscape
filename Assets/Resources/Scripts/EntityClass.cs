@@ -6,7 +6,6 @@ using Lod = System.Int32;
 using EntityClassID = System.Int32;
 
 public class EntityClass {
-	public string prefabName;
 	public int[] atlasIndices;
 	public GameObject prefab;
 
@@ -22,7 +21,6 @@ public class EntityClass {
 
 	public EntityClass(string prefabName)
 	{
-		this.prefabName = prefabName;
 		prefab = Root.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
@@ -48,13 +46,13 @@ public class EntityClass {
 		List<VoxelObject> uniqueVoxelObjects = new List<VoxelObject>();
 
 		for (int i = 0; i < voxelObjects.Length; ++i) {
-			int atlasIndex = voxelObjects[i].resolvedIndex();
+			int atlasIndex = voxelObjects[i].atlasIndex;
 			if (atlasIndex < 0)
 				continue;
 			
 			bool unique = true;
 			for (int v = 0; v < uniqueVoxelObjects.Count; ++v) {
-				if (uniqueVoxelObjects[v].resolvedIndex() == atlasIndex) {
+				if (uniqueVoxelObjects[v].atlasIndex == atlasIndex) {
 					unique = false;
 					break;
 				}
@@ -64,7 +62,7 @@ public class EntityClass {
 		}
 
 		if (uniqueVoxelObjects.Count == 0)
-			MonoBehaviour.print("Could not find any non-toplevel voxel objects in prefab: " + prefabName);
+			MonoBehaviour.print("Could not find any non-toplevel voxel objects in prefab: " + prefab.name);
 
 		return uniqueVoxelObjects;
 	}
