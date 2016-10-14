@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Lod = System.Int32;
 
 public class VoxelObjectRoot : MonoBehaviour {
 
-	public Mesh createMesh(Lod lod)
+	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions)
 	{
 		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
 		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
@@ -12,7 +13,7 @@ public class VoxelObjectRoot : MonoBehaviour {
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
 			VoxelObject vo = selfAndchildren[i];
-			combine[i].mesh = vo.createMesh(lod);
+			combine[i].mesh = vo.createMesh(lod, indexSubstitutions);
 			combine[i].transform = parentTransform * vo.transform.localToWorldMatrix;
 		}
 

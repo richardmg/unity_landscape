@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Lod = System.Int32;
 
 public class VoxelObject : MonoBehaviour {
@@ -34,12 +35,12 @@ public class VoxelObject : MonoBehaviour {
 		Debug.Assert(false, "Don't add VoxelObjects (" + name + ") directly to scene. Use EntityClass/Instance instead");
 	}
 
-	public Mesh createMesh(Lod lod)
+	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions = null)
 	{
 		if (voxelMeshFactory == null)
 			voxelMeshFactory = new VoxelMeshFactory();
 
-		voxelMeshFactory.atlasIndex = atlasIndex;
+		voxelMeshFactory.atlasIndex = indexSubstitutions == null ? atlasIndex : indexSubstitutions[atlasIndex];
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
 		voxelMeshFactory.yFaces = voxelDepth != 0;

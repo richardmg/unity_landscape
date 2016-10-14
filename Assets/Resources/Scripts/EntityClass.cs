@@ -6,7 +6,7 @@ using Lod = System.Int32;
 using EntityClassID = System.Int32;
 
 public class EntityClass {
-	public int[] atlasIndices;
+	public Dictionary<int, int> indexSubstitutions;
 	public GameObject prefab;
 
 	VoxelObjectRoot m_voxelObjectRoot;
@@ -27,9 +27,9 @@ public class EntityClass {
 
 		// Allocate indices in the TextureAtlas for this prefab variant
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
-		atlasIndices = new int[uniqueVoxelObjects.Count];
+		indexSubstitutions = new Dictionary<int, int>();
 		for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
-			atlasIndices[i] = Root.instance.atlasManager.acquireIndex();
+			indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = Root.instance.atlasManager.acquireIndex();
 	}
 
 	public GameObject createInstance(Transform parent = null, string name = "")
@@ -85,7 +85,7 @@ public class EntityClass {
 	{
 		Mesh mesh = m_mesh[lod];
 		if (mesh == null || unmarkDirty(DirtyFlags.Mesh)) {
-			mesh = m_voxelObjectRoot.createMesh(lod);
+			mesh = m_voxelObjectRoot.createMesh(lod, indexSubstitutions);
 			m_mesh[lod] = mesh;
 		}
 
