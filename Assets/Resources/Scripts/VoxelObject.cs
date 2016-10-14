@@ -51,27 +51,6 @@ public class VoxelObject : MonoBehaviour {
 		voxelObjectCount++;
 	}
 
-	void OnValidate()
-	{
-		resolveAtlasIndex();
-
-		if (gameObject.scene.name == null || !gameObject.activeSelf) {
-			// Don't modify prefabs or inactive objects
-			vertexCount = 0;
-			return;
-		}
-
-		initAsStandAlone();
-		rebuildStandAlone();
-	}
-
-	public void initAsStandAlone()
-	{
-		resolveAtlasIndex();
-		initMeshComponents();
-		initStaticResources();
-	}
-
 	public void setIndex(string index)
 	{
 		this.index = index;
@@ -94,66 +73,9 @@ public class VoxelObject : MonoBehaviour {
 		currentLod = lod;
 	}
 
-	public void rebuildStandAlone()
-	{
-		m_meshFilter.sharedMesh = createMesh(currentLod);
-		if (m_meshFilter.sharedMesh == null) {
-			vertexCount = 0;
-			return;
-		}
-
-		m_meshRenderer.sharedMaterial = (currentLod == Root.kLod0) ? materialExact : materialVolume;
-		vertexCount = m_meshFilter.sharedMesh.vertices.Length;
-	}
-
-	public void setChildrenActive(bool active)
-	{
-		bool isActive = gameObject.activeSelf;
-		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
-		if (active) {
-			for (int i = 0; i < selfAndchildren.Length; ++i) {
-				selfAndchildren[i].initAsStandAlone();
-				selfAndchildren[i].rebuildStandAlone();
-				selfAndchildren[i].gameObject.SetActive(true);
-			}
-		} else {
-			for (int i = 0; i < selfAndchildren.Length; ++i)
-				selfAndchildren[i].gameObject.SetActive(false);
-		}
-		if (isActive)
-			gameObject.SetActive(true);
-	}
-
-	public void setTopLevel(bool topLevel)
-	{
-		if (topLevel) {
-			int childCount = transform.childCount;
-			if (childCount == 0)
-				return;
-
-			Vector3 firstChildPos = transform.GetChild(0).localPosition;
-			for (int i = 0; i < childCount; ++i)
-				transform.GetChild(i).localPosition -= firstChildPos;
-
-			index = indexToString(kTopLevel);
-			resolveAtlasIndex();
-			setChildrenActive(false);
-		} else {
-			index = indexToString(kEmpty);
-			resolveAtlasIndex();
-			setChildrenActive(true);
-			clearMesh();
-		}
-	}
-
-	public bool isTopLevel()
-	{
-		return m_resolvedIndex == kTopLevel;
-	}
-
 	public Mesh createMesh(Lod lod)
 	{
-		return isTopLevel() ? createTopLevelMesh(currentLod) : createMeshNonRecursive(currentLod);
+		return isTopLevel() ? createTopLevelMesh(lod) : createMeshNonRecursive(lod);
 	}
 
 	public Mesh createTopLevelMesh(Lod lod)
@@ -213,6 +135,86 @@ public class VoxelObject : MonoBehaviour {
 			// TODO: toggle visibility?
 			return;
 		}
+	}
+
+	// **************************** editor code ************************
+
+	void OnValidate()
+	{
+		resolveAtlasIndex();
+
+		if (gameObject.scene.name == null || !gameObject.activeSelf) {
+			// Don't modify prefabs or inactive objects
+			vertexCount = 0;
+			return;
+		}
+
+		initAsStandAlone();
+		rebuildStandAlone();
+	}
+
+	public void rebuildStandAlone()
+	{
+		m_meshFilter.sharedMesh = createMesh(currentLod);
+		if (m_meshFilter.sharedMesh == null) {
+			vertexCount = 0;
+			return;
+		}
+
+		m_meshRenderer.sharedMaterial = (currentLod == Root.kLod0) ? materialExact : materialVolume;
+		vertexCount = m_meshFilter.sharedMesh.vertices.Length;
+	}
+
+	public bool isTopLevel()
+	{
+		return m_resolvedIndex == kTopLevel;
+	}
+
+	public void setChildrenActive(bool active)
+	{
+		bool isActive = gameObject.activeSelf;
+		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
+		if (active) {
+			for (int i = 0; i < selfAndchildren.Length; ++i) {
+				selfAndchildren[i].initAsStandAlone();
+				selfAndchildren[i].rebuildStandAlone();
+				selfAndchildren[i].gameObject.SetActive(true);
+			}
+		} else {
+			for (int i = 0; i < selfAndchildren.Length; ++i)
+				selfAndchildren[i].gameObject.SetActive(false);
+		}
+		if (isActive)
+			gameObject.SetActive(true);
+	}
+
+	public void setTopLevel(bool topLevel)
+	{
+		if (topLevel) {
+			int childCount = transform.childCount;
+			if (childCount == 0)
+				return;
+
+			Vector3 firstChildPos = transform.GetChild(0).localPosition;
+			for (int i = 0; i < childCount; ++i)
+				transform.GetChild(i).localPosition -= firstChildPos;
+
+			index = indexToString(kTopLevel);
+			resolveAtlasIndex();
+			setChildrenActive(false);
+		} else {
+			index = indexToString(kEmpty);
+			resolveAtlasIndex();
+			setChildrenActive(true);
+			clearMesh();
+		}
+	}
+
+	public void initAsStandAlone()
+	{
+		resolveAtlasIndex();
+		initMeshComponents();
+		initStaticResources();
 	}
 
 	public void initMeshComponents()
