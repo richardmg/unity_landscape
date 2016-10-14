@@ -69,7 +69,7 @@ public class VoxelMeshFactory {
 	public VoxelMeshFactory()
 	{
 		// TODO: Change out texture with Color32 matrix
-		texture = (Texture2D)Root.instance.voxelMaterialExact.mainTexture;
+		texture = Root.instance.textureAtlas;
 	}
 
 	public void beginMesh()

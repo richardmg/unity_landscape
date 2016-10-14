@@ -15,6 +15,7 @@ public class Root : MonoBehaviour {
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
+	public Texture2D textureAtlas;
 
 	[HideInInspector]
 	public static Root instance;

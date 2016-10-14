@@ -4,10 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using EditMode = System.Int32;
 
-public class ThingPainter : MonoBehaviour {
-	public Texture2D atlas;
-	public Color color = Color.black;
-
+public class EntityPainter : MonoBehaviour {
+	Color color = Color.black;
 	Texture2D m_texture;
 	EntityClass m_entityClass;
 	int m_currentListIndex;
@@ -96,7 +94,7 @@ public class ThingPainter : MonoBehaviour {
 
 		int atlasPixelX, atlasPixelY;
 		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
-		var pixels = atlas.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
+		var pixels = Root.instance.textureAtlas.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
 
 		m_texture = new Texture2D(Root.kSubImageWidth, Root.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
@@ -147,8 +145,8 @@ public class ThingPainter : MonoBehaviour {
 		int atlasPixelX;
 		int atlasPixelY;
 		Root.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
-		atlas.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
-		atlas.Apply();
+		Root.instance.textureAtlas.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
+		Root.instance.textureAtlas.Apply();
 
 		m_textureDirty = false;
 
