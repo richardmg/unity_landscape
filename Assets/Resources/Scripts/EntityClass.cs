@@ -8,6 +8,7 @@ using EntityClassID = System.Int32;
 public class EntityClass {
 	public Dictionary<int, int> indexSubstitutions;
 	public GameObject prefab;
+	public string name;
 
 	VoxelObjectRoot m_voxelObjectRoot;
 
@@ -21,6 +22,7 @@ public class EntityClass {
 
 	public EntityClass(string prefabName, bool keepExistingAtlasInidicies = false)
 	{
+		name = prefabName;
 		prefab = Root.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
@@ -38,6 +40,8 @@ public class EntityClass {
 			for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
 				indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = Root.instance.atlasManager.acquireIndex();
 		}
+
+		Root.instance.entityManager.addEntityClass(this);
 
 //		List<int> indices = atlasIndexList();
 //		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);

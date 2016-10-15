@@ -34,6 +34,8 @@ public class Root : MonoBehaviour {
 	public PlayerStartupScript player;
 	[HideInInspector]
 	public AtlasManager atlasManager;
+	[HideInInspector]
+	public EntityManager entityManager;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -48,6 +50,7 @@ public class Root : MonoBehaviour {
 	void Awake()
 	{
 		meshManager = new MeshManager();
+		entityManager = new EntityManager();
 		uiManager = uiGO.GetComponent<UIManager>();
 		notificationManager = new NotificationManager();
 		atlasManager = new AtlasManager();

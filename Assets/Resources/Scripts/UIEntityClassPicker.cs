@@ -1,7 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class UIEntityClassPicker : MonoBehaviour {
+
+	void OnEnable()
+	{
+		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
+		for (int i = 0; i < entityClasses.Count; ++i) {
+			print("create instance of: " + entityClasses[i].name);
+		}
+	}
 
 	public void onNewTreeButtonClicked()
 	{
