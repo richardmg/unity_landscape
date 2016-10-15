@@ -17,10 +17,11 @@ class UIManagerStackItem {
 
 public class UIManager : MonoBehaviour {
 	public GameObject backgroundGO;
-	public GameObject firstPersonGO;
-	public GameObject colorPickerGO;
-	public GameObject paintEditorGO;
-	public GameObject entityClassPickerGO;
+	public GameObject uiFirstPersonGO;
+	public GameObject uiColorPickerGO;
+	public GameObject uiPaintEditorGO;
+	public GameObject uiEntityClassPickerGO;
+	public GameObject entityPainterGO;
 
 	public KeyCode uiOnOffKey;
 
@@ -28,29 +29,32 @@ public class UIManager : MonoBehaviour {
 
 	[HideInInspector]
 	public UIEntityClassPicker entityClassPicker;
+	[HideInInspector]
+	public EntityPainter entityPainter;
 
 	List<UIManagerStackItem> stack = new List<UIManagerStackItem>();
 	MonoBehaviour m_mouseGrab = null;
 
 	void Awake()
 	{
-		entityClassPicker = entityClassPickerGO.GetComponent<UIEntityClassPicker>();
+		entityClassPicker = uiEntityClassPickerGO.GetComponent<UIEntityClassPicker>();
+		entityPainter = entityPainterGO.GetComponent<EntityPainter>();
 	}
 
 	void Start()
 	{
 		hideUI();
-		push(entityClassPickerGO, (bool accepted) => {});
+		push(uiEntityClassPickerGO, (bool accepted) => {});
 		showFirstPersonUI();
 	}
 
 	void hideUI()
 	{
 		backgroundGO.SetActive(false);
-		firstPersonGO.SetActive(false);
-		colorPickerGO.SetActive(false);
-		paintEditorGO.SetActive(false);
-		entityClassPickerGO.SetActive(false);
+		uiFirstPersonGO.SetActive(false);
+		uiColorPickerGO.SetActive(false);
+		uiPaintEditorGO.SetActive(false);
+		uiEntityClassPickerGO.SetActive(false);
 
 		m_mouseGrab = null;
 	}
@@ -77,24 +81,24 @@ public class UIManager : MonoBehaviour {
 	{
 		hideUI();
 		backgroundGO.SetActive(false);
-		firstPersonGO.SetActive(true);
+		uiFirstPersonGO.SetActive(true);
 		enableCursorMode(false);
 	}
 
 	public void showCurrentMenu()
 	{
 		hideUI();
-		if (m_currentMenu == paintEditorGO) {
+		if (m_currentMenu == uiPaintEditorGO) {
 			backgroundGO.SetActive(true);
-			paintEditorGO.SetActive(true);
+			uiPaintEditorGO.SetActive(true);
 			enableCursorMode(true);
-		} else if (m_currentMenu == colorPickerGO) {
+		} else if (m_currentMenu == uiColorPickerGO) {
 			backgroundGO.SetActive(true);
-			colorPickerGO.SetActive(true);
+			uiColorPickerGO.SetActive(true);
 			enableCursorMode(true);
-		} else if (m_currentMenu == entityClassPickerGO) {
+		} else if (m_currentMenu == uiEntityClassPickerGO) {
 			backgroundGO.SetActive(true);
-			entityClassPickerGO.SetActive(true);
+			uiEntityClassPickerGO.SetActive(true);
 			enableCursorMode(true);
 		} else {
 			Debug.Assert(false, "Unknown UI to show: " + m_currentMenu);
@@ -112,7 +116,7 @@ public class UIManager : MonoBehaviour {
 		if (!Input.GetKeyDown(uiOnOffKey))
 			return;
 
-		if (firstPersonGO.activeSelf)
+		if (uiFirstPersonGO.activeSelf)
 			showCurrentMenu();
 		else
 			showFirstPersonUI();

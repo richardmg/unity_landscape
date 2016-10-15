@@ -5,6 +5,9 @@ public class UIEntityClassPicker : MonoBehaviour {
 
 	public void onNewTreeButtonClicked()
 	{
-		Root.instance.uiManager.push(Root.instance.uiManager.paintEditorGO, (bool accepted) => {});
+		EntityClass entityClass = new EntityClass("SquareTree");
+		Root.instance.player.currentEntityClass = entityClass;
+		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
+		Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
 	}
 }

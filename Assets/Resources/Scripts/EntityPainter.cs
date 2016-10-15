@@ -80,14 +80,14 @@ public class EntityPainter : MonoBehaviour {
 		m_currentMode = kPaintMode;
 	}
 
-	void setEntityClass(EntityClass entityClass)
+	public void setEntityClass(EntityClass entityClass)
 	{
 		m_entityClass = entityClass;
 		m_atlasIndexList = m_entityClass.atlasIndexList();
 		setListIndex(0);
 	}
 
-	void setListIndex(int listIndex)
+	public void setListIndex(int listIndex)
     {
 		m_currentListIndex = listIndex;
 		int atlasIndex = m_atlasIndexList[listIndex];
@@ -156,7 +156,7 @@ public class EntityPainter : MonoBehaviour {
 
 	public void onColorButtonClicked()
 	{
-		GameObject colorPicker = Root.instance.uiManager.colorPickerGO;
+		GameObject colorPicker = Root.instance.uiManager.uiColorPickerGO;
 		Root.instance.uiManager.push(colorPicker, (bool accepted) => {
 			if (accepted)
 				color = colorPicker.GetComponentInChildren<ColorPicker>().selectedColor;
