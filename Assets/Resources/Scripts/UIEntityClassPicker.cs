@@ -4,15 +4,23 @@ using System.Collections.Generic;
 
 public class UIEntityClassPicker : MonoBehaviour {
 
+	EntityInstance instance;
+
 	void OnEnable()
 	{
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 		for (int i = 0; i < entityClasses.Count; ++i) {
-			EntityInstance instance = entityClasses[i].createInstance(Root.instance.playerGO.transform, "Entity in picker");
+			instance = entityClasses[i].createInstance(Root.instance.playerGO.transform, "Entity in picker");
 			instance.makeStandalone();
 			instance.transform.localPosition = new Vector3(0, 0, 10);
 			instance.gameObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+			instance.gameObject.GetComponent<Renderer>().sortingLayerName = "MyUI";
 		}
+	}
+
+	void OnDisable()
+	{
+		GameObject.Destroy(instance.gameObject);
 	}
 
 	public void onNewTreeButtonClicked()
