@@ -10,7 +10,7 @@ public class PlayerStartupScript : MonoBehaviour {
 
 	void Awake()
 	{
-		currentEntityClass = new EntityClass("SquareTree");
+		currentEntityClass = new EntityClass("SquareTree", true);
 	}
 
 	void Start()

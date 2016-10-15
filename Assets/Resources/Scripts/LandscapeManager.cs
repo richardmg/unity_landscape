@@ -25,8 +25,8 @@ public class LandscapeManager : MonoBehaviour {
 	[Range (0, 20)]
 	public float tileHeightOct2 = 1;
 
-	[Range (0, 1000)]
-	public float treeBorder = 1;
+	[Range (0, 1)]
+	public float treeBorder = 0.5f;
 
 	[HideInInspector]
 	public float noiseScaleOct0 = 0.003f;
@@ -78,7 +78,7 @@ public class LandscapeManager : MonoBehaviour {
 
 	public LandscapeType getLandscapeType(Vector3 worldPos)
 	{
-		if (calculateHeight(worldPos.x, worldPos.z) > treeBorder)
+		if (calculateHeight(worldPos.x, worldPos.z) < (treeBorder * (tileHeightOct0 + tileHeightOct1 + tileHeightOct2)))
 			return kForrest;
 		else
 			return kMeadow;

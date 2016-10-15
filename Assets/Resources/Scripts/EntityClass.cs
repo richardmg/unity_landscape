@@ -19,7 +19,7 @@ public class EntityClass {
 		Mesh = 1
 	}
 
-	public EntityClass(string prefabName)
+	public EntityClass(string prefabName, bool keepExistingAtlasInidicies = false)
 	{
 		prefab = Root.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
@@ -28,8 +28,16 @@ public class EntityClass {
 		// Allocate indices in the TextureAtlas for this prefab variant
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
 		indexSubstitutions = new Dictionary<int, int>();
-		for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
-			indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = Root.instance.atlasManager.acquireIndex();
+
+		if (keepExistingAtlasInidicies) {
+			for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
+				var atlasIndex = uniqueVoxelObjects[i].atlasIndex;
+				indexSubstitutions[atlasIndex] = atlasIndex;
+			}
+		} else {
+			for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
+				indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = Root.instance.atlasManager.acquireIndex();
+		}
 
 //		List<int> indices = atlasIndexList();
 //		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);
