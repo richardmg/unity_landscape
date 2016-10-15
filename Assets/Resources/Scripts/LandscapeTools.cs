@@ -9,6 +9,7 @@ public class LandscapeDescription
 	public float size;
 	public int resolution;
 	public int pixelError;
+	public float textureScale;
 	public Texture2D texture;
 }
 
@@ -41,6 +42,7 @@ public class LandscapeTools
 		SplatPrototype[] splatArray = new SplatPrototype[1]; 
 		splatArray[0] = new SplatPrototype(); 
 		splatArray[0].texture = desc.texture;
+		splatArray[0].tileSize = new Vector2(desc.textureScale, desc.textureScale);
 //		splatArray[0].texture = (Texture2D)Resources.Load("finaltexture");
 		data.splatPrototypes = splatArray;  
 

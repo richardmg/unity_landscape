@@ -8,6 +8,8 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	public int heightmapResolution = 33;
 	[Range (0, 200)]
 	public int pixelError = 50;
+	[Range (0.1f, 5)]
+	public float textureScale = 1;
 	public Texture2D terrainTexture;
 
 	GameObject[,] m_tileMatrix;
@@ -58,6 +60,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		desc.pixelError = pixelError;
 		desc.resolution = heightmapResolution;
 		desc.texture = terrainTexture;
+		desc.textureScale = textureScale;
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
