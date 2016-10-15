@@ -7,6 +7,19 @@ public class EntityInstance : MonoBehaviour {
 	public EntityClass entityClass;
 	public bool instanceHidden = false;
 
+	public void makeStandalone()
+	{
+		gameObject.SetActive(true);
+		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		if (!meshFilter)
+			meshFilter = gameObject.AddComponent<MeshFilter>();
+		meshFilter.sharedMesh = entityClass.getMesh(Root.kLod0);
+		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+		if (!meshRenderer)
+			meshRenderer = gameObject.AddComponent<MeshRenderer>();
+		meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
+	}
+
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
 	{
 		EntityInstance[] selfAndchildren = root.GetComponentsInChildren<EntityInstance>(true);

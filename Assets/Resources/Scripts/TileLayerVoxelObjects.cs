@@ -58,16 +58,16 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 //			m_pivotAdjustmentY = pa.adjustY;
 	}
 
-	public void onEntityInstanceAdded(GameObject entityInstance)
+	public void onEntityInstanceAdded(EntityInstance entityInstance)
 	{
 		// Find out which tile is currently under the new things position
 		Vector2 matrixCoord = new Vector2();
-		m_tileEngine.matrixCoordFromWorldPos(entityInstance.transform.position, ref matrixCoord);
+		m_tileEngine.matrixCoordFromWorldPos(entityInstance.gameObject.transform.position, ref matrixCoord);
 		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 
 		// Create and position an instance of the thing as a child of the tile
-		entityInstance.transform.parent = tile.transform;
-		entityInstance.SetActive(false);
+		entityInstance.gameObject.transform.parent = tile.transform;
+		entityInstance.gameObject.SetActive(false);
 		rebuildTileMesh(tile);
 
 //		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);

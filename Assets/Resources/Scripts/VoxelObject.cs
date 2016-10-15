@@ -19,15 +19,7 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-		if (!meshFilter)
-			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		meshFilter.sharedMesh = createMesh(Root.kLod0);
-
-		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-		if (!meshRenderer)
-			meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-		meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
+		makeStandalone();
 	}
 
 	public void Start()
@@ -61,4 +53,16 @@ public class VoxelObject : MonoBehaviour {
 		return voxelMeshFactory.createMesh();
 	}
 
+	void makeStandalone()
+	{
+		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		if (!meshFilter)
+			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
+		meshFilter.sharedMesh = createMesh(Root.kLod0);
+
+		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+		if (!meshRenderer)
+			meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
+		meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
+	}
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public interface EntitySubscriber
 {
-	void onEntityInstanceAdded(GameObject entityInstance);
+	void onEntityInstanceAdded(EntityInstance entityInstance);
 	void onEntityClassChanged(EntityClass entityClass);
 }
 
@@ -20,7 +20,7 @@ public class NotificationManager {
 			entitySubscribers.Add(subscriber);
 	}
 
-	public void notifyEntityInstanceAdded(GameObject entityInstance)
+	public void notifyEntityInstanceAdded(EntityInstance entityInstance)
 	{
 		foreach (EntitySubscriber subscriber in entitySubscribers)
 			subscriber.onEntityInstanceAdded(entityInstance);	

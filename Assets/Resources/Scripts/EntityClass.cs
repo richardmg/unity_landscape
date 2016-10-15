@@ -47,7 +47,7 @@ public class EntityClass {
 //		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);
 	}
 
-	public GameObject createInstance(Transform parent = null, string name = "")
+	public EntityInstance createInstance(Transform parent = null, string name = "")
 	{
 		GameObject go = new GameObject(name);
 		go.transform.parent = parent;
@@ -55,7 +55,7 @@ public class EntityClass {
 		go.SetActive(false);
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
-		return go;
+		return instance;
 	}
 
 	public List<int> atlasIndexList()

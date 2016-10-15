@@ -84,9 +84,9 @@ public class LandscapeManager : MonoBehaviour {
 			return kMeadow;
 	}
 
-	public void addEntityInstance(GameObject entityInstance)
+	public void addEntityInstance(EntityInstance entityInstance)
 	{
-		worldMatrix[0, 0].entityInstances.Add(entityInstance);
+		worldMatrix[0, 0].entityInstances.Add(entityInstance.gameObject);
 		Root.instance.notificationManager.notifyEntityInstanceAdded(entityInstance);
 	}
 
