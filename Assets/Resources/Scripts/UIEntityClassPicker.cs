@@ -6,24 +6,31 @@ public class UIEntityClassPicker : MonoBehaviour {
 
 	public GameObject uiEntityPickerCamera;
 
-	EntityInstance instance;
+	List<EntityInstance> entityInstanceList = new List<EntityInstance>();
 
 	void OnEnable()
 	{
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
-		for (int i = 0; i < entityClasses.Count; ++i) {
-			instance = entityClasses[i].createInstance(uiEntityPickerCamera.transform);
-			instance.gameObject.layer = LayerMask.NameToLayer("UIEntityPickerLayer");
-			instance.makeStandalone();
-			instance.transform.localPosition = new Vector3(0, 0, 1);
-			float scale = 0.01f;
-			instance.gameObject.transform.localScale = new Vector3(scale, scale, scale);
-		}
+		for (int i = 0; i < entityClasses.Count; ++i)
+			createEntityInstance(entityClasses[i]);
 	}
 
 	void OnDisable()
 	{
-		GameObject.Destroy(instance.gameObject);
+		foreach (EntityInstance i in entityInstanceList)
+			GameObject.Destroy(i.gameObject);
+		entityInstanceList = new List<EntityInstance>();
+	}
+
+	void createEntityInstance(EntityClass entityClass)
+	{
+		EntityInstance instance = entityClass.createInstance(uiEntityPickerCamera.transform, entityClass.name);
+		instance.gameObject.layer = LayerMask.NameToLayer("UIEntityPickerLayer");
+		instance.makeStandalone();
+		instance.transform.localPosition = new Vector3(0, 0, 1);
+		float scale = 0.01f;
+		instance.gameObject.transform.localScale = new Vector3(scale, scale, scale);
+		entityInstanceList.Add(instance);
 	}
 
 	public void onNewTreeButtonClicked()
