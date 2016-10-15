@@ -39,6 +39,7 @@ public class EntityClass {
 	{
 		GameObject go = new GameObject(name);
 		go.transform.parent = parent;
+		go.transform.localScale = Root.instance.entityBaseScale;
 		go.SetActive(false);
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;

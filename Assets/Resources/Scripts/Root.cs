@@ -17,6 +17,8 @@ public class Root : MonoBehaviour {
 	public Material voxelMaterialVolume;
 	public Texture2D textureAtlas;
 
+	public Vector3 entityBaseScale = new Vector3(0.2f, 0.2f, 0.2f);
+
 	[HideInInspector]
 	public static Root instance;
 
