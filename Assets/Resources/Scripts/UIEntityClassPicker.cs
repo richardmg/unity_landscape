@@ -8,8 +8,10 @@ public class UIEntityClassPicker : MonoBehaviour {
 	{
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 		for (int i = 0; i < entityClasses.Count; ++i) {
-			EntityInstance instance = entityClasses[i].createInstance(null, "Entity in picker");
+			EntityInstance instance = entityClasses[i].createInstance(Root.instance.playerGO.transform, "Entity in picker");
 			instance.makeStandalone();
+			instance.transform.localPosition = new Vector3(0, 0, 10);
+			instance.gameObject.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
 		}
 	}
 
