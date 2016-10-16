@@ -28,5 +28,6 @@ public class AtlasManager {
 		atlasPixelForIndex(destIndex, out destX, out destY);
 		Color[] pixels = texture.GetPixels(srcX, srcY, Root.kSubImageWidth, Root.kSubImageHeight);
 		texture.SetPixels(destX, destY, Root.kSubImageWidth, Root.kSubImageHeight, pixels);
+		texture.Apply();
 	}
 }
