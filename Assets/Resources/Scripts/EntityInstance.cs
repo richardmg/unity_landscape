@@ -23,7 +23,7 @@ public class EntityInstance : MonoBehaviour {
 	public void hideAndDestroy()
 	{
 		gameObject.SetActive(false);
-		GameObject.Destroy(this);
+		GameObject.Destroy(this.gameObject);
 	}
 
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
