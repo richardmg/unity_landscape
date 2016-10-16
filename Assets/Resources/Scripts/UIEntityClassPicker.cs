@@ -7,14 +7,32 @@ public class UIEntityClassPicker : MonoBehaviour {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
+	Texture2D tableTexture;
+	Color32[] clearColorArray;
+
+	int rowCount = 5;
+	int colCount = 5;
+	int cellWidth = 256;
+	int cellHeight = 256;
 
 	void OnEnable()
 	{
+		if (tableTexture == null) {
+			tableTexture = new Texture2D(cellWidth * colCount, cellHeight * rowCount);
+			clearColorArray = tableTexture.GetPixels32();
+			for (int i = 0; i < clearColorArray.Length; i++)
+					clearColorArray[i] = Color.clear;
+		}
+
+		tableTexture.SetPixels32(clearColorArray);
+
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 		for (int i = 0; i < entityClasses.Count; ++i) {
-			Texture2D snapshot = entityClasses[i].takeSnapshot();
-			rawImageGO.GetComponent<RawImage>().texture = snapshot;
+			entityClasses[i].takeSnapshot(tableTexture, new Rect(cellWidth * i, 0, cellWidth, cellHeight));
 		}
+
+		tableTexture.Apply();
+		rawImageGO.GetComponent<RawImage>().texture = tableTexture;
 	}
 
 	void OnDisable()

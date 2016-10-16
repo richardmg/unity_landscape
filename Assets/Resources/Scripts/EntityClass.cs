@@ -123,4 +123,12 @@ public class EntityClass {
 		instance.hideAndDestroy();
 		return snapshot;
 	}
+
+	public void takeSnapshot(Texture2D destTexture, Rect destRect)
+	{
+		EntityInstance instance = createInstance(null, "SnapshotEntity");
+		instance.makeStandalone();
+		Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, new Vector3(0, 0, -10), destTexture, destRect);
+		instance.hideAndDestroy();
+	}
 }
