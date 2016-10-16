@@ -37,8 +37,11 @@ public class EntityClass {
 				indexSubstitutions[atlasIndex] = atlasIndex;
 			}
 		} else {
-			for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
-				indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = Root.instance.atlasManager.acquireIndex();
+			for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
+				int baseIndex = uniqueVoxelObjects[i].atlasIndex;
+				int newIndex = Root.instance.atlasManager.acquireIndex();
+				indexSubstitutions[baseIndex] = newIndex;
+			}
 		}
 
 		Root.instance.entityManager.addEntityClass(this);
@@ -58,15 +61,15 @@ public class EntityClass {
 		indexSubstitutions = new Dictionary<int, int>();
 
 		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
+			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
 			int newIndex = Root.instance.atlasManager.acquireIndex();
-			indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = newIndex;
-			Root.instance.atlasManager.copySubImage(uniqueVoxelObjects[i].atlasIndex, newIndex);
+			int indexToCopy = originalEntityClass.indexSubstitutions[baseIndex];
+			Root.instance.atlasManager.copySubImage(indexToCopy, newIndex);
+
+			indexSubstitutions[baseIndex] = newIndex;
 		}
 
 		Root.instance.entityManager.addEntityClass(this);
-
-//		List<int> indices = atlasIndexList();
-//		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);
 	}
 
 	public EntityInstance createInstance(Transform parent = null, string name = "")
