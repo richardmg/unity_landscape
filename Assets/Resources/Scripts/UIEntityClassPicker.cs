@@ -53,7 +53,13 @@ public class UIEntityClassPicker : MonoBehaviour {
 		
 		EntityClass entityClass = entityClasses[index];
 		Root.instance.player.currentEntityClass = entityClass;
-		Root.instance.uiManager.showFirstPersonUI();
+
+		if (Input.GetKey(KeyCode.LeftShift)) {
+			Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
+			Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
+		} else {
+			Root.instance.uiManager.showFirstPersonUI();
+		}
 	}
 
 	void OnDisable()
