@@ -12,6 +12,7 @@ public class Root : MonoBehaviour {
 	public GameObject playerGO;
 	public GameObject uiGO;
 	public GameObject landscapeGO;
+	public GameObject snapshotCameraGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
@@ -36,6 +37,8 @@ public class Root : MonoBehaviour {
 	public AtlasManager atlasManager;
 	[HideInInspector]
 	public EntityManager entityManager;
+	[HideInInspector]
+	public Camera snapshotCamera;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -56,6 +59,7 @@ public class Root : MonoBehaviour {
 		atlasManager = new AtlasManager();
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
+		snapshotCamera = snapshotCameraGO.GetComponent<Camera>();
 
 		Debug.Assert(voxelMaterialExact.mainTexture.width == kAtlasWidth);
 		Debug.Assert(voxelMaterialExact.mainTexture.height == kAtlasHeight);

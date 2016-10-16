@@ -8,7 +8,7 @@ using EntityClassID = System.Int32;
 public class EntityClass {
 	public Dictionary<int, int> indexSubstitutions;
 	public GameObject prefab;
-	public string name;
+	public string entityName;
 
 	VoxelObjectRoot m_voxelObjectRoot;
 
@@ -22,7 +22,7 @@ public class EntityClass {
 
 	public EntityClass(string prefabName, bool keepExistingAtlasInidicies = false)
 	{
-		name = prefabName;
+		entityName = prefabName;
 		prefab = Root.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
@@ -113,5 +113,31 @@ public class EntityClass {
 		}
 
 		return mesh;
+	}
+
+	public Texture2D takeSnapshot()
+	{
+		Camera camera = Root.instance.snapshotCamera;
+
+		EntityInstance instance = createInstance(camera.gameObject.transform, entityName);
+		instance.makeStandalone();
+		instance.gameObject.layer = LayerMask.NameToLayer("UIEntityPickerLayer");
+		instance.transform.localPosition = new Vector3(0, 0, 1);
+		float scale = 0.01f;
+		instance.gameObject.transform.localScale = new Vector3(scale, scale, scale);
+
+        RenderTexture currentRT = RenderTexture.active;
+		RenderTexture.active = camera.targetTexture;
+		camera.Render();
+
+		Texture2D snapshot = new Texture2D(camera.targetTexture.width, camera.targetTexture.height);
+		snapshot.ReadPixels(new Rect(0, 0, camera.targetTexture.width, camera.targetTexture.height), 0, 0);
+		snapshot.Apply();
+
+        RenderTexture.active = currentRT;
+		instance.gameObject.SetActive(false);
+		GameObject.Destroy(instance);
+
+		return snapshot;
 	}
 }
