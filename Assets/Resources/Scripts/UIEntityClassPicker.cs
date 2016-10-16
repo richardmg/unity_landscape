@@ -19,20 +19,19 @@ public class UIEntityClassPicker : MonoBehaviour {
 	{
 		if (tableTexture == null) {
 			tableTexture = new Texture2D(cellWidth * colCount, cellHeight * rowCount);
+			rawImageGO.GetComponent<RawImage>().texture = tableTexture;
 			clearColorArray = tableTexture.GetPixels32();
 			for (int i = 0; i < clearColorArray.Length; i++)
-					clearColorArray[i] = Color.clear;
+				clearColorArray[i] = Color.clear;
 		}
 
 		tableTexture.SetPixels32(clearColorArray);
 
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
-		for (int i = 0; i < entityClasses.Count; ++i) {
+		for (int i = 0; i < entityClasses.Count; ++i)
 			entityClasses[i].takeSnapshot(tableTexture, new Rect(cellWidth * i, 0, cellWidth, cellHeight));
-		}
 
 		tableTexture.Apply();
-		rawImageGO.GetComponent<RawImage>().texture = tableTexture;
 	}
 
 	void OnDisable()
