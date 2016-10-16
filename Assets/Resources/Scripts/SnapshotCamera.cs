@@ -33,6 +33,7 @@ public class SnapshotCamera {
 		targetGO.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
 
 		m_camera.Render();
+//		destTexture.Apply() - remember to do this in the end
 
 		int srcX = (int)(m_camera.targetTexture.width - destRect.width) / 2;
 		int srcY = (int)(m_camera.targetTexture.height - destRect.height) / 2;
