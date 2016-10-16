@@ -28,8 +28,12 @@ public class UIEntityClassPicker : MonoBehaviour {
 		tableTexture.SetPixels32(clearColorArray);
 
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
-		for (int i = 0; i < entityClasses.Count; ++i)
-			entityClasses[i].takeSnapshot(tableTexture, new Rect(cellWidth * i, 0, cellWidth, cellHeight));
+		for (int i = 0; i < entityClasses.Count; ++i) {
+			int x = (i * cellWidth) % tableTexture.width;
+			int y = (int)((i * cellWidth) / tableTexture.width) * cellHeight;
+			y = (int)tableTexture.height - cellHeight - y;
+			entityClasses[i].takeSnapshot(tableTexture, new Rect(x, y, cellWidth, cellHeight));
+		}
 
 		tableTexture.Apply();
 	}
