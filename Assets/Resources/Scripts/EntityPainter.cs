@@ -104,12 +104,6 @@ public class EntityPainter : MonoBehaviour {
 		m_textureDirty = false;
 	}
 
-	public void onIndexFieldEndInput(InputField indexField)
-    {
-		saveChanges();
-//		setCurrentEntityClass(new EntityClass(indexField.text));
-    }
-
 	public void onPrevButtonClicked()
 	{
 		int index = m_currentListIndex - 1;

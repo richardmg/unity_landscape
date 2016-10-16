@@ -47,6 +47,25 @@ public class EntityClass {
 //		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);
 	}
 
+	public EntityClass(EntityClass originalEntityClass)
+	{
+		entityName = originalEntityClass.entityName + "_clone";
+		prefab = originalEntityClass.prefab;
+		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
+
+		// Allocate indices in the TextureAtlas for this prefab variant
+		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
+		indexSubstitutions = new Dictionary<int, int>();
+
+		for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
+			indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = Root.instance.atlasManager.acquireIndex();
+
+		Root.instance.entityManager.addEntityClass(this);
+
+//		List<int> indices = atlasIndexList();
+//		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);
+	}
+
 	public EntityInstance createInstance(Transform parent = null, string name = "")
 	{
 		GameObject go = new GameObject(name);
