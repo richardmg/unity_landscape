@@ -117,27 +117,10 @@ public class EntityClass {
 
 	public Texture2D takeSnapshot()
 	{
-		Camera camera = Root.instance.snapshotCamera;
-
-		EntityInstance instance = createInstance(camera.gameObject.transform, entityName);
+		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone();
-		instance.gameObject.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
-		instance.transform.localPosition = new Vector3(0, 0, 1);
-		float scale = 0.01f;
-		instance.gameObject.transform.localScale = new Vector3(scale, scale, scale);
-
-        RenderTexture currentRT = RenderTexture.active;
-		RenderTexture.active = camera.targetTexture;
-		camera.Render();
-
-		Texture2D snapshot = new Texture2D(camera.targetTexture.width, camera.targetTexture.height);
-		snapshot.ReadPixels(new Rect(0, 0, camera.targetTexture.width, camera.targetTexture.height), 0, 0);
-		snapshot.Apply();
-
-        RenderTexture.active = currentRT;
-		instance.gameObject.SetActive(false);
-		GameObject.Destroy(instance);
-
+		Texture2D snapshot = Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, new Vector3(0, 0, -10));
+		instance.hideAndDestroy();
 		return snapshot;
 	}
 }

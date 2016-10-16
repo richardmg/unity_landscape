@@ -20,6 +20,12 @@ public class EntityInstance : MonoBehaviour {
 		meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
 	}
 
+	public void hideAndDestroy()
+	{
+		gameObject.SetActive(false);
+		GameObject.Destroy(this);
+	}
+
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
 	{
 		EntityInstance[] selfAndchildren = root.GetComponentsInChildren<EntityInstance>(true);
