@@ -128,7 +128,7 @@ public class EntityClass {
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone();
-		Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, new Vector3(0, 0, -10), destTexture, destRect);
+		Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, new Vector3(0, 0, -5), destTexture, destRect);
 		instance.hideAndDestroy();
 	}
 }

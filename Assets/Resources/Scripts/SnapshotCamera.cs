@@ -27,9 +27,10 @@ public class SnapshotCamera {
 		RenderTexture.active = m_camera.targetTexture;
 		int prevLayer = targetGO.layer;
 
+		Bounds bounds = targetGO.GetComponent<Renderer>().bounds;
 		m_cameraGO.transform.parent = targetGO.transform.parent;
-		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset;
-		m_cameraGO.transform.LookAt(targetGO.transform.position);
+		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset + bounds.center;
+		m_cameraGO.transform.LookAt(bounds.center);
 		targetGO.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
 
 		m_camera.Render();
