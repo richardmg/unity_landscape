@@ -121,7 +121,7 @@ public class EntityClass {
 
 		EntityInstance instance = createInstance(camera.gameObject.transform, entityName);
 		instance.makeStandalone();
-		instance.gameObject.layer = LayerMask.NameToLayer("UIEntityPickerLayer");
+		instance.gameObject.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
 		instance.transform.localPosition = new Vector3(0, 0, 1);
 		float scale = 0.01f;
 		instance.gameObject.transform.localScale = new Vector3(scale, scale, scale);
