@@ -57,8 +57,11 @@ public class EntityClass {
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
 		indexSubstitutions = new Dictionary<int, int>();
 
-		for (int i = 0; i < uniqueVoxelObjects.Count; ++i)
-			indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = Root.instance.atlasManager.acquireIndex();
+		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
+			int newIndex = Root.instance.atlasManager.acquireIndex();
+			indexSubstitutions[uniqueVoxelObjects[i].atlasIndex] = newIndex;
+			Root.instance.atlasManager.copySubImage(uniqueVoxelObjects[i].atlasIndex, newIndex);
+		}
 
 		Root.instance.entityManager.addEntityClass(this);
 

@@ -65,12 +65,6 @@ public class Root : MonoBehaviour {
 		Debug.Assert(voxelMaterialExact.mainTexture.height == kAtlasHeight);
 	}
 
-	public static void atlasPixelForIndex(int atlasIndex, out int x, out int y)
-	{
-		x = (atlasIndex * Root.kSubImageWidth) % Root.kAtlasWidth;
-		y = (int)((atlasIndex * Root.kSubImageWidth) / Root.kAtlasHeight) * Root.kSubImageHeight;
-	}
-
 	public static GameObject getPrefab(string prefabName)
     {
 		return (GameObject)Resources.Load("Prefabs/" + prefabName, typeof(GameObject));
