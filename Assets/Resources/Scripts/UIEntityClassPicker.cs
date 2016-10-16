@@ -9,6 +9,7 @@ public class UIEntityClassPicker : MonoBehaviour {
 	public GameObject rawImageGO;
 	Texture2D tableTexture;
 	Color32[] clearColorArray;
+	List<EntityClass> entityClasses;
 
 	int rowCount = 5;
 	int colCount = 5;
@@ -26,8 +27,8 @@ public class UIEntityClassPicker : MonoBehaviour {
 		}
 
 		tableTexture.SetPixels32(clearColorArray);
+		entityClasses = Root.instance.entityManager.allEntityClasses;
 
-		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 		for (int i = 0; i < entityClasses.Count; ++i) {
 			int x = (i * cellWidth) % tableTexture.width;
 			int y = (int)((i * cellWidth) / tableTexture.width) * cellHeight;
@@ -36,6 +37,23 @@ public class UIEntityClassPicker : MonoBehaviour {
 		}
 
 		tableTexture.Apply();
+	}
+
+	void Update()
+    {
+		if (!Input.GetMouseButtonDown(0))
+			return;
+
+		Vector2 uv = UIManager.getMousePosOnImage(rawImageGO.GetComponent<RawImage>(), true);
+		int x = (int)(uv.x * colCount);
+		int y = (int)(uv.y * rowCount);
+		int index = x + (y * colCount);
+		if (index < 0 || index >= entityClasses.Count)
+			return;
+		
+		EntityClass entityClass = entityClasses[index];
+		Root.instance.player.currentEntityClass = entityClass;
+		Root.instance.uiManager.showFirstPersonUI();
 	}
 
 	void OnDisable()

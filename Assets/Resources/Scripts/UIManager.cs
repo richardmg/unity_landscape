@@ -122,13 +122,13 @@ public class UIManager : MonoBehaviour {
 			showFirstPersonUI();
 	}
 
-	static public Vector2 getMousePosOnImage(RawImage image)
+	static public Vector2 getMousePosOnImage(RawImage image, bool flipY = false)
 	{
 		Vector3[] corners = new Vector3[4];
 		image.rectTransform.GetWorldCorners(corners);
 		float uvx = (Input.mousePosition.x - corners[0].x) / (corners[2].x - corners[0].x);
 		float uvy = (Input.mousePosition.y - corners[0].y) / (corners[2].y - corners[0].y);
-		return new Vector2(uvx, uvy);
+		return new Vector2(uvx, flipY ? 1 - uvy : uvy);
 	}
 
 	static public bool isInside(Vector2 uv)
@@ -136,8 +136,10 @@ public class UIManager : MonoBehaviour {
 		return (uv.x > 0 && uv.x <= 1 && uv.y > 0 && uv.y <= 1);
 	}
 
-	public bool grabMouse(MonoBehaviour ui)
+	public bool grabMouse(MonoBehaviour ui, bool requireMousePress = true)
 	{
+		if (requireMousePress && !Input.GetMouseButton(0))
+			return false;
 		if (m_mouseGrab == ui)
 			return true;
 		if (!Input.GetMouseButtonDown(0))

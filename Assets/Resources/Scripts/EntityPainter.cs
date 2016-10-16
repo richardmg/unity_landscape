@@ -40,8 +40,6 @@ public class EntityPainter : MonoBehaviour {
 			return;
 		if (m_entityClass == null)
 			return;
-		if (!Input.GetMouseButton(0))
-			return;
 
 		Vector2 uv = UIManager.getMousePosOnImage(GetComponent<RawImage>());
 
