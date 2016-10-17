@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.IO;
+using System;
 
 public class AtlasManager {
 
@@ -37,10 +39,19 @@ public class AtlasManager {
 		textureAtlas.Apply();
 	}
 
-	public void load(byte[] bytes)
+	public void load(FileStream filestream)
 	{
+		// Read image byte length
+		byte[] intBytes = new byte[sizeof(int)];
+		filestream.Read(intBytes, 0, intBytes.Length);
+		int imageByteCount = BitConverter.ToInt32(intBytes, 0);
+
+		// Read image
+		byte[] imageBytes = new byte[imageByteCount];
+		filestream.Read(imageBytes, 0, imageBytes.Length);
 		textureAtlas = new Texture2D(2, 2);
-		textureAtlas.LoadImage(bytes);
+		textureAtlas.LoadImage(imageBytes);
+
 		textureAtlas.filterMode = FilterMode.Point;
 
 		Debug.Assert(textureAtlas);
@@ -51,8 +62,14 @@ public class AtlasManager {
 		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
 	}
 
-	public byte[] save()
+	public void save(FileStream filestream)
 	{
-		return textureAtlas.EncodeToPNG();
+		byte[] bytes = textureAtlas.EncodeToPNG();
+		byte[] imageByteCount = BitConverter.GetBytes(bytes.Length);
+
+		filestream.Write(imageByteCount, 0, imageByteCount.Length);
+		filestream.Write(bytes, 0, bytes.Length);
+
+		// File.WriteAllBytes(path + "/atlas.png", bytes);
 	}
 }

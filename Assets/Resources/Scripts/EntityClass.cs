@@ -149,4 +149,13 @@ public class EntityClass {
 		Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, new Vector3(0, 0, -5), destTexture, destRect);
 		instance.hideAndDestroy();
 	}
+
+	public void load(byte[] bytes)
+	{
+	}
+
+	public byte[] save()
+	{
+		return new byte[1];
+	}
 }

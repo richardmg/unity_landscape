@@ -21,15 +21,20 @@ public class Project
 		
 		System.IO.Directory.CreateDirectory(path);
 
-		File.WriteAllBytes(path + "/atlas.png", Root.instance.atlasManager.save());
+		using (FileStream filestream = File.Create(path + "/atlas.png"))
+		{
+			Root.instance.atlasManager.save(filestream);
+		}
 
 		Debug.Log("Saved project to: " + path);
 	}
 
 	public void load()
 	{
-		byte[] atlasPng = File.ReadAllBytes(path + "/atlas.png");
-		Root.instance.atlasManager.load(atlasPng);
+		using (FileStream filestream = File.OpenRead(path + "/atlas.png"))
+		{
+			Root.instance.atlasManager.load(filestream);
+		}
 
 		loaded = true;
 		Debug.Log("Project loaded from: " + path);
