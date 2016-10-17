@@ -67,6 +67,8 @@ public class Root : MonoBehaviour {
 
 		Debug.Assert(voxelMaterialExact.mainTexture.width == kAtlasWidth);
 		Debug.Assert(voxelMaterialExact.mainTexture.height == kAtlasHeight);
+
+		projectManager.restoreSession();
 	}
 
 	public static GameObject getPrefab(string prefabName)

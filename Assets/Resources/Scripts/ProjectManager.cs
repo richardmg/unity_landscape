@@ -2,23 +2,48 @@
 using System.Collections;
 using System.IO;
 
-public class ProjectManager {
-	string filename;
+public class Project
+{
+	public string name;
+	public string path;
 
-	public void saveProject()
+	public Project(string name)
 	{
-		saveProjectAs(filename);
+		this.name = name;
+		this.path = Application.persistentDataPath + "/" + name;
 	}
 
-	public void saveProjectAs(string filename)
+	public void save()
 	{
-		this.filename = filename;
+		System.IO.Directory.CreateDirectory(path);
+
 		byte[] atlasPng = Root.instance.textureAtlas.EncodeToPNG();
-		Debug.Log("save png to: " + Application.persistentDataPath);
-//		File.WriteAllBytes(Application.dataPath + "/../SavedScreen.png", bytes);
+		File.WriteAllBytes(path + "/atlas.png", atlasPng);
+
+		Debug.Log("Saved project to: " + path);
 	}
 
-	public void loadProject(string filename)
+	public void load()
 	{
+		byte[] atlasPng = File.ReadAllBytes(path + "/atlas.png");
+		Root.instance.textureAtlas.LoadImage(atlasPng);
+
+		Debug.Log("Project loaded from: " + path);
+	}
+}
+
+public class ProjectManager {
+	public Project currentProject;
+
+	public void saveSession()
+	{
+		// TODO: read from file, and figure out when to call this function
+	}
+
+	public void restoreSession()
+	{
+		// TODO: read from file
+		currentProject = new Project("MyWorld");
+		currentProject.load();
 	}
 }

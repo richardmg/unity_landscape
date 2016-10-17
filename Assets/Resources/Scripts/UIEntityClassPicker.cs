@@ -81,6 +81,6 @@ public class UIEntityClassPicker : MonoBehaviour {
 
 	public void onSaveButtonClicked()
 	{
-		Root.instance.projectManager.saveProject();
+		Root.instance.projectManager.currentProject.save();
 	}
 }
