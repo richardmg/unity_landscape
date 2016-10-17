@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -18,9 +19,14 @@ public class EntityManager
 
 	public void save(FileStream filestream)
 	{
-		int count = allEntityClasses.Count;
-		for (int i = 0; i < count; ++i) {
-			 allEntityClasses[i].save();
-		}
+		return;
+
+
+		int classCount = allEntityClasses.Count;
+		byte[] classCountBytes = BitConverter.GetBytes(classCount);
+		filestream.Write(classCountBytes, 0, classCountBytes.Length);
+
+		for (int i = 0; i < classCount; ++i)
+			allEntityClasses[i].save(filestream);
 	}
 }

@@ -21,9 +21,13 @@ public class Project
 		
 		System.IO.Directory.CreateDirectory(path);
 
-		using (FileStream filestream = File.Create(path + "/atlas.png"))
+		using (FileStream filestream = File.Create(path + "/atlas.dat"))
 		{
 			Root.instance.atlasManager.save(filestream);
+		}
+		using (FileStream filestream = File.Create(path + "/entities.dat"))
+		{
+			Root.instance.entityManager.save(filestream);
 		}
 
 		Debug.Log("Saved project to: " + path);
@@ -31,9 +35,13 @@ public class Project
 
 	public void load()
 	{
-		using (FileStream filestream = File.OpenRead(path + "/atlas.png"))
+		using (FileStream filestream = File.OpenRead(path + "/atlas.dat"))
 		{
 			Root.instance.atlasManager.load(filestream);
+		}
+		using (FileStream filestream = File.OpenRead(path + "/entities.dat"))
+		{
+			Root.instance.entityManager.load(filestream);
 		}
 
 		loaded = true;

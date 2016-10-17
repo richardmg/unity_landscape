@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using System;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -150,12 +152,11 @@ public class EntityClass {
 		instance.hideAndDestroy();
 	}
 
-	public void load(byte[] bytes)
+	public void load(FileStream filestream)
 	{
 	}
 
-	public byte[] save()
+	public void save(FileStream filestream)
 	{
-		return new byte[1];
 	}
 }
