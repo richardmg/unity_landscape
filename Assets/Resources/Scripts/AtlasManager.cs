@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class AtlasManager {
@@ -40,7 +41,12 @@ public class AtlasManager {
 	{
 		textureAtlas = new Texture2D(2, 2);
 		textureAtlas.LoadImage(bytes);
+//		textureAtlas.filterMode = FilterMode.Point;
 		Debug.Assert(textureAtlas);
+
+		Root.instance.voxelMaterialExact.mainTexture = textureAtlas;
+		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
+		Root.instance.inspectTextureGO.GetComponent<RawImage>().texture = textureAtlas;
 	}
 
 	public byte[] save()

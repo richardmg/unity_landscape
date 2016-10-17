@@ -11,6 +11,7 @@ public class PlayerStartupScript : MonoBehaviour {
 	void Awake()
 	{
 		currentEntityClass = new EntityClass("SquareTree");
+		Debug.Log("Creating class: " + currentEntityClass);
 	}
 
 	void Start()

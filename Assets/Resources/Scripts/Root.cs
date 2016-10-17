@@ -13,6 +13,7 @@ public class Root : MonoBehaviour {
 	public GameObject uiGO;
 	public GameObject landscapeGO;
 	public GameObject snapshotCameraGO;
+	public GameObject inspectTextureGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
