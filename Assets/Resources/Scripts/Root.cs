@@ -13,7 +13,6 @@ public class Root : MonoBehaviour {
 	public GameObject uiGO;
 	public GameObject landscapeGO;
 	public GameObject snapshotCameraGO;
-	public GameObject inspectTextureGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
@@ -64,9 +63,6 @@ public class Root : MonoBehaviour {
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
 		snapshotCamera = new SnapshotCamera(snapshotCameraGO);
-
-		Debug.Assert(voxelMaterialExact.mainTexture.width == kAtlasWidth);
-		Debug.Assert(voxelMaterialExact.mainTexture.height == kAtlasHeight);
 
 		projectManager.restoreSession();
 	}

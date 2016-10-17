@@ -27,7 +27,7 @@ public class AtlasManager {
 		if (srcIndex == destIndex)
 			return;
 
-		Debug.Log("copy " + srcIndex + " to " + destIndex);
+//		Debug.Log("copy " + srcIndex + " to " + destIndex);
 
 		int srcX, srcY, destX, destY;
 		atlasPixelForIndex(srcIndex, out srcX, out srcY);
@@ -41,12 +41,14 @@ public class AtlasManager {
 	{
 		textureAtlas = new Texture2D(2, 2);
 		textureAtlas.LoadImage(bytes);
-//		textureAtlas.filterMode = FilterMode.Point;
+		textureAtlas.filterMode = FilterMode.Point;
+
 		Debug.Assert(textureAtlas);
+		Debug.Assert(textureAtlas.width == Root.kAtlasWidth);
+		Debug.Assert(textureAtlas.height == Root.kAtlasHeight);
 
 		Root.instance.voxelMaterialExact.mainTexture = textureAtlas;
 		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
-		Root.instance.inspectTextureGO.GetComponent<RawImage>().texture = textureAtlas;
 	}
 
 	public byte[] save()
