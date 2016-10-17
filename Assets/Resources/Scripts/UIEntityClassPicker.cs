@@ -26,17 +26,7 @@ public class UIEntityClassPicker : MonoBehaviour {
 				clearColorArray[i] = Color.clear;
 		}
 
-		tableTexture.SetPixels32(clearColorArray);
-		entityClasses = Root.instance.entityManager.allEntityClasses;
-
-		for (int i = 0; i < entityClasses.Count; ++i) {
-			int x = (i * cellWidth) % tableTexture.width;
-			int y = (int)((i * cellWidth) / tableTexture.width) * cellHeight;
-			y = (int)tableTexture.height - cellHeight - y;
-			entityClasses[i].takeSnapshot(tableTexture, new Rect(x, y, cellWidth, cellHeight));
-		}
-
-		tableTexture.Apply();
+		repaintTableTexture();
 	}
 
 	void Update()
@@ -60,8 +50,7 @@ public class UIEntityClassPicker : MonoBehaviour {
 		} else if (Input.GetKey(KeyCode.LeftControl)) {
 			EntityClass newEntityClass = new EntityClass(entityClass);
 			Root.instance.player.currentEntityClass = newEntityClass;
-			Root.instance.uiManager.entityPainter.setEntityClass(newEntityClass);
-			Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
+			repaintTableTexture();
 		} else {
 			Root.instance.uiManager.showFirstPersonUI();
 		}
@@ -71,12 +60,26 @@ public class UIEntityClassPicker : MonoBehaviour {
 	{
 	}
 
-	public void onNewTreeButtonClicked()
+	void repaintTableTexture()
+	{
+		tableTexture.SetPixels32(clearColorArray);
+		entityClasses = Root.instance.entityManager.allEntityClasses;
+
+		for (int i = 0; i < entityClasses.Count; ++i) {
+			int x = (i * cellWidth) % tableTexture.width;
+			int y = (int)((i * cellWidth) / tableTexture.width) * cellHeight;
+			y = (int)tableTexture.height - cellHeight - y;
+			entityClasses[i].takeSnapshot(tableTexture, new Rect(x, y, cellWidth, cellHeight));
+		}
+
+		tableTexture.Apply();
+	}
+
+	public void onCloneButtonClicked()
 	{
 		EntityClass entityClass = new EntityClass("SquareTree");
 		Root.instance.player.currentEntityClass = entityClass;
-		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
-		Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
+		repaintTableTexture();
 	}
 
 	public void onSaveButtonClicked()

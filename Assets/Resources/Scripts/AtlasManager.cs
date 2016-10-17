@@ -23,13 +23,17 @@ public class AtlasManager {
 
 	public void copySubImage(int srcIndex, int destIndex)
 	{
-		Texture2D texture = Root.instance.atlasManager.textureAtlas;
+		if (srcIndex == destIndex)
+			return;
+
+		Debug.Log("copy " + srcIndex + " to " + destIndex);
+
 		int srcX, srcY, destX, destY;
 		atlasPixelForIndex(srcIndex, out srcX, out srcY);
 		atlasPixelForIndex(destIndex, out destX, out destY);
-		Color[] pixels = texture.GetPixels(srcX, srcY, Root.kSubImageWidth, Root.kSubImageHeight);
-		texture.SetPixels(destX, destY, Root.kSubImageWidth, Root.kSubImageHeight, pixels);
-		texture.Apply();
+		Color[] pixels = textureAtlas.GetPixels(srcX, srcY, Root.kSubImageWidth, Root.kSubImageHeight);
+		textureAtlas.SetPixels(destX, destY, Root.kSubImageWidth, Root.kSubImageHeight, pixels);
+		textureAtlas.Apply();
 	}
 
 	public void load(byte[] bytes)

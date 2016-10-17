@@ -20,7 +20,7 @@ public class EntityClass {
 		Mesh = 1
 	}
 
-	public EntityClass(string prefabName, bool keepExistingAtlasInidicies = false)
+	public EntityClass(string prefabName)
 	{
 		entityName = prefabName;
 		prefab = Root.getPrefab(prefabName);
@@ -31,17 +31,11 @@ public class EntityClass {
 		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
 		indexSubstitutions = new Dictionary<int, int>();
 
-		if (keepExistingAtlasInidicies) {
-			for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
-				var atlasIndex = uniqueVoxelObjects[i].atlasIndex;
-				indexSubstitutions[atlasIndex] = atlasIndex;
-			}
-		} else {
-			for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
-				int baseIndex = uniqueVoxelObjects[i].atlasIndex;
-				int newIndex = Root.instance.atlasManager.acquireIndex();
-				indexSubstitutions[baseIndex] = newIndex;
-			}
+		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
+			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
+			int newIndex = Root.instance.atlasManager.acquireIndex();
+			Root.instance.atlasManager.copySubImage(baseIndex, newIndex);
+			indexSubstitutions[baseIndex] = newIndex;
 		}
 
 		Root.instance.entityManager.addEntityClass(this);
@@ -65,7 +59,6 @@ public class EntityClass {
 			int newIndex = Root.instance.atlasManager.acquireIndex();
 			int indexToCopy = originalEntityClass.indexSubstitutions[baseIndex];
 			Root.instance.atlasManager.copySubImage(indexToCopy, newIndex);
-
 			indexSubstitutions[baseIndex] = newIndex;
 		}
 
