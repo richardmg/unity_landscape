@@ -68,7 +68,7 @@ public class VoxelMeshFactory {
 
 	public void beginMesh()
 	{
-		texture = Root.instance.projectManager.currentProject.textureAtlas;
+		texture = Root.instance.atlasManager.textureAtlas;
 		mesh = new Mesh();
 		verticeList.Clear();
 		vertexPixelList.Clear();

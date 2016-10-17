@@ -8,8 +8,6 @@ public class Project
 	public string name;
 	public string path;
 
-	public Texture2D textureAtlas;
-
 	public Project(string name)
 	{
 		this.name = name;
@@ -23,8 +21,7 @@ public class Project
 		
 		System.IO.Directory.CreateDirectory(path);
 
-		byte[] atlasPng = textureAtlas.EncodeToPNG();
-		File.WriteAllBytes(path + "/atlas.png", atlasPng);
+		File.WriteAllBytes(path + "/atlas.png", Root.instance.atlasManager.save());
 
 		Debug.Log("Saved project to: " + path);
 	}
@@ -32,9 +29,7 @@ public class Project
 	public void load()
 	{
 		byte[] atlasPng = File.ReadAllBytes(path + "/atlas.png");
-		textureAtlas = new Texture2D(2, 2);
-		if (!textureAtlas.LoadImage(atlasPng))
-			return;
+		Root.instance.atlasManager.load(atlasPng);
 
 		loaded = true;
 		Debug.Log("Project loaded from: " + path);
