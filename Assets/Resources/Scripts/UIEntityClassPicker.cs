@@ -35,6 +35,9 @@ public class UIEntityClassPicker : MonoBehaviour {
 			return;
 
 		Vector2 uv = UIManager.getMousePosOnImage(rawImageGO.GetComponent<RawImage>(), true);
+		if (!UIManager.isInside(uv))
+			return;
+
 		int x = (int)(uv.x * colCount);
 		int y = (int)(uv.y * rowCount);
 		int index = x + (y * colCount);
