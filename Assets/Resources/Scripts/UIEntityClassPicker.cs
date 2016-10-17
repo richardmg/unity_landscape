@@ -78,4 +78,9 @@ public class UIEntityClassPicker : MonoBehaviour {
 		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
 		Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
 	}
+
+	public void onSaveButtonClicked()
+	{
+		Root.instance.projectManager.saveProject();
+	}
 }

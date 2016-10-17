@@ -39,6 +39,8 @@ public class Root : MonoBehaviour {
 	public EntityManager entityManager;
 	[HideInInspector]
 	public SnapshotCamera snapshotCamera;
+	[HideInInspector]
+	public ProjectManager projectManager;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -54,9 +56,11 @@ public class Root : MonoBehaviour {
 	{
 		meshManager = new MeshManager();
 		entityManager = new EntityManager();
-		uiManager = uiGO.GetComponent<UIManager>();
-		notificationManager = new NotificationManager();
+		projectManager = new ProjectManager();
 		atlasManager = new AtlasManager();
+		notificationManager = new NotificationManager();
+
+		uiManager = uiGO.GetComponent<UIManager>();
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
 		snapshotCamera = new SnapshotCamera(snapshotCameraGO);
