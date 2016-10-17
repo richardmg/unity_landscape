@@ -4,8 +4,11 @@ using System.IO;
 
 public class Project
 {
+	public bool loaded = false;
 	public string name;
 	public string path;
+
+	public Texture2D textureAtlas;
 
 	public Project(string name)
 	{
@@ -15,9 +18,12 @@ public class Project
 
 	public void save()
 	{
+		if (!loaded)
+			return;
+		
 		System.IO.Directory.CreateDirectory(path);
 
-		byte[] atlasPng = Root.instance.textureAtlas.EncodeToPNG();
+		byte[] atlasPng = textureAtlas.EncodeToPNG();
 		File.WriteAllBytes(path + "/atlas.png", atlasPng);
 
 		Debug.Log("Saved project to: " + path);
@@ -26,8 +32,11 @@ public class Project
 	public void load()
 	{
 		byte[] atlasPng = File.ReadAllBytes(path + "/atlas.png");
-		Root.instance.textureAtlas.LoadImage(atlasPng);
+		textureAtlas = new Texture2D(2, 2);
+		if (!textureAtlas.LoadImage(atlasPng))
+			return;
 
+		loaded = true;
 		Debug.Log("Project loaded from: " + path);
 	}
 }

@@ -92,7 +92,8 @@ public class EntityPainter : MonoBehaviour {
 
 		int atlasPixelX, atlasPixelY;
 		Root.instance.atlasManager.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
-		var pixels = Root.instance.textureAtlas.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
+		Texture2D texture = Root.instance.projectManager.currentProject.textureAtlas;
+		var pixels = texture.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
 
 		m_texture = new Texture2D(Root.kSubImageWidth, Root.kSubImageHeight, TextureFormat.ARGB32, false);
 		m_texture.filterMode = FilterMode.Point;
@@ -137,8 +138,9 @@ public class EntityPainter : MonoBehaviour {
 		int atlasPixelX;
 		int atlasPixelY;
 		Root.instance.atlasManager.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
-		Root.instance.textureAtlas.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
-		Root.instance.textureAtlas.Apply();
+		Texture2D texture = Root.instance.projectManager.currentProject.textureAtlas;
+		texture.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
+		texture.Apply();
 
 		m_textureDirty = false;
 

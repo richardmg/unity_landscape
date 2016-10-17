@@ -66,14 +66,9 @@ public class VoxelMeshFactory {
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
 
-	public VoxelMeshFactory()
-	{
-		// TODO: Change out texture with Color32 matrix
-		texture = Root.instance.textureAtlas;
-	}
-
 	public void beginMesh()
 	{
+		texture = Root.instance.projectManager.currentProject.textureAtlas;
 		mesh = new Mesh();
 		verticeList.Clear();
 		vertexPixelList.Clear();

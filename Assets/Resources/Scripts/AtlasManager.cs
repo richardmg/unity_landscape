@@ -22,7 +22,7 @@ public class AtlasManager {
 
 	public void copySubImage(int srcIndex, int destIndex)
 	{
-		Texture2D texture = Root.instance.textureAtlas;
+		Texture2D texture = Root.instance.projectManager.currentProject.textureAtlas;
 		int srcX, srcY, destX, destY;
 		atlasPixelForIndex(srcIndex, out srcX, out srcY);
 		atlasPixelForIndex(destIndex, out destX, out destY);
