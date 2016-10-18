@@ -28,7 +28,6 @@ public class ProjectIO
 
 public class Project
 {
-	public bool loaded = false;
 	public string name;
 	public string path;
 
@@ -40,7 +39,7 @@ public class Project
 
 	public bool exists()
 	{
-		return File.Exists(path);
+		return Directory.Exists(path);
 	}
 
 	public void initAsNewProject()
@@ -50,9 +49,6 @@ public class Project
 
 	public void save()
 	{
-		if (!loaded)
-			return;
-		
 		System.IO.Directory.CreateDirectory(path);
 
 		using (FileStream filestream = File.Create(path + "/atlas.dat"))
@@ -82,7 +78,6 @@ public class Project
 			Root.instance.entityManager.load(projectIO);
 		}
 
-		loaded = true;
 		Debug.Log("Project loaded from: " + path);
 	}
 }
@@ -119,7 +114,7 @@ public class ProjectManager {
 			currentProject.load();
 		} else {
 			Debug.Log("Could not open last project: " + projectName);
-			createNewProject("unnamed");
+			createNewProject(projectName);
 		}
 	}
 }
