@@ -20,12 +20,14 @@ public class EntityManager
 	public void load(ProjectIO projectIO)
 	{
 		allEntityClasses = new List<EntityClass>();
+		int classCount = projectIO.readInt();
+
+		for (int i = 0; i < classCount; ++i)
+			EntityClass.load(projectIO);
 	}
 
 	public void save(ProjectIO projectIO)
 	{
-		return;
-
 		int classCount = allEntityClasses.Count;
 		projectIO.writeInt(classCount);
 

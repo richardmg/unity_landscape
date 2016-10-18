@@ -10,6 +10,7 @@ using EntityClassID = System.Int32;
 public class EntityClass {
 	public Dictionary<int, int> indexSubstitutions;
 	public GameObject prefab;
+	public string prefabName;
 	public string entityName;
 
 	VoxelObjectRoot m_voxelObjectRoot;
@@ -24,7 +25,8 @@ public class EntityClass {
 
 	public EntityClass(string prefabName)
 	{
-		entityName = prefabName;
+		this.prefabName = prefabName;
+		this.entityName = prefabName;
 		prefab = Root.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
@@ -48,7 +50,8 @@ public class EntityClass {
 
 	public EntityClass(EntityClass originalEntityClass)
 	{
-		entityName = originalEntityClass.entityName + "_clone";
+		this.prefabName = prefabName;
+		this.entityName = originalEntityClass.entityName + "_clone";
 		prefab = originalEntityClass.prefab;
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 
@@ -152,11 +155,16 @@ public class EntityClass {
 		instance.hideAndDestroy();
 	}
 
-	public void load(ProjectIO projectIO)
+	public static void load(ProjectIO projectIO)
 	{
+		string prefabName = projectIO.readString();
+		string entityName = projectIO.readString();
+		new EntityClass(prefabName);
 	}
 
 	public void save(ProjectIO projectIO)
 	{
+		projectIO.writeString(prefabName);
+		projectIO.writeString(entityName);
 	}
 }

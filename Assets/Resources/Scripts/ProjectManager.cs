@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 
 public class ProjectIO
 {
@@ -24,12 +25,30 @@ public class ProjectIO
 		byte[] bytes = BitConverter.GetBytes(value);
 		stream.Write(bytes, 0, bytes.Length);
 	}
+
+	public void writeString(string str)
+	{
+		byte[] bytes = Encoding.Unicode.GetBytes(str);
+		writeInt(bytes.Length);
+		stream.Write(bytes, 0, bytes.Length);
+	}
+
+	public string readString()
+	{
+		int length = readInt();
+		byte[] bytes = new byte[length];
+		stream.Read(bytes, 0, bytes.Length);
+		return Encoding.Unicode.GetString(bytes);
+	}
+
 }
 
 public class Project
 {
 	public string name;
 	public string path;
+
+	int fileVersion = 1;
 
 	public Project(string name)
 	{
@@ -57,11 +76,13 @@ public class Project
 		using (FileStream filestream = File.Create(path + "/atlas.dat"))
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
+			projectIO.writeInt(fileVersion);
 			Root.instance.atlasManager.save(projectIO);
 		}
 		using (FileStream filestream = File.Create(path + "/entities.dat"))
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
+			projectIO.writeInt(fileVersion);
 			Root.instance.entityManager.save(projectIO);
 		}
 
@@ -73,11 +94,13 @@ public class Project
 		using (FileStream filestream = File.OpenRead(path + "/atlas.dat"))
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
+			Debug.Assert(fileVersion == projectIO.readInt());
 			Root.instance.atlasManager.load(projectIO);
 		}
 		using (FileStream filestream = File.OpenRead(path + "/entities.dat"))
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
+			Debug.Assert(fileVersion == projectIO.readInt());
 			Root.instance.entityManager.load(projectIO);
 		}
 
@@ -109,7 +132,7 @@ public class ProjectManager {
 	public void restoreSession()
 	{
 		// TODO: read from file
-		string projectName = "MyWorld";
+		string projectName = "MyWorld2";
 
 		currentProject = new Project(projectName);
 		if (currentProject.exists()) {
