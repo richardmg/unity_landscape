@@ -46,6 +46,8 @@ public class Project
 	{
 		Root.instance.atlasManager.initNewProject();
 		Root.instance.entityManager.initNewProject();
+
+		Debug.Log("Project created: " + name);
 	}
 
 	public void save()
@@ -63,7 +65,7 @@ public class Project
 			Root.instance.entityManager.save(projectIO);
 		}
 
-		Debug.Log("Saved project to: " + path);
+		Debug.Log("Project saved: " + path);
 	}
 
 	public void load()
@@ -79,7 +81,7 @@ public class Project
 			Root.instance.entityManager.load(projectIO);
 		}
 
-		Debug.Log("Project loaded from: " + path);
+		Debug.Log("Project loaded: " + path);
 	}
 }
 
@@ -96,7 +98,6 @@ public class ProjectManager {
 
 		currentProject.initAsNewProject();
 		currentProject = newProject;
-		Debug.Log("Created new project: " + projectName);
 		return true;
 	}
 
