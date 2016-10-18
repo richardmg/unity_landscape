@@ -5,15 +5,21 @@ using System.Collections.Generic;
 
 public class EntityManager
 {
-	public List<EntityClass> allEntityClasses = new List<EntityClass>();
+	public List<EntityClass> allEntityClasses;
 
 	public void addEntityClass(EntityClass entityClass)
 	{
 		allEntityClasses.Add(entityClass);
 	}
 
+	public void initNewProject()
+	{
+		allEntityClasses = new List<EntityClass>();
+	}
+
 	public void load(ProjectIO projectIO)
 	{
+		allEntityClasses = new List<EntityClass>();
 	}
 
 	public void save(ProjectIO projectIO)

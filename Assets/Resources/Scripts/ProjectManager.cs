@@ -44,7 +44,8 @@ public class Project
 
 	public void initAsNewProject()
 	{
-		Root.instance.atlasManager.initNewAtlas();
+		Root.instance.atlasManager.initNewProject();
+		Root.instance.entityManager.initNewProject();
 	}
 
 	public void save()

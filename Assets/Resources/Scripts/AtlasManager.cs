@@ -39,7 +39,7 @@ public class AtlasManager {
 		textureAtlas.Apply();
 	}
 
-	public void initNewAtlas()
+	public void initNewProject()
 	{
 		Texture2D defaultAtlas = Root.instance.textureAtlas;
 		textureAtlas = new Texture2D(defaultAtlas.width, defaultAtlas.height);
