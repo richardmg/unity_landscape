@@ -39,22 +39,38 @@ public class AtlasManager {
 		textureAtlas.Apply();
 	}
 
-	public void load(ProjectIO projectIO)
+	public void initNewAtlas()
 	{
-		int imageByteCount = projectIO.readInt();
-		byte[] imageBytes = new byte[imageByteCount];
-		projectIO.stream.Read(imageBytes, 0, imageBytes.Length);
-		textureAtlas = new Texture2D(2, 2);
-		textureAtlas.LoadImage(imageBytes);
-
+		Texture2D defaultAtlas = Root.instance.textureAtlas;
+		textureAtlas = new Texture2D(defaultAtlas.width, defaultAtlas.height);
 		textureAtlas.filterMode = FilterMode.Point;
+		Color32[] pixels = defaultAtlas.GetPixels32();
+		textureAtlas.SetPixels32(pixels);
+		textureAtlas.Apply();
 
+		syncMaterialsWithAtlas();
+	}
+
+	public void syncMaterialsWithAtlas()
+	{
 		Debug.Assert(textureAtlas);
 		Debug.Assert(textureAtlas.width == Root.kAtlasWidth);
 		Debug.Assert(textureAtlas.height == Root.kAtlasHeight);
 
 		Root.instance.voxelMaterialExact.mainTexture = textureAtlas;
 		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
+	}
+
+	public void load(ProjectIO projectIO)
+	{
+		int imageByteCount = projectIO.readInt();
+		byte[] imageBytes = new byte[imageByteCount];
+		projectIO.stream.Read(imageBytes, 0, imageBytes.Length);
+		textureAtlas = new Texture2D(2, 2);
+		textureAtlas.filterMode = FilterMode.Point;
+		textureAtlas.LoadImage(imageBytes);
+
+		syncMaterialsWithAtlas();
 	}
 
 	public void save(ProjectIO projectIO)

@@ -38,6 +38,16 @@ public class Project
 		this.path = Application.persistentDataPath + "/" + name;
 	}
 
+	public bool exists()
+	{
+		return File.Exists(path);
+	}
+
+	public void initAsNewProject()
+	{
+		Root.instance.atlasManager.initNewAtlas();
+	}
+
 	public void save()
 	{
 		if (!loaded)
@@ -80,6 +90,20 @@ public class Project
 public class ProjectManager {
 	public Project currentProject;
 
+	public bool createNewProject(string projectName)
+	{
+		Project newProject = new Project(projectName);
+		if (newProject.exists()) {
+			Debug.Log("Another project with name '" + projectName + "' already exists!");
+			return false;
+		}
+
+		currentProject.initAsNewProject();
+		currentProject = newProject;
+		Debug.Log("Created new project: " + projectName);
+		return true;
+	}
+
 	public void saveSession()
 	{
 		// TODO: read from file, and figure out when to call this function
@@ -88,7 +112,14 @@ public class ProjectManager {
 	public void restoreSession()
 	{
 		// TODO: read from file
-		currentProject = new Project("MyWorld");
-		currentProject.load();
+		string projectName = "MyWorld";
+
+		currentProject = new Project(projectName);
+		if (currentProject.exists()) {
+			currentProject.load();
+		} else {
+			Debug.Log("Could not open last project: " + projectName);
+			createNewProject("unnamed");
+		}
 	}
 }
