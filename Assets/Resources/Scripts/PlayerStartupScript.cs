@@ -6,13 +6,6 @@ public class PlayerStartupScript : MonoBehaviour {
 
 	public EntityClass currentEntityClass;
 
-	// Use this for initialization
-
-	void Awake()
-	{
-		currentEntityClass = new EntityClass("SquareTree");
-	}
-
 	void Start()
 	{
 		if (moveToGround) {
@@ -21,4 +14,23 @@ public class PlayerStartupScript : MonoBehaviour {
 			transform.position = worldPos;
 		}
 	}
+
+	public void initNewProject()
+	{
+		currentEntityClass = Root.instance.entityManager.getEntity(0);
+		Debug.Assert(currentEntityClass != null);
+	}
+
+	public void load(ProjectIO projectIO)
+	{
+		int id = projectIO.readInt();
+		currentEntityClass = Root.instance.entityManager.getEntity(id);
+		Debug.Assert(currentEntityClass != null);
+	}
+
+	public void save(ProjectIO projectIO)
+	{
+		projectIO.writeInt(currentEntityClass.id);
+	}
+
 }

@@ -13,6 +13,9 @@ public class EntityClass {
 	public string prefabName;
 	public string entityName;
 
+	// id is set by EntityManager
+	public int id = -1;
+
 	VoxelObjectRoot m_voxelObjectRoot;
 
 	Mesh[] m_mesh = new Mesh[Root.kLodCount];
@@ -157,14 +160,15 @@ public class EntityClass {
 
 	public static void load(ProjectIO projectIO)
 	{
-		string prefabName = projectIO.readString();
-		string entityName = projectIO.readString();
-		new EntityClass(prefabName);
+		EntityClass entityClass = new EntityClass(projectIO.readString());
+		Debug.Assert(entityClass.id == projectIO.readInt());
+		entityClass.entityName = projectIO.readString();
 	}
 
 	public void save(ProjectIO projectIO)
 	{
 		projectIO.writeString(prefabName);
+		projectIO.writeInt(id);
 		projectIO.writeString(entityName);
 	}
 }

@@ -65,6 +65,7 @@ public class Project
 	{
 		Root.instance.atlasManager.initNewProject();
 		Root.instance.entityManager.initNewProject();
+		Root.instance.player.initNewProject();
 
 		Debug.Log("Project created: " + name);
 	}
@@ -73,17 +74,13 @@ public class Project
 	{
 		System.IO.Directory.CreateDirectory(path);
 
-		using (FileStream filestream = File.Create(path + "/atlas.dat"))
+		using (FileStream filestream = File.Create(path + "/savegame.dat"))
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
 			projectIO.writeInt(fileVersion);
 			Root.instance.atlasManager.save(projectIO);
-		}
-		using (FileStream filestream = File.Create(path + "/entities.dat"))
-		{
-			ProjectIO projectIO = new ProjectIO(filestream);
-			projectIO.writeInt(fileVersion);
 			Root.instance.entityManager.save(projectIO);
+			Root.instance.player.save(projectIO);
 		}
 
 		Debug.Log("Project saved: " + path);
@@ -91,17 +88,13 @@ public class Project
 
 	public void load()
 	{
-		using (FileStream filestream = File.OpenRead(path + "/atlas.dat"))
+		using (FileStream filestream = File.OpenRead(path + "/savegame.dat"))
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
 			Debug.Assert(fileVersion == projectIO.readInt());
 			Root.instance.atlasManager.load(projectIO);
-		}
-		using (FileStream filestream = File.OpenRead(path + "/entities.dat"))
-		{
-			ProjectIO projectIO = new ProjectIO(filestream);
-			Debug.Assert(fileVersion == projectIO.readInt());
 			Root.instance.entityManager.load(projectIO);
+			Root.instance.player.load(projectIO);
 		}
 
 		Debug.Log("Project loaded: " + path);
@@ -111,16 +104,16 @@ public class Project
 public class ProjectManager {
 	public Project currentProject;
 
-	public bool createNewProject(string projectName)
+	public bool createNewProject(string projectName, bool overwrite = false)
 	{
 		Project newProject = new Project(projectName);
-		if (newProject.exists()) {
+		if (!overwrite && newProject.exists()) {
 			Debug.Log("Another project with name '" + projectName + "' already exists!");
 			return false;
 		}
 
-		currentProject.initAsNewProject();
 		currentProject = newProject;
+		currentProject.initAsNewProject();
 		return true;
 	}
 
@@ -133,6 +126,9 @@ public class ProjectManager {
 	{
 		// TODO: read from file
 		string projectName = "MyWorld2";
+
+//		createNewProject(projectName, true);
+//		return;
 
 		currentProject = new Project(projectName);
 		if (currentProject.exists()) {
