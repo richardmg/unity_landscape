@@ -4,8 +4,8 @@ using System.Collections;
 using System.IO;
 using System;
 
-public class AtlasManager {
-
+public class AtlasManager : IProjectIOMember
+{
 	public Texture2D textureAtlas;
 	int currentIndex = 0;
 
@@ -39,6 +39,16 @@ public class AtlasManager {
 		textureAtlas.Apply();
 	}
 
+	public void syncMaterialsWithAtlas()
+	{
+		Debug.Assert(textureAtlas);
+		Debug.Assert(textureAtlas.width == Root.kAtlasWidth);
+		Debug.Assert(textureAtlas.height == Root.kAtlasHeight);
+
+		Root.instance.voxelMaterialExact.mainTexture = textureAtlas;
+		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
+	}
+
 	public void initNewProject()
 	{
 		Texture2D defaultAtlas = Root.instance.textureAtlas;
@@ -49,16 +59,6 @@ public class AtlasManager {
 		textureAtlas.Apply();
 
 		syncMaterialsWithAtlas();
-	}
-
-	public void syncMaterialsWithAtlas()
-	{
-		Debug.Assert(textureAtlas);
-		Debug.Assert(textureAtlas.width == Root.kAtlasWidth);
-		Debug.Assert(textureAtlas.height == Root.kAtlasHeight);
-
-		Root.instance.voxelMaterialExact.mainTexture = textureAtlas;
-		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
 	}
 
 	public void load(ProjectIO projectIO)

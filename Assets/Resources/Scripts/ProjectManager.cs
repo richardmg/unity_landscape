@@ -1,8 +1,16 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
+
+public interface IProjectIOMember
+{
+	void initNewProject();
+	void save(ProjectIO projectIO);
+	void load(ProjectIO projectIO);
+}
 
 public class ProjectIO
 {
@@ -47,13 +55,25 @@ public class Project
 {
 	public string name;
 	public string path;
-
 	int fileVersion = 1;
+
+	static List<IProjectIOMember> projectIOMemberList;
 
 	public Project(string name)
 	{
+		if (projectIOMemberList == null)
+			Project.initProjectIOMemberList();
+
 		this.name = name;
 		this.path = Application.persistentDataPath + "/" + name;
+	}
+
+	static public void initProjectIOMemberList()
+	{
+		projectIOMemberList = new List<IProjectIOMember>();
+		projectIOMemberList.Add(Root.instance.atlasManager);
+		projectIOMemberList.Add(Root.instance.entityManager);
+		projectIOMemberList.Add(Root.instance.player);
 	}
 
 	public bool exists()
@@ -63,9 +83,8 @@ public class Project
 
 	public void initAsNewProject()
 	{
-		Root.instance.atlasManager.initNewProject();
-		Root.instance.entityManager.initNewProject();
-		Root.instance.player.initNewProject();
+		foreach (IProjectIOMember member in projectIOMemberList)
+			member.initNewProject();
 
 		Debug.Log("Project created: " + name);
 	}
@@ -78,9 +97,8 @@ public class Project
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
 			projectIO.writeInt(fileVersion);
-			Root.instance.atlasManager.save(projectIO);
-			Root.instance.entityManager.save(projectIO);
-			Root.instance.player.save(projectIO);
+			foreach (IProjectIOMember member in projectIOMemberList)
+				member.save(projectIO);
 		}
 
 		Debug.Log("Project saved: " + path);
@@ -92,9 +110,8 @@ public class Project
 		{
 			ProjectIO projectIO = new ProjectIO(filestream);
 			Debug.Assert(fileVersion == projectIO.readInt());
-			Root.instance.atlasManager.load(projectIO);
-			Root.instance.entityManager.load(projectIO);
-			Root.instance.player.load(projectIO);
+			foreach (IProjectIOMember member in projectIOMemberList)
+				member.load(projectIO);
 		}
 
 		Debug.Log("Project loaded: " + path);

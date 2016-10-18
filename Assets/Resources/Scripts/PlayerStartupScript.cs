@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerStartupScript : MonoBehaviour {
+public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
 
 	public EntityClass currentEntityClass;
