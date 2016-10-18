@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject uiPaintEditorGO;
 	public GameObject uiEntityClassPickerGO;
 	public GameObject entityPainterGO;
+	public GameObject backButton;
 
 	public KeyCode uiOnOffKey;
 
@@ -45,6 +46,7 @@ public class UIManager : MonoBehaviour {
 	{
 		hideUI();
 		push(uiEntityClassPickerGO, (bool accepted) => {});
+		backButton.SetActive(false);
 		showFirstPersonUI();
 	}
 
@@ -64,6 +66,7 @@ public class UIManager : MonoBehaviour {
 		stack.Add(new UIManagerStackItem(ui, callback));
 		m_currentMenu = ui;
 		showCurrentMenu();
+		backButton.SetActive(true);
 	}
 
 	public void pop(bool accepted)
@@ -75,6 +78,8 @@ public class UIManager : MonoBehaviour {
 		m_currentMenu = itemToShow.ui;
 		showCurrentMenu();
 		itemToPopOff.callback(accepted);
+		if (stack.Count <= 1)
+			backButton.SetActive(false);
 	}
 
 	public void showFirstPersonUI()
