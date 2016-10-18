@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Lod = System.Int32;
 using EntityClassID = System.Int32;
 
-public class EntityClass {
+public class EntityClass : IProjectIOMember {
 	public Dictionary<int, int> indexSubstitutions;
 	public GameObject prefab;
 	public string prefabName;
@@ -53,7 +53,7 @@ public class EntityClass {
 
 	public EntityClass(EntityClass originalEntityClass)
 	{
-		this.prefabName = prefabName;
+		this.prefabName = originalEntityClass.prefabName;
 		this.entityName = originalEntityClass.entityName + "_clone";
 		prefab = originalEntityClass.prefab;
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
@@ -70,6 +70,11 @@ public class EntityClass {
 			indexSubstitutions[baseIndex] = newIndex;
 		}
 
+		Root.instance.entityManager.addEntityClass(this);
+	}
+
+	public EntityClass()
+	{
 		Root.instance.entityManager.addEntityClass(this);
 	}
 
@@ -158,17 +163,34 @@ public class EntityClass {
 		instance.hideAndDestroy();
 	}
 
-	public static void load(ProjectIO projectIO)
+	public void initNewProject()
+	{}
+
+	public void load(ProjectIO projectIO)
 	{
-		EntityClass entityClass = new EntityClass(projectIO.readString());
-		Debug.Assert(entityClass.id == projectIO.readInt());
-		entityClass.entityName = projectIO.readString();
+		Debug.Assert(id == projectIO.readInt());
+		prefabName = projectIO.readString();
+		entityName = projectIO.readString();
+
+		prefab = Root.getPrefab(prefabName);
+		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
+		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
+
+		// Allocate indices in the TextureAtlas for this prefab variant
+		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
+		indexSubstitutions = new Dictionary<int, int>();
+
+		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
+			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
+			int newIndex = Root.instance.atlasManager.acquireIndex();
+			indexSubstitutions[baseIndex] = newIndex;
+		}
 	}
 
 	public void save(ProjectIO projectIO)
 	{
-		projectIO.writeString(prefabName);
 		projectIO.writeInt(id);
+		projectIO.writeString(prefabName);
 		projectIO.writeString(entityName);
 	}
 }

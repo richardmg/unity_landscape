@@ -31,8 +31,10 @@ public class EntityManager : IProjectIOMember
 		allEntityClasses = new List<EntityClass>();
 		int classCount = projectIO.readInt();
 
-		for (int i = 0; i < classCount; ++i)
-			EntityClass.load(projectIO);
+		for (int i = 0; i < classCount; ++i) {
+			EntityClass entityClass = new EntityClass();
+			entityClass.load(projectIO);
+		}
 	}
 
 	public void save(ProjectIO projectIO)
