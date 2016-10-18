@@ -152,11 +152,11 @@ public class EntityClass {
 		instance.hideAndDestroy();
 	}
 
-	public void load(FileStream filestream)
+	public void load(ProjectIO projectIO)
 	{
 	}
 
-	public void save(FileStream filestream)
+	public void save(ProjectIO projectIO)
 	{
 	}
 }

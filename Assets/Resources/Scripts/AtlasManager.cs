@@ -39,16 +39,11 @@ public class AtlasManager {
 		textureAtlas.Apply();
 	}
 
-	public void load(FileStream filestream)
+	public void load(ProjectIO projectIO)
 	{
-		// Read image byte length
-		byte[] intBytes = new byte[sizeof(int)];
-		filestream.Read(intBytes, 0, intBytes.Length);
-		int imageByteCount = BitConverter.ToInt32(intBytes, 0);
-
-		// Read image
+		int imageByteCount = projectIO.readInt();
 		byte[] imageBytes = new byte[imageByteCount];
-		filestream.Read(imageBytes, 0, imageBytes.Length);
+		projectIO.stream.Read(imageBytes, 0, imageBytes.Length);
 		textureAtlas = new Texture2D(2, 2);
 		textureAtlas.LoadImage(imageBytes);
 
@@ -62,13 +57,11 @@ public class AtlasManager {
 		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
 	}
 
-	public void save(FileStream filestream)
+	public void save(ProjectIO projectIO)
 	{
 		byte[] bytes = textureAtlas.EncodeToPNG();
-		byte[] imageByteCount = BitConverter.GetBytes(bytes.Length);
-
-		filestream.Write(imageByteCount, 0, imageByteCount.Length);
-		filestream.Write(bytes, 0, bytes.Length);
+		projectIO.writeInt(bytes.Length);
+		projectIO.stream.Write(bytes, 0, bytes.Length);
 
 		// File.WriteAllBytes(path + "/atlas.png", bytes);
 	}

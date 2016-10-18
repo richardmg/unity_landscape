@@ -1,6 +1,30 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.IO;
+
+public class ProjectIO
+{
+	public FileStream stream;
+
+	public ProjectIO(FileStream stream)
+	{
+		this.stream = stream;
+	}
+
+	public int readInt()
+	{
+		byte[] bytes = new byte[sizeof(int)];
+		stream.Read(bytes, 0, bytes.Length);
+		return BitConverter.ToInt32(bytes, 0);
+	}
+
+	public void writeInt(int value)
+	{
+		byte[] bytes = BitConverter.GetBytes(value);
+		stream.Write(bytes, 0, bytes.Length);
+	}
+}
 
 public class Project
 {
@@ -23,11 +47,13 @@ public class Project
 
 		using (FileStream filestream = File.Create(path + "/atlas.dat"))
 		{
-			Root.instance.atlasManager.save(filestream);
+			ProjectIO projectIO = new ProjectIO(filestream);
+			Root.instance.atlasManager.save(projectIO);
 		}
 		using (FileStream filestream = File.Create(path + "/entities.dat"))
 		{
-			Root.instance.entityManager.save(filestream);
+			ProjectIO projectIO = new ProjectIO(filestream);
+			Root.instance.entityManager.save(projectIO);
 		}
 
 		Debug.Log("Saved project to: " + path);
@@ -37,11 +63,13 @@ public class Project
 	{
 		using (FileStream filestream = File.OpenRead(path + "/atlas.dat"))
 		{
-			Root.instance.atlasManager.load(filestream);
+			ProjectIO projectIO = new ProjectIO(filestream);
+			Root.instance.atlasManager.load(projectIO);
 		}
 		using (FileStream filestream = File.OpenRead(path + "/entities.dat"))
 		{
-			Root.instance.entityManager.load(filestream);
+			ProjectIO projectIO = new ProjectIO(filestream);
+			Root.instance.entityManager.load(projectIO);
 		}
 
 		loaded = true;

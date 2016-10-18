@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,20 +12,18 @@ public class EntityManager
 		allEntityClasses.Add(entityClass);
 	}
 
-	public void load(FileStream filestream)
+	public void load(ProjectIO projectIO)
 	{
 	}
 
-	public void save(FileStream filestream)
+	public void save(ProjectIO projectIO)
 	{
 		return;
 
-
 		int classCount = allEntityClasses.Count;
-		byte[] classCountBytes = BitConverter.GetBytes(classCount);
-		filestream.Write(classCountBytes, 0, classCountBytes.Length);
+		projectIO.writeInt(classCount);
 
 		for (int i = 0; i < classCount; ++i)
-			allEntityClasses[i].save(filestream);
+			allEntityClasses[i].save(projectIO);
 	}
 }
