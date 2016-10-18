@@ -81,7 +81,7 @@ public class Project
 		return Directory.Exists(path);
 	}
 
-	public void initAsNewProject()
+	public void initNewProject()
 	{
 		foreach (IProjectIOMember member in projectIOMemberList)
 			member.initNewProject();
@@ -130,7 +130,7 @@ public class ProjectManager {
 		}
 
 		currentProject = newProject;
-		currentProject.initAsNewProject();
+		currentProject.initNewProject();
 		return true;
 	}
 
