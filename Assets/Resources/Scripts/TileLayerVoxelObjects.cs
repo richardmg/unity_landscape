@@ -36,7 +36,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 
-		m_entityClass = Root.instance.player.currentEntityClass;
+		m_entityClass = Root.instance.entityManager.getEntity(0);
 
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
