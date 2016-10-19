@@ -21,10 +21,9 @@ public class UIManager : MonoBehaviour {
 	public GameObject uiColorPickerGO;
 	public GameObject uiPaintEditorGO;
 	public GameObject uiEntityClassPickerGO;
+	public GameObject uiCommandPromptGO;
 	public GameObject entityPainterGO;
 	public GameObject backButton;
-
-	public KeyCode uiOnOffKey;
 
 	GameObject m_currentMenu;
 
@@ -57,6 +56,7 @@ public class UIManager : MonoBehaviour {
 		uiColorPickerGO.SetActive(false);
 		uiPaintEditorGO.SetActive(false);
 		uiEntityClassPickerGO.SetActive(false);
+		uiCommandPromptGO.SetActive(false);
 
 		m_mouseGrab = null;
 	}
@@ -90,24 +90,19 @@ public class UIManager : MonoBehaviour {
 		enableCursorMode(false);
 	}
 
+	public void toggleCommandPromptUI(bool show)
+	{
+		uiCommandPromptGO.SetActive(show);
+		if (uiFirstPersonGO.activeSelf)
+			enableCursorMode(show);
+	}
+
 	public void showCurrentMenu()
 	{
 		hideUI();
-		if (m_currentMenu == uiPaintEditorGO) {
-			backgroundGO.SetActive(true);
-			uiPaintEditorGO.SetActive(true);
-			enableCursorMode(true);
-		} else if (m_currentMenu == uiColorPickerGO) {
-			backgroundGO.SetActive(true);
-			uiColorPickerGO.SetActive(true);
-			enableCursorMode(true);
-		} else if (m_currentMenu == uiEntityClassPickerGO) {
-			backgroundGO.SetActive(true);
-			uiEntityClassPickerGO.SetActive(true);
-			enableCursorMode(true);
-		} else {
-			Debug.Assert(false, "Unknown UI to show: " + m_currentMenu);
-		}
+		backgroundGO.SetActive(true);
+		m_currentMenu.SetActive(true);
+		enableCursorMode(true);
 	}
 
 	public void enableCursorMode(bool on)
@@ -118,13 +113,14 @@ public class UIManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (!Input.GetKeyDown(uiOnOffKey))
-			return;
-
-		if (uiFirstPersonGO.activeSelf)
-			showCurrentMenu();
-		else
-			showFirstPersonUI();
+		if (Input.GetKeyDown(KeyCode.Tab)) {
+			if (uiFirstPersonGO.activeSelf)
+				showCurrentMenu();
+			else
+				showFirstPersonUI();
+		} else if (Input.GetKeyDown(KeyCode.Quote)) {
+			toggleCommandPromptUI(!uiCommandPromptGO.activeSelf);
+		}
 	}
 
 	static public Vector2 getMousePosOnImage(RawImage image, bool flipY = false)

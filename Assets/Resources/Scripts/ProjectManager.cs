@@ -86,7 +86,7 @@ public class Project
 		foreach (IProjectIOMember member in projectIOMemberList)
 			member.initNewProject();
 
-		Debug.Log("Project created: " + name);
+		Root.instance.commandPrompt.log("Project created: " + name);
 	}
 
 	public void save()
@@ -101,7 +101,7 @@ public class Project
 				member.save(projectIO);
 		}
 
-		Debug.Log("Project saved: " + path);
+		Root.instance.commandPrompt.log("Project saved: " + path);
 	}
 
 	public void load()
@@ -114,7 +114,7 @@ public class Project
 				member.load(projectIO);
 		}
 
-		Debug.Log("Project loaded: " + path);
+		Root.instance.commandPrompt.log("Project loaded: " + path);
 	}
 }
 
@@ -125,7 +125,7 @@ public class ProjectManager {
 	{
 		Project newProject = new Project(projectName);
 		if (!overwrite && newProject.exists()) {
-			Debug.Log("Another project with name '" + projectName + "' already exists!");
+			Root.instance.commandPrompt.log("Another project with name '" + projectName + "' already exists!");
 			return false;
 		}
 
@@ -151,7 +151,7 @@ public class ProjectManager {
 		if (currentProject.exists()) {
 			currentProject.load();
 		} else {
-			Debug.Log("Could not open last project: " + projectName);
+			Root.instance.commandPrompt.log("Could not open last project: " + projectName);
 			createNewProject(projectName);
 		}
 	}

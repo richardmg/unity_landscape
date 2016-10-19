@@ -13,6 +13,7 @@ public class Root : MonoBehaviour {
 	public GameObject uiGO;
 	public GameObject landscapeGO;
 	public GameObject snapshotCameraGO;
+	public GameObject commandPromptGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
@@ -42,6 +43,8 @@ public class Root : MonoBehaviour {
 	public SnapshotCamera snapshotCamera;
 	[HideInInspector]
 	public ProjectManager projectManager;
+	[HideInInspector]
+	public CommandPrompt commandPrompt;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -65,6 +68,7 @@ public class Root : MonoBehaviour {
 		uiManager = uiGO.GetComponent<UIManager>();
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
+		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
 		snapshotCamera = new SnapshotCamera(snapshotCameraGO);
 
 		projectManager.restoreSession();

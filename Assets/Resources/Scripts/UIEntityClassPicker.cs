@@ -84,9 +84,4 @@ public class UIEntityClassPicker : MonoBehaviour {
 		Root.instance.player.currentEntityClass = entityClass;
 		repaintTableTexture();
 	}
-
-	public void onSaveButtonClicked()
-	{
-		Root.instance.projectManager.currentProject.save();
-	}
 }
