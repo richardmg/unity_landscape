@@ -47,6 +47,7 @@ public class AtlasManager : IProjectIOMember
 
 		Root.instance.voxelMaterialExact.mainTexture = textureAtlas;
 		Root.instance.voxelMaterialVolume.mainTexture = textureAtlas;
+		Root.instance.voxelMaterialLit.mainTexture = textureAtlas;
 	}
 
 	public void initNewProject()

@@ -29,6 +29,7 @@
 			#pragma fragment frag
 
 			#define NO_LIGHT
+			#define NO_GRADIENT
 			#define NO_DISCARD
 			#include "VoxelObject.cginc"
 
