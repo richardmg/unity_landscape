@@ -43,7 +43,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 				GameObject tile = new GameObject();
 				tile.AddComponent<MeshFilter>();
 				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
-				meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
+				meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
 
 				tile.name = "Tile " + x + ", " + z;
 				tile.transform.parent = transform;

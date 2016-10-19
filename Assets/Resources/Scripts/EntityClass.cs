@@ -30,7 +30,7 @@ public class EntityClass : IProjectIOMember {
 	{
 		this.prefabName = prefabName;
 		this.entityName = prefabName;
-		prefab = Root.getPrefab(prefabName);
+		prefab = Root.instance.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 
@@ -149,7 +149,7 @@ public class EntityClass : IProjectIOMember {
 	public Texture2D takeSnapshot()
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
-		instance.makeStandalone();
+		instance.makeStandalone(Root.kLodLit);
 		Texture2D snapshot = Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, new Vector3(0, 0, -10));
 		instance.hideAndDestroy();
 		return snapshot;
@@ -158,7 +158,7 @@ public class EntityClass : IProjectIOMember {
 	public void takeSnapshot(Texture2D destTexture, Rect destRect)
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
-		instance.makeStandalone();
+		instance.makeStandalone(Root.kLodLit);
 		Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, new Vector3(0, 0, -5), destTexture, destRect);
 		instance.hideAndDestroy();
 	}
@@ -172,7 +172,7 @@ public class EntityClass : IProjectIOMember {
 		prefabName = projectIO.readString();
 		entityName = projectIO.readString();
 
-		prefab = Root.getPrefab(prefabName);
+		prefab = Root.instance.getPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 

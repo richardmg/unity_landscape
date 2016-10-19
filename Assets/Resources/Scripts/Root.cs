@@ -16,6 +16,7 @@ public class Root : MonoBehaviour {
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
+	public Material voxelMaterialLit;
 	public Texture2D textureAtlas;
 
 	public Vector3 entityBaseScale = new Vector3(0.2f, 0.2f, 0.2f);
@@ -45,7 +46,8 @@ public class Root : MonoBehaviour {
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
 	public const Lod kLod1 = 1;
-	public const Lod kLodCount = 2;
+	public const Lod kLodLit = 2;
+	public const Lod kLodCount = kLodLit + 1;
 
 	Root()
 	{
@@ -68,8 +70,18 @@ public class Root : MonoBehaviour {
 		projectManager.restoreSession();
 	}
 
-	public static GameObject getPrefab(string prefabName)
+	public GameObject getPrefab(string prefabName)
     {
 		return (GameObject)Resources.Load("Prefabs/" + prefabName, typeof(GameObject));
     }
+
+	public Material voxelMaterialForLod(Lod lod)
+	{
+		switch (lod) {
+		case kLod0: return voxelMaterialExact;
+		case kLod1: return voxelMaterialVolume;
+		default: return voxelMaterialLit;
+		}
+	}
+
 }

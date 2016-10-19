@@ -63,6 +63,7 @@ public class VoxelObject : MonoBehaviour {
 		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
 		if (!meshRenderer)
 			meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-		meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
+
+		meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
 	}
 }

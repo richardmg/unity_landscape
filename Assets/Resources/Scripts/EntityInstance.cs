@@ -7,7 +7,7 @@ public class EntityInstance : MonoBehaviour {
 	public EntityClass entityClass;
 	public bool instanceHidden = false;
 
-	public void makeStandalone()
+	public void makeStandalone(Lod lod)
 	{
 		gameObject.SetActive(true);
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
@@ -17,7 +17,8 @@ public class EntityInstance : MonoBehaviour {
 		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
 		if (!meshRenderer)
 			meshRenderer = gameObject.AddComponent<MeshRenderer>();
-		meshRenderer.sharedMaterial = Root.instance.voxelMaterialExact;
+
+		meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(lod);
 	}
 
 	public void hideAndDestroy()
