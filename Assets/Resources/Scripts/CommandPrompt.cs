@@ -54,13 +54,24 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "save") {
 			Root.instance.projectManager.currentProject.save();
 			accepted = true;
+		} else if (token == "close") {
+			Root.instance.uiManager.toggleCommandPromptUI(false);
+			accepted = true;
+		} else if (token == "paint") {
+			token = nextString();
+			if (token == "index") {
+				log("Current paint index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex());
+				accepted = true;
+			}
 		}
 
 		if (accepted) {
 			inputField.text = "";
 		} else {
 			log("atlas [copyback|copy] [from] [to]");
+			log("paint index");
 			log("save");
+			log("close");
 			log("clear");
 			log("-- help --");
 		}

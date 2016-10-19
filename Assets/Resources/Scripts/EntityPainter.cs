@@ -49,6 +49,11 @@ public class EntityPainter : MonoBehaviour {
 			updatePaint(uv);
 	}
 
+	public int currentAtlasIndex()
+	{
+		return m_atlasIndexList[m_currentListIndex];
+	}
+
 	void updatePaint(Vector2 uv)
 	{
 		if (!UIManager.isInside(uv))
