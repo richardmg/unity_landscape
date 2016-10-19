@@ -13,7 +13,7 @@ public class EntityInstance : MonoBehaviour {
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
 		if (!meshFilter)
 			meshFilter = gameObject.AddComponent<MeshFilter>();
-		meshFilter.sharedMesh = entityClass.getMesh(Root.kLod0);
+		meshFilter.sharedMesh = entityClass.getMesh(lod);
 		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
 		if (!meshRenderer)
 			meshRenderer = gameObject.AddComponent<MeshRenderer>();

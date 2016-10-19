@@ -39,6 +39,7 @@ public class VoxelObject : MonoBehaviour {
 
 		switch (lod) {
 		case Root.kLod0:
+		case Root.kLodLit:
 			voxelMeshFactory.useVolume = false;
 			voxelMeshFactory.simplify = false;
 			break;
