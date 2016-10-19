@@ -55,8 +55,7 @@ public class AtlasManager : IProjectIOMember
 		Texture2D defaultAtlas = Root.instance.textureAtlas;
 		textureAtlas = new Texture2D(defaultAtlas.width, defaultAtlas.height);
 		textureAtlas.filterMode = FilterMode.Point;
-		Color32[] pixels = defaultAtlas.GetPixels32();
-		textureAtlas.SetPixels32(pixels);
+		textureAtlas.SetPixels32(defaultAtlas.GetPixels32());
 		textureAtlas.Apply();
 
 		syncMaterialsWithAtlas();
