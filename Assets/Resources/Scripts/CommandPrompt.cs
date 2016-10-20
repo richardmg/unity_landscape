@@ -154,10 +154,20 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "player") {
 			token = nextToken();
 			if (token == "pos") {
-				log("player position: " + Root.instance.player.transform.position);
-				accepted = true;
+				if (hasNext()) {
+					int x = nextInt();
+					int z = nextInt();
+					Vector3 pos = new Vector3(x, 0, z);
+					pos.y = Root.instance.landscapeManager.sampleHeight(pos) + 1;
+					Root.instance.player.transform.position = pos;
+					log("Moved player to position: " + Root.instance.player.transform.position);
+					accepted = true;
+				} else {
+					log("Player position: " + Root.instance.player.transform.position);
+					accepted = true;
+				}
 			} else if (token == "entity") {
-				log("player holds entity: " + Root.instance.player.currentEntityClass.id);
+				log("Player holds entity: " + Root.instance.player.currentEntityClass.id);
 				accepted = true;
 			}
 		} else if (token == "entity") {
@@ -175,7 +185,8 @@ public class CommandPrompt : MonoBehaviour {
 				int id = nextInt();
 				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
 				entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
-				log("cleard mesh cache for entity: " + id);
+				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
+				log("Cleard mesh cache for entity: " + id);
 				accepted = true;
 			}
 		} else if (token == "notify") {
