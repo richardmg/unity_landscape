@@ -51,9 +51,12 @@ public class CommandPrompt : MonoBehaviour {
 			InputField output = outputGO.GetComponent<InputField>();
 			output.text = "";
 			accepted = true;
-		} else if (token == "save") {
-			Root.instance.projectManager.currentProject.save();
-			accepted = true;
+		} else if (token == "project") {
+			token = nextString();
+			if (token == "save") {
+				Root.instance.projectManager.currentProject.save();
+				accepted = true;
+			}
 		} else if (token == "close") {
 			Root.instance.uiManager.toggleCommandPromptUI(false);
 			accepted = true;
@@ -69,8 +72,8 @@ public class CommandPrompt : MonoBehaviour {
 			inputField.text = "";
 		} else {
 			log("atlas [copyback|copy] [from] [to]");
-			log("paint index");
-			log("save");
+			log("paint [index]");
+			log("project [save]");
 			log("close");
 			log("clear");
 			log("-- help --");
@@ -78,9 +81,10 @@ public class CommandPrompt : MonoBehaviour {
 
 		inputField.ActivateInputField();
 		UnityEditor.EditorApplication.delayCall += ()=> {
-			inputField.selectionAnchorPosition = 0;
-			inputField.selectionFocusPosition = 0;
-			inputField.caretPosition = inputField.text.Length;
+//			inputField.selectionAnchorPosition = 0;
+//			inputField.selectionFocusPosition = 0;
+//			inputField.caretPosition = inputField.text.Length;
+			inputField.MoveTextEnd(false);
 		};
 	}
 }
