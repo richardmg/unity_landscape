@@ -91,6 +91,12 @@ public class Project
 
 	public void save()
 	{
+		saveAs(name);
+	}
+
+	public void saveAs(string name)
+	{
+		string path = Application.persistentDataPath + "/" + name;
 		System.IO.Directory.CreateDirectory(path);
 
 		using (FileStream filestream = File.Create(path + "/savegame.dat"))

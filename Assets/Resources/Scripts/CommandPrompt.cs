@@ -81,22 +81,33 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "project") {
 			token = nextToken();
 			if (token == "save") {
-				Root.instance.projectManager.currentProject.save();
+				token = nextToken();
+				if (token != "")
+					Root.instance.projectManager.currentProject.saveAs(token);
+				else
+					Root.instance.projectManager.currentProject.save();
 				accepted = true;
 			} else if (token == "load") {
 				token = nextToken();
-				Root.instance.projectManager.loadProject(token);
-				accepted = true;
+				if (token != "") {
+					Root.instance.projectManager.loadProject(token);
+					accepted = true;
+				}
 			} else if (token == "new") {
 				token = nextToken();
-				Root.instance.projectManager.createProject(token);
-				accepted = true;
+				if (token != "") {
+					Root.instance.projectManager.createProject(token);
+					accepted = true;
+				}
 			} else if (token == "list") {
 				token = nextToken();
 				string[] paths = Root.instance.projectManager.listProjects(token == "" ? "*" : token);
 				foreach (string path in paths)
 					log(path, kListItem);
 				log("Projects", kHeading);
+				accepted = true;
+			} else if (token == "name") {
+				log("Name of current project: " + Root.instance.projectManager.currentProject.name);
 				accepted = true;
 			}
 		} else if (token == "close") {
@@ -115,7 +126,7 @@ public class CommandPrompt : MonoBehaviour {
 		} else {
 			log("atlas [[copyback|copy] [from] [to]]", kListItem);
 			log("paint [index]", kListItem);
-			log("project [load <name>] | [save [name]] | new | list [pattern]", kListItem);
+			log("project [load <name>] | [save [name]] | new | list [pattern] | name", kListItem);
 			log("close", kListItem);
 			log("clear", kListItem);
 			log("Help", kHeading);
