@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
-using LineType = System.Int32;
+using MessageType = System.Int32;
 
 public class CommandPrompt : MonoBehaviour {
 	public GameObject inputGO;
@@ -10,10 +10,10 @@ public class CommandPrompt : MonoBehaviour {
 	List<string> tokens;
 	List<string> outputList = new List<string>();
 
-	public const LineType kNormal = 0;
-	public const LineType kHeading = 1;
-	public const LineType kListItem = 2;
-	public const LineType kWarning = 3;
+	public const MessageType kNormal = 0;
+	public const MessageType kHeading = 1;
+	public const MessageType kListItem = 2;
+	public const MessageType kWarning = 3;
 
 	void OnEnable()
 	{
@@ -35,16 +35,16 @@ public class CommandPrompt : MonoBehaviour {
 		return 0;
 	}
 
-	public void log(string message, LineType lineType = kNormal)
+	public void log(string message, MessageType messageType = kNormal)
 	{
 		InputField output = outputGO.GetComponent<InputField>();
 		string formattedMessage;
 
-		if (lineType == kHeading)
+		if (messageType == kHeading)
 			formattedMessage = "<b><color=blue>" + message + "</color></b>";
-		else if (lineType == kListItem)
+		else if (messageType == kListItem)
 			formattedMessage = "<i><color=green>" + message + "</color></i>";
-		else if (lineType == kWarning)
+		else if (messageType == kWarning)
 			formattedMessage = "<color=red>" + message + "</color>";
 		else
 			formattedMessage = message;
