@@ -9,11 +9,28 @@ public class CommandPrompt : MonoBehaviour {
 	public GameObject outputGO;
 	List<string> tokens;
 	List<string> outputList = new List<string>();
+	List<string> helpList = new List<string>();
 
 	public const MessageType kNormal = 0;
 	public const MessageType kHeading = 1;
 	public const MessageType kListItem = 2;
 	public const MessageType kWarning = 3;
+
+	void Awake()
+	{
+		helpList.Add("atlas copy <from> <to> : copy subimage inside project atlas");
+		helpList.Add("atlas copyfrombase <from> <to> : copy subimage from base atas to project atlas");
+		helpList.Add("atlas copytobase <from> <to> : copy subimage from project atas to base atlas");
+		helpList.Add("entitypainter currentindex : print current atlas index in entity painter");
+		helpList.Add("close : close console");
+		helpList.Add("clear : clear console");
+		helpList.Add("project name : print name of current project");
+		helpList.Add("project new <name> : Create a new project");
+		helpList.Add("project load <name> : load project");
+		helpList.Add("project save : save project");
+		helpList.Add("project saveAs <name> : save a copy of the project");
+		helpList.Add("project list [pattern] : list all project that conforms to pattern");
+	}
 
 	void OnEnable()
 	{
@@ -62,7 +79,8 @@ public class CommandPrompt : MonoBehaviour {
 
 	public void onInputChanged(InputField inputField)
 	{
-		tokens = new List<string>(inputField.text.Split(new char[]{' '}));
+		string commandString = inputField.text;
+		tokens = new List<string>(commandString.Split(new char[]{' '}));
 		bool accepted = false;
 
 		string token = nextToken();
@@ -113,10 +131,10 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "close") {
 			Root.instance.uiManager.toggleCommandPromptUI(false);
 			accepted = true;
-		} else if (token == "paint") {
+		} else if (token == "entitypainter") {
 			token = nextToken();
-			if (token == "index") {
-				log("Current paint index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex());
+			if (token == "currentindex") {
+				log("Current entity painter index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex());
 				accepted = true;
 			}
 		}
@@ -124,11 +142,10 @@ public class CommandPrompt : MonoBehaviour {
 		if (accepted) {
 			inputField.text = "";
 		} else {
-			log("atlas [[copyback|copy] [from] [to]]", kListItem);
-			log("paint [index]", kListItem);
-			log("project [load <name>] | [save [name]] | new | list [pattern] | name", kListItem);
-			log("close", kListItem);
-			log("clear", kListItem);
+			foreach (string helpString in helpList) {
+				if (helpString.StartsWith(commandString))
+					log(helpString, kListItem);
+			}
 			log("Help", kHeading);
 		}
 
