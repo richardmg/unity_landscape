@@ -184,7 +184,7 @@ public class CommandPrompt : MonoBehaviour {
 				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
 				entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
-				log("Cleard mesh cache for entity: " + id);
+				log("Cleard mesh cache (and sendt entity changed notification) for entity: " + id);
 				accepted = true;
 			}
 		} else if (token == "notify") {
