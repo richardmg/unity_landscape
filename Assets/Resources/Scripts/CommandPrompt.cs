@@ -33,7 +33,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("project list [pattern] : list all project that conforms to pattern");
 		helpList.Add("player entity ; print entity held by player");
 		helpList.Add("player pos: print players position");
-		helpList.Add("player pos x y: set players position");
+		helpList.Add("player move x z: move player on top of landscape at position");
 		helpList.Add("entity indexlist <id> : print atlas indecies used by entity");
 		helpList.Add("entity clearcache <id> : clear entity mesh cache");
 		helpList.Add("notify entitychanged <id> : update listeners that entity changed");
@@ -154,18 +154,16 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "player") {
 			token = nextToken();
 			if (token == "pos") {
-				if (hasNext()) {
-					int x = nextInt();
-					int z = nextInt();
-					Vector3 pos = new Vector3(x, 0, z);
-					pos.y = Root.instance.landscapeManager.sampleHeight(pos) + 1;
-					Root.instance.player.transform.position = pos;
-					log("Moved player to position: " + Root.instance.player.transform.position);
-					accepted = true;
-				} else {
-					log("Player position: " + Root.instance.player.transform.position);
-					accepted = true;
-				}
+				log("Player position: " + Root.instance.player.transform.position);
+				accepted = true;
+			} else if (token == "move") {
+				int x = nextInt();
+				int z = nextInt();
+				Vector3 pos = new Vector3(x, 0, z);
+				pos.y = Root.instance.landscapeManager.sampleHeight(pos) + 1;
+				Root.instance.player.transform.position = pos;
+				log("Moved player to position: " + Root.instance.player.transform.position);
+				accepted = true;
 			} else if (token == "entity") {
 				log("Player holds entity: " + Root.instance.player.currentEntityClass.id);
 				accepted = true;
