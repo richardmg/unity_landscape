@@ -24,6 +24,8 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("atlas copy <from> <to> : copy subimage inside project atlas");
 		helpList.Add("atlas show : show atlas image");
 		helpList.Add("atlas hide: hide atlas image");
+		helpList.Add("baseatlas show : show base atlas image");
+		helpList.Add("baseatlas hide: hide base atlas image");
 		helpList.Add("baseatlas copy <from> <to> : copy subimage inside base atlas");
 		helpList.Add("baseatlas copytoproject <from> <to> : copy subimage from base atas to project atlas");
 		helpList.Add("baseatlas copyfromproject <from> <to> : copy subimage from project atas to base atlas");
@@ -111,6 +113,16 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			} else if (token == "show") {
 				atlasDebugImageGO.GetComponent<RawImage>().texture = Root.instance.voxelMaterialExact.mainTexture;
+				atlasDebugGO.SetActive(true);
+				accepted = true;
+			} else if (token == "hide") {
+				atlasDebugGO.SetActive(false);
+				accepted = true;
+			}
+		} else if (token == "baseatlas") {
+			token = nextToken();
+			if (token == "show") {
+				atlasDebugImageGO.GetComponent<RawImage>().texture = Root.instance.textureAtlas;
 				atlasDebugGO.SetActive(true);
 				accepted = true;
 			} else if (token == "hide") {
