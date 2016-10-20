@@ -19,8 +19,9 @@ public class CommandPrompt : MonoBehaviour {
 	void Awake()
 	{
 		helpList.Add("atlas copy <from> <to> : copy subimage inside project atlas");
-		helpList.Add("atlas copyfrombase <from> <to> : copy subimage from base atas to project atlas");
-		helpList.Add("atlas copytobase <from> <to> : copy subimage from project atas to base atlas");
+		helpList.Add("baseatlas copy <from> <to> : copy subimage inside base atlas");
+		helpList.Add("baseatlas copytoproject <from> <to> : copy subimage from base atas to project atlas");
+		helpList.Add("baseatlas copyfromproject <from> <to> : copy subimage from project atas to base atlas");
 		helpList.Add("entitypainter currentindex : print current atlas index in entity painter");
 		helpList.Add("close : close console");
 		helpList.Add("clear : clear console");
@@ -30,8 +31,12 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("project save : save project");
 		helpList.Add("project saveAs <name> : save a copy of the project");
 		helpList.Add("project list [pattern] : list all project that conforms to pattern");
+		helpList.Add("player entity ; print entity held by player");
 		helpList.Add("player pos: print players position");
 		helpList.Add("player pos x y: set players position");
+		helpList.Add("entity indexlist <id> : print atlas indecies used by entity");
+		helpList.Add("entity clearcache <id> : clear entity mesh cache");
+		helpList.Add("notify entitychanged <id> : update listeners that entity changed");
 	}
 
 	void OnEnable()
@@ -39,6 +44,11 @@ public class CommandPrompt : MonoBehaviour {
 		InputField input = inputGO.GetComponent<InputField>();
 		input.ActivateInputField();
 		input.text = System.String.Empty;
+	}
+
+	bool hasNext()
+	{
+		return tokens.Count > 0;
 	}
 
 	string nextToken()
@@ -88,8 +98,11 @@ public class CommandPrompt : MonoBehaviour {
 
 		if (token == "atlas") {
 			token = nextToken();
-			if (token == "copyback") {
-				log("copyback index x to base atlas index y");
+			if (token == "copy") {
+				int srcIndex = nextInt();
+				int destIndex = nextInt();
+				Root.instance.atlasManager.copySubImage(srcIndex, destIndex);
+				log("copy atlas sub image " + srcIndex + " to " + destIndex);
 				accepted = true;
 			}
 		} else if (token == "clear") {
@@ -142,6 +155,36 @@ public class CommandPrompt : MonoBehaviour {
 			token = nextToken();
 			if (token == "pos") {
 				log("player position: " + Root.instance.player.transform.position);
+				accepted = true;
+			} else if (token == "entity") {
+				log("player holds entity: " + Root.instance.player.currentEntityClass.id);
+				accepted = true;
+			}
+		} else if (token == "entity") {
+			token = nextToken();
+			if (token == "indexlist") {
+				int id = nextInt();
+				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				List<int> list = entityClass.atlasIndexList();
+				string s = "Entity index list: ";
+				foreach (int i in list)
+					s += i + ", ";
+				log(s);
+				accepted = true;
+			} else if (token == "clearcache") {
+				int id = nextInt();
+				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
+				log("cleard mesh cache for entity: " + id);
+				accepted = true;
+			}
+		} else if (token == "notify") {
+			token = nextToken();
+			if (token == "entitychanged") {
+				int id = nextInt();
+				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
+				log("Sent entitychanged notification for entity: " + id);
 				accepted = true;
 			}
 		}
