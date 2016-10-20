@@ -108,7 +108,7 @@ public class CommandPrompt : MonoBehaviour {
 			if (token == "copy") {
 				int srcIndex = nextInt();
 				int destIndex = nextInt();
-				Root.instance.atlasManager.copySubImage(srcIndex, destIndex);
+				Root.instance.atlasManager.copySubImageFromProjectToProject(srcIndex, destIndex);
 				log("copy atlas sub image " + srcIndex + " to " + destIndex);
 				accepted = true;
 			} else if (token == "show") {

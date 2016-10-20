@@ -24,7 +24,27 @@ public class AtlasManager : IProjectIOMember
 		y = (int)((atlasIndex * Root.kSubImageWidth) / Root.kAtlasHeight) * Root.kSubImageHeight;
 	}
 
-	public void copySubImage(int srcIndex, int destIndex)
+	public void copySubImageFromBaseToBase(int srcIndex, int destIndex)
+	{
+		copySubImage(srcIndex, destIndex, Root.instance.textureAtlas, Root.instance.textureAtlas);
+	}
+
+	public void copySubImageFromBaseToProject(int srcIndex, int destIndex)
+	{
+		copySubImage(srcIndex, destIndex, Root.instance.textureAtlas, textureAtlas);
+	}
+
+	public void copySubImageFromProjectToBase(int srcIndex, int destIndex)
+	{
+		copySubImage(srcIndex, destIndex, textureAtlas, Root.instance.textureAtlas);
+	}
+
+	public void copySubImageFromProjectToProject(int srcIndex, int destIndex)
+	{
+		copySubImage(srcIndex, destIndex, textureAtlas, textureAtlas);
+	}
+
+	public void copySubImage(int srcIndex, int destIndex, Texture2D srcAtlas, Texture2D destAtlas)
 	{
 		if (srcIndex == destIndex)
 			return;
@@ -34,9 +54,9 @@ public class AtlasManager : IProjectIOMember
 		int srcX, srcY, destX, destY;
 		atlasPixelForIndex(srcIndex, out srcX, out srcY);
 		atlasPixelForIndex(destIndex, out destX, out destY);
-		Color[] pixels = textureAtlas.GetPixels(srcX, srcY, Root.kSubImageWidth, Root.kSubImageHeight);
-		textureAtlas.SetPixels(destX, destY, Root.kSubImageWidth, Root.kSubImageHeight, pixels);
-		textureAtlas.Apply();
+		Color[] pixels = srcAtlas.GetPixels(srcX, srcY, Root.kSubImageWidth, Root.kSubImageHeight);
+		destAtlas.SetPixels(destX, destY, Root.kSubImageWidth, Root.kSubImageHeight, pixels);
+		destAtlas.Apply();
 	}
 
 	public void syncMaterialsWithAtlas()

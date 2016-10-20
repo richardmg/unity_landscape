@@ -41,7 +41,7 @@ public class EntityClass : IProjectIOMember {
 		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
 			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
 			int newIndex = Root.instance.atlasManager.acquireIndex();
-			Root.instance.atlasManager.copySubImage(baseIndex, newIndex);
+			Root.instance.atlasManager.copySubImageFromProjectToProject(baseIndex, newIndex);
 			indexSubstitutions[baseIndex] = newIndex;
 		}
 
@@ -66,7 +66,7 @@ public class EntityClass : IProjectIOMember {
 			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
 			int newIndex = Root.instance.atlasManager.acquireIndex();
 			int indexToCopy = originalEntityClass.indexSubstitutions[baseIndex];
-			Root.instance.atlasManager.copySubImage(indexToCopy, newIndex);
+			Root.instance.atlasManager.copySubImageFromProjectToProject(indexToCopy, newIndex);
 			indexSubstitutions[baseIndex] = newIndex;
 		}
 
