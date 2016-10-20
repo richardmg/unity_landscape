@@ -2,11 +2,16 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using LineType = System.Int32;
 
 public class CommandPrompt : MonoBehaviour {
 	public GameObject inputGO;
 	public GameObject outputGO;
 	List<string> tokens;
+
+	const LineType kNormal = 0;
+	const LineType kHeading = 0;
+	const LineType kListItem = 0;
 
 	void OnEnable()
 	{
@@ -28,10 +33,19 @@ public class CommandPrompt : MonoBehaviour {
 		return 0;
 	}
 
-	public void log(string message, Color color = new Color())
+	public void log(string message, LineType lineType = kNormal)
 	{
 		InputField output = outputGO.GetComponent<InputField>();
-		output.text = message + "\n" + output.text.Substring(0, Mathf.Min(output.text.Length, 500));
+		string formattedMessage;
+		if (lineType == kHeading)
+			formattedMessage = "<b>" + message + "</b>";
+		else if (lineType == kListItem)
+			formattedMessage = "<i>" + message + "</i>";
+		else
+			formattedMessage = message;
+
+		output.text = formattedMessage + "\n" + output.text.Substring(0, Mathf.Min(output.text.Length, 500));
+		print(output.text);
 	}
 
 	public void onInputChanged(InputField inputField)
@@ -68,8 +82,8 @@ public class CommandPrompt : MonoBehaviour {
 				token = nextString();
 				string[] paths = Root.instance.projectManager.listProjects(token == "" ? "*" : token);
 				foreach (string path in paths)
-					log(path, Color.cyan);
-				log("Projects", Color.blue);
+					log(path, kListItem);
+				log("Projects", kHeading);
 				accepted = true;
 			}
 		} else if (token == "close") {
@@ -86,12 +100,12 @@ public class CommandPrompt : MonoBehaviour {
 		if (accepted) {
 			inputField.text = "";
 		} else {
-			log("atlas [[copyback|copy] [from] [to]]", Color.cyan);
-			log("paint [index]", Color.cyan);
-			log("project [load <name>] | [save [name]] | new | list [pattern]", Color.cyan);
-			log("close", Color.cyan);
-			log("clear", Color.cyan);
-			log("Help", Color.blue);
+			log("atlas [[copyback|copy] [from] [to]]", kListItem);
+			log("paint [index]", kListItem);
+			log("project [load <name>] | [save [name]] | new | list [pattern]", kListItem);
+			log("close", kListItem);
+			log("clear", kListItem);
+			log("Help", kHeading);
 		}
 
 		inputField.ActivateInputField();
