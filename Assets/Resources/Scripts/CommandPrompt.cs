@@ -60,13 +60,13 @@ public class CommandPrompt : MonoBehaviour {
 		string formattedMessage;
 
 		if (messageType == kHeading)
-			formattedMessage = "<b><color=blue>" + message + "</color></b>";
+			formattedMessage = "<b><color=#8080FF>" + message + "</color></b>";
 		else if (messageType == kListItem)
-			formattedMessage = "<i><color=green>" + message + "</color></i>";
+			formattedMessage = "<i><color=#00FF00>" + message + "</color></i>";
 		else if (messageType == kWarning)
-			formattedMessage = "<color=red>" + message + "</color>";
+			formattedMessage = "<color=#FF8080>" + message + "</color>";
 		else
-			formattedMessage = message;
+			formattedMessage = "<color=white>" + message + "</color>";;
 
 		outputList.Insert(0, formattedMessage);
 
@@ -150,6 +150,6 @@ public class CommandPrompt : MonoBehaviour {
 		}
 
 		inputField.ActivateInputField();
-		UnityEditor.EditorApplication.delayCall += ()=> { inputField.MoveTextEnd(false); };
+		UnityEditor.EditorApplication.delayCall += ()=> {inputField.MoveTextEnd(false); };
 	}
 }
