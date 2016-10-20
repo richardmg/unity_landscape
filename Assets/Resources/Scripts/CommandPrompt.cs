@@ -30,6 +30,8 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("project save : save project");
 		helpList.Add("project saveAs <name> : save a copy of the project");
 		helpList.Add("project list [pattern] : list all project that conforms to pattern");
+		helpList.Add("player pos: print players position");
+		helpList.Add("player pos x y: set players position");
 	}
 
 	void OnEnable()
@@ -135,6 +137,12 @@ public class CommandPrompt : MonoBehaviour {
 			token = nextToken();
 			if (token == "currentindex") {
 				log("Current entity painter index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex());
+				accepted = true;
+			}
+		} else if (token == "player") {
+			token = nextToken();
+			if (token == "pos") {
+				log("player position: " + Root.instance.player.transform.position);
 				accepted = true;
 			}
 		}
