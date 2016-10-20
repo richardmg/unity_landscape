@@ -17,10 +17,12 @@ public class CommandPrompt : MonoBehaviour {
 
 	void OnEnable()
 	{
-		inputGO.GetComponent<InputField>().ActivateInputField();
+		InputField input = inputGO.GetComponent<InputField>();
+		input.ActivateInputField();
+		input.text = System.String.Empty;
 	}
 
-	string nextString()
+	string nextToken()
 	{
 		if (tokens.Count == 0)
 			return "";
@@ -63,10 +65,10 @@ public class CommandPrompt : MonoBehaviour {
 		tokens = new List<string>(inputField.text.Split(new char[]{' '}));
 		bool accepted = false;
 
-		string token = nextString();
+		string token = nextToken();
 
 		if (token == "atlas") {
-			token = nextString();
+			token = nextToken();
 			if (token == "copyback") {
 				log("copyback index x to base atlas index y");
 				accepted = true;
@@ -77,20 +79,20 @@ public class CommandPrompt : MonoBehaviour {
 			output.text = "";
 			accepted = true;
 		} else if (token == "project") {
-			token = nextString();
+			token = nextToken();
 			if (token == "save") {
 				Root.instance.projectManager.currentProject.save();
 				accepted = true;
 			} else if (token == "load") {
-				token = nextString();
+				token = nextToken();
 				Root.instance.projectManager.loadProject(token);
 				accepted = true;
 			} else if (token == "new") {
-				token = nextString();
+				token = nextToken();
 				Root.instance.projectManager.createProject(token);
 				accepted = true;
 			} else if (token == "list") {
-				token = nextString();
+				token = nextToken();
 				string[] paths = Root.instance.projectManager.listProjects(token == "" ? "*" : token);
 				foreach (string path in paths)
 					log(path, kListItem);
@@ -101,7 +103,7 @@ public class CommandPrompt : MonoBehaviour {
 			Root.instance.uiManager.toggleCommandPromptUI(false);
 			accepted = true;
 		} else if (token == "paint") {
-			token = nextString();
+			token = nextToken();
 			if (token == "index") {
 				log("Current paint index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex());
 				accepted = true;
