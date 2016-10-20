@@ -9,9 +9,10 @@ public class CommandPrompt : MonoBehaviour {
 	public GameObject outputGO;
 	List<string> tokens;
 
-	const LineType kNormal = 0;
-	const LineType kHeading = 0;
-	const LineType kListItem = 0;
+	public const LineType kNormal = 0;
+	public const LineType kHeading = 1;
+	public const LineType kListItem = 2;
+	public const LineType kWarning = 3;
 
 	void OnEnable()
 	{
@@ -37,15 +38,17 @@ public class CommandPrompt : MonoBehaviour {
 	{
 		InputField output = outputGO.GetComponent<InputField>();
 		string formattedMessage;
+
 		if (lineType == kHeading)
-			formattedMessage = "<b>" + message + "</b>";
+			formattedMessage = "<b><color=blue>" + message + "</color></b>";
 		else if (lineType == kListItem)
-			formattedMessage = "<i>" + message + "</i>";
+			formattedMessage = "<i><color=green>" + message + "</color></i>";
+		else if (lineType == kWarning)
+			formattedMessage = "<color=red>" + message + "</color>";
 		else
 			formattedMessage = message;
 
 		output.text = formattedMessage + "\n" + output.text.Substring(0, Mathf.Min(output.text.Length, 500));
-		print(output.text);
 	}
 
 	public void onInputChanged(InputField inputField)

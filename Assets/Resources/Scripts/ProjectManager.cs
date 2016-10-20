@@ -125,7 +125,7 @@ public class ProjectManager {
 	{
 		Project newProject = new Project(projectName);
 		if (!overwrite && newProject.exists()) {
-			Root.instance.commandPrompt.log("Another project with name '" + projectName + "' already exists!");
+			Root.instance.commandPrompt.log("Another project with name '" + projectName + "' already exists!", CommandPrompt.kWarning);
 			return false;
 		}
 
@@ -141,7 +141,7 @@ public class ProjectManager {
 			currentProject.load();
 			return true;
 		}
-		Root.instance.commandPrompt.log("Could not load project: " + name);
+		Root.instance.commandPrompt.log("Could not load project: " + name, CommandPrompt.kWarning);
 		return false;
 	}
 
