@@ -52,8 +52,7 @@ public class CommandPrompt : MonoBehaviour {
 
 	int nextInt()
 	{
-//		string token = nextString();
-		return 0;
+		return int.Parse(nextToken());
 	}
 
 	public void log(string message, MessageType messageType = kNormal)
