@@ -56,6 +56,14 @@ public class CommandPrompt : MonoBehaviour {
 			if (token == "save") {
 				Root.instance.projectManager.currentProject.save();
 				accepted = true;
+			} else if (token == "load") {
+				token = nextString();
+				Root.instance.projectManager.loadProject(token);
+				accepted = true;
+			} else if (token == "new") {
+				token = nextString();
+				Root.instance.projectManager.createProject(token);
+				accepted = true;
 			}
 		} else if (token == "close") {
 			Root.instance.uiManager.toggleCommandPromptUI(false);
@@ -71,9 +79,9 @@ public class CommandPrompt : MonoBehaviour {
 		if (accepted) {
 			inputField.text = "";
 		} else {
-			log("atlas [copyback|copy] [from] [to]");
+			log("atlas [[copyback|copy] [from] [to]]");
 			log("paint [index]");
-			log("project [save]");
+			log("project [load <name>] | [save [name]] | new");
 			log("close");
 			log("clear");
 			log("-- help --");

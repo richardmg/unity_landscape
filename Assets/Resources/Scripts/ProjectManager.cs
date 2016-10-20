@@ -121,7 +121,7 @@ public class Project
 public class ProjectManager {
 	public Project currentProject;
 
-	public bool createNewProject(string projectName, bool overwrite = false)
+	public bool createProject(string projectName, bool overwrite = false)
 	{
 		Project newProject = new Project(projectName);
 		if (!overwrite && newProject.exists()) {
@@ -132,6 +132,17 @@ public class ProjectManager {
 		currentProject = newProject;
 		currentProject.initNewProject();
 		return true;
+	}
+
+	public bool loadProject(string name)
+	{
+		currentProject = new Project(name);
+		if (currentProject.exists()) {
+			currentProject.load();
+			return true;
+		}
+		Root.instance.commandPrompt.log("Could not load project: " + name);
+		return false;
 	}
 
 	public void saveSession()
@@ -147,12 +158,7 @@ public class ProjectManager {
 //		createNewProject(projectName, true);
 //		return;
 
-		currentProject = new Project(projectName);
-		if (currentProject.exists()) {
-			currentProject.load();
-		} else {
-			Root.instance.commandPrompt.log("Could not open last project: " + projectName);
-			createNewProject(projectName);
-		}
+		if (!loadProject(projectName))
+			createProject(projectName);
 	}
 }
