@@ -145,6 +145,11 @@ public class ProjectManager {
 		return false;
 	}
 
+	public string[] listProjects(string pattern = "*")
+	{
+		return Directory.GetDirectories(Application.persistentDataPath, pattern);
+	}
+
 	public void saveSession()
 	{
 		// TODO: read from file, and figure out when to call this function

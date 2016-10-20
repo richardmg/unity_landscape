@@ -28,7 +28,7 @@ public class CommandPrompt : MonoBehaviour {
 		return 0;
 	}
 
-	public void log(string message)
+	public void log(string message, Color color = new Color())
 	{
 		InputField output = outputGO.GetComponent<InputField>();
 		output.text = message + "\n" + output.text.Substring(0, Mathf.Min(output.text.Length, 500));
@@ -64,6 +64,13 @@ public class CommandPrompt : MonoBehaviour {
 				token = nextString();
 				Root.instance.projectManager.createProject(token);
 				accepted = true;
+			} else if (token == "list") {
+				token = nextString();
+				string[] paths = Root.instance.projectManager.listProjects(token == "" ? "*" : token);
+				foreach (string path in paths)
+					log(path, Color.cyan);
+				log("Projects", Color.blue);
+				accepted = true;
 			}
 		} else if (token == "close") {
 			Root.instance.uiManager.toggleCommandPromptUI(false);
@@ -79,12 +86,12 @@ public class CommandPrompt : MonoBehaviour {
 		if (accepted) {
 			inputField.text = "";
 		} else {
-			log("atlas [[copyback|copy] [from] [to]]");
-			log("paint [index]");
-			log("project [load <name>] | [save [name]] | new");
-			log("close");
-			log("clear");
-			log("-- help --");
+			log("atlas [[copyback|copy] [from] [to]]", Color.cyan);
+			log("paint [index]", Color.cyan);
+			log("project [load <name>] | [save [name]] | new | list [pattern]", Color.cyan);
+			log("close", Color.cyan);
+			log("clear", Color.cyan);
+			log("Help", Color.blue);
 		}
 
 		inputField.ActivateInputField();
