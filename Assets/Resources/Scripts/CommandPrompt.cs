@@ -7,6 +7,9 @@ using MessageType = System.Int32;
 public class CommandPrompt : MonoBehaviour {
 	public GameObject inputGO;
 	public GameObject outputGO;
+	public GameObject atlasDebugGO;
+	public GameObject atlasDebugImageGO;
+
 	List<string> tokens;
 	List<string> outputList = new List<string>();
 	List<string> helpList = new List<string>();
@@ -19,6 +22,8 @@ public class CommandPrompt : MonoBehaviour {
 	void Awake()
 	{
 		helpList.Add("atlas copy <from> <to> : copy subimage inside project atlas");
+		helpList.Add("atlas show : show atlas image");
+		helpList.Add("atlas hide: hide atlas image");
 		helpList.Add("baseatlas copy <from> <to> : copy subimage inside base atlas");
 		helpList.Add("baseatlas copytoproject <from> <to> : copy subimage from base atas to project atlas");
 		helpList.Add("baseatlas copyfromproject <from> <to> : copy subimage from project atas to base atlas");
@@ -103,6 +108,13 @@ public class CommandPrompt : MonoBehaviour {
 				int destIndex = nextInt();
 				Root.instance.atlasManager.copySubImage(srcIndex, destIndex);
 				log("copy atlas sub image " + srcIndex + " to " + destIndex);
+				accepted = true;
+			} else if (token == "show") {
+				atlasDebugImageGO.GetComponent<RawImage>().texture = Root.instance.voxelMaterialExact.mainTexture;
+				atlasDebugGO.SetActive(true);
+				accepted = true;
+			} else if (token == "hide") {
+				atlasDebugGO.SetActive(false);
 				accepted = true;
 			}
 		} else if (token == "clear") {
