@@ -52,6 +52,8 @@ public class AtlasManager : IProjectIOMember
 
 	public void initNewProject()
 	{
+		currentIndex = 0;
+
 		Texture2D defaultAtlas = Root.instance.textureAtlas;
 		textureAtlas = new Texture2D(defaultAtlas.width, defaultAtlas.height);
 		textureAtlas.filterMode = FilterMode.Point;
@@ -63,6 +65,8 @@ public class AtlasManager : IProjectIOMember
 
 	public void load(ProjectIO projectIO)
 	{
+		currentIndex = 0;
+
 		int imageByteCount = projectIO.readInt();
 		byte[] imageBytes = new byte[imageByteCount];
 		projectIO.stream.Read(imageBytes, 0, imageBytes.Length);
