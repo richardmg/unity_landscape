@@ -8,6 +8,7 @@ public class CommandPrompt : MonoBehaviour {
 	public GameObject inputGO;
 	public GameObject outputGO;
 	List<string> tokens;
+	List<string> outputList = new List<string>();
 
 	public const LineType kNormal = 0;
 	public const LineType kHeading = 1;
@@ -48,7 +49,13 @@ public class CommandPrompt : MonoBehaviour {
 		else
 			formattedMessage = message;
 
-		output.text = formattedMessage + "\n" + output.text.Substring(0, Mathf.Min(output.text.Length, 500));
+		outputList.Insert(0, formattedMessage);
+
+		const int maxLines = 50;
+		if (outputList.Count >= maxLines)
+			outputList.RemoveRange(maxLines, outputList.Count - maxLines);
+
+		output.text = string.Join("\n", outputList.ToArray());
 	}
 
 	public void onInputChanged(InputField inputField)
@@ -66,6 +73,7 @@ public class CommandPrompt : MonoBehaviour {
 			}
 		} else if (token == "clear") {
 			InputField output = outputGO.GetComponent<InputField>();
+			outputList.Clear();
 			output.text = "";
 			accepted = true;
 		} else if (token == "project") {
