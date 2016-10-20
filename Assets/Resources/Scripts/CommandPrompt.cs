@@ -150,11 +150,6 @@ public class CommandPrompt : MonoBehaviour {
 		}
 
 		inputField.ActivateInputField();
-		UnityEditor.EditorApplication.delayCall += ()=> {
-//			inputField.selectionAnchorPosition = 0;
-//			inputField.selectionFocusPosition = 0;
-//			inputField.caretPosition = inputField.text.Length;
-			inputField.MoveTextEnd(false);
-		};
+		UnityEditor.EditorApplication.delayCall += ()=> { inputField.MoveTextEnd(false); };
 	}
 }
