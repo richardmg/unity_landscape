@@ -137,6 +137,9 @@ public class ProjectManager {
 
 		currentProject = newProject;
 		currentProject.initNewProject();
+
+		Root.instance.notificationManager.notifyProjectLoaded();
+
 		return true;
 	}
 
@@ -145,6 +148,7 @@ public class ProjectManager {
 		currentProject = new Project(name);
 		if (currentProject.exists()) {
 			currentProject.load();
+			Root.instance.notificationManager.notifyProjectLoaded();
 			return true;
 		}
 		Root.instance.commandPrompt.log("Could not load project: " + name, CommandPrompt.kWarning);

@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber 
+public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, ProjectListener 
 {
 	[Range (1, 100)]
 	public int objectCount = 4;
@@ -53,6 +53,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 			}
 		}
 
+		Root.instance.notificationManager.addProjectListener(this);
+		Root.instance.notificationManager.addEntityListener(this);
+
 //		PivotAdjustment pa = prefab.GetComponent<PivotAdjustment>();
 //		if (pa != null)
 //			m_pivotAdjustmentY = pa.adjustY;
@@ -83,6 +86,11 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntitySubscriber
 				rebuildTileMesh(tile);
 			}
 		}
+	}
+
+	public void onProjectLoaded()
+	{
+		m_entityClass = Root.instance.entityManager.getEntity(0);
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)

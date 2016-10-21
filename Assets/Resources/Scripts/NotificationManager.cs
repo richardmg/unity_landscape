@@ -2,34 +2,48 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public interface EntitySubscriber
+public interface EntityListener
 {
 	void onEntityInstanceAdded(EntityInstance entityInstance);
 	void onEntityClassChanged(EntityClass entityClass);
 }
 
+public interface ProjectListener
+{
+	void onProjectLoaded();
+}
+
 public class NotificationManager {
 
-	private List<EntitySubscriber> entitySubscribers;
+	private List<EntityListener> entityListeners = new List<EntityListener>();
+	private List<ProjectListener> projectListeners = new List<ProjectListener>();
 
-	public NotificationManager()
+	public void addEntityListener(EntityListener listener)
 	{
-		// Find all decendants that wants to know when things change
-		entitySubscribers = new List<EntitySubscriber>();
-		foreach (EntitySubscriber subscriber in Root.instance.GetComponentsInChildren<EntitySubscriber>())
-			entitySubscribers.Add(subscriber);
+		entityListeners.Add(listener);
+	}
+
+	public void addProjectListener(ProjectListener listener)
+	{
+		projectListeners.Add(listener);
 	}
 
 	public void notifyEntityInstanceAdded(EntityInstance entityInstance)
 	{
-		foreach (EntitySubscriber subscriber in entitySubscribers)
+		foreach (EntityListener subscriber in entityListeners)
 			subscriber.onEntityInstanceAdded(entityInstance);	
 	}
 
 	public void notifyEntityClassChanged(EntityClass entityClass)
 	{
-		foreach (EntitySubscriber subscriber in entitySubscribers)
+		foreach (EntityListener subscriber in entityListeners)
 			subscriber.onEntityClassChanged(entityClass);	
+	}
+
+	public void notifyProjectLoaded()
+	{
+		foreach (ProjectListener subscriber in projectListeners)
+			subscriber.onProjectLoaded();	
 	}
 
 }
