@@ -29,14 +29,14 @@ public class AtlasManager : IProjectIOMember
 		copySubImage(srcIndex, destIndex, Root.instance.textureAtlas, Root.instance.textureAtlas);
 	}
 
-	public void copySubImageFromBaseToProject(int srcIndex, int destIndex)
-	{
-		copySubImage(srcIndex, destIndex, Root.instance.textureAtlas, textureAtlas);
-	}
-
 	public void copySubImageFromProjectToBase(int srcIndex, int destIndex)
 	{
 		copySubImage(srcIndex, destIndex, textureAtlas, Root.instance.textureAtlas);
+	}
+
+	public void copySubImageFromBaseToProject(int srcIndex, int destIndex)
+	{
+		copySubImage(srcIndex, destIndex, Root.instance.textureAtlas, textureAtlas);
 	}
 
 	public void copySubImageFromProjectToProject(int srcIndex, int destIndex)
