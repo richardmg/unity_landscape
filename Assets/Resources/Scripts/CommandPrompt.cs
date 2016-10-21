@@ -31,6 +31,8 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("baseatlas copyfromproject <from> <to> : copy subimage from project atas to base atlas");
 		helpList.Add("baseatlas save : save base atlas image back to common resource folder");
 		helpList.Add("entitypainter currentindex : print current atlas index in entity painter");
+		helpList.Add("entitypainter setindex : set current atlas index in entity painter");
+		helpList.Add("entitypainter save: save modifications back to texure atlas");
 		helpList.Add("close : close console");
 		helpList.Add("clear : clear console");
 		helpList.Add("project name : print name of current project");
@@ -181,7 +183,16 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "entitypainter") {
 			token = nextToken();
 			if (token == "currentindex") {
-				log("Current entity painter index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex());
+				log("Current entity painter index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex);
+				accepted = true;
+			} else if (token == "setindex") {
+				int atlasIndex = nextInt();
+				Root.instance.uiManager.entityPainter.setAtlasIndex(atlasIndex);
+				log("Set index in entity painter to: " + atlasIndex);
+				accepted = true;
+			} else if (token == "save") {
+				Root.instance.uiManager.entityPainter.saveChanges();
+				log("Saved changes in entity painter with index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex);
 				accepted = true;
 			}
 		} else if (token == "player") {

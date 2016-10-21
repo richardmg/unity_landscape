@@ -9,6 +9,7 @@ public class EntityPainter : MonoBehaviour {
 	Texture2D m_texture;
 	EntityClass m_entityClass;
 	int m_currentListIndex;
+	public int currentAtlasIndex;
 	List<int> m_atlasIndexList;
 	EditMode m_currentMode = kPaintMode;
 	bool m_textureDirty = false;
@@ -47,11 +48,6 @@ public class EntityPainter : MonoBehaviour {
 			updateColorSelect(uv);
 		else if (m_currentMode == kPaintMode)
 			updatePaint(uv);
-	}
-
-	public int currentAtlasIndex()
-	{
-		return m_atlasIndexList[m_currentListIndex];
 	}
 
 	void updatePaint(Vector2 uv)
@@ -93,8 +89,12 @@ public class EntityPainter : MonoBehaviour {
 	public void setListIndex(int listIndex)
     {
 		m_currentListIndex = listIndex;
-		int atlasIndex = m_atlasIndexList[listIndex];
+		setAtlasIndex(m_atlasIndexList[listIndex]);
+	}
 
+	public void setAtlasIndex(int atlasIndex)
+	{
+		currentAtlasIndex = atlasIndex;
 		int atlasPixelX, atlasPixelY;
 		Root.instance.atlasManager.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
@@ -138,11 +138,9 @@ public class EntityPainter : MonoBehaviour {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
-		int atlasIndex = m_atlasIndexList[m_currentListIndex];
-
 		int atlasPixelX;
 		int atlasPixelY;
-		Root.instance.atlasManager.atlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
+		Root.instance.atlasManager.atlasPixelForIndex(currentAtlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
 		texture.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
 		texture.Apply();
