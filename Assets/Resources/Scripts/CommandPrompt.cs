@@ -29,6 +29,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("baseatlas copy <from> <to> : copy subimage inside base atlas");
 		helpList.Add("baseatlas copytoproject <from> <to> : copy subimage from base atas to project atlas");
 		helpList.Add("baseatlas copyfromproject <from> <to> : copy subimage from project atas to base atlas");
+		helpList.Add("baseatlas save : save base atlas image back to common resource folder");
 		helpList.Add("entitypainter currentindex : print current atlas index in entity painter");
 		helpList.Add("close : close console");
 		helpList.Add("clear : clear console");
@@ -127,6 +128,14 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			} else if (token == "hide") {
 				atlasDebugGO.SetActive(false);
+				accepted = true;
+			} else if (token == "copy") {
+				int srcIndex = nextInt();
+				int destIndex = nextInt();
+				Root.instance.atlasManager.copySubImageFromBaseToBase(srcIndex, destIndex);
+				accepted = true;
+			} else if (token == "save") {
+				Root.instance.atlasManager.saveBaseAtlasTexture();
 				accepted = true;
 			}
 		} else if (token == "clear") {

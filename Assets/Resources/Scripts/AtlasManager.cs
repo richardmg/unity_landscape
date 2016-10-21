@@ -24,6 +24,14 @@ public class AtlasManager : IProjectIOMember
 		y = (int)((atlasIndex * Root.kSubImageWidth) / Root.kAtlasHeight) * Root.kSubImageHeight;
 	}
 
+	public void saveBaseAtlasTexture()
+	{
+		byte[] bytes = Root.instance.textureAtlas.EncodeToPNG();
+		string path = Application.dataPath + "/Resources/Textures/textureatlas.png";
+		File.WriteAllBytes(path, bytes);
+		Root.instance.commandPrompt.log("Wrote texture: " + path);
+	}
+
 	public void copySubImageFromBaseToBase(int srcIndex, int destIndex)
 	{
 		copySubImage(srcIndex, destIndex, Root.instance.textureAtlas, Root.instance.textureAtlas);
