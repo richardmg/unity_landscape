@@ -63,7 +63,7 @@ public class CommandPrompt : MonoBehaviour {
 			InputField inputField = inputGO.GetComponent<InputField>();
 			string textBefore = inputField.text;
 			string completed = stripNonCommands(autocomplete(inputField.text, helpList));
-			if (completed != textBefore) {
+			if (completed.Length > 0 && completed != textBefore) {
 				inputField.text = stripNonCommands(autocomplete(inputField.text, helpList));
 				inputField.MoveTextEnd(false);
 			} else {
