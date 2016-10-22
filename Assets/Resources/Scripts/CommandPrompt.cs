@@ -21,33 +21,33 @@ public class CommandPrompt : MonoBehaviour {
 
 	void Awake()
 	{
-		helpList.Add("atlas copy [from> <to] : copy subimage inside project atlas");
+		helpList.Add("atlas copy [from] [to] : copy subimage inside project atlas");
 		helpList.Add("atlas show : show atlas image");
 		helpList.Add("atlas hide: hide atlas image");
 		helpList.Add("baseatlas show : show base atlas image");
 		helpList.Add("baseatlas hide: hide base atlas image");
-		helpList.Add("baseatlas copy <from> <to> : copy subimage inside base atlas");
-		helpList.Add("baseatlas copytoproject <from> <to> : copy subimage from base atas to project atlas");
-		helpList.Add("baseatlas copyfromproject <from> <to> : copy subimage from project atas to base atlas");
+		helpList.Add("baseatlas copy [from] [to] : copy subimage inside base atlas");
+		helpList.Add("baseatlas copytoproject [from] [to] : copy subimage from base atas to project atlas");
+		helpList.Add("baseatlas copyfromproject [from] [to] : copy subimage from project atas to base atlas");
 		helpList.Add("baseatlas save : save base atlas image back to common resource folder");
 		helpList.Add("painter index : print current atlas index in entity painter");
 		helpList.Add("painter setindex : set current atlas index in entity painter");
 		helpList.Add("painter save: save modifications back to texure atlas");
 		helpList.Add("project name : print name of current project");
-		helpList.Add("project new <name> : Create a new project");
-		helpList.Add("project load <name> : load project");
+		helpList.Add("project new [name] : Create a new project");
+		helpList.Add("project load [name] : load project");
 		helpList.Add("project save : save project");
-		helpList.Add("project saveAs <name> : save a copy of the project");
-		helpList.Add("project list <pattern> : list all project that conforms to pattern");
-		helpList.Add("entity indexlist <id> : print atlas indecies used by entity");
-		helpList.Add("entity clearcache <id> : clear entity mesh cache");
-		helpList.Add("notify entitychanged <id> : update listeners that entity changed");
+		helpList.Add("project saveAs [name] : save a copy of the project");
+		helpList.Add("project list [pattern] : list all project that conforms to pattern");
+		helpList.Add("entity indexlist [id] : print atlas indecies used by entity");
+		helpList.Add("entity clearcache [id] : clear entity mesh cache");
+		helpList.Add("notify entitychanged [id] : update listeners that entity changed");
 		helpList.Add("player entity : print entity held by player");
 		helpList.Add("player pos: print players position");
 		helpList.Add("player move [x] [z]: move player on top of landscape at position");
 		helpList.Add("close : close console");
 		helpList.Add("clear : clear console");
-		helpList.Add("help <keyword> : show help");
+		helpList.Add("help [keyword] : show help");
 	}
 
 	void OnEnable()
