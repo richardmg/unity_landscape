@@ -180,6 +180,14 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "close") {
 			Root.instance.uiManager.toggleCommandPromptUI(false);
 			accepted = true;
+		} else if (token == "help") {
+			token = nextToken();
+			foreach (string helpString in helpList) {
+				if (helpString.StartsWith(token))
+					log(helpString, kListItem);
+			}
+			log("Help", kHeading);
+			accepted = true;
 		} else if (token == "painter") {
 			token = nextToken();
 			if (token == "index") {
@@ -245,14 +253,51 @@ public class CommandPrompt : MonoBehaviour {
 		if (accepted) {
 			inputField.text = "";
 		} else {
-			foreach (string helpString in helpList) {
-				if (helpString.StartsWith(commandString))
-					log(helpString, kListItem);
-			}
-			log("Help", kHeading);
+			inputField.text = stripNonCommands(autocomplete(commandString, helpList));
 		}
 
 		inputField.ActivateInputField();
 		UnityEditor.EditorApplication.delayCall += ()=> {inputField.MoveTextEnd(false); };
+	}
+
+	string autocomplete(string input, List<string> strings)
+	{
+		List<string> relevantStringList = new List<string>();
+		foreach (string s in strings) {
+			if (s.StartsWith(input))
+				relevantStringList.Add(s);
+		}
+
+		if (relevantStringList.Count == 0)
+			return System.String.Empty;
+		if (relevantStringList.Count == 1)
+			return relevantStringList[0];
+
+		string shortestString = relevantStringList[0];
+		for (int i = 1; i < relevantStringList.Count; ++i) {
+			if (relevantStringList[i].Length < shortestString.Length)
+				shortestString = relevantStringList[i];
+		}
+
+		char[] charArray = shortestString.ToCharArray();
+		for (int i = 0; i < charArray.Length; ++i) {
+			foreach (string s in relevantStringList) {
+				if (s.ToCharArray()[i] != charArray[i])
+					return s.Substring(0, i);
+			}
+		}
+
+		return shortestString;
+	}
+
+	public string stripNonCommands(string helpDesc)
+	{
+		int index1 = helpDesc.IndexOf('<');
+		if (index1 == -1)
+			index1 = helpDesc.Length;
+		int index2 = helpDesc.IndexOf(':');
+		if (index2 == -1)
+			index2 = helpDesc.Length;
+		return helpDesc.Substring(0, Mathf.Min(index1, index2));	
 	}
 }
