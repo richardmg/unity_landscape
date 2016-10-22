@@ -21,7 +21,7 @@ public class CommandPrompt : MonoBehaviour {
 
 	void Awake()
 	{
-		helpList.Add("atlas copy <from> <to> : copy subimage inside project atlas");
+		helpList.Add("atlas copy [from> <to] : copy subimage inside project atlas");
 		helpList.Add("atlas show : show atlas image");
 		helpList.Add("atlas hide: hide atlas image");
 		helpList.Add("baseatlas show : show base atlas image");
@@ -33,20 +33,20 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("painter index : print current atlas index in entity painter");
 		helpList.Add("painter setindex : set current atlas index in entity painter");
 		helpList.Add("painter save: save modifications back to texure atlas");
-		helpList.Add("close : close console");
-		helpList.Add("clear : clear console");
 		helpList.Add("project name : print name of current project");
 		helpList.Add("project new <name> : Create a new project");
 		helpList.Add("project load <name> : load project");
 		helpList.Add("project save : save project");
 		helpList.Add("project saveAs <name> : save a copy of the project");
-		helpList.Add("project list [pattern] : list all project that conforms to pattern");
-		helpList.Add("player entity ; print entity held by player");
-		helpList.Add("player pos: print players position");
-		helpList.Add("player move x z: move player on top of landscape at position");
+		helpList.Add("project list <pattern> : list all project that conforms to pattern");
 		helpList.Add("entity indexlist <id> : print atlas indecies used by entity");
 		helpList.Add("entity clearcache <id> : clear entity mesh cache");
 		helpList.Add("notify entitychanged <id> : update listeners that entity changed");
+		helpList.Add("player entity : print entity held by player");
+		helpList.Add("player pos: print players position");
+		helpList.Add("player move [x] [z]: move player on top of landscape at position");
+		helpList.Add("close : close console");
+		helpList.Add("clear : clear console");
 		helpList.Add("help <keyword> : show help");
 	}
 
@@ -61,10 +61,14 @@ public class CommandPrompt : MonoBehaviour {
 	{
 		if (Input.GetKeyDown(KeyCode.Tab)) {
 			InputField inputField = inputGO.GetComponent<InputField>();
+			string textBefore = inputField.text;
 			string completed = stripNonCommands(autocomplete(inputField.text, helpList));
-			if (completed.Length > 0)
+			if (completed != textBefore) {
 				inputField.text = stripNonCommands(autocomplete(inputField.text, helpList));
-			inputField.MoveTextEnd(false);
+				inputField.MoveTextEnd(false);
+			} else {
+				printHelp(inputField.text);
+			}
 		}
 	}
 
@@ -298,7 +302,7 @@ public class CommandPrompt : MonoBehaviour {
 
 	public string stripNonCommands(string helpDesc)
 	{
-		int index1 = helpDesc.IndexOf('<');
+		int index1 = helpDesc.IndexOf('[');
 		if (index1 == -1)
 			index1 = helpDesc.Length;
 		int index2 = helpDesc.IndexOf(':');
