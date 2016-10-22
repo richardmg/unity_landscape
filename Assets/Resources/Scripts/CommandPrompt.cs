@@ -47,6 +47,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("entity indexlist <id> : print atlas indecies used by entity");
 		helpList.Add("entity clearcache <id> : clear entity mesh cache");
 		helpList.Add("notify entitychanged <id> : update listeners that entity changed");
+		helpList.Add("help <keyword> : show help");
 	}
 
 	void OnEnable()
@@ -54,6 +55,17 @@ public class CommandPrompt : MonoBehaviour {
 		InputField input = inputGO.GetComponent<InputField>();
 		input.ActivateInputField();
 		input.text = System.String.Empty;
+	}
+
+	void Update()
+	{
+		if (Input.GetKeyDown(KeyCode.Tab)) {
+			InputField inputField = inputGO.GetComponent<InputField>();
+			string completed = stripNonCommands(autocomplete(inputField.text, helpList));
+			if (completed.Length > 0)
+				inputField.text = stripNonCommands(autocomplete(inputField.text, helpList));
+			inputField.MoveTextEnd(false);
+		}
 	}
 
 	bool hasNext()
@@ -181,12 +193,7 @@ public class CommandPrompt : MonoBehaviour {
 			Root.instance.uiManager.toggleCommandPromptUI(false);
 			accepted = true;
 		} else if (token == "help") {
-			token = nextToken();
-			foreach (string helpString in helpList) {
-				if (helpString.StartsWith(token))
-					log(helpString, kListItem);
-			}
-			log("Help", kHeading);
+			printHelp(nextToken());
 			accepted = true;
 		} else if (token == "painter") {
 			token = nextToken();
@@ -250,11 +257,10 @@ public class CommandPrompt : MonoBehaviour {
 			}
 		}
 
-		if (accepted) {
+		if (accepted)
 			inputField.text = "";
-		} else {
-			inputField.text = stripNonCommands(autocomplete(commandString, helpList));
-		}
+		else
+			printHelp(commandString);
 
 		inputField.ActivateInputField();
 		UnityEditor.EditorApplication.delayCall += ()=> {inputField.MoveTextEnd(false); };
@@ -299,5 +305,14 @@ public class CommandPrompt : MonoBehaviour {
 		if (index2 == -1)
 			index2 = helpDesc.Length;
 		return helpDesc.Substring(0, Mathf.Min(index1, index2));	
+	}
+
+	void printHelp(string startsWithString)
+	{
+		foreach (string helpString in helpList) {
+			if (helpString.StartsWith(startsWithString))
+				log(helpString, kListItem);
+		}
+		log("Help", kHeading);
 	}
 }

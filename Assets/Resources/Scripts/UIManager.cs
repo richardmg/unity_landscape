@@ -113,7 +113,7 @@ public class UIManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Tab)) {
+		if (Input.GetKeyDown(KeyCode.Tab) && !uiCommandPromptGO.activeSelf) {
 			if (uiFirstPersonGO.activeSelf)
 				showCurrentMenu();
 			else
