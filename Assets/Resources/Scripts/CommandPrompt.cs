@@ -152,6 +152,16 @@ public class CommandPrompt : MonoBehaviour {
 				int destIndex = nextInt();
 				Root.instance.atlasManager.copySubImageFromBaseToBase(srcIndex, destIndex);
 				accepted = true;
+			} else if (token == "copytoproject") {
+				int srcIndex = nextInt();
+				int destIndex = nextInt();
+				Root.instance.atlasManager.copySubImageFromBaseToProject(srcIndex, destIndex);
+				accepted = true;
+			} else if (token == "copyfromproject") {
+				int srcIndex = nextInt();
+				int destIndex = nextInt();
+				Root.instance.atlasManager.copySubImageFromProjectToBase(srcIndex, destIndex);
+				accepted = true;
 			} else if (token == "save") {
 				Root.instance.atlasManager.saveBaseAtlasTexture();
 				accepted = true;
@@ -259,6 +269,9 @@ public class CommandPrompt : MonoBehaviour {
 				log("Sent entitychanged notification for entity: " + id);
 				accepted = true;
 			}
+		} else if (token == "'") {
+			// Close command
+			accepted = true;
 		}
 
 		if (accepted)
