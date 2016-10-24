@@ -44,7 +44,7 @@ public class UIManager : MonoBehaviour {
 	void Start()
 	{
 		hideUI();
-		push(uiEntityClassPickerGO, (bool accepted) => {});
+		push(uiEntityClassPickerGO, (bool accepted) => {}, false);
 		backButton.SetActive(false);
 		showFirstPersonUI();
 	}
@@ -61,11 +61,12 @@ public class UIManager : MonoBehaviour {
 		m_mouseGrab = null;
 	}
 
-	public void push(GameObject ui, Action<bool> callback)
+	public void push(GameObject ui, Action<bool> callback, bool show = true)
 	{
 		stack.Add(new UIManagerStackItem(ui, callback));
 		m_currentMenu = ui;
-		showCurrentMenu();
+		if (show)
+			showCurrentMenu();
 		backButton.SetActive(true);
 	}
 
