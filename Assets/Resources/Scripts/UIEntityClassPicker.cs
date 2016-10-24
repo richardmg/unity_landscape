@@ -69,16 +69,14 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	public void onEntityClassAdded(EntityClass entityClass)
 	{
-		m_dirty = true;
-		if (gameObject.activeSelf)
-			repaintTableTexture();
+		paintEntityClass(entityClass);
+		tableTexture.Apply();
 	}
 
 	public void onEntityClassChanged(EntityClass entityClass)
 	{
-		m_dirty = true;
-		if (gameObject.activeSelf)
-			repaintTableTexture();
+		paintEntityClass(entityClass);
+		tableTexture.Apply();
 	}
 
 	public void onEntityInstanceAdded(EntityInstance entityInstance)
@@ -90,15 +88,22 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		tableTexture.SetPixels32(clearColorArray);
 		entityClasses = Root.instance.entityManager.allEntityClasses;
 
-		for (int i = 0; i < entityClasses.Count; ++i) {
-			int x = (i * cellWidth) % tableTexture.width;
-			int y = (int)((i * cellWidth) / tableTexture.width) * cellHeight;
-			y = (int)tableTexture.height - cellHeight - y;
-			entityClasses[i].takeSnapshot(tableTexture, new Rect(x, y, cellWidth, cellHeight));
-		}
+		for (int id = 0; id < entityClasses.Count; ++id)
+			paintEntityClass(Root.instance.entityManager.getEntity(id));
 
 		tableTexture.Apply();
 		m_dirty = false;
+	}
+
+	void paintEntityClass(EntityClass entityClass)
+	{
+		// NB: I assume here that an entities ID correspond to the
+		// cell in the tabletexture. This might change in the future...
+		int id = entityClass.id;
+		int x = (id * cellWidth) % tableTexture.width;
+		int y = (int)((id * cellWidth) / tableTexture.width) * cellHeight;
+		y = (int)tableTexture.height - cellHeight - y;
+		entityClasses[id].takeSnapshot(tableTexture, new Rect(x, y, cellWidth, cellHeight));
 	}
 
 	public void onCloneButtonClicked()
