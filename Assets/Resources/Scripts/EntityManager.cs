@@ -7,10 +7,13 @@ public class EntityManager : IProjectIOMember
 {
 	public List<EntityClass> allEntityClasses;
 
-	public void addEntityClass(EntityClass entityClass)
+	public void addEntityClass(EntityClass entityClass, bool notify = true)
 	{
 		entityClass.id = allEntityClasses.Count;
 		allEntityClasses.Add(entityClass);
+
+		if (notify)
+			Root.instance.notificationManager.notifyEntityClassAdded(entityClass);
 	}
 
 	public EntityClass getEntity(int id)
@@ -32,7 +35,7 @@ public class EntityManager : IProjectIOMember
 		int classCount = projectIO.readInt();
 
 		for (int i = 0; i < classCount; ++i) {
-			EntityClass entityClass = new EntityClass();
+			EntityClass entityClass = new EntityClass(false);
 			entityClass.load(projectIO);
 		}
 	}

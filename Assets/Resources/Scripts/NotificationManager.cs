@@ -35,10 +35,17 @@ public class NotificationManager {
 			subscriber.onEntityInstanceAdded(entityInstance);	
 	}
 
-	public void notifyEntityClassAdded(EntityClass entityClass)
+	public void notifyEntityClassAdded(EntityClass entityClass, bool postNotification = true)
 	{
-		foreach (EntityListener subscriber in entityListeners)
-			subscriber.onEntityClassAdded(entityClass);	
+		if (postNotification) {
+			UnityEditor.EditorApplication.delayCall += ()=> {
+				foreach (EntityListener subscriber in entityListeners)
+					subscriber.onEntityClassAdded(entityClass);	
+			};
+		} else {
+			foreach (EntityListener subscriber in entityListeners)
+				subscriber.onEntityClassAdded(entityClass);	
+		}
 	}
 
 	public void notifyEntityClassChanged(EntityClass entityClass)

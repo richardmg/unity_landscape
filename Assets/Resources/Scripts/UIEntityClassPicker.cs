@@ -104,7 +104,6 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	public void onCloneButtonClicked()
 	{
 		EntityClass entityClass = new EntityClass("SquareTree");
-		Root.instance.notificationManager.notifyEntityClassAdded(entityClass);
 		Root.instance.player.currentEntityClass = entityClass;
 	}
 }

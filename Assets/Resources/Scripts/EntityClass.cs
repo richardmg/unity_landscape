@@ -73,9 +73,9 @@ public class EntityClass : IProjectIOMember {
 		Root.instance.entityManager.addEntityClass(this);
 	}
 
-	public EntityClass()
+	public EntityClass(bool notify = true)
 	{
-		Root.instance.entityManager.addEntityClass(this);
+		Root.instance.entityManager.addEntityClass(this, notify);
 	}
 
 	public EntityInstance createInstance(Transform parent = null, string name = "")
