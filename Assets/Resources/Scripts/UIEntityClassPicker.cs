@@ -7,6 +7,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
+	public GameObject selectionRectGO;
+
 	Texture2D tableTexture;
 	Color32[] clearColorArray;
 	List<EntityClass> entityClasses;
@@ -14,8 +16,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	int rowCount = 5;
 	int colCount = 5;
-	int cellWidth = 256;
-	int cellHeight = 256;
+	int cellWidth = 250;
+	int cellHeight = 250;
 
 	void Start()
 	{
