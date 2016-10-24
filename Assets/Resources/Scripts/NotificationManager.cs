@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public interface EntityListener
 {
@@ -18,6 +19,8 @@ public class NotificationManager {
 
 	private List<EntityListener> entityListeners = new List<EntityListener>();
 	private List<ProjectListener> projectListeners = new List<ProjectListener>();
+
+	bool m_postNotifications = false;
 
 	public void addEntityListener(EntityListener listener)
 	{
@@ -37,7 +40,7 @@ public class NotificationManager {
 
 	public void notifyEntityClassAdded(EntityClass entityClass, bool postNotification = true)
 	{
-		if (postNotification) {
+		if (m_postNotifications) {
 			UnityEditor.EditorApplication.delayCall += ()=> {
 				foreach (EntityListener subscriber in entityListeners)
 					subscriber.onEntityClassAdded(entityClass);	
@@ -58,6 +61,14 @@ public class NotificationManager {
 	{
 		foreach (ProjectListener subscriber in projectListeners)
 			subscriber.onProjectLoaded();	
+	}
+
+	public void postNotificationBlock(bool post, Action function)
+	{
+		bool prevPost = m_postNotifications;
+		m_postNotifications = post;
+		function();
+		m_postNotifications = prevPost;
 	}
 
 }
