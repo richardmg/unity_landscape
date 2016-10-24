@@ -14,10 +14,12 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	List<EntityClass> entityClasses;
 	bool m_dirty = true;
 
-	int rowCount = 5;
-	int colCount = 5;
+	int rowCount = 10;
+	int colCount = 10;
 	int cellWidth = 50;
 	int cellHeight = 50;
+	int textureCellWidth = 2048 / 10;
+	int textureCellHeight = 2048 / 10;
 	int margin = 5;
 
 	int selectedIndex;
@@ -31,12 +33,11 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	{
 		if (tableTexture == null) {
 			Vector2 selectionRectSize = new Vector2(cellWidth + (margin * 2), cellHeight + (margin * 2));
-			Vector2 tableSize = new Vector2(cellWidth * colCount, cellHeight * rowCount);
+			Vector2 textureTableSize = new Vector2(textureCellWidth * colCount, textureCellHeight * rowCount);
 
 			selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRectSize;
-			rawImageGO.GetComponent<RawImage>().rectTransform.sizeDelta = tableSize;
 
-			tableTexture = new Texture2D((int)tableSize.x, (int)tableSize.y);
+			tableTexture = new Texture2D((int)textureTableSize.x, (int)textureTableSize.y);
 			rawImageGO.GetComponent<RawImage>().texture = tableTexture;
 			clearColorArray = tableTexture.GetPixels32();
 			for (int i = 0; i < clearColorArray.Length; i++)
@@ -105,8 +106,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 //		cellX -= margin;
 //		cellY -= margin;
 	
-		cellX += cellWidth / 2;
-		cellY += cellHeight / 2;
+		cellX += textureCellWidth / 2;
+		cellY += textureCellHeight / 2;
 		selectionRectGO.transform.position = new Vector3(topX + cellX, topY + cellY, 0);
 	}
 
@@ -158,14 +159,14 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		int id = entityClass.id;
 		int x, y;
 		cellPos(id, out x, out y);
-		entityClasses[id].takeSnapshot(tableTexture, new Rect(x, y, cellWidth, cellHeight));
+		entityClasses[id].takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight));
 	}
 
 	void cellPos(int index, out int x, out int y)
 	{
-		x = (index * cellWidth) % tableTexture.width;
-		y = (int)((index * cellWidth) / tableTexture.width) * cellHeight;
-		y = (int)tableTexture.height - cellHeight - y;
+		x = (index * textureCellWidth) % tableTexture.width;
+		y = (int)((index * textureCellWidth) / tableTexture.width) * textureCellHeight;
+		y = (int)tableTexture.height - textureCellHeight - y;
 	}
 
 	public void onCloneButtonClicked()
