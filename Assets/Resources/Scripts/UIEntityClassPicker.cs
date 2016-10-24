@@ -3,18 +3,24 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UIEntityClassPicker : MonoBehaviour {
+public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
 	Texture2D tableTexture;
 	Color32[] clearColorArray;
 	List<EntityClass> entityClasses;
+	bool m_dirty = true;
 
 	int rowCount = 5;
 	int colCount = 5;
 	int cellWidth = 256;
 	int cellHeight = 256;
+
+	void Start()
+	{
+		Root.instance.notificationManager.addEntityListener(this);
+	}
 
 	void OnEnable()
 	{
@@ -26,8 +32,10 @@ public class UIEntityClassPicker : MonoBehaviour {
 				clearColorArray[i] = Color.clear;
 		}
 
-		repaintTableTexture();
+		if (m_dirty)
+			repaintTableTexture();
 	}
+
 
 	void Update()
     {
@@ -59,7 +67,21 @@ public class UIEntityClassPicker : MonoBehaviour {
 		}
 	}
 
-	void OnDisable()
+	public void onEntityClassAdded(EntityClass entityClass)
+	{
+		m_dirty = true;
+		if (gameObject.activeSelf)
+			repaintTableTexture();
+	}
+
+	public void onEntityClassChanged(EntityClass entityClass)
+	{
+		m_dirty = true;
+		if (gameObject.activeSelf)
+			repaintTableTexture();
+	}
+
+	public void onEntityInstanceAdded(EntityInstance entityInstance)
 	{
 	}
 
@@ -76,12 +98,13 @@ public class UIEntityClassPicker : MonoBehaviour {
 		}
 
 		tableTexture.Apply();
+		m_dirty = false;
 	}
 
 	public void onCloneButtonClicked()
 	{
 		EntityClass entityClass = new EntityClass("SquareTree");
+		Root.instance.notificationManager.notifyEntityClassAdded(entityClass);
 		Root.instance.player.currentEntityClass = entityClass;
-		repaintTableTexture();
 	}
 }

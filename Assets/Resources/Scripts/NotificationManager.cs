@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public interface EntityListener
 {
 	void onEntityInstanceAdded(EntityInstance entityInstance);
+	void onEntityClassAdded(EntityClass entityClass);
 	void onEntityClassChanged(EntityClass entityClass);
 }
 
@@ -32,6 +33,12 @@ public class NotificationManager {
 	{
 		foreach (EntityListener subscriber in entityListeners)
 			subscriber.onEntityInstanceAdded(entityInstance);	
+	}
+
+	public void notifyEntityClassAdded(EntityClass entityClass)
+	{
+		foreach (EntityListener subscriber in entityListeners)
+			subscriber.onEntityClassAdded(entityClass);	
 	}
 
 	public void notifyEntityClassChanged(EntityClass entityClass)

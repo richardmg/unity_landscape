@@ -13,6 +13,8 @@ public class CommandPrompt : MonoBehaviour {
 	List<string> tokens;
 	List<string> outputList = new List<string>();
 	List<string> helpList = new List<string>();
+	List<string> commandHistory = new List<string>();
+	int commandHistoryIndex = 0;
 
 	public const MessageType kNormal = 0;
 	public const MessageType kHeading = 1;
@@ -69,6 +71,27 @@ public class CommandPrompt : MonoBehaviour {
 			} else {
 				printHelp(inputField.text);
 			}
+		} else if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			if (commandHistory.Count == 0)
+				return;
+			InputField inputField = inputGO.GetComponent<InputField>();
+			inputField.text = commandHistory[commandHistoryIndex];
+			inputField.MoveTextEnd(false);
+			commandHistoryIndex--;
+			if (commandHistoryIndex < 0)
+				commandHistoryIndex = 0;
+		} else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			if (commandHistory.Count == 0)
+				return;
+			InputField inputField = inputGO.GetComponent<InputField>();
+			commandHistoryIndex++;
+			if (commandHistoryIndex >= commandHistory.Count) {
+				commandHistoryIndex = commandHistory.Count - 1;
+				inputField.text = System.String.Empty;
+			} else {
+				inputField.text = commandHistory[commandHistoryIndex];
+			}
+			inputField.MoveTextEnd(false);
 		}
 	}
 
@@ -274,10 +297,16 @@ public class CommandPrompt : MonoBehaviour {
 			accepted = true;
 		}
 
-		if (accepted)
+		if (accepted) {
+			const int maxLines = 10;
+			commandHistory.Add(commandString);
+			if (commandHistory.Count >= maxLines)
+				outputList.RemoveRange(maxLines, commandHistory.Count - maxLines);
+			commandHistoryIndex = commandHistory.Count - 1;
 			inputField.text = "";
-		else
+		} else {
 			printHelp(commandString);
+		}
 
 		inputField.ActivateInputField();
 		UnityEditor.EditorApplication.delayCall += ()=> {inputField.MoveTextEnd(false); };
