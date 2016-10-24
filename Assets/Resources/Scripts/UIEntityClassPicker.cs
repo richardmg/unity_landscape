@@ -69,14 +69,22 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	public void onEntityClassAdded(EntityClass entityClass)
 	{
+		m_dirty = true;
+		if (!gameObject.activeSelf)
+			return;
+		
 		paintEntityClass(entityClass);
-		tableTexture.Apply();
+		paintingDone();
 	}
 
 	public void onEntityClassChanged(EntityClass entityClass)
 	{
+		m_dirty = true;
+		if (!gameObject.activeSelf)
+			return;
+
 		paintEntityClass(entityClass);
-		tableTexture.Apply();
+		paintingDone();
 	}
 
 	public void onEntityInstanceAdded(EntityInstance entityInstance)
@@ -91,6 +99,11 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		for (int id = 0; id < entityClasses.Count; ++id)
 			paintEntityClass(Root.instance.entityManager.getEntity(id));
 
+		paintingDone();
+	}
+
+	void paintingDone()
+	{
 		tableTexture.Apply();
 		m_dirty = false;
 	}
