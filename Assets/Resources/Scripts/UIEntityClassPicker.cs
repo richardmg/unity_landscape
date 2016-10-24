@@ -20,6 +20,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	int cellHeight = 50;
 	int margin = 5;
 
+	int selectedIndex;
+
 	void Start()
 	{
 		Root.instance.notificationManager.addEntityListener(this);
@@ -28,10 +30,13 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	void OnEnable()
 	{
 		if (tableTexture == null) {
-			Vector2 size = new Vector2(cellWidth * colCount, cellHeight * rowCount);
-			rawImageGO.GetComponent<RawImage>().rectTransform.sizeDelta = size;
+			Vector2 selectionRectSize = new Vector2(cellWidth + (margin * 2), cellHeight + (margin * 2));
+			Vector2 tableSize = new Vector2(cellWidth * colCount, cellHeight * rowCount);
 
-			tableTexture = new Texture2D((int)size.x, (int)size.y);
+			selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRectSize;
+			rawImageGO.GetComponent<RawImage>().rectTransform.sizeDelta = tableSize;
+
+			tableTexture = new Texture2D((int)tableSize.x, (int)tableSize.y);
 			rawImageGO.GetComponent<RawImage>().texture = tableTexture;
 			clearColorArray = tableTexture.GetPixels32();
 			for (int i = 0; i < clearColorArray.Length; i++)
@@ -40,6 +45,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 		if (m_dirty)
 			repaintTableTexture();
+
+		selectIndex(selectedIndex);
 	}
 
 
@@ -58,7 +65,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		if (index < 0 || index >= entityClasses.Count)
 			return;
 
-		moveSelectionRect(index);
+		selectIndex(index);
 
 //		EntityClass entityClass = entityClasses[index];
 //		Root.instance.player.currentEntityClass = entityClass;
@@ -75,6 +82,14 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 //		}
 	}
 
+	public void selectIndex(int index)
+	{
+		selectedIndex = index;
+		moveSelectionRect(index);
+		EntityClass entityClass = entityClasses[index];
+		Root.instance.player.currentEntityClass = entityClass;
+	}
+
 	public void moveSelectionRect(int index)
 	{
 		float w = tableTexture.width;
@@ -84,12 +99,11 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 		int cellX, cellY;
 		cellPos(index, out cellX, out cellY);
-		cellX -= margin;
-		cellY -= margin;
+//		cellX -= margin;
+//		cellY -= margin;
 	
-		// This is wrong, but should be fixes once selection image is corrected:
-		cellX += cellWidth;
-		cellY += cellHeight;
+		cellX += cellWidth / 2;
+		cellY += cellHeight / 2;
 		selectionRectGO.transform.position = new Vector3(topX + cellX, topY + cellY, 0);
 	}
 
@@ -153,7 +167,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	public void onCloneButtonClicked()
 	{
-		EntityClass entityClass = new EntityClass("SquareTree");
-		Root.instance.player.currentEntityClass = entityClass;
+		EntityClass entityClass = new EntityClass(Root.instance.entityManager.getEntity(selectedIndex));
+		selectIndex(entityClass.id);
 	}
 }
