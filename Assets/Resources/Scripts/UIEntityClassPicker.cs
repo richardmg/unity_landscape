@@ -65,7 +65,10 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		if (index < 0 || index >= entityClasses.Count)
 			return;
 
-		selectIndex(index);
+		if (selectedIndex != index)
+			selectIndex(index);
+		else
+			Root.instance.uiManager.showFirstPersonUI();
 
 //		EntityClass entityClass = entityClasses[index];
 //		Root.instance.player.currentEntityClass = entityClass;
