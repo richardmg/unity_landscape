@@ -10,6 +10,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	public GameObject selectionRectGO;
 
 	Texture2D tableTexture;
+	RawImage rawImage;
 	Color32[] clearColorArray;
 	List<EntityClass> entityClasses;
 	bool m_dirty = true;
@@ -35,13 +36,14 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 			Vector2 selectionRectSize = new Vector2(cellWidth + (margin * 2), cellHeight + (margin * 2));
 			Vector2 textureTableSize = new Vector2(textureCellWidth * colCount, textureCellHeight * rowCount);
 
+			rawImage = rawImageGO.GetComponent<RawImage>();
 			selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRectSize;
 
 			tableTexture = new Texture2D((int)textureTableSize.x, (int)textureTableSize.y);
 			rawImageGO.GetComponent<RawImage>().texture = tableTexture;
 			clearColorArray = tableTexture.GetPixels32();
 			for (int i = 0; i < clearColorArray.Length; i++)
-				clearColorArray[i] = Color.red;//Color.clear;
+				clearColorArray[i] = Color.clear;
 		}
 
 		if (m_dirty)
@@ -66,24 +68,16 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		if (index < 0 || index >= entityClasses.Count)
 			return;
 
-		if (selectedIndex != index)
+		int prevIndex = selectedIndex;
+		if (index != selectedIndex)
 			selectIndex(index);
-		else
-			Root.instance.uiManager.showFirstPersonUI();
 
-//		EntityClass entityClass = entityClasses[index];
-//		Root.instance.player.currentEntityClass = entityClass;
-//
-//		if (Input.GetKey(KeyCode.LeftShift)) {
-//			Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
-//			Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
-//		} else if (Input.GetKey(KeyCode.LeftControl)) {
-//			EntityClass newEntityClass = new EntityClass(entityClass);
-//			Root.instance.player.currentEntityClass = newEntityClass;
-//			repaintTableTexture();
-//		} else {
-//			Root.instance.uiManager.showFirstPersonUI();
-//		}
+		if (Input.GetKey(KeyCode.LeftShift))
+			onPaintButtonClicked();
+		else if (Input.GetKey(KeyCode.LeftControl))
+			onCloneButtonClicked();
+		else if (prevIndex == selectedIndex)
+			Root.instance.uiManager.showFirstPersonUI();
 	}
 
 	public void selectIndex(int index)
@@ -96,19 +90,12 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	public void moveSelectionRect(int index)
 	{
-		float w = tableTexture.width;
-		float h = tableTexture.height;
-		float topX = rawImageGO.transform.position.x - (w / 2);
-		float topY = rawImageGO.transform.position.y - (h / 2);
-
-		int cellX, cellY;
-		cellPos(index, out cellX, out cellY);
-//		cellX -= margin;
-//		cellY -= margin;
-	
-		cellX += textureCellWidth / 2;
-		cellY += textureCellHeight / 2;
-		selectionRectGO.transform.position = new Vector3(topX + cellX, topY + cellY, 0);
+		int x, y;
+		textureCellPos(index, out x, out y);
+		x += textureCellWidth / 2;
+		y += textureCellHeight / 2;
+		textureToImagePos(ref x, ref y);
+		selectionRectGO.transform.position = new Vector3(x, y, 0);
 	}
 
 	public void onEntityClassAdded(EntityClass entityClass)
@@ -158,20 +145,40 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		// cell in the tabletexture. This might change in the future...
 		int id = entityClass.id;
 		int x, y;
-		cellPos(id, out x, out y);
+		textureCellPos(id, out x, out y);
 		entityClasses[id].takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight));
 	}
 
-	void cellPos(int index, out int x, out int y)
+	void textureCellPos(int index, out int x, out int y)
 	{
 		x = (index * textureCellWidth) % tableTexture.width;
 		y = (int)((index * textureCellWidth) / tableTexture.width) * textureCellHeight;
 		y = (int)tableTexture.height - textureCellHeight - y;
 	}
 
+	void textureToImagePos(ref int x, ref int y)
+	{
+		float w = rawImage.rectTransform.sizeDelta.x;
+		float h = rawImage.rectTransform.sizeDelta.y;
+		float topX = rawImageGO.transform.position.x - (w / 2);
+		float topY = rawImageGO.transform.position.y - (h / 2);
+
+		x = (int)topX + (int)(x * (w / tableTexture.width));
+		y = (int)topY + (int)(y * (h / tableTexture.height));
+	}
+
 	public void onCloneButtonClicked()
 	{
-		EntityClass entityClass = new EntityClass(Root.instance.entityManager.getEntity(selectedIndex));
+		EntityClass originalEntityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		EntityClass entityClass = new EntityClass(originalEntityClass);
 		selectIndex(entityClass.id);
 	}
+
+	public void onPaintButtonClicked()
+	{
+		EntityClass entityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
+		Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
+	}
+
 }
