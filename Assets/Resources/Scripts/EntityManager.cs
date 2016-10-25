@@ -16,6 +16,14 @@ public class EntityManager : IProjectIOMember
 			Root.instance.notificationManager.notifyEntityClassAdded(entityClass);
 	}
 
+	public void removeEntityClass(EntityClass entityClass, bool notify = true)
+	{
+		allEntityClasses.Remove(entityClass);
+
+		if (notify)
+			Root.instance.notificationManager.notifyEntityClassAdded(entityClass);
+	}
+
 	public EntityClass getEntity(int id)
 	{
 		if (id < 0 || id >= allEntityClasses.Count)

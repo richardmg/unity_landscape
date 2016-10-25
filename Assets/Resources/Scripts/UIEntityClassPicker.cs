@@ -11,7 +11,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	RawImage image;
 	Texture2D tableTexture;
-	Color32[] clearColorArray;
+	Color[] clearColorArray;
 	bool m_dirty = true;
 
 	const int rowCount = 10;
@@ -31,7 +31,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		image.texture = tableTexture;
 
 		// Create a color array to clear the table texture
-		clearColorArray = tableTexture.GetPixels32();
+		clearColorArray = tableTexture.GetPixels();
 		for (int i = 0; i < clearColorArray.Length; i++)
 			clearColorArray[i] = Color.clear;
 
@@ -108,6 +108,16 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		paintingDone();
 	}
 
+	public void onEntityClassRemoved(EntityClass entityClass)
+	{
+		m_dirty = true;
+		if (!gameObject.activeSelf)
+			return;
+		
+		clearCell(entityClass.id);
+		paintingDone();
+	}
+
 	public void onEntityClassChanged(EntityClass entityClass)
 	{
 		m_dirty = true;
@@ -124,7 +134,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	void repaintTableTexture()
 	{
-		tableTexture.SetPixels32(clearColorArray);
+		tableTexture.SetPixels(clearColorArray);
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 
 		for (int id = 0; id < entityClasses.Count; ++id)
@@ -148,6 +158,13 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		textureCellPos(id, out x, out y);
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 		entityClasses[id].takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight));
+	}
+
+	void clearCell(int index)
+	{
+		int x, y;
+		textureCellPos(index, out x, out y);
+		tableTexture.SetPixels(x, y, textureCellWidth, textureCellHeight, clearColorArray);
 	}
 
 	void textureCellPos(int index, out int x, out int y)
@@ -175,6 +192,14 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 			return;
 		EntityClass entityClass = new EntityClass(originalEntityClass);
 		selectIndex(entityClass.id);
+	}
+
+	public void onDeleteButtonClicked()
+	{
+		EntityClass entityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		if (entityClass == null)
+			return;
+		entityClass.remove();
 	}
 
 	public void onPaintButtonClicked()

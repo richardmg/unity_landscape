@@ -7,6 +7,7 @@ public interface EntityListener
 {
 	void onEntityInstanceAdded(EntityInstance entityInstance);
 	void onEntityClassAdded(EntityClass entityClass);
+	void onEntityClassRemoved(EntityClass entityClass);
 	void onEntityClassChanged(EntityClass entityClass);
 }
 
@@ -48,6 +49,19 @@ public class NotificationManager {
 		} else {
 			foreach (EntityListener subscriber in entityListeners)
 				subscriber.onEntityClassAdded(entityClass);	
+		}
+	}
+
+	public void notifyEntityClassRemoved(EntityClass entityClass, bool postNotification = true)
+	{
+		if (m_postNotifications) {
+			UnityEditor.EditorApplication.delayCall += ()=> {
+				foreach (EntityListener subscriber in entityListeners)
+					subscriber.onEntityClassRemoved(entityClass);	
+			};
+		} else {
+			foreach (EntityListener subscriber in entityListeners)
+				subscriber.onEntityClassRemoved(entityClass);	
 		}
 	}
 

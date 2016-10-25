@@ -78,6 +78,11 @@ public class EntityClass : IProjectIOMember {
 		Root.instance.entityManager.addEntityClass(this, notify);
 	}
 
+	public void remove()
+	{
+		Root.instance.entityManager.removeEntityClass(this);
+	}
+
 	public EntityInstance createInstance(Transform parent = null, string name = "")
 	{
 		GameObject go = new GameObject(name);

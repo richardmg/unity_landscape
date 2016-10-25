@@ -92,6 +92,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 	{
 	}
 
+	public void onEntityClassRemoved(EntityClass entityClass)
+	{
+	}
+
 	public void onProjectLoaded()
 	{
 		m_entityClass = Root.instance.entityManager.getEntity(0);
