@@ -9,19 +9,17 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	public GameObject rawImageGO;
 	public GameObject selectionRectGO;
 
+	RawImage image;
 	Texture2D tableTexture;
-	RawImage rawImage;
 	Color32[] clearColorArray;
 	List<EntityClass> entityClasses;
 	bool m_dirty = true;
 
-	int rowCount = 10;
-	int colCount = 10;
-	int cellWidth = 50;
-	int cellHeight = 50;
-	int textureCellWidth = 2048 / 10;
-	int textureCellHeight = 2048 / 10;
-	int margin = 5;
+	const int rowCount = 10;
+	const int colCount = 10;
+	const int textureCellWidth = 2048 / 10;
+	const int textureCellHeight = 2048 / 10;
+	const int margin = 5;
 
 	int selectedIndex;
 
@@ -33,17 +31,23 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	void OnEnable()
 	{
 		if (tableTexture == null) {
-			Vector2 selectionRectSize = new Vector2(cellWidth + (margin * 2), cellHeight + (margin * 2));
+			// Create table texture, and assign it to the image ui component
+			image = rawImageGO.GetComponent<RawImage>();
 			Vector2 textureTableSize = new Vector2(textureCellWidth * colCount, textureCellHeight * rowCount);
-
-			rawImage = rawImageGO.GetComponent<RawImage>();
-			selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRectSize;
-
 			tableTexture = new Texture2D((int)textureTableSize.x, (int)textureTableSize.y);
-			rawImageGO.GetComponent<RawImage>().texture = tableTexture;
+			image.texture = tableTexture;
+
+			// Create a color array to clear the table texture
 			clearColorArray = tableTexture.GetPixels32();
 			for (int i = 0; i < clearColorArray.Length; i++)
 				clearColorArray[i] = Color.clear;
+
+			// Calculate the size of the selection rectangle
+			Vector2 imageSize = image.rectTransform.sizeDelta;
+			float selectionRectWidth = textureCellWidth * (imageSize.x / textureTableSize.x);
+			float selectionRectHeight = textureCellHeight * (imageSize.x / textureTableSize.x);
+			Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
+			selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 		}
 
 		if (m_dirty)
@@ -158,8 +162,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	void textureToImagePos(ref int x, ref int y)
 	{
-		float w = rawImage.rectTransform.sizeDelta.x;
-		float h = rawImage.rectTransform.sizeDelta.y;
+		float w = image.rectTransform.sizeDelta.x;
+		float h = image.rectTransform.sizeDelta.y;
 		float topX = rawImageGO.transform.position.x - (w / 2);
 		float topY = rawImageGO.transform.position.y - (h / 2);
 
