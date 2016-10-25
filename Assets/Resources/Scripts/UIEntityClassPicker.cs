@@ -23,6 +23,27 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	int selectedIndex;
 
+	void Awake()
+	{
+		// Create table texture, and assign it to the image ui component
+		image = rawImageGO.GetComponent<RawImage>();
+		Vector2 textureTableSize = new Vector2(textureCellWidth * colCount, textureCellHeight * rowCount);
+		tableTexture = new Texture2D((int)textureTableSize.x, (int)textureTableSize.y);
+		image.texture = tableTexture;
+
+		// Create a color array to clear the table texture
+		clearColorArray = tableTexture.GetPixels32();
+		for (int i = 0; i < clearColorArray.Length; i++)
+			clearColorArray[i] = Color.clear;
+
+		// Calculate the size of the selection rectangle
+		Vector2 imageSize = image.rectTransform.sizeDelta;
+		float selectionRectWidth = textureCellWidth * (imageSize.x / textureTableSize.x);
+		float selectionRectHeight = textureCellHeight * (imageSize.x / textureTableSize.x);
+		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
+		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
+	}
+
 	void Start()
 	{
 		Root.instance.notificationManager.addEntityListener(this);
@@ -30,32 +51,12 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	void OnEnable()
 	{
-		if (tableTexture == null) {
-			// Create table texture, and assign it to the image ui component
-			image = rawImageGO.GetComponent<RawImage>();
-			Vector2 textureTableSize = new Vector2(textureCellWidth * colCount, textureCellHeight * rowCount);
-			tableTexture = new Texture2D((int)textureTableSize.x, (int)textureTableSize.y);
-			image.texture = tableTexture;
-
-			// Create a color array to clear the table texture
-			clearColorArray = tableTexture.GetPixels32();
-			for (int i = 0; i < clearColorArray.Length; i++)
-				clearColorArray[i] = Color.clear;
-
-			// Calculate the size of the selection rectangle
-			Vector2 imageSize = image.rectTransform.sizeDelta;
-			float selectionRectWidth = textureCellWidth * (imageSize.x / textureTableSize.x);
-			float selectionRectHeight = textureCellHeight * (imageSize.x / textureTableSize.x);
-			Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
-			selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
-		}
-
-		if (m_dirty)
-			repaintTableTexture();
-
+		if (!m_dirty)
+			return;
+		
+		repaintTableTexture();
 		selectIndex(selectedIndex);
 	}
-
 
 	void Update()
     {
