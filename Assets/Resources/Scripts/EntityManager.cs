@@ -18,6 +18,8 @@ public class EntityManager : IProjectIOMember
 
 	public EntityClass getEntity(int id)
 	{
+		if (id < 0 || id >= allEntityClasses.Count)
+			return null;
 		return allEntityClasses[id];
 	}
 

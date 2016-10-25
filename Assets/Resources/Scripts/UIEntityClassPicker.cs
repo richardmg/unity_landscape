@@ -12,7 +12,6 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	RawImage image;
 	Texture2D tableTexture;
 	Color32[] clearColorArray;
-	List<EntityClass> entityClasses;
 	bool m_dirty = true;
 
 	const int rowCount = 10;
@@ -42,6 +41,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		float selectionRectHeight = textureCellHeight * (imageSize.x / textureTableSize.x);
 		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
 		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
+
+		selectIndex(0);
 	}
 
 	void Start()
@@ -51,11 +52,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	void OnEnable()
 	{
-		if (!m_dirty)
-			return;
-		
-		repaintTableTexture();
-		selectIndex(selectedIndex);
+		if (m_dirty)
+			repaintTableTexture();
 	}
 
 	void Update()
@@ -70,8 +68,6 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		int x = (int)(uv.x * colCount);
 		int y = (int)(uv.y * rowCount);
 		int index = x + (y * colCount);
-		if (index < 0 || index >= entityClasses.Count)
-			return;
 
 		int prevIndex = selectedIndex;
 		if (index != selectedIndex)
@@ -89,8 +85,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	{
 		selectedIndex = index;
 		moveSelectionRect(index);
-		EntityClass entityClass = entityClasses[index];
-		Root.instance.player.currentEntityClass = entityClass;
+		Root.instance.player.currentEntityClass = Root.instance.entityManager.getEntity(index);
 	}
 
 	public void moveSelectionRect(int index)
@@ -130,7 +125,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	void repaintTableTexture()
 	{
 		tableTexture.SetPixels32(clearColorArray);
-		entityClasses = Root.instance.entityManager.allEntityClasses;
+		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 
 		for (int id = 0; id < entityClasses.Count; ++id)
 			paintEntityClass(Root.instance.entityManager.getEntity(id));
@@ -151,6 +146,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		int id = entityClass.id;
 		int x, y;
 		textureCellPos(id, out x, out y);
+		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 		entityClasses[id].takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight));
 	}
 
@@ -175,6 +171,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	public void onCloneButtonClicked()
 	{
 		EntityClass originalEntityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		if (originalEntityClass == null)
+			return;
 		EntityClass entityClass = new EntityClass(originalEntityClass);
 		selectIndex(entityClass.id);
 	}
@@ -182,6 +180,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	public void onPaintButtonClicked()
 	{
 		EntityClass entityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		if (entityClass == null)
+			return;
 		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
 		Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
 	}
