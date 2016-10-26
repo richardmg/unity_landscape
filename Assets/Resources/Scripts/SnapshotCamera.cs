@@ -42,9 +42,8 @@ public class SnapshotCamera {
 		targetGO.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
 
 		m_camera.Render();
-//		destTexture.Apply() - remember to do this in the end
-
 		destTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), destX, destY);
+//		destTexture.Apply() - remember to do this in the end
 
 		targetGO.layer = prevLayer;
         RenderTexture.active = currentRT;
