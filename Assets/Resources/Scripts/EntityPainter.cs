@@ -104,14 +104,14 @@ public class EntityPainter : MonoBehaviour {
 		m_thumbnailList.Clear();
 			
 		float thumbSize = 50;
-		float baseX = -10;
-		float baseY = -10;
+		float baseX = -260;
+		float baseY = -280;
 
 		for (int i = 0; i < m_atlasIndexList.Count; ++i) {
 			int atlasIndex = m_atlasIndexList[i];
 			float x = baseX + (i * thumbSize);
 			float y = baseY;
-			GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, atlasIndex, x , y, thumbSize, thumbSize);
+			GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, atlasIndex, x, y, thumbSize, thumbSize);
 			m_thumbnailList.Add(thumbnailGO);
 		}
 	}

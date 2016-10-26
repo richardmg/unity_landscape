@@ -44,11 +44,11 @@ public class AtlasManager : IProjectIOMember
 	public GameObject createThumbnailImage(Transform parent, int atlasIndex, float x, float y, float width, float height)
 	{
 		GameObject imageGO = new GameObject("Thumbnail");
-		imageGO.transform.SetParent(parent);
+		imageGO.transform.SetParent(parent.parent);
 
 		RawImage image = imageGO.AddComponent<RawImage>();
 		image.texture = textureAtlas;
-		image.rectTransform.anchoredPosition = new Vector2(x, y);
+		image.rectTransform.anchoredPosition = new Vector3(x, y);
 		image.rectTransform.sizeDelta = new Vector2(width, height);
 		image.uvRect = getUVRectForIndex(atlasIndex);
 
