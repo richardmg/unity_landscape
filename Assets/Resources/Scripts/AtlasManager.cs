@@ -67,6 +67,10 @@ public class AtlasManager : IProjectIOMember
 		destAtlas.Apply();
 	}
 
+	public void copySubImage(int srcIndex, Texture2D srcAtlas, Texture2D destAtlas, int destX, int destY)
+	{
+	}
+
 	public void syncMaterialsWithAtlas()
 	{
 		Debug.Assert(textureAtlas);
