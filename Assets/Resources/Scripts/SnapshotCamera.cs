@@ -20,10 +20,10 @@ public class SnapshotCamera {
 
 	public Texture2D takeSnapshot(GameObject targetGO)
 	{
-		Texture2D snapshot = new Texture2D(m_camera.targetTexture.width, m_camera.targetTexture.height);
-		takeSnapshot(targetGO, snapshot, 0, 0);
-		snapshot.Apply();
-		return snapshot;
+		Texture2D targetTexture = new Texture2D(renderTexture.width, renderTexture.height);
+		takeSnapshot(targetGO, targetTexture, 0, 0);
+		targetTexture.Apply();
+		return targetTexture;
 	}
 
 	public void takeSnapshot(GameObject targetGO, Texture2D destTexture, int destX, int destY)
