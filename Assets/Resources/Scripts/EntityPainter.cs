@@ -11,6 +11,7 @@ public class EntityPainter : MonoBehaviour {
 	int m_currentListIndex;
 	public int currentAtlasIndex;
 	List<int> m_atlasIndexList;
+	List<GameObject> m_thumbnailList = new List<GameObject>();
 	EditMode m_currentMode = kPaintMode;
 	bool m_textureDirty = false;
 	bool m_clearToggleOn = false;
@@ -84,6 +85,31 @@ public class EntityPainter : MonoBehaviour {
 		m_entityClass = entityClass;
 		m_atlasIndexList = m_entityClass.atlasIndexList();
 		setListIndex(0);
+
+		foreach (GameObject go in m_thumbnailList) {
+			go.SetActive(false);
+			GameObject.Destroy(go);
+		}
+		m_thumbnailList.Clear();
+			
+		GameObject thumbnailGO = createThumbnailImage(1, -10, -10);
+		m_thumbnailList.Add(thumbnailGO);
+	}
+
+	GameObject createThumbnailImage(int atlasIndex, float x, float y)
+	{
+		GameObject imageGO = new GameObject("Thumbnail");
+		imageGO.transform.SetParent(transform);
+
+		RawImage image = imageGO.AddComponent<RawImage>();
+		image.texture = Root.instance.atlasManager.textureAtlas;
+		image.rectTransform.anchoredPosition = new Vector2(x, y);
+		image.rectTransform.sizeDelta = new Vector2(50, 50);
+
+		image.uvRect = Root.instance.atlasManager.getUVRectForIndex(atlasIndex);
+		Debug.Log(image.uvRect);
+
+		return imageGO;
 	}
 
 	public void setListIndex(int listIndex)

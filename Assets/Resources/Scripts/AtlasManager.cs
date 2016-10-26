@@ -24,17 +24,21 @@ public class AtlasManager : IProjectIOMember
 		y = (int)((atlasIndex * Root.kSubImageWidth) / Root.kAtlasHeight) * Root.kSubImageHeight;
 	}
 
-	public void getUVCoordsForIndex(int index, out int uvX1, out int uvY1, out int uvX2, out int uvY2)
+	public Rect getUVRectForIndex(int index)
 	{
 		float xScale = 1.0f / (float)textureAtlas.width;
 		float yScale = 1.0f / (float)textureAtlas.height;
 
 		int x, y;
 		getAtlasPixelForIndex(index, out x, out y);
-		uvX1 = (int)(x * xScale);
-		uvY1 = (int)(y * yScale);
-		uvX2 = uvX1 + (int)(Root.kSubImageWidth * xScale);
-		uvY2 = uvY1 + (int)(Root.kSubImageHeight * yScale);
+
+		float uvX1, uvY1, uvX2, uvY2;
+		uvX1 = x * xScale;
+		uvY1 = y * yScale;
+		uvX2 = uvX1 + (Root.kSubImageWidth * xScale);
+		uvY2 = uvY1 + (Root.kSubImageHeight * yScale);
+
+		return new Rect(uvX1, uvY1, uvX2 - uvX1, uvY2 - uvY1);
 	}
 
 	public void saveBaseAtlasTexture()
