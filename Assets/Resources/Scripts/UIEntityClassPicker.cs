@@ -16,18 +16,23 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	const int rowCount = 10;
 	const int colCount = 10;
-	const int textureCellWidth = 2048 / 10;
-	const int textureCellHeight = 2048 / 10;
+	const int textureWidth = 2048;
+	const int textureHeight = 2048;
 	const int margin = 5;
+
+	int textureCellWidth;
+	int textureCellHeight;
 
 	int selectedIndex;
 
 	void Awake()
 	{
+		textureCellWidth = textureWidth / colCount;
+		textureCellHeight = textureHeight / rowCount;
+
 		// Create table texture, and assign it to the image ui component
+		tableTexture = new Texture2D(textureWidth, textureHeight);
 		image = rawImageGO.GetComponent<RawImage>();
-		Vector2 textureTableSize = new Vector2(textureCellWidth * colCount, textureCellHeight * rowCount);
-		tableTexture = new Texture2D((int)textureTableSize.x, (int)textureTableSize.y);
 		image.texture = tableTexture;
 
 		// Create a color array to clear the table texture
@@ -37,8 +42,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 		// Calculate the size of the selection rectangle
 		Vector2 imageSize = image.rectTransform.sizeDelta;
-		float selectionRectWidth = textureCellWidth * (imageSize.x / textureTableSize.x);
-		float selectionRectHeight = textureCellHeight * (imageSize.x / textureTableSize.x);
+		float selectionRectWidth = textureCellWidth * (imageSize.x / textureWidth);
+		float selectionRectHeight = textureCellHeight * (imageSize.y / textureHeight);
 		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
 		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 
