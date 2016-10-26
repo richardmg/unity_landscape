@@ -92,14 +92,8 @@ public class EntityPainter : MonoBehaviour {
 		}
 		m_thumbnailList.Clear();
 			
-		GameObject thumbnailGO = createThumbnailImage(1, -10, -10);
+		GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, 1, -10, -10, 50, 50);
 		m_thumbnailList.Add(thumbnailGO);
-	}
-
-	GameObject createThumbnailImage(int atlasIndex, float x, float y)
-	{
-		GameObject go = Root.instance.atlasManager.createThumbnailImage(atlasIndex, transform, x, y, 50, 50);
-		return go;
 	}
 
 	public void setListIndex(int listIndex)

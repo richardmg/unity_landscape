@@ -41,7 +41,7 @@ public class AtlasManager : IProjectIOMember
 		return new Rect(uvX1, uvY1, uvX2 - uvX1, uvY2 - uvY1);
 	}
 
-	public GameObject createThumbnailImage(int atlasIndex, Transform parent, float x, float y, float width, float height)
+	public GameObject createThumbnailImage(Transform parent, int atlasIndex, float x, float y, float width, float height)
 	{
 		GameObject imageGO = new GameObject("Thumbnail");
 		imageGO.transform.SetParent(parent);
