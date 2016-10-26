@@ -18,10 +18,23 @@ public class AtlasManager : IProjectIOMember
 	{
 	}
 
-	public void atlasPixelForIndex(int atlasIndex, out int x, out int y)
+	public void getAtlasPixelForIndex(int atlasIndex, out int x, out int y)
 	{
 		x = (atlasIndex * Root.kSubImageWidth) % Root.kAtlasWidth;
 		y = (int)((atlasIndex * Root.kSubImageWidth) / Root.kAtlasHeight) * Root.kSubImageHeight;
+	}
+
+	public void getUVCoordsForIndex(int index, out int uvX1, out int uvY1, out int uvX2, out int uvY2)
+	{
+		float xScale = 1.0f / (float)textureAtlas.width;
+		float yScale = 1.0f / (float)textureAtlas.height;
+
+		int x, y;
+		getAtlasPixelForIndex(index, out x, out y);
+		uvX1 = (int)(x * xScale);
+		uvY1 = (int)(y * yScale);
+		uvX2 = uvX1 + (int)(Root.kSubImageWidth * xScale);
+		uvY2 = uvY1 + (int)(Root.kSubImageHeight * yScale);
 	}
 
 	public void saveBaseAtlasTexture()
@@ -57,18 +70,12 @@ public class AtlasManager : IProjectIOMember
 		if (srcIndex == destIndex)
 			return;
 
-//		Debug.Log("copy " + srcIndex + " to " + destIndex);
-
 		int srcX, srcY, destX, destY;
-		atlasPixelForIndex(srcIndex, out srcX, out srcY);
-		atlasPixelForIndex(destIndex, out destX, out destY);
+		getAtlasPixelForIndex(srcIndex, out srcX, out srcY);
+		getAtlasPixelForIndex(destIndex, out destX, out destY);
 		Color[] pixels = srcAtlas.GetPixels(srcX, srcY, Root.kSubImageWidth, Root.kSubImageHeight);
 		destAtlas.SetPixels(destX, destY, Root.kSubImageWidth, Root.kSubImageHeight, pixels);
 		destAtlas.Apply();
-	}
-
-	public void copySubImage(int srcIndex, Texture2D srcAtlas, Texture2D destAtlas, int destX, int destY)
-	{
 	}
 
 	public void syncMaterialsWithAtlas()
