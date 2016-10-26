@@ -12,22 +12,18 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	RawImage image;
 	Texture2D tableTexture;
 	Color[] clearColorArray;
+	int selectedIndex;
 	bool m_dirty = true;
 
 	const int rowCount = 5;
 	const int colCount = 5;
-	const int textureWidth = 2048;
-	const int textureHeight = 2048;
-	const int margin = 5;
-
-	int textureCellWidth;
-	int textureCellHeight;
-	int selectedIndex;
+	const int textureCellWidth = 256; // same as snapshot camera render texture
+	const int textureCellHeight = 256;
 
 	void Awake()
 	{
-		textureCellWidth = textureWidth / colCount;
-		textureCellHeight = textureHeight / rowCount;
+		int textureWidth = textureCellWidth * colCount;
+		int textureHeight = textureCellHeight * rowCount;
 
 		// Create table texture, and assign it to the image ui component
 		tableTexture = new Texture2D(textureWidth, textureHeight);
@@ -157,7 +153,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	{
 		int x, y;
 		textureCellPos(index, out x, out y);
-		entityClass.takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight));
+		entityClass.takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight), new Vector3(0, 0, -7.0f));
 	}
 
 	void clearCell(int index)
