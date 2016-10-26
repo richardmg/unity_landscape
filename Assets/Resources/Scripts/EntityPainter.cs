@@ -53,13 +53,8 @@ public class EntityPainter : MonoBehaviour {
 		} else {
 			if (!Input.GetMouseButtonDown(0))
 				return;
-			
-			for (int i = 0; i < m_thumbnailList.Count; ++i) {
-				GameObject go = m_thumbnailList[i];
-				Vector2 thumbUv = UIManager.getMousePosOnImage(go.GetComponent<RawImage>());
-				if (UIManager.isInside(thumbUv))
-					setListIndex(i);
-			}
+
+			updateThumbnailSelect(uv);
 		}
 	}
 
@@ -84,6 +79,16 @@ public class EntityPainter : MonoBehaviour {
 		color = m_texture.GetPixel(pixelX, pixelY);
 
 		m_currentMode = kPaintMode;
+	}
+
+	void updateThumbnailSelect(Vector2 uv)
+	{
+		for (int i = 0; i < m_thumbnailList.Count; ++i) {
+			GameObject go = m_thumbnailList[i];
+			Vector2 thumbUv = UIManager.getMousePosOnImage(go.GetComponent<RawImage>());
+			if (UIManager.isInside(thumbUv))
+				setListIndex(i);
+		}
 	}
 
 	public void setEntityClass(EntityClass entityClass)
