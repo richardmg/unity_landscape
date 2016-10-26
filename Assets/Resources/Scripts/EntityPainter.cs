@@ -58,7 +58,7 @@ public class EntityPainter : MonoBehaviour {
 				GameObject go = m_thumbnailList[i];
 				Vector2 thumbUv = UIManager.getMousePosOnImage(go.GetComponent<RawImage>());
 				if (UIManager.isInside(thumbUv))
-					setListIndex(m_atlasIndexList[i]);
+					setListIndex(i);
 			}
 		}
 	}
