@@ -45,17 +45,26 @@ public class EntityPainter : MonoBehaviour {
 
 		Vector2 uv = UIManager.getMousePosOnImage(GetComponent<RawImage>());
 
-		if (Input.GetKey(KeyCode.C) || m_currentMode == kColorSelectMode)
-			updateColorSelect(uv);
-		else if (m_currentMode == kPaintMode)
-			updatePaint(uv);
+		if (UIManager.isInside(uv)) {
+			if (Input.GetKey(KeyCode.C) || m_currentMode == kColorSelectMode)
+				updateColorSelect(uv);
+			else if (m_currentMode == kPaintMode)
+				updatePaint(uv);
+		} else {
+			if (!Input.GetMouseButtonDown(0))
+				return;
+			
+			for (int i = 0; i < m_thumbnailList.Count; ++i) {
+				GameObject go = m_thumbnailList[i];
+				Vector2 thumbUv = UIManager.getMousePosOnImage(go.GetComponent<RawImage>());
+				if (UIManager.isInside(thumbUv))
+					setListIndex(m_atlasIndexList[i]);
+			}
+		}
 	}
 
 	void updatePaint(Vector2 uv)
 	{
-		if (!UIManager.isInside(uv))
-			return;
-
 		int pixelX = (int)(uv.x * m_texture.width);
 		int pixelY = (int)(uv.y * m_texture.height);
 
@@ -70,9 +79,6 @@ public class EntityPainter : MonoBehaviour {
 
 	void updateColorSelect(Vector2 uv)
 	{
-		if (!UIManager.isInside(uv))
-			return;
-
 		int pixelX = (int)(uv.x * m_texture.width);
 		int pixelY = (int)(uv.y * m_texture.height);
 		color = m_texture.GetPixel(pixelX, pixelY);
