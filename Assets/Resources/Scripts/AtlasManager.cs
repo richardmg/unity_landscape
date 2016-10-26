@@ -41,6 +41,20 @@ public class AtlasManager : IProjectIOMember
 		return new Rect(uvX1, uvY1, uvX2 - uvX1, uvY2 - uvY1);
 	}
 
+	public GameObject createThumbnailImage(int atlasIndex, Transform parent, float x, float y, float width, float height)
+	{
+		GameObject imageGO = new GameObject("Thumbnail");
+		imageGO.transform.SetParent(parent);
+
+		RawImage image = imageGO.AddComponent<RawImage>();
+		image.texture = textureAtlas;
+		image.rectTransform.anchoredPosition = new Vector2(x, y);
+		image.rectTransform.sizeDelta = new Vector2(width, height);
+		image.uvRect = getUVRectForIndex(atlasIndex);
+
+		return imageGO;
+	}
+
 	public void saveBaseAtlasTexture()
 	{
 		byte[] bytes = Root.instance.textureAtlas.EncodeToPNG();

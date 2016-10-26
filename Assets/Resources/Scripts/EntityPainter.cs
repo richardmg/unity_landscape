@@ -98,18 +98,8 @@ public class EntityPainter : MonoBehaviour {
 
 	GameObject createThumbnailImage(int atlasIndex, float x, float y)
 	{
-		GameObject imageGO = new GameObject("Thumbnail");
-		imageGO.transform.SetParent(transform);
-
-		RawImage image = imageGO.AddComponent<RawImage>();
-		image.texture = Root.instance.atlasManager.textureAtlas;
-		image.rectTransform.anchoredPosition = new Vector2(x, y);
-		image.rectTransform.sizeDelta = new Vector2(50, 50);
-
-		image.uvRect = Root.instance.atlasManager.getUVRectForIndex(atlasIndex);
-		Debug.Log(image.uvRect);
-
-		return imageGO;
+		GameObject go = Root.instance.atlasManager.createThumbnailImage(atlasIndex, transform, x, y, 50, 50);
+		return go;
 	}
 
 	public void setListIndex(int listIndex)
