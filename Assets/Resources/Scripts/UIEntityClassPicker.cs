@@ -18,8 +18,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 
 	const int rowCount = 5;
 	const int colCount = 5;
-	const int textureCellWidth = 256; // same as snapshot camera render texture
-	const int textureCellHeight = 256;
+	const int textureCellWidth = 64;
+	const int textureCellHeight = 64;
 
 	void Awake()
 	{
