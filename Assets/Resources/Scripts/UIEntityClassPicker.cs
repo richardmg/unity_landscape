@@ -14,15 +14,14 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	Color[] clearColorArray;
 	bool m_dirty = true;
 
-	const int rowCount = 10;
-	const int colCount = 10;
+	const int rowCount = 5;
+	const int colCount = 5;
 	const int textureWidth = 2048;
 	const int textureHeight = 2048;
 	const int margin = 5;
 
 	int textureCellWidth;
 	int textureCellHeight;
-
 	int selectedIndex;
 
 	void Awake()
@@ -109,7 +108,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		if (!gameObject.activeSelf)
 			return;
 		
-		paintEntityClass(entityClass);
+		paintEntityClass(entityClass.id, entityClass);
 		paintingDone();
 	}
 
@@ -129,7 +128,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		if (!gameObject.activeSelf)
 			return;
 
-		paintEntityClass(entityClass);
+		paintEntityClass(entityClass.id, entityClass);
 		paintingDone();
 	}
 
@@ -143,7 +142,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
 
 		for (int id = 0; id < entityClasses.Count; ++id)
-			paintEntityClass(Root.instance.entityManager.getEntity(id));
+			paintEntityClass(id, Root.instance.entityManager.getEntity(id));
 
 		paintingDone();
 	}
@@ -154,15 +153,11 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		m_dirty = false;
 	}
 
-	void paintEntityClass(EntityClass entityClass)
+	void paintEntityClass(int index, EntityClass entityClass)
 	{
-		// NB: I assume here that an entities ID correspond to the
-		// cell in the tabletexture. This might change in the future...
-		int id = entityClass.id;
 		int x, y;
-		textureCellPos(id, out x, out y);
-		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
-		entityClasses[id].takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight));
+		textureCellPos(index, out x, out y);
+		entityClass.takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight));
 	}
 
 	void clearCell(int index)
