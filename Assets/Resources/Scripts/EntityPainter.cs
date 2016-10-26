@@ -115,12 +115,13 @@ public class EntityPainter : MonoBehaviour {
 		m_thumbnailList.Clear();
 			
 		float thumbSize = 50;
+		float margin = 10;
 		float baseX = -260;
 		float baseY = -280;
 
 		for (int i = 0; i < m_atlasIndexList.Count; ++i) {
 			int atlasIndex = m_atlasIndexList[i];
-			float x = baseX + (i * thumbSize);
+			float x = baseX + (i * (thumbSize + margin));
 			float y = baseY;
 			GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, atlasIndex, x, y, thumbSize, thumbSize);
 			m_thumbnailList.Add(thumbnailGO);
@@ -143,24 +144,6 @@ public class EntityPainter : MonoBehaviour {
 		GetComponent<RawImage>().texture = m_texture;
 
 		m_textureDirty = false;
-	}
-
-	public void onPrevButtonClicked()
-	{
-		int index = m_currentListIndex - 1;
-		if (index < 0)
-			index = m_atlasIndexList.Count - 1;
-		saveChanges();
-		setListIndex(index);
-	}
-
-	public void onNextButtonClicked()
-	{
-		int index = m_currentListIndex + 1;
-		if (index >= m_atlasIndexList.Count)
-			index = 0;
-		saveChanges();
-		setListIndex(index);
 	}
 
 	public void onDiscardButtonClicked()
