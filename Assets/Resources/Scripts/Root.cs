@@ -40,8 +40,6 @@ public class Root : MonoBehaviour {
 	[HideInInspector]
 	public EntityManager entityManager;
 	[HideInInspector]
-	public SnapshotCamera snapshotCamera;
-	[HideInInspector]
 	public ProjectManager projectManager;
 	[HideInInspector]
 	public CommandPrompt commandPrompt;
@@ -69,7 +67,6 @@ public class Root : MonoBehaviour {
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
 		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
-		snapshotCamera = new SnapshotCamera(snapshotCameraGO);
 
 		projectManager.restoreSession();
 	}

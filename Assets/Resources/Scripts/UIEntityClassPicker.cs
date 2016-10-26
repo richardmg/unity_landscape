@@ -12,6 +12,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	RawImage image;
 	Texture2D tableTexture;
 	Color[] clearColorArray;
+	SnapshotCamera snapshotCamera;
 	int selectedIndex;
 	bool m_dirty = true;
 
@@ -24,6 +25,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	{
 		int textureWidth = textureCellWidth * colCount;
 		int textureHeight = textureCellHeight * rowCount;
+
+		snapshotCamera = new SnapshotCamera(textureCellWidth, textureCellHeight, -7);
 
 		// Create table texture, and assign it to the image ui component
 		tableTexture = new Texture2D(textureWidth, textureHeight);
@@ -153,7 +156,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 	{
 		int x, y;
 		textureCellPos(index, out x, out y);
-		entityClass.takeSnapshot(tableTexture, new Rect(x, y, textureCellWidth, textureCellHeight), new Vector3(0, 0, -7.0f));
+		entityClass.takeSnapshot(snapshotCamera, tableTexture, x, y);
 	}
 
 	void clearCell(int index)

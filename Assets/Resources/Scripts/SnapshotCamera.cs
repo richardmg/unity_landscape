@@ -3,44 +3,48 @@ using System.Collections;
 
 public class SnapshotCamera {
 
+	public Vector3 targetOffset;
+
 	Camera m_camera;
 	GameObject m_cameraGO;
+	RenderTexture renderTexture;
 
-	public SnapshotCamera(GameObject cameraGO)
+	public SnapshotCamera(int renderTextureWidth = 256, int renderTextureHeight = 256, float targetOffset = -10)
 	{
-		m_cameraGO = cameraGO;
-		m_camera = cameraGO.GetComponent<Camera>();
+		this.targetOffset = new Vector3(0, 0, targetOffset);
+		renderTexture = new RenderTexture(renderTextureWidth, renderTextureHeight, 16, RenderTextureFormat.ARGB32);
+
+		m_cameraGO = Root.instance.snapshotCameraGO;
+		m_camera = m_cameraGO.GetComponent<Camera>();
 	}
 
-	public Texture2D takeSnapshot(GameObject targetGO, Vector3 cameraOffset)
+	public Texture2D takeSnapshot(GameObject targetGO)
 	{
 		Texture2D snapshot = new Texture2D(m_camera.targetTexture.width, m_camera.targetTexture.height);
-		Rect targetRect = new Rect(0, 0, snapshot.width, snapshot.height);
-		takeSnapshot(targetGO, cameraOffset, snapshot, targetRect);
+		takeSnapshot(targetGO, snapshot, 0, 0);
 		snapshot.Apply();
 		return snapshot;
 	}
 
-	public void takeSnapshot(GameObject targetGO, Vector3 cameraOffset, Texture2D destTexture, Rect destRect)
+	public void takeSnapshot(GameObject targetGO, Texture2D destTexture, int destX, int destY)
 	{
-        RenderTexture currentRT = RenderTexture.active;
-		RenderTexture.active = m_camera.targetTexture;
-		int prevLayer = targetGO.layer;
+		renderTexture.Create();
+		m_camera.targetTexture = renderTexture;
 
-		int srcWidth = m_camera.targetTexture.width;
-		int srcHeight = m_camera.targetTexture.height;
-		Debug.Assert(destRect.width == srcWidth && destRect.height == srcHeight, "destRect needs to have the same size as the render texture for now");
+        RenderTexture currentRT = RenderTexture.active;
+		RenderTexture.active = renderTexture;
+		int prevLayer = targetGO.layer;
 
 		Bounds bounds = targetGO.GetComponent<Renderer>().bounds;
 		m_cameraGO.transform.parent = targetGO.transform.parent;
-		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset + bounds.center;
+		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + targetOffset + bounds.center;
 		m_cameraGO.transform.LookAt(bounds.center);
 		targetGO.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
 
 		m_camera.Render();
 //		destTexture.Apply() - remember to do this in the end
 
-		destTexture.ReadPixels(new Rect(0, 0, srcWidth, srcHeight), (int)destRect.x, (int)destRect.y);
+		destTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), destX, destY);
 
 		targetGO.layer = prevLayer;
         RenderTexture.active = currentRT;

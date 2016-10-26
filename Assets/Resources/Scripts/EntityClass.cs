@@ -151,20 +151,20 @@ public class EntityClass : IProjectIOMember {
 		return mesh;
 	}
 
-	public Texture2D takeSnapshot(Vector3 cameraOffset)
+	public Texture2D takeSnapshot(SnapshotCamera camera)
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone(Root.kLodLit);
-		Texture2D snapshot = Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, cameraOffset);
+		Texture2D snapshot = camera.takeSnapshot(instance.gameObject);
 		instance.hideAndDestroy();
 		return snapshot;
 	}
 
-	public void takeSnapshot(Texture2D destTexture, Rect destRect, Vector3 cameraOffset)
+	public void takeSnapshot(SnapshotCamera camera, Texture2D destTexture, int destX, int destY)
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone(Root.kLodLit);
-		Root.instance.snapshotCamera.takeSnapshot(instance.gameObject, cameraOffset, destTexture, destRect);
+		camera.takeSnapshot(instance.gameObject, destTexture, destX, destY);
 		instance.hideAndDestroy();
 	}
 
