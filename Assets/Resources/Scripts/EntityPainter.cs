@@ -85,21 +85,35 @@ public class EntityPainter : MonoBehaviour {
 		m_entityClass = entityClass;
 		m_atlasIndexList = m_entityClass.atlasIndexList();
 		setListIndex(0);
-
-		foreach (GameObject go in m_thumbnailList) {
-			go.SetActive(false);
-			GameObject.Destroy(go);
-		}
-		m_thumbnailList.Clear();
-			
-		GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, 1, -10, -10, 50, 50);
-		m_thumbnailList.Add(thumbnailGO);
+		updateThumbnails();
 	}
 
 	public void setListIndex(int listIndex)
     {
 		m_currentListIndex = listIndex;
 		setAtlasIndex(m_atlasIndexList[listIndex]);
+	}
+
+	public void updateThumbnails()
+	{
+		foreach (GameObject go in m_thumbnailList) {
+			go.SetActive(false);
+			GameObject.Destroy(go);
+		}
+
+		m_thumbnailList.Clear();
+			
+		float thumbSize = 50;
+		float baseX = -10;
+		float baseY = -10;
+
+		for (int i = 0; i < m_atlasIndexList.Count; ++i) {
+			int atlasIndex = m_atlasIndexList[i];
+			float x = baseX + (i * thumbSize);
+			float y = baseY;
+			GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, atlasIndex, x , y, thumbSize, thumbSize);
+			m_thumbnailList.Add(thumbnailGO);
+		}
 	}
 
 	public void setAtlasIndex(int atlasIndex)
