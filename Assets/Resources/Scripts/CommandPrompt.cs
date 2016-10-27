@@ -313,7 +313,8 @@ public class CommandPrompt : MonoBehaviour {
 			commandHistoryIndex = commandHistory.Count - 1;
 			inputField.text = "";
 		} else {
-			printHelp(commandString);
+			if (token == "")
+				atlasDebugGO.SetActive(false);
 		}
 
 		inputField.ActivateInputField();
