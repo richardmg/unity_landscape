@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using EditMode = System.Int32;
 
 public class EntityPainter : MonoBehaviour {
+	public GameObject thumbnailRowGO;
+
 	Color color = Color.white;
 	Texture2D m_texture;
 	EntityClass m_entityClass;
@@ -19,15 +21,17 @@ public class EntityPainter : MonoBehaviour {
 	const EditMode kPaintMode = 0;
 	const EditMode kColorSelectMode = 1;
 
-	void OnEnable()
-    {
-		if (m_entityClass != null)
-			return;
-
+	void Awake()
+	{
 		// Use scale to enlarge the UI instead of the rect. At least not both.
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.x == Root.kSubImageWidth);
 		Debug.Assert(GetComponent<RectTransform>().sizeDelta.y == Root.kSubImageHeight);
 
+		createThumbnails();
+	}
+
+	void Start()
+	{
 		setEntityClass(Root.instance.player.currentEntityClass);
 	}
 
@@ -105,27 +109,42 @@ public class EntityPainter : MonoBehaviour {
 		setAtlasIndex(m_atlasIndexList[listIndex]);
 	}
 
-	public void updateThumbnails()
+	public void createThumbnails()
 	{
-		foreach (GameObject go in m_thumbnailList) {
-			go.SetActive(false);
-			GameObject.Destroy(go);
-		}
-
-		m_thumbnailList.Clear();
-			
+		int count = 10;
 		float thumbSize = 50;
 		float margin = 10;
 		float baseX = -260;
 		float baseY = -280;
 
-		for (int i = 0; i < m_atlasIndexList.Count; ++i) {
-			int atlasIndex = m_atlasIndexList[i];
+		for (int i = 0; i < count; ++i) {
+			GameObject imageGO = new GameObject("Thumbnail " + i);
+			imageGO.transform.SetParent(thumbnailRowGO.transform.parent);
+
+			RawImage image = imageGO.AddComponent<RawImage>();
+			image.texture = Root.instance.atlasManager.textureAtlas;
+
 			float x = baseX + (i * (thumbSize + margin));
 			float y = baseY;
-			GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, atlasIndex, x, y, thumbSize, thumbSize);
-			m_thumbnailList.Add(thumbnailGO);
+			image.rectTransform.anchoredPosition = new Vector3(x, y);
+			image.rectTransform.sizeDelta = new Vector2(thumbSize, thumbSize);
 		}
+	}
+
+	public void updateThumbnails()
+	{
+//		int i = 0;
+//		for (; i < m_atlasIndexList.Count; ++i) {
+//			int atlasIndex = m_atlasIndexList[i];
+//			float x = baseX + (i * (thumbSize + margin));
+//			float y = baseY;
+//			GameObject thumbnailGO = Root.instance.atlasManager.createThumbnailImage(transform, atlasIndex, x, y, thumbSize, thumbSize);
+//			m_thumbnailList.Add(thumbnailGO);
+//		}
+//
+//		for (; i < m_thumbnailList.Count; ++i) {
+//			// Clear thumbnail contents
+//		}
 	}
 
 	public void setAtlasIndex(int atlasIndex)
