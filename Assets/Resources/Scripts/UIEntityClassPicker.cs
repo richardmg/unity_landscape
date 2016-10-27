@@ -184,6 +184,11 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		y = (int)topY + (int)(y * (h / tableTexture.height));
 	}
 
+	public void onCloseButtonClicked()
+	{
+		Root.instance.uiManager.showFirstPersonUI();
+	}
+
 	public void onCloneButtonClicked()
 	{
 		EntityClass originalEntityClass = Root.instance.entityManager.getEntity(selectedIndex);
