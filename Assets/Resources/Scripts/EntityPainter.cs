@@ -114,12 +114,9 @@ public class EntityPainter : MonoBehaviour {
 		for (int i = 0; i < count; ++i) {
 			GameObject thumbnailGO = new GameObject("Thumbnail " + i);
 			thumbnailGO.transform.SetParent(thumbnailRowGO.transform);
-
 			RawImage image = thumbnailGO.AddComponent<RawImage>();
-			image.texture = Root.instance.atlasManager.textureAtlas;
 
 			float x = (thumbSize / 2) + (i * (thumbSize + margin));
-
 			image.rectTransform.anchorMin = new Vector2(0, 0.5f);
 			image.rectTransform.anchorMax = new Vector2(0, 0.5f);
 			image.rectTransform.anchoredPosition = new Vector3(x, 0);
@@ -134,6 +131,7 @@ public class EntityPainter : MonoBehaviour {
 		int i = 0;
 		for (; i < m_atlasIndexList.Count; ++i) {
 			int atlasIndex = m_atlasIndexList[i];
+			m_thumbnailImageList[i].texture = Root.instance.atlasManager.textureAtlas;
 			m_thumbnailImageList[i].uvRect = Root.instance.atlasManager.getUVRectForIndex(atlasIndex);
 		}
 
