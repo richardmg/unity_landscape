@@ -55,29 +55,19 @@ public class Root : MonoBehaviour {
 		instance = this;
 	}
 
-	void OnValidate()
-	{
-		init();
-	}
-
 	void Awake()
 	{
-		init();
-		projectManager.restoreSession();
-	}
+		uiManager = uiGO.GetComponent<UIManager>();
+		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
+		player = playerGO.GetComponent<PlayerStartupScript>();
+		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
 
-	void init()
-	{
 		meshManager = new MeshManager();
 		entityManager = new EntityManager();
 		projectManager = new ProjectManager();
 		atlasManager = new AtlasManager();
 		notificationManager = new NotificationManager();
-
-		uiManager = uiGO.GetComponent<UIManager>();
-		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
-		player = playerGO.GetComponent<PlayerStartupScript>();
-		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
+		projectManager.restoreSession();
 	}
 
 	public GameObject getPrefab(string prefabName)

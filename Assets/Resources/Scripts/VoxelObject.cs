@@ -29,7 +29,7 @@ public class VoxelObject : MonoBehaviour {
 
 	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions = null)
 	{
-		if (voxelMeshFactory == null)
+		if (voxelMeshFactory == null) 
 			voxelMeshFactory = new VoxelMeshFactory();
 
 		voxelMeshFactory.atlasIndex = indexSubstitutions == null ? atlasIndex : indexSubstitutions[atlasIndex];

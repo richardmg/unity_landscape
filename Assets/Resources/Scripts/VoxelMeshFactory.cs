@@ -68,10 +68,11 @@ public class VoxelMeshFactory {
 
 	public void beginMesh()
 	{
-		texture = Root.instance.atlasManager.textureAtlas;
-		if (!texture) {
-			// let texture be assignable, like a state machine. Don't assign it here
-		}
+		if (Application.isEditor)
+			texture = Root.instance.textureAtlas;
+		else
+			texture = Root.instance.atlasManager.textureAtlas;
+
 		mesh = new Mesh();
 		verticeList.Clear();
 		vertexPixelList.Clear();
