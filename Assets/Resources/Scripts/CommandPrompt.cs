@@ -45,6 +45,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("project list [pattern] : list all project that conforms to pattern");
 		helpList.Add("entity indexlist [id] : print atlas indecies used by entity");
 		helpList.Add("entity clearcache [id] : clear entity mesh cache");
+		helpList.Add("entity classcount : print number of entity classes");
 		helpList.Add("notify entitychanged [id] : update listeners that entity changed");
 		helpList.Add("player entity : print entity held by player");
 		helpList.Add("player pos: print players position");
@@ -289,6 +290,10 @@ public class CommandPrompt : MonoBehaviour {
 				entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
 				log("Cleard mesh cache (and sendt entity changed notification) for entity: " + id);
+				accepted = true;
+			} else if (token == "classcount") {
+				int count = Root.instance.entityManager.allEntityClasses.Count;
+				log("Number of entity classes: " + count);
 				accepted = true;
 			}
 		} else if (token == "notify") {

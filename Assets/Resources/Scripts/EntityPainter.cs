@@ -136,8 +136,10 @@ public class EntityPainter : MonoBehaviour {
 		}
 
 		Rect emptyRect = new Rect();
-		for (; i < m_thumbnailImageList.Count; ++i)
+		for (; i < m_thumbnailImageList.Count; ++i) {
+			m_thumbnailImageList[i].texture = Root.instance.atlasManager.textureAtlas;
 			m_thumbnailImageList[i].uvRect = emptyRect;
+		}
 	}
 
 	public void setAtlasIndex(int atlasIndex)
