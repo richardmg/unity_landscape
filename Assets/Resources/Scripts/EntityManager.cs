@@ -36,7 +36,7 @@ public class EntityManager : IProjectIOMember
 		allEntityClasses = new List<EntityClass>();
 
 		// Add premade entity classes already present in the texture atlas
-		new EntityClass("SquareTree");
+		new EntityClass("BallTree");
 	}
 
 	public void load(ProjectIO projectIO)

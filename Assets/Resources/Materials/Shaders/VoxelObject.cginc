@@ -18,7 +18,7 @@ sampler2D _DetailTex;
 float4 _MainTex_ST;
 
 static float2 _TextureSize = float2(64, 64);
-static float2 _SubImageSize = float2(16, 8);
+static float2 _SubImageSize = float2(16, 16);
 
 static float2 _UVAtlasOnePixel = 1.0f / _TextureSize;
 static float2 _UVAtlasHalfPixel = _UVAtlasOnePixel / 2;
