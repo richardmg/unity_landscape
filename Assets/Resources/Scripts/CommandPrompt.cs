@@ -308,8 +308,8 @@ public class CommandPrompt : MonoBehaviour {
 		if (accepted) {
 			const int maxLines = 10;
 			commandHistory.Add(commandString);
-			if (commandHistory.Count >= maxLines)
-				outputList.RemoveRange(maxLines, commandHistory.Count - maxLines);
+			if (commandHistory.Count > maxLines)
+				commandHistory.RemoveAt(0);
 			commandHistoryIndex = commandHistory.Count - 1;
 			inputField.text = "";
 		} else {
