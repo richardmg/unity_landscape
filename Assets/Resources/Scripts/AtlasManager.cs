@@ -18,7 +18,7 @@ public class AtlasManager : IProjectIOMember
 	{
 	}
 
-	public void getAtlasPixelForIndex(int atlasIndex, out int x, out int y)
+	public static void getAtlasPixelForIndex(int atlasIndex, out int x, out int y)
 	{
 		x = (atlasIndex * Root.kSubImageWidth) % Root.kAtlasWidth;
 		y = (int)((atlasIndex * Root.kSubImageWidth) / Root.kAtlasHeight) * Root.kSubImageHeight;

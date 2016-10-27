@@ -69,6 +69,9 @@ public class VoxelMeshFactory {
 	public void beginMesh()
 	{
 		texture = Root.instance.atlasManager.textureAtlas;
+		if (!texture) {
+			// let texture be assignable, like a state machine. Don't assign it here
+		}
 		mesh = new Mesh();
 		verticeList.Clear();
 		vertexPixelList.Clear();
@@ -78,7 +81,7 @@ public class VoxelMeshFactory {
 
 	public void buildMesh()
 	{
-		Root.instance.atlasManager.getAtlasPixelForIndex(atlasIndex, out startPixelX, out startPixelY);
+		AtlasManager.getAtlasPixelForIndex(atlasIndex, out startPixelX, out startPixelY);
 		cropRect = calculatecropRect();
 
 		if (useVolume && !kDisableVolume) {

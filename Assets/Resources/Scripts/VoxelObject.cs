@@ -54,7 +54,7 @@ public class VoxelObject : MonoBehaviour {
 		return voxelMeshFactory.createMesh();
 	}
 
-	void makeStandalone()
+	public void makeStandalone()
 	{
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
 		if (!meshFilter)

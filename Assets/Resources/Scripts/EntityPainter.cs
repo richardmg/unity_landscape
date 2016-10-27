@@ -146,7 +146,7 @@ public class EntityPainter : MonoBehaviour {
 	{
 		currentAtlasIndex = atlasIndex;
 		int atlasPixelX, atlasPixelY;
-		Root.instance.atlasManager.getAtlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
+		AtlasManager.getAtlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
 		var pixels = texture.GetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight);
 
@@ -172,7 +172,7 @@ public class EntityPainter : MonoBehaviour {
 
 		int atlasPixelX;
 		int atlasPixelY;
-		Root.instance.atlasManager.getAtlasPixelForIndex(currentAtlasIndex, out atlasPixelX, out atlasPixelY);
+		AtlasManager.getAtlasPixelForIndex(currentAtlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
 		texture.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
 		texture.Apply();
