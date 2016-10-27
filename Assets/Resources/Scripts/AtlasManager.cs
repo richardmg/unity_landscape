@@ -85,7 +85,7 @@ public class AtlasManager : IProjectIOMember
 
 	public void copySubImage(int srcIndex, int destIndex, Texture2D srcAtlas, Texture2D destAtlas)
 	{
-		if (srcIndex == destIndex)
+		if (srcIndex == destIndex && srcAtlas == destAtlas)
 			return;
 
 		int srcX, srcY, destX, destY;
