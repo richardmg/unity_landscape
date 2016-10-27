@@ -23,12 +23,12 @@ public class CommandPrompt : MonoBehaviour {
 
 	void Awake()
 	{
-		helpList.Add("atlas copy [from] [to] : copy subimage inside project atlas");
+		helpList.Add("atlas copyindex [from] [to] : copy subimage inside project atlas");
 		helpList.Add("atlas show : show atlas image");
 		helpList.Add("atlas hide: hide atlas image");
 		helpList.Add("baseatlas show : show base atlas image");
 		helpList.Add("baseatlas hide: hide base atlas image");
-		helpList.Add("baseatlas copy [from] [to] : copy subimage inside base atlas");
+		helpList.Add("baseatlas copyindex [from] [to] : copy subimage inside base atlas");
 		helpList.Add("baseatlas copyindextoproject [from] [to] : copy subimage from base atas to project atlas");
 		helpList.Add("baseatlas copyindexfromproject [from] [to] : copy subimage from project atas to base atlas");
 		helpList.Add("baseatlas copyatlasfromproject : copy project atlas to base atlas");
@@ -149,7 +149,7 @@ public class CommandPrompt : MonoBehaviour {
 
 		if (token == "atlas") {
 			token = nextToken();
-			if (token == "copy") {
+			if (token == "copyindex") {
 				int srcIndex = nextInt();
 				int destIndex = nextInt();
 				Root.instance.atlasManager.copySubImageFromProjectToProject(srcIndex, destIndex);
@@ -172,7 +172,7 @@ public class CommandPrompt : MonoBehaviour {
 			} else if (token == "hide") {
 				atlasDebugGO.SetActive(false);
 				accepted = true;
-			} else if (token == "copy") {
+			} else if (token == "copyindex") {
 				int srcIndex = nextInt();
 				int destIndex = nextInt();
 				Root.instance.atlasManager.copySubImageFromBaseToBase(srcIndex, destIndex);
