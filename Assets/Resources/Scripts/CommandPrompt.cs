@@ -29,8 +29,10 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("baseatlas show : show base atlas image");
 		helpList.Add("baseatlas hide: hide base atlas image");
 		helpList.Add("baseatlas copy [from] [to] : copy subimage inside base atlas");
-		helpList.Add("baseatlas copytoproject [from] [to] : copy subimage from base atas to project atlas");
-		helpList.Add("baseatlas copyfromproject [from] [to] : copy subimage from project atas to base atlas");
+		helpList.Add("baseatlas copyindextoproject [from] [to] : copy subimage from base atas to project atlas");
+		helpList.Add("baseatlas copyindexfromproject [from] [to] : copy subimage from project atas to base atlas");
+		helpList.Add("baseatlas copyatlasfromproject : copy project atlas to base atlas");
+		helpList.Add("baseatlas copyatlastoproject : copy base atlas to project atlas");
 		helpList.Add("baseatlas save : save base atlas image back to common resource folder");
 		helpList.Add("painter index : print current atlas index in entity painter");
 		helpList.Add("painter setindex : set current atlas index in entity painter");
@@ -175,15 +177,21 @@ public class CommandPrompt : MonoBehaviour {
 				int destIndex = nextInt();
 				Root.instance.atlasManager.copySubImageFromBaseToBase(srcIndex, destIndex);
 				accepted = true;
-			} else if (token == "copytoproject") {
+			} else if (token == "copyindextoproject") {
 				int srcIndex = nextInt();
 				int destIndex = nextInt();
 				Root.instance.atlasManager.copySubImageFromBaseToProject(srcIndex, destIndex);
 				accepted = true;
-			} else if (token == "copyfromproject") {
+			} else if (token == "copyindexfromproject") {
 				int srcIndex = nextInt();
 				int destIndex = nextInt();
 				Root.instance.atlasManager.copySubImageFromProjectToBase(srcIndex, destIndex);
+				accepted = true;
+			} else if (token == "copyatlastoproject") {
+				Root.instance.atlasManager.copyAtlasBaseToProject();
+				accepted = true;
+			} else if (token == "copyatlasfromproject") {
+				Root.instance.atlasManager.copyAtlasProjectToBase();
 				accepted = true;
 			} else if (token == "save") {
 				Root.instance.atlasManager.saveBaseAtlasTexture();

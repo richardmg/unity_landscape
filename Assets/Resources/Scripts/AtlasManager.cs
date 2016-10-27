@@ -96,6 +96,22 @@ public class AtlasManager : IProjectIOMember
 		destAtlas.Apply();
 	}
 
+	public void copyAtlasProjectToBase()
+	{
+		Texture2D defaultAtlas = Root.instance.textureAtlas;
+		defaultAtlas.SetPixels32(textureAtlas.GetPixels32());
+		defaultAtlas.Apply();
+	}
+
+	public void copyAtlasBaseToProject()
+	{
+		Texture2D defaultAtlas = Root.instance.textureAtlas;
+		textureAtlas.SetPixels32(defaultAtlas.GetPixels32());
+		textureAtlas.Apply();
+
+		syncMaterialsWithAtlas();
+	}
+
 	public void syncMaterialsWithAtlas()
 	{
 		Debug.Assert(textureAtlas);
