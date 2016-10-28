@@ -80,5 +80,6 @@ public class EntityManager : IProjectIOMember
 		new EntityClass("BallTree");
 		new EntityClass("SquareTree");
 		new EntityClass("Grass");
+		new EntityClass("GrassFlat");
 	}
 }

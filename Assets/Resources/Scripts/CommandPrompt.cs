@@ -49,6 +49,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("entity classcount : print number of entity classes");
 		helpList.Add("entity name [id]: print the name of entity class");
 		helpList.Add("entity prefab [id]: print the name of the prefab the entity is based on");
+		helpList.Add("entity new [prefab]: create a new entity class based on the given prefab");
 		helpList.Add("notify entitychanged [id] : update listeners that entity changed");
 		helpList.Add("player entity : print entity held by player");
 		helpList.Add("player pos: print players position");
@@ -324,6 +325,11 @@ public class CommandPrompt : MonoBehaviour {
 				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
 				entityClass.getMesh(lod);
 				log("Vertex count: " + entityClass.getVertexCount(lod));
+				accepted = true;
+			} else if (token == "new") {
+				string prefabName = nextToken();
+				EntityClass entityClass = new EntityClass(prefabName);
+				log("Created new entity class with id: " + entityClass.id);
 				accepted = true;
 			}
 		} else if (token == "notify") {
