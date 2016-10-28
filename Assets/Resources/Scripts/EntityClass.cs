@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using Lod = System.Int32;
 using EntityClassID = System.Int32;
 
-public class EntityClass : IProjectIOMember {
+public class EntityClass {
 	public Dictionary<int, int> indexSubstitutions;
 	public GameObject prefab;
 	public string prefabName;
@@ -15,6 +15,7 @@ public class EntityClass : IProjectIOMember {
 
 	// id is set by EntityManager
 	public int id = -1;
+	public bool removed = false;
 
 	VoxelObjectRoot m_voxelObjectRoot;
 
@@ -73,10 +74,8 @@ public class EntityClass : IProjectIOMember {
 		Root.instance.entityManager.addEntityClass(this);
 	}
 
-	public EntityClass(bool notify = true)
-	{
-		Root.instance.entityManager.addEntityClass(this, notify);
-	}
+	private EntityClass()
+	{}
 
 	public void remove()
 	{
@@ -142,6 +141,7 @@ public class EntityClass : IProjectIOMember {
 
 	public Mesh getMesh(Lod lod)
 	{
+		Debug.Assert(!removed, "This entity class has beed removed from project. The caller has and old reference!");
 		Mesh mesh = m_mesh[lod];
 		if (mesh == null || unmarkDirty(DirtyFlags.Mesh)) {
 			mesh = m_voxelObjectRoot.createMesh(lod, indexSubstitutions);
@@ -168,12 +168,16 @@ public class EntityClass : IProjectIOMember {
 		instance.hideAndDestroy();
 	}
 
-	public void initNewProject()
-	{}
-
-	public void load(ProjectIO projectIO)
+	public static EntityClass load(ProjectIO projectIO, bool notify = true)
 	{
-		Debug.Assert(id == projectIO.readInt());
+		EntityClass c = new EntityClass();
+		c.loadInstance(projectIO, notify);
+		return c;
+	}
+
+	public void loadInstance(ProjectIO projectIO, bool notify)
+	{
+		id = projectIO.readInt();
 		prefabName = projectIO.readString();
 		entityName = projectIO.readString();
 
@@ -190,6 +194,8 @@ public class EntityClass : IProjectIOMember {
 			int newIndex = Root.instance.atlasManager.acquireIndex();
 			indexSubstitutions[baseIndex] = newIndex;
 		}
+
+		Root.instance.entityManager.addEntityClass(this, id, notify);
 	}
 
 	public void save(ProjectIO projectIO)

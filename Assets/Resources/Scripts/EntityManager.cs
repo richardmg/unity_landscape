@@ -5,11 +5,17 @@ using System.Collections.Generic;
 
 public class EntityManager : IProjectIOMember
 {
-	public List<EntityClass> allEntityClasses;
+	public List<EntityClass> allEntityClasses = new List<EntityClass>();
 
 	public void addEntityClass(EntityClass entityClass, bool notify = true)
 	{
-		entityClass.id = allEntityClasses.Count;
+		int newID = allEntityClasses.Count;
+		addEntityClass(entityClass, newID, notify);
+	}
+
+	public void addEntityClass(EntityClass entityClass, int id, bool notify = true)
+	{
+		entityClass.id = id;
 		allEntityClasses.Add(entityClass);
 
 		if (notify)
@@ -18,10 +24,21 @@ public class EntityManager : IProjectIOMember
 
 	public void removeEntityClass(EntityClass entityClass, bool notify = true)
 	{
+		entityClass.removed = true;
 		allEntityClasses.Remove(entityClass);
 
 		if (notify)
 			Root.instance.notificationManager.notifyEntityClassAdded(entityClass);
+	}
+
+	public void removeAllEntityClasses()
+	{
+		// Mark the old classes as destroyed, since they should
+		// no longer be used by anyone.
+		foreach (EntityClass entityClass in allEntityClasses)
+			entityClass.removed = true;
+
+		allEntityClasses = new List<EntityClass>();
 	}
 
 	public EntityClass getEntity(int id)
@@ -33,7 +50,7 @@ public class EntityManager : IProjectIOMember
 
 	public void initNewProject()
 	{
-		allEntityClasses = new List<EntityClass>();
+		removeAllEntityClasses();
 
 		// Add premade entity classes already present in the texture atlas
 		new EntityClass("BallTree");
@@ -41,13 +58,11 @@ public class EntityManager : IProjectIOMember
 
 	public void load(ProjectIO projectIO)
 	{
-		allEntityClasses = new List<EntityClass>();
-		int classCount = projectIO.readInt();
+		removeAllEntityClasses();
 
-		for (int i = 0; i < classCount; ++i) {
-			EntityClass entityClass = new EntityClass(false);
-			entityClass.load(projectIO);
-		}
+		int classCount = projectIO.readInt();
+		for (int i = 0; i < classCount; ++i)
+			EntityClass.load(projectIO, false);
 	}
 
 	public void save(ProjectIO projectIO)
