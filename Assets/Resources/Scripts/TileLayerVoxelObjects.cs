@@ -38,20 +38,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 
 		m_entityClass = Root.instance.entityManager.getEntity(0);
 
-		for (int z = 0; z < tileCount; ++z) {
-			for (int x = 0; x < tileCount; ++x) {
-				GameObject tile = new GameObject();
-				tile.AddComponent<MeshFilter>();
-				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
-				meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
-
-				tile.name = "Tile " + x + ", " + z;
-				tile.transform.parent = transform;
-				m_tileMatrix[x, z] = tile;
-
-				initVoxelObjects(tile);
-			}
-		}
+		createAllTiles();
 
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityListener(this);
@@ -59,17 +46,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 //		PivotAdjustment pa = prefab.GetComponent<PivotAdjustment>();
 //		if (pa != null)
 //			m_pivotAdjustmentY = pa.adjustY;
-	}
-
-	public void rebuildAllTiles()
-	{
-		int tileCount = m_tileEngine.tileCount;
-		for (int z = 0; z < tileCount; ++z) {
-			for (int x = 0; x < tileCount; ++x) {
-				GameObject tile = m_tileMatrix[x, z];
-				rebuildTileMesh(tile);
-			}
-		}
 	}
 
 	public void onEntityInstanceAdded(EntityInstance entityInstance)
@@ -90,7 +66,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 	public void onEntityClassChanged(EntityClass entityClass)
 	{
 		// Rebuild all tiles, since we don't keep track which tiles contains which objects
-		rebuildAllTiles();
+		rebuildTileMeshes();
 	}
 
 	public void onEntityClassAdded(EntityClass entityClass)
@@ -104,7 +80,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 	public void onProjectLoaded()
 	{
 		m_entityClass = Root.instance.entityManager.getEntity(0);
-		rebuildAllTiles();
+		removeAllTiles();
+		createAllTiles();
+		m_tileEngine.updateAllTiles();
 		Debug.Log("todo: check that we don't rebuild twize after project loaded");
 	}
 
@@ -114,7 +92,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 			TileDescription desc = tilesToMove[i];
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
-			moveVoxelObjects(tile);
+			moveEntityInstances(tile);
 			rebuildTileMesh(tile);
 		}
 	}
@@ -133,7 +111,37 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		}
 	}
 
-	private void initVoxelObjects(GameObject tile)
+	public void createAllTiles()
+	{
+		int tileCount = m_tileEngine.tileCount;
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
+				GameObject tile = new GameObject();
+				tile.AddComponent<MeshFilter>();
+				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
+				meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
+
+				tile.name = "Tile " + x + ", " + z;
+				tile.transform.parent = transform;
+				m_tileMatrix[x, z] = tile;
+
+				createEntityInstances(tile);
+			}
+		}
+	}
+
+	public void rebuildTileMeshes()
+	{
+		int tileCount = m_tileEngine.tileCount;
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
+				GameObject tile = m_tileMatrix[x, z];
+				rebuildTileMesh(tile);
+			}
+		}
+	}
+
+	void createEntityInstances(GameObject tile)
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
@@ -142,7 +150,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		}
 	}
 
-	private void moveVoxelObjects(GameObject tile)
+	private void moveEntityInstances(GameObject tile)
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {

@@ -16,7 +16,7 @@ public class WorldTile
 	public List<GameObject> entityInstances = new List<GameObject>();
 }
 
-public class LandscapeManager : MonoBehaviour {
+public class LandscapeManager : MonoBehaviour,  IProjectIOMember {
 
 	[Range (0, 700)]
 	public float tileHeightOct0 = 200;
@@ -46,13 +46,7 @@ public class LandscapeManager : MonoBehaviour {
 
 	void Awake()
 	{
-		// Create a matrix that holds all explicit things
-		worldMatrix = new WorldTile[10, 10];
-		for (int x = 0; x < worldMatrix.GetLength(0); ++x) {
-			for (int y = 0; y < worldMatrix.GetLength(1); ++y) {
-				worldMatrix[x, y] = new WorldTile();
-			}
-		}
+		clearWorldMatrix();
 	}
 
 	void OnValidate()
@@ -60,6 +54,16 @@ public class LandscapeManager : MonoBehaviour {
 		foreach (TileEngine tileEngine in GetComponentsInChildren<TileEngine>()) {
 			if (tileEngine.showInEditor)
 				tileEngine.updateAllTiles();
+		}
+	}
+
+	void clearWorldMatrix()
+	{
+		worldMatrix = new WorldTile[10, 10];
+		for (int x = 0; x < worldMatrix.GetLength(0); ++x) {
+			for (int y = 0; y < worldMatrix.GetLength(1); ++y) {
+				worldMatrix[x, y] = new WorldTile();
+			}
 		}
 	}
 
@@ -88,6 +92,20 @@ public class LandscapeManager : MonoBehaviour {
 	{
 		worldMatrix[0, 0].entityInstances.Add(entityInstance.gameObject);
 		Root.instance.notificationManager.notifyEntityInstanceAdded(entityInstance);
+	}
+
+	public void initNewProject()
+	{
+		clearWorldMatrix();	
+	}
+
+	public void load(ProjectIO projectIO)
+	{
+		clearWorldMatrix();	
+	}
+
+	public void save(ProjectIO projectIO)
+	{
 	}
 
 }
