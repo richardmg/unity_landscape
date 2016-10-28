@@ -65,6 +65,8 @@ public class VoxelObject : MonoBehaviour {
 		if (!meshRenderer)
 			meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
 
-		meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
+		// Use separate material to let atlas stay unchanged after playing in editor
+		Material mat = (Material)Resources.Load("Materials/VoxelObjectEditor", typeof(Material));
+		meshRenderer.sharedMaterial = mat;
 	}
 }
