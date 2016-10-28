@@ -71,6 +71,8 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 				m_terrainMatrix[x, z] = go.GetComponent<Terrain>();
 			}
 		}
+
+		engine.updateAllTiles();
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)

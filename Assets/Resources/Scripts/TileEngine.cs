@@ -50,21 +50,12 @@ public class TileEngine : MonoBehaviour {
 
 	ITileLayer[] m_tileLayerArray;
 
-	public void OnValidate()
+	void Awake()
 	{
-		removeAllTiles();
-		if (!showInEditor)
-			return;
-
 		init();
-		updateAllTiles();
-	}
-
-	void Start()
-	{
-		removeAllTiles();
-		init();
-		updateAllTiles();
+		// Note: tile layer is responsible for calling
+		// updateAllTiles from init, or upon callback that the
+		// project has been loaded.
 	}
 
 	void Update()

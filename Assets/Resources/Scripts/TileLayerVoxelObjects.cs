@@ -10,23 +10,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 	public float paddingBetweenObjects = 25;
 
 	GameObject[,] m_tileMatrix;
-	float m_pivotAdjustmentY;
 	TileEngine m_tileEngine;
 	EntityClass m_entityClass;
-
-	public void OnValidate()
-	{
-		if (m_tileEngine == null)
-			return;
-		if (!m_tileEngine.showInEditor)
-			return;
-
-		int currentObjectCount = (int)Mathf.Sqrt(transform.GetChild(0).childCount);
-		if (currentObjectCount != objectCount)
-			m_tileEngine.OnValidate();
-		else
-			m_tileEngine.updateAllTiles();
-	}
 
 	public void initTileLayer(TileEngine engine)
 	{
@@ -35,17 +20,19 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
-
-		m_entityClass = Root.instance.entityManager.getEntity(0);
-
-		createAllTiles();
-
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityListener(this);
+	}
 
-//		PivotAdjustment pa = prefab.GetComponent<PivotAdjustment>();
-//		if (pa != null)
-//			m_pivotAdjustmentY = pa.adjustY;
+	public void moveTiles(TileDescription[] tilesToMove)
+	{
+		for (int i = 0; i < tilesToMove.Length; ++i) {
+			TileDescription desc = tilesToMove[i];
+			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			tile.transform.position = desc.worldPos;
+			moveEntityInstances(tile);
+			rebuildTileMesh(tile);
+		}
 	}
 
 	public void onEntityInstanceAdded(EntityInstance entityInstance)
@@ -59,8 +46,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		entityInstance.gameObject.transform.parent = tile.transform;
 		entityInstance.gameObject.SetActive(false);
 		rebuildTileMesh(tile);
-
-//		Debug.Log("Added " + thing.index + " in tile " + tile.name + " at world pos " + thing.worldPos);
 	}
 
 	public void onEntityClassChanged(EntityClass entityClass)
@@ -83,18 +68,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		removeAllTiles();
 		createAllTiles();
 		m_tileEngine.updateAllTiles();
-		Debug.Log("todo: check that we don't rebuild twize after project loaded");
-	}
-
-	public void moveTiles(TileDescription[] tilesToMove)
-	{
-		for (int i = 0; i < tilesToMove.Length; ++i) {
-			TileDescription desc = tilesToMove[i];
-			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
-			tile.transform.position = desc.worldPos;
-			moveEntityInstances(tile);
-			rebuildTileMesh(tile);
-		}
 	}
 
 	public void rebuildTileMesh(GameObject tile)
@@ -158,7 +131,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 				Transform voTransform = tile.transform.GetChild((int)(z * objectCount) + x);
 				int type = Root.instance.landscapeManager.getLandscapeType(worldPos);
 				if (type == LandscapeManager.kForrest) {
-					worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + m_pivotAdjustmentY;
+					worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos);
 					voTransform.position = worldPos;
 					voTransform.gameObject.GetComponent<EntityInstance>().instanceHidden = false;
 				} else {

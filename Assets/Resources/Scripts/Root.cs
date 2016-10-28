@@ -67,6 +67,13 @@ public class Root : MonoBehaviour {
 		projectManager = new ProjectManager();
 		atlasManager = new AtlasManager();
 		notificationManager = new NotificationManager();
+	}
+
+	void Start()
+	{
+		// Restore session on Start to ensure that all gameobjects
+		// have been initialized on Awake, and started to subscribe
+		// for notifications.
 		projectManager.restoreSession();
 	}
 

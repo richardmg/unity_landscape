@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UIEntityClassPicker : MonoBehaviour, EntityListener {
+public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListener {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
@@ -46,10 +46,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 
 		selectIndex(0);
-	}
 
-	void Start()
-	{
+		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityListener(this);
 	}
 
@@ -99,6 +97,14 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener {
 		y += textureCellHeight / 2;
 		textureToImagePos(ref x, ref y);
 		selectionRectGO.transform.position = new Vector3(x, y, 0);
+	}
+
+	public void onProjectLoaded()
+	{
+		m_dirty = true;
+		if (!gameObject.activeSelf)
+			return;
+		repaintTableTexture();
 	}
 
 	public void onEntityClassAdded(EntityClass entityClass)
