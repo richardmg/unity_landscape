@@ -61,6 +61,17 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 //			m_pivotAdjustmentY = pa.adjustY;
 	}
 
+	public void rebuildAllTiles()
+	{
+		int tileCount = m_tileEngine.tileCount;
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
+				GameObject tile = m_tileMatrix[x, z];
+				rebuildTileMesh(tile);
+			}
+		}
+	}
+
 	public void onEntityInstanceAdded(EntityInstance entityInstance)
 	{
 		// Find out which tile is currently under the new things position
@@ -79,13 +90,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 	public void onEntityClassChanged(EntityClass entityClass)
 	{
 		// Rebuild all tiles, since we don't keep track which tiles contains which objects
-		int tileCount = m_tileEngine.tileCount;
-		for (int z = 0; z < tileCount; ++z) {
-			for (int x = 0; x < tileCount; ++x) {
-				GameObject tile = m_tileMatrix[x, z];
-				rebuildTileMesh(tile);
-			}
-		}
+		rebuildAllTiles();
 	}
 
 	public void onEntityClassAdded(EntityClass entityClass)
@@ -99,6 +104,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 	public void onProjectLoaded()
 	{
 		m_entityClass = Root.instance.entityManager.getEntity(0);
+		rebuildAllTiles();
+		Debug.Log("todo: check that we don't rebuild twize after project loaded");
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
