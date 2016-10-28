@@ -93,6 +93,16 @@ public class EntityClass {
 		return instance;
 	}
 
+	public int getVertexCount(Lod lod)
+	{
+		if (lod >= Root.kLodCount)
+			return -1;
+		Mesh m = m_mesh[lod];
+		if (m == null)
+			return -1;
+		return m.vertexCount;
+	}
+
 	public List<int> atlasIndexList()
 	{
 		var list = new List<int>();

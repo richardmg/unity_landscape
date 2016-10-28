@@ -45,6 +45,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("project list [pattern] : list all project that conforms to pattern");
 		helpList.Add("entity indexlist [id] : print atlas indecies used by entity");
 		helpList.Add("entity clearcache [id] : clear entity mesh cache");
+		helpList.Add("entity vertexcount [id] [lod]: print the enity class' vertex count for the given lod");
 		helpList.Add("entity classcount : print number of entity classes");
 		helpList.Add("notify entitychanged [id] : update listeners that entity changed");
 		helpList.Add("player entity : print entity held by player");
@@ -294,6 +295,13 @@ public class CommandPrompt : MonoBehaviour {
 			} else if (token == "classcount") {
 				int count = Root.instance.entityManager.allEntityClasses.Count;
 				log("Number of entity classes: " + count);
+				accepted = true;
+			} else if (token == "vertexcount") {
+				int id = nextInt();
+				int lod = nextInt();
+				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				entityClass.getMesh(lod);
+				log("Vertex count: " + entityClass.getVertexCount(lod));
 				accepted = true;
 			}
 		} else if (token == "notify") {
