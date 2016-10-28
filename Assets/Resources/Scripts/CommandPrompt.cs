@@ -70,9 +70,17 @@ public class CommandPrompt : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Tab)) {
 			InputField inputField = inputGO.GetComponent<InputField>();
 			string textBefore = inputField.text;
-			string completed = stripNonCommands(autocomplete(inputField.text, helpList));
+			string completed = System.String.Empty;
+
+			if (textBefore.StartsWith("help")) {
+				string str = textBefore.Substring(5);
+				completed = "help " + stripNonCommands(autocomplete(str, helpList));
+			} else {
+				completed = stripNonCommands(autocomplete(textBefore, helpList));
+			}
+
 			if (completed.Length > 0 && completed != textBefore) {
-				inputField.text = stripNonCommands(autocomplete(inputField.text, helpList));
+				inputField.text = completed;
 				inputField.MoveTextEnd(false);
 			} else {
 				printHelp(inputField.text);
@@ -391,10 +399,19 @@ public class CommandPrompt : MonoBehaviour {
 
 	void printHelp(string startsWithString)
 	{
-		foreach (string helpString in helpList) {
-			if (helpString.StartsWith(startsWithString))
+		if (startsWithString.Length == 0) {
+			HashSet<string> helpIndex = new HashSet<string>();
+			foreach (string helpString in helpList)
+				helpIndex.Add(helpString.Split(new char[]{' '})[0]);
+			foreach (string helpString in helpIndex)
 				log(helpString, kListItem);
+			log("Help index", kHeading);
+		} else {
+			foreach (string helpString in helpList) {
+				if (helpString.StartsWith(startsWithString))
+					log(helpString, kListItem);
+			}
+			log("Help", kHeading);
 		}
-		log("Help", kHeading);
 	}
 }
