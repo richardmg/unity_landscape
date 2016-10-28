@@ -13,18 +13,13 @@ public class EntityPainter : MonoBehaviour {
 	int m_currentListIndex;
 	public int currentAtlasIndex;
 	List<int> m_atlasIndexList;
-	List<RawImage> m_thumbnailImageList = new List<RawImage>();
+	List<RawImage> m_thumbnailImageList;
 	EditMode m_currentMode = kPaintMode;
 	bool m_textureDirty = false;
 	bool m_clearToggleOn = false;
 
 	const EditMode kPaintMode = 0;
 	const EditMode kColorSelectMode = 1;
-
-	void Awake()
-	{
-		createThumbnails();
-	}
 
 	void Start()
 	{
@@ -111,6 +106,8 @@ public class EntityPainter : MonoBehaviour {
 		float thumbSize = 50;
 		float margin = 10;
 
+		m_thumbnailImageList = new List<RawImage>();
+
 		for (int i = 0; i < count; ++i) {
 			GameObject thumbnailGO = new GameObject("Thumbnail " + i);
 			thumbnailGO.transform.SetParent(thumbnailRowGO.transform);
@@ -128,6 +125,9 @@ public class EntityPainter : MonoBehaviour {
 
 	public void updateThumbnails()
 	{
+		if (m_thumbnailImageList == null)
+			createThumbnails();
+		
 		int i = 0;
 		for (; i < m_atlasIndexList.Count; ++i) {
 			int atlasIndex = m_atlasIndexList[i];
