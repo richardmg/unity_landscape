@@ -142,8 +142,12 @@ public class EntityClass {
 	public Mesh getMesh(Lod lod)
 	{
 		Debug.Assert(!removed, "This entity class has beed removed from project. The caller has and old reference!");
+
+		if (unmarkDirty(DirtyFlags.Mesh))
+			m_mesh = new Mesh[Root.kLodCount];
+
 		Mesh mesh = m_mesh[lod];
-		if (mesh == null || unmarkDirty(DirtyFlags.Mesh)) {
+		if (mesh == null) {
 			mesh = m_voxelObjectRoot.createMesh(lod, indexSubstitutions);
 			m_mesh[lod] = mesh;
 		}
