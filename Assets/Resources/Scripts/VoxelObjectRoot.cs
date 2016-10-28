@@ -5,6 +5,8 @@ using Lod = System.Int32;
 
 public class VoxelObjectRoot : MonoBehaviour {
 
+	public bool snapshotFromAbove = false;
+
 	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions)
 	{
 		VoxelObject[] selfAndchildren = GetComponentsInChildren<VoxelObject>(true);
