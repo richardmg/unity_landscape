@@ -51,9 +51,8 @@ public class EntityManager : IProjectIOMember
 	public void initNewProject()
 	{
 		removeAllEntityClasses();
+		registerPredefinedEntityClasses();
 
-		// Add premade entity classes already present in the texture atlas
-		new EntityClass("BallTree");
 	}
 
 	public void load(ProjectIO projectIO)
@@ -72,5 +71,14 @@ public class EntityManager : IProjectIOMember
 
 		for (int i = 0; i < classCount; ++i)
 			allEntityClasses[i].save(projectIO);
+	}
+
+	public void registerPredefinedEntityClasses()
+	{
+		// Create all entity classes that have
+		// premade subimages  in the texture atlas
+		new EntityClass("BallTree");
+		new EntityClass("SquareTree");
+		new EntityClass("Grass");
 	}
 }
