@@ -47,6 +47,8 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("entity clearcache [id] : clear entity mesh cache");
 		helpList.Add("entity vertexcount [id] [lod]: print the enity class' vertex count for the given lod");
 		helpList.Add("entity classcount : print number of entity classes");
+		helpList.Add("entity name [id]: print the name of entity class");
+		helpList.Add("entity prefab [id]: print the name of the prefab the entity is based on");
 		helpList.Add("notify entitychanged [id] : update listeners that entity changed");
 		helpList.Add("player entity : print entity held by player");
 		helpList.Add("player pos: print players position");
@@ -291,6 +293,18 @@ public class CommandPrompt : MonoBehaviour {
 				entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
 				log("Cleard mesh cache (and sendt entity changed notification) for entity: " + id);
+				accepted = true;
+			} else if (token == "name") {
+				int id = nextInt();
+				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				string name = entityClass.entityName;
+				log("Name of entity class: " + name);
+				accepted = true;
+			} else if (token == "prefab") {
+				int id = nextInt();
+				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				string name = entityClass.prefabName;
+				log("Name of entity class prefab: " + name);
 				accepted = true;
 			} else if (token == "classcount") {
 				int count = Root.instance.entityManager.allEntityClasses.Count;
