@@ -201,14 +201,12 @@ public class EntityClass {
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 
-		// Allocate indices in the TextureAtlas for this prefab variant
-		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
 		indexSubstitutions = new Dictionary<int, int>();
-
-		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
-			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
-			int newIndex = Root.instance.atlasManager.acquireIndex();
-			indexSubstitutions[baseIndex] = newIndex;
+		int substitutionKeysCount = projectIO.readInt();
+		for (int i = 0; i < substitutionKeysCount; ++i) {
+			int atlasIndex = projectIO.readInt();
+			int substitution = projectIO.readInt();
+			indexSubstitutions[atlasIndex] = substitution;
 		}
 
 		Root.instance.entityManager.addEntityClass(this, id, notify);
@@ -219,5 +217,12 @@ public class EntityClass {
 		projectIO.writeInt(id);
 		projectIO.writeString(prefabName);
 		projectIO.writeString(entityName);
+
+		var atlasIndexList = indexSubstitutions.Keys;
+		projectIO.writeInt(atlasIndexList.Count);
+		foreach (int atlasIndex in atlasIndexList) {
+			projectIO.writeInt(atlasIndex);
+			projectIO.writeInt(indexSubstitutions[atlasIndex]);
+		}
 	}
 }
