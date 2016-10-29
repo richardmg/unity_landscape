@@ -114,13 +114,18 @@ public class UIManager : MonoBehaviour {
 	}
 
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Tab) && !uiCommandPromptGO.activeSelf) {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			toggleCommandPromptUI(!uiCommandPromptGO.activeSelf);
+			return;
+		} else if (uiCommandPromptGO.activeSelf) {
+			return;
+		}
+
+		if (Input.GetKeyDown(KeyCode.Tab)) {
 			if (uiFirstPersonGO.activeSelf)
 				showCurrentMenu();
 			else
 				showFirstPersonUI();
-		} else if (Input.GetKeyDown(KeyCode.Quote)) {
-			toggleCommandPromptUI(!uiCommandPromptGO.activeSelf);
 		}
 	}
 

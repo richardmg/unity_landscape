@@ -64,7 +64,6 @@ public class CommandPrompt : MonoBehaviour {
 	{
 		InputField input = inputGO.GetComponent<InputField>();
 		input.ActivateInputField();
-		input.text = System.String.Empty;
 	}
 
 	void Update()
@@ -350,9 +349,6 @@ public class CommandPrompt : MonoBehaviour {
 				log("Sent entitychanged notification for entity: " + id);
 				accepted = true;
 			}
-		} else if (token == "'") {
-			// Close command
-			accepted = true;
 		}
 
 		if (accepted) {
