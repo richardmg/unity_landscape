@@ -224,6 +224,10 @@ public class CommandPrompt : MonoBehaviour {
 				else
 					Root.instance.projectManager.currentProject.save();
 				accepted = true;
+			} else if (token == "saveAs") {
+				token = nextToken();
+				Root.instance.projectManager.currentProject.saveAs(token);
+				accepted = true;
 			} else if (token == "load") {
 				token = nextToken();
 				if (token != "") {
