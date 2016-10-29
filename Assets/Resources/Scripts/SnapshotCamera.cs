@@ -3,30 +3,26 @@ using System.Collections;
 
 public class SnapshotCamera {
 
-	public Vector3 targetOffset;
-
 	Camera m_camera;
 	GameObject m_cameraGO;
 	RenderTexture renderTexture;
 
-	public SnapshotCamera(int renderTextureWidth = 256, int renderTextureHeight = 256, float targetOffset = -10)
+	public SnapshotCamera(int renderTextureWidth = 256, int renderTextureHeight = 256)
 	{
-		this.targetOffset = new Vector3(0, 0, targetOffset);
 		renderTexture = new RenderTexture(renderTextureWidth, renderTextureHeight, 16, RenderTextureFormat.ARGB32);
-
 		m_cameraGO = Root.instance.snapshotCameraGO;
 		m_camera = m_cameraGO.GetComponent<Camera>();
 	}
 
-	public Texture2D takeSnapshot(GameObject targetGO)
+	public Texture2D takeSnapshot(GameObject targetGO, Vector3 cameraOffset)
 	{
 		Texture2D targetTexture = new Texture2D(renderTexture.width, renderTexture.height);
-		takeSnapshot(targetGO, targetTexture, 0, 0);
+		takeSnapshot(targetGO, cameraOffset, targetTexture, 0, 0);
 		targetTexture.Apply();
 		return targetTexture;
 	}
 
-	public void takeSnapshot(GameObject targetGO, Texture2D destTexture, int destX, int destY)
+	public void takeSnapshot(GameObject targetGO, Vector3 cameraOffset, Texture2D destTexture, int destX, int destY)
 	{
 		renderTexture.Create();
 		m_camera.targetTexture = renderTexture;
@@ -37,7 +33,7 @@ public class SnapshotCamera {
 
 		Bounds bounds = targetGO.GetComponent<Renderer>().bounds;
 		m_cameraGO.transform.parent = targetGO.transform.parent;
-		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + targetOffset + bounds.center;
+		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset + bounds.center;
 		m_cameraGO.transform.LookAt(bounds.center);
 		targetGO.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
 

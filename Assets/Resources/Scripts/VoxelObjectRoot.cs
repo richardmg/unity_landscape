@@ -5,7 +5,7 @@ using Lod = System.Int32;
 
 public class VoxelObjectRoot : MonoBehaviour {
 
-	public bool snapshotFromAbove = false;
+	public Vector3 snapshotOffset = new Vector3(0, 0, -7);
 
 	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions)
 	{

@@ -169,7 +169,7 @@ public class EntityClass {
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone(Root.kLodLit);
-		Texture2D snapshot = camera.takeSnapshot(instance.gameObject);
+		Texture2D snapshot = camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset);
 		instance.hideAndDestroy();
 		return snapshot;
 	}
@@ -178,7 +178,7 @@ public class EntityClass {
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone(Root.kLodLit);
-		camera.takeSnapshot(instance.gameObject, destTexture, destX, destY);
+		camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset, destTexture, destX, destY);
 		instance.hideAndDestroy();
 	}
 

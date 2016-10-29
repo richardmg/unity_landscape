@@ -26,7 +26,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListene
 		int textureWidth = textureCellWidth * colCount;
 		int textureHeight = textureCellHeight * rowCount;
 
-		snapshotCamera = new SnapshotCamera(textureCellWidth, textureCellHeight, -7);
+		snapshotCamera = new SnapshotCamera(textureCellWidth, textureCellHeight);
 
 		// Create table texture, and assign it to the image ui component
 		tableTexture = new Texture2D(textureWidth, textureHeight);
