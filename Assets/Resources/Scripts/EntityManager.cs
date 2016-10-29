@@ -52,7 +52,6 @@ public class EntityManager : IProjectIOMember
 	{
 		removeAllEntityClasses();
 		registerPredefinedEntityClasses();
-
 	}
 
 	public void load(ProjectIO projectIO)
@@ -76,14 +75,14 @@ public class EntityManager : IProjectIOMember
 	public void registerPredefinedEntityClasses()
 	{
 		// Create all entity classes that have  premade subimages  in the texture atlas
-		string entityPrefabPath = Application.dataPath + "/Resources/Prefabs";
+		string entityPrefabPath = Application.dataPath + "/Resources/Prefabs/EntityClassPrefabs";
 		string[] prefabs = Directory.GetFiles(entityPrefabPath, "*.prefab");
 		foreach (string prefabFileName in prefabs) {
 			// Remove path
 			string prefabName = Path.GetFileName(prefabFileName);
 			// Remove ".prefab"
 			prefabName = prefabName.Remove(prefabName.Length - 7);
-			new EntityClass(prefabName);
+			new EntityClass("EntityClassPrefabs/" + prefabName);
 		}
 	}
 }
