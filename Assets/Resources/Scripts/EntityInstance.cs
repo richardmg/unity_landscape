@@ -35,7 +35,8 @@ public class EntityInstance : MonoBehaviour {
 
 		for (int i = 0; i < selfAndchildren.Length; ++i) {
 			EntityInstance entityClassInstance = selfAndchildren[i];
-			combine[i].mesh = entityClassInstance.instanceHidden ? new Mesh() : entityClassInstance.entityClass.getMesh(lod);
+			EntityClass entityClass = entityClassInstance.entityClass;
+			combine[i].mesh = entityClassInstance.instanceHidden ? new Mesh() : entityClass.getMesh(lod);
 			combine[i].transform = parentTransform * entityClassInstance.transform.localToWorldMatrix;
 		}
 

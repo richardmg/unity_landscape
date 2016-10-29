@@ -86,7 +86,9 @@ public class EntityClass {
 	{
 		GameObject go = new GameObject(name);
 		go.transform.parent = parent;
-		go.transform.localScale = Root.instance.entityBaseScale;
+		Vector3 localScale = m_voxelObjectRoot.transform.localScale;
+		localScale.Scale(Root.instance.entityBaseScale);
+		go.transform.localScale = localScale;
 		go.SetActive(false);
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
@@ -185,11 +187,11 @@ public class EntityClass {
 	public static EntityClass load(ProjectIO projectIO, bool notify = true)
 	{
 		EntityClass c = new EntityClass();
-		c.loadInstance(projectIO, notify);
+		c.initFromLoad(projectIO, notify);
 		return c;
 	}
 
-	public void loadInstance(ProjectIO projectIO, bool notify)
+	void initFromLoad(ProjectIO projectIO, bool notify)
 	{
 		id = projectIO.readInt();
 		prefabName = projectIO.readString();
