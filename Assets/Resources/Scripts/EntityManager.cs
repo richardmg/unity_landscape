@@ -75,11 +75,15 @@ public class EntityManager : IProjectIOMember
 
 	public void registerPredefinedEntityClasses()
 	{
-		// Create all entity classes that have
-		// premade subimages  in the texture atlas
-		new EntityClass("BallTree");
-		new EntityClass("SquareTree");
-		new EntityClass("Grass");
-		new EntityClass("GrassFlat");
+		// Create all entity classes that have  premade subimages  in the texture atlas
+		string entityPrefabPath = Application.dataPath + "/Resources/Prefabs";
+		string[] prefabs = Directory.GetFiles(entityPrefabPath, "*.prefab");
+		foreach (string prefabFileName in prefabs) {
+			// Remove path
+			string prefabName = Path.GetFileName(prefabFileName);
+			// Remove ".prefab"
+			prefabName = prefabName.Remove(prefabName.Length - 7);
+			new EntityClass(prefabName);
+		}
 	}
 }
