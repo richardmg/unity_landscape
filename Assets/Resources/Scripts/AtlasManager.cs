@@ -138,7 +138,7 @@ public class AtlasManager : IProjectIOMember
 
 	public void load(ProjectIO projectIO)
 	{
-		currentIndex = 0;
+		currentIndex = projectIO.readInt();
 
 		int imageByteCount = projectIO.readInt();
 		byte[] imageBytes = new byte[imageByteCount];
@@ -152,6 +152,7 @@ public class AtlasManager : IProjectIOMember
 
 	public void save(ProjectIO projectIO)
 	{
+		projectIO.writeInt(currentIndex);
 		byte[] bytes = textureAtlas.EncodeToPNG();
 		projectIO.writeInt(bytes.Length);
 		projectIO.stream.Write(bytes, 0, bytes.Length);
