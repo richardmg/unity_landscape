@@ -300,7 +300,7 @@ public class CommandPrompt : MonoBehaviour {
 				log("Moved player to position: " + Root.instance.player.transform.position);
 				accepted = true;
 			} else if (token == "entity") {
-				log("Player holds entity: " + Root.instance.player.currentEntityClass.id);
+				log("Player holds entity: " + Root.instance.player.currentEntityClass().id);
 				accepted = true;
 			}
 		} else if (token == "entity") {

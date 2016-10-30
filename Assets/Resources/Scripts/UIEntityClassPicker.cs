@@ -82,11 +82,22 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListene
 			Root.instance.uiManager.showFirstPersonUI();
 	}
 
+	public void selectEntityClass(EntityClass entityClass)
+	{
+		// This is propbably wrong once id doesn't map to index!
+		selectIndex(entityClass.id);
+	}
+
+	public EntityClass getSelectedEntityClass()
+	{
+		// This is propbably wrong once id doesn't map to index!
+		return Root.instance.entityManager.getEntity(selectedIndex);
+	}
+
 	public void selectIndex(int index)
 	{
 		selectedIndex = index;
 		moveSelectionRect(index);
-		Root.instance.player.currentEntityClass = Root.instance.entityManager.getEntity(index);
 	}
 
 	public void moveSelectionRect(int index)

@@ -218,4 +218,11 @@ public class EntityPainter : MonoBehaviour {
 		m_textureDirty = true;
 	}
 
+	public void onCloneButtonClicked()
+	{
+		EntityClass entityClass = new EntityClass(m_entityClass);
+		setEntityClass(entityClass);
+		Root.instance.uiManager.entityClassPicker.selectEntityClass(entityClass);
+	}
+
 }
