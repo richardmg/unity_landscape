@@ -27,6 +27,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("atlas show : show atlas image");
 		helpList.Add("atlas hide: hide atlas image");
 		helpList.Add("atlas saveasbase: copy project atlas to base atlas, and save base atlas");
+		helpList.Add("atlas saveindextopng [index] [name]: save subimage as png in project folder");
 		helpList.Add("baseatlas show : show base atlas image");
 		helpList.Add("baseatlas hide: hide base atlas image");
 		helpList.Add("baseatlas copyindex [from] [to] : copy subimage inside base atlas");
@@ -178,6 +179,11 @@ public class CommandPrompt : MonoBehaviour {
 			} else if (token == "saveasbase") {
 				Root.instance.atlasManager.copyAtlasProjectToBase();
 				Root.instance.atlasManager.saveBaseAtlasTexture();
+				accepted = true;
+			} else if (token == "saveindextopng") {
+				int index = nextInt();
+				string name = nextToken();
+				Root.instance.atlasManager.saveIndexToPNG(index, name);
 				accepted = true;
 			}
 		} else if (token == "baseatlas") {

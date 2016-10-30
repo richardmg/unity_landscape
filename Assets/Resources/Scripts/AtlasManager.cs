@@ -63,6 +63,16 @@ public class AtlasManager : IProjectIOMember
 		Root.instance.commandPrompt.log("Wrote texture: " + path);
 	}
 
+	public void saveIndexToPNG(int atlasIndex, string name)
+	{
+		string path = Application.dataPath + "/Resources/Textures/" + name + ".png";
+		Texture2D tex = new Texture2D(Root.kSubImageWidth, Root.kSubImageHeight);
+		copySubImage(atlasIndex, 0, textureAtlas, tex);
+		byte[] bytes = tex.EncodeToPNG();
+		File.WriteAllBytes(path, bytes);
+		Root.instance.commandPrompt.log("Wrote texture: " + path);
+	}
+
 	public void copySubImageFromBaseToBase(int srcIndex, int destIndex)
 	{
 		copySubImage(srcIndex, destIndex, Root.instance.textureAtlas, Root.instance.textureAtlas);
