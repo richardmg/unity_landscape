@@ -25,7 +25,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject entityPainterGO;
 	public GameObject backButton;
 
-	GameObject m_currentMenu;
+	public GameObject currentMenu;
 
 	[HideInInspector]
 	public UIEntityClassPicker entityClassPicker;
@@ -64,7 +64,7 @@ public class UIManager : MonoBehaviour {
 	public void push(GameObject ui, Action<bool> callback, bool show = true)
 	{
 		stack.Add(new UIManagerStackItem(ui, callback));
-		m_currentMenu = ui;
+		currentMenu = ui;
 		if (show)
 			showCurrentMenu();
 		if (stack.Count > 1)
@@ -77,7 +77,7 @@ public class UIManager : MonoBehaviour {
 		UIManagerStackItem itemToPopOff = stack[stack.Count - 1];
 		stack.RemoveAt(stack.Count - 1);	
 		UIManagerStackItem itemToShow = stack[stack.Count - 1];
-		m_currentMenu = itemToShow.ui;
+		currentMenu = itemToShow.ui;
 		showCurrentMenu();
 		itemToPopOff.callback(accepted);
 		if (stack.Count <= 1)
@@ -111,7 +111,7 @@ public class UIManager : MonoBehaviour {
 	{
 		hideUI();
 		backgroundGO.SetActive(true);
-		m_currentMenu.SetActive(true);
+		currentMenu.SetActive(true);
 		enableCursorMode(true);
 		enableFPSController(false);
 	}
