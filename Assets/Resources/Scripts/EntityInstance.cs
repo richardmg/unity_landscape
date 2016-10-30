@@ -31,6 +31,14 @@ public class EntityInstance : MonoBehaviour {
 		GameObject.Destroy(this.gameObject);
 	}
 
+	public void updateMesh()
+	{
+		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+		MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
+		meshFilter.sharedMesh = entityClass.getMesh(Root.kLod0);
+		meshCollider.sharedMesh = meshFilter.sharedMesh;
+	}
+
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
 	{
 		EntityInstance[] selfAndchildren = root.GetComponentsInChildren<EntityInstance>(true);

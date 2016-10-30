@@ -31,7 +31,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveEntityInstances(tile);
-//			rebuildTileMesh(tile);
+			rebuildTileMesh(tile);
 		}
 	}
 
@@ -44,8 +44,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 
 		// Create and position an instance of the thing as a child of the tile
 		entityInstance.gameObject.transform.parent = tile.transform;
-//		entityInstance.gameObject.SetActive(false);
-//		rebuildTileMesh(tile);
+		rebuildTileMesh(tile);
 	}
 
 	public void onEntityClassChanged(EntityClass entityClass)
@@ -72,8 +71,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 
 	public void rebuildTileMesh(GameObject tile)
 	{
-		Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
-		tile.GetComponent<MeshFilter>().sharedMesh = mesh;
+//		Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
+//		tile.GetComponent<MeshFilter>().sharedMesh = mesh;
+
+		EntityInstance[] selfAndchildren = tile.GetComponentsInChildren<EntityInstance>(true);
+		for (int i = 0; i < selfAndchildren.Length; ++i)
+			selfAndchildren[i].updateMesh();
 	}
 
 	public void removeAllTiles()
