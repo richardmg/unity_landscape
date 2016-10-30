@@ -45,7 +45,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListene
 		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
 		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 
-		selectIndex(0);
+		moveSelectionRect(selectedIndex);
 
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityListener(this);
@@ -97,7 +97,8 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListene
 	public void selectIndex(int index)
 	{
 		selectedIndex = index;
-		moveSelectionRect(index);
+		if (tableTexture != null)
+			moveSelectionRect(index);
 	}
 
 	public void moveSelectionRect(int index)
