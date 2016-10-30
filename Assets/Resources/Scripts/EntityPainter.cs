@@ -71,7 +71,7 @@ public class EntityPainter : MonoBehaviour {
 
 	void updateThumbnailSelect(Vector2 uv)
 	{
-		for (int i = 0; i < m_thumbnailImageList.Count; ++i) {
+		for (int i = 0; i < m_atlasIndexList.Count; ++i) {
 			RawImage image = m_thumbnailImageList[i];
 			Vector2 thumbUv = UIManager.getMousePosOnImage(image);
 			if (UIManager.isInside(thumbUv))
