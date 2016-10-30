@@ -31,7 +31,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveEntityInstances(tile);
-			rebuildTileMesh(tile);
+//			rebuildTileMesh(tile);
 		}
 	}
 
@@ -44,8 +44,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 
 		// Create and position an instance of the thing as a child of the tile
 		entityInstance.gameObject.transform.parent = tile.transform;
-		entityInstance.gameObject.SetActive(false);
-		rebuildTileMesh(tile);
+//		entityInstance.gameObject.SetActive(false);
+//		rebuildTileMesh(tile);
 	}
 
 	public void onEntityClassChanged(EntityClass entityClass)
@@ -118,7 +118,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 	{
 		for (int z = 0; z < objectCount; ++z) {
 			for (int x = 0; x < objectCount; ++x) {
-				m_entityClass.createInstance(tile.transform, "VoxelObject: " + x + ", " + z);
+				EntityInstance e = m_entityClass.createInstance(tile.transform, "VoxelObject: " + x + ", " + z);
+				e.gameObject.isStatic = true;
 			}
 		}
 	}

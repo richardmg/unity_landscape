@@ -89,9 +89,12 @@ public class EntityClass {
 		Vector3 localScale = m_voxelObjectRoot.transform.localScale;
 		localScale.Scale(Root.instance.entityBaseScale);
 		go.transform.localScale = localScale;
-		go.SetActive(false);
+//		go.SetActive(false);
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
+
+		instance.makeStandalone(Root.kLod0);
+
 		return instance;
 	}
 
