@@ -67,7 +67,8 @@ public class UIManager : MonoBehaviour {
 		m_currentMenu = ui;
 		if (show)
 			showCurrentMenu();
-		backButton.SetActive(true);
+		if (stack.Count > 1)
+			backButton.SetActive(true);
 	}
 
 	public void pop(bool accepted)
@@ -83,19 +84,27 @@ public class UIManager : MonoBehaviour {
 			backButton.SetActive(false);
 	}
 
+	public void popAll()
+	{
+		stack = new List<UIManagerStackItem>();
+		backButton.SetActive(false);
+	}
+
 	public void showFirstPersonUI()
 	{
 		hideUI();
 		backgroundGO.SetActive(false);
 		uiFirstPersonGO.SetActive(true);
 		enableCursorMode(false);
+		enableFPSController(true);
 	}
 
-	public void toggleCommandPromptUI(bool show)
+	public void showCommandPromptUI()
 	{
-		uiCommandPromptGO.SetActive(show);
-		if (uiFirstPersonGO.activeSelf)
-			enableCursorMode(show);
+		hideUI();
+		uiCommandPromptGO.SetActive(true);
+		enableCursorMode(true);
+		enableFPSController(false);
 	}
 
 	public void showCurrentMenu()
@@ -104,24 +113,35 @@ public class UIManager : MonoBehaviour {
 		backgroundGO.SetActive(true);
 		m_currentMenu.SetActive(true);
 		enableCursorMode(true);
+		enableFPSController(false);
 	}
 
 	public void enableCursorMode(bool on)
 	{
-		Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = !on;
-		Cursor.visible = on;
-		Cursor.lockState = CursorLockMode.None;
+		if (on) {
+			Cursor.lockState = CursorLockMode.None;
+			Cursor.visible = true;
+		} else {
+			Cursor.lockState = CursorLockMode.Locked;
+			Cursor.visible = false;
+		}
+	}
+
+	void enableFPSController(bool enable)
+	{
+		Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = enable;
 	}
 
 	void Update () {
-		if (Input.GetKeyDown(KeyCode.Escape)) {
-			toggleCommandPromptUI(!uiCommandPromptGO.activeSelf);
-			return;
-		} else if (uiCommandPromptGO.activeSelf) {
+		if (uiCommandPromptGO.activeSelf) {
+			if (Input.GetKeyDown(KeyCode.Escape))
+				showFirstPersonUI();
 			return;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Tab)) {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
+			showCommandPromptUI();
+		} else if (Input.GetKeyDown(KeyCode.Tab)) {
 			if (uiFirstPersonGO.activeSelf)
 				showCurrentMenu();
 			else

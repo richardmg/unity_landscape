@@ -152,10 +152,10 @@ public class CommandPrompt : MonoBehaviour {
 		output.text = string.Join("\n", outputList.ToArray());
 	}
 
-	public void onInputChanged(InputField inputField)
+	public void performCommand(string commandString)
 	{
-		string commandString = inputField.text;
 		tokens = new List<string>(commandString.Split(new char[]{' '}));
+		InputField inputField = inputGO.GetComponent<InputField>();
 		bool accepted = false;
 
 		string token = nextToken();
@@ -256,7 +256,7 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			}
 		} else if (token == "close") {
-			Root.instance.uiManager.toggleCommandPromptUI(false);
+			Root.instance.uiManager.showFirstPersonUI();
 			accepted = true;
 		} else if (token == "help") {
 			printHelp(nextToken());
@@ -268,7 +268,11 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			} else if (token == "setindex") {
 				int atlasIndex = nextInt();
+				Root.instance.uiManager.popAll();
+				Root.instance.uiManager.entityPainter.setEntityClass(null);
 				Root.instance.uiManager.entityPainter.setAtlasIndex(atlasIndex);
+				Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool a) => {}, false);
+				Root.instance.uiManager.showCurrentMenu();
 				log("Set index in entity painter to: " + atlasIndex);
 				accepted = true;
 			} else if (token == "save") {
@@ -358,13 +362,15 @@ public class CommandPrompt : MonoBehaviour {
 				commandHistory.RemoveAt(0);
 			commandHistoryIndex = commandHistory.Count - 1;
 			inputField.text = "";
-		} else {
-			if (token == "")
-				atlasDebugGO.SetActive(false);
 		}
 
 		inputField.ActivateInputField();
 		UnityEditor.EditorApplication.delayCall += ()=> {inputField.MoveTextEnd(false); };
+	}
+
+	public void onInputChanged(InputField inputField)
+	{
+		performCommand(inputField.text);
 	}
 
 	string autocomplete(string input, List<string> strings)

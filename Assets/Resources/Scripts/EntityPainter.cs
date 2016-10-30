@@ -21,11 +21,6 @@ public class EntityPainter : MonoBehaviour {
 	const EditMode kPaintMode = 0;
 	const EditMode kColorSelectMode = 1;
 
-	void Start()
-	{
-		setEntityClass(Root.instance.player.currentEntityClass);
-	}
-
 	void OnDisable()
 	{
 		saveChanges();
@@ -34,8 +29,6 @@ public class EntityPainter : MonoBehaviour {
 	void Update()
     {
 		if (!Root.instance.uiManager.grabMouse(this))
-			return;
-		if (m_entityClass == null)
 			return;
 
 		Vector2 uv = UIManager.getMousePosOnImage(GetComponent<RawImage>());
@@ -89,8 +82,14 @@ public class EntityPainter : MonoBehaviour {
 	public void setEntityClass(EntityClass entityClass)
 	{
 		m_entityClass = entityClass;
-		m_atlasIndexList = m_entityClass.atlasIndexList();
-		setListIndex(0);
+
+		if (entityClass != null) {
+			m_atlasIndexList = m_entityClass.atlasIndexList();
+			setListIndex(0);
+		} else {
+			// Since atlas index paint support
+			m_atlasIndexList = new List<int>(); 
+		}
 		updateThumbnails();
 	}
 
@@ -144,6 +143,8 @@ public class EntityPainter : MonoBehaviour {
 
 	public void setAtlasIndex(int atlasIndex)
 	{
+		saveChanges();
+
 		currentAtlasIndex = atlasIndex;
 		int atlasPixelX, atlasPixelY;
 		AtlasManager.getAtlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
@@ -179,8 +180,10 @@ public class EntityPainter : MonoBehaviour {
 
 		m_textureDirty = false;
 
-		m_entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
-		Root.instance.notificationManager.notifyEntityClassChanged(m_entityClass);
+		if (m_entityClass != null) {
+			m_entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
+			Root.instance.notificationManager.notifyEntityClassChanged(m_entityClass);
+		}
     }
 
 	public void onColorButtonClicked()
