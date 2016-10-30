@@ -10,6 +10,7 @@ using EntityClassID = System.Int32;
 public class EntityClass {
 	public Dictionary<int, int> indexSubstitutions;
 	public GameObject prefab;
+	MeshCollider meshCollider;
 	public string prefabName;
 	public string entityName;
 
@@ -89,10 +90,11 @@ public class EntityClass {
 		Vector3 localScale = m_voxelObjectRoot.transform.localScale;
 		localScale.Scale(Root.instance.entityBaseScale);
 		go.transform.localScale = localScale;
-//		go.SetActive(false);
+
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
 
+//		go.SetActive(false);
 		instance.makeStandalone(Root.kLod0);
 
 		return instance;
@@ -168,6 +170,15 @@ public class EntityClass {
 		}
 
 		return mesh;
+	}
+
+	public MeshCollider getMeshCollider()
+	{
+		// NOTE: this collider needs to be translated to the instance to be usable!
+		if (meshCollider == null)
+			meshCollider = new MeshCollider();
+		meshCollider.sharedMesh = getMesh(Root.kLod0);
+		return meshCollider;
 	}
 
 	public Texture2D takeSnapshot(SnapshotCamera camera)

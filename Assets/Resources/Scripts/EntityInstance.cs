@@ -17,6 +17,10 @@ public class EntityInstance : MonoBehaviour {
 		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
 		if (!meshRenderer)
 			meshRenderer = gameObject.AddComponent<MeshRenderer>();
+		MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
+		if (!meshCollider)
+			meshCollider = gameObject.AddComponent<MeshCollider>();
+		meshCollider.sharedMesh = meshFilter.sharedMesh;
 
 		meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(lod);
 	}
