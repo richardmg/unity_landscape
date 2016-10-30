@@ -274,11 +274,10 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			} else if (token == "setindex") {
 				int atlasIndex = nextInt();
-				Root.instance.uiManager.entityPainter.setEntityClass(null);
-				Root.instance.uiManager.entityPainter.setAtlasIndex(atlasIndex);
-				if (Root.instance.uiManager.currentMenu != Root.instance.uiManager.uiPaintEditorGO)
-					Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool a) => {}, false);
-				Root.instance.uiManager.showCurrentMenu();
+				UIManager uiMgr = Root.instance.uiManager;
+				uiMgr.entityPainter.setEntityClass(null);
+				uiMgr.entityPainter.setAtlasIndex(atlasIndex);
+				uiMgr.push(uiMgr.uiPaintEditorGO, (bool a) => {}, true);
 				log("Set index in entity painter to: " + atlasIndex);
 				accepted = true;
 			} else if (token == "save") {

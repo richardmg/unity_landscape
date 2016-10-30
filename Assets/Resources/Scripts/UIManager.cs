@@ -61,9 +61,10 @@ public class UIManager : MonoBehaviour {
 		m_mouseGrab = null;
 	}
 
-	public void push(GameObject ui, Action<bool> callback, bool show = true)
+	public void push(GameObject ui, Action<bool> callback, bool show = true, bool repush = false)
 	{
-		stack.Add(new UIManagerStackItem(ui, callback));
+		if (currentMenu != ui || repush)
+			stack.Add(new UIManagerStackItem(ui, callback));
 		currentMenu = ui;
 		if (show)
 			showCurrentMenu();
