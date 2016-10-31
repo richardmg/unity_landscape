@@ -13,6 +13,7 @@ public class EntityClass {
 	MeshCollider meshCollider;
 	public string prefabName;
 	public string entityName;
+	public int instanceCount;
 
 	// id is set by EntityManager
 	public int id = -1;
@@ -93,6 +94,7 @@ public class EntityClass {
 
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
+		instanceCount++;
 
 //		go.SetActive(false);
 		instance.makeStandalone(Root.kLod0);

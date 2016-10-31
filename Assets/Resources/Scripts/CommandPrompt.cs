@@ -270,7 +270,7 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "painter") {
 			token = nextToken();
 			if (token == "index") {
-				log("Current entity painter index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex);
+				log("Current entity painter index: " + Root.instance.uiManager.entityPainter.m_currentAtlasIndex);
 				accepted = true;
 			} else if (token == "setindex") {
 				int atlasIndex = nextInt();
@@ -282,7 +282,7 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			} else if (token == "save") {
 				Root.instance.uiManager.entityPainter.saveChanges();
-				log("Saved changes in entity painter. Atlas index: " + Root.instance.uiManager.entityPainter.currentAtlasIndex);
+				log("Saved changes in entity painter. Atlas index: " + Root.instance.uiManager.entityPainter.m_currentAtlasIndex);
 				accepted = true;
 			}
 		} else if (token == "player") {

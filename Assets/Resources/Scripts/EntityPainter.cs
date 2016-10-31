@@ -11,7 +11,7 @@ public class EntityPainter : MonoBehaviour {
 	Texture2D m_texture;
 	EntityClass m_entityClass;
 	int m_currentListIndex;
-	public int currentAtlasIndex;
+	public int m_currentAtlasIndex;
 	List<int> m_atlasIndexList;
 	List<RawImage> m_thumbnailImageList;
 	EditMode m_currentMode = kPaintMode;
@@ -145,7 +145,7 @@ public class EntityPainter : MonoBehaviour {
 	{
 		saveChanges();
 
-		currentAtlasIndex = atlasIndex;
+		m_currentAtlasIndex = atlasIndex;
 		int atlasPixelX, atlasPixelY;
 		AtlasManager.getAtlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
@@ -166,14 +166,17 @@ public class EntityPainter : MonoBehaviour {
 		setListIndex(m_currentListIndex);
 	}
 
-	public void saveChanges()
+	public void saveChanges(bool detach = true)
     {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
+		if (m_entityClass != null && detach && m_entityClass.instanceCount > 1)
+			detachEntityClass();
+
 		int atlasPixelX;
 		int atlasPixelY;
-		AtlasManager.getAtlasPixelForIndex(currentAtlasIndex, out atlasPixelX, out atlasPixelY);
+		AtlasManager.getAtlasPixelForIndex(m_currentAtlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
 		texture.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
 		texture.Apply();
@@ -185,6 +188,18 @@ public class EntityPainter : MonoBehaviour {
 			Root.instance.notificationManager.notifyEntityClassChanged(m_entityClass);
 		}
     }
+
+	void detachEntityClass()
+	{
+		// Create a new entity class, and modify that one instead
+		EntityClass newClass = new EntityClass(m_entityClass);
+		List<int> indexList = newClass.atlasIndexList();
+		m_currentAtlasIndex = indexList[m_currentListIndex];
+		m_entityClass = newClass;
+		// Swap instance
+
+		Root.instance.uiManager.entityClassPicker.selectEntityClass(newClass);
+	}
 
 	public void onColorButtonClicked()
 	{
