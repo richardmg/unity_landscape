@@ -3,13 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public interface EntityListener
+public interface EntityClassListener
 {
-	void onEntityInstanceAdded(EntityInstance entityInstance);
-	void onEntityInstanceSwapped(EntityInstance from, EntityInstance to);
 	void onEntityClassAdded(EntityClass entityClass);
 	void onEntityClassRemoved(EntityClass entityClass);
 	void onEntityClassChanged(EntityClass entityClass);
+}
+
+public interface EntityInstanceListener
+{
+	void onEntityInstanceAdded(EntityInstance entityInstance);
+	void onEntityInstanceSwapped(EntityInstance from, EntityInstance to);
 }
 
 public interface ProjectListener
@@ -19,14 +23,20 @@ public interface ProjectListener
 
 public class NotificationManager {
 
-	private List<EntityListener> entityListeners = new List<EntityListener>();
+	private List<EntityClassListener> entityClassListeners = new List<EntityClassListener>();
+	private List<EntityInstanceListener> entityInstanceListeners = new List<EntityInstanceListener>();
 	private List<ProjectListener> projectListeners = new List<ProjectListener>();
 
 	bool m_postNotifications = false;
 
-	public void addEntityListener(EntityListener listener)
+	public void addEntityClassListener(EntityClassListener listener)
 	{
-		entityListeners.Add(listener);
+		entityClassListeners.Add(listener);
+	}
+
+	public void addEntityInstanceListener(EntityInstanceListener listener)
+	{
+		entityInstanceListeners.Add(listener);
 	}
 
 	public void addProjectListener(ProjectListener listener)
@@ -36,13 +46,13 @@ public class NotificationManager {
 
 	public void notifyEntityInstanceAdded(EntityInstance entityInstance)
 	{
-		foreach (EntityListener subscriber in entityListeners)
+		foreach (EntityInstanceListener subscriber in entityInstanceListeners)
 			subscriber.onEntityInstanceAdded(entityInstance);	
 	}
 
 	public void notifyEntityInstanceSwapped(EntityInstance from, EntityInstance to)
 	{
-		foreach (EntityListener subscriber in entityListeners)
+		foreach (EntityInstanceListener subscriber in entityInstanceListeners)
 			subscriber.onEntityInstanceSwapped(from, to);	
 	}
 
@@ -50,11 +60,11 @@ public class NotificationManager {
 	{
 		if (m_postNotifications) {
 			UnityEditor.EditorApplication.delayCall += ()=> {
-				foreach (EntityListener subscriber in entityListeners)
+				foreach (EntityClassListener subscriber in entityClassListeners)
 					subscriber.onEntityClassAdded(entityClass);	
 			};
 		} else {
-			foreach (EntityListener subscriber in entityListeners)
+			foreach (EntityClassListener subscriber in entityClassListeners)
 				subscriber.onEntityClassAdded(entityClass);	
 		}
 	}
@@ -63,18 +73,18 @@ public class NotificationManager {
 	{
 		if (m_postNotifications) {
 			UnityEditor.EditorApplication.delayCall += ()=> {
-				foreach (EntityListener subscriber in entityListeners)
+				foreach (EntityClassListener subscriber in entityClassListeners)
 					subscriber.onEntityClassRemoved(entityClass);	
 			};
 		} else {
-			foreach (EntityListener subscriber in entityListeners)
+			foreach (EntityClassListener subscriber in entityClassListeners)
 				subscriber.onEntityClassRemoved(entityClass);	
 		}
 	}
 
 	public void notifyEntityClassChanged(EntityClass entityClass)
 	{
-		foreach (EntityListener subscriber in entityListeners)
+		foreach (EntityClassListener subscriber in entityClassListeners)
 			subscriber.onEntityClassChanged(entityClass);	
 	}
 

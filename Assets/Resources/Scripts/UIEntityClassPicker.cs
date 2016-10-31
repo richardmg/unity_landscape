@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListener {
+public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectListener {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
@@ -48,7 +48,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListene
 		moveSelectionRect(selectedIndex);
 
 		Root.instance.notificationManager.addProjectListener(this);
-		Root.instance.notificationManager.addEntityListener(this);
+		Root.instance.notificationManager.addEntityClassListener(this);
 	}
 
 	void OnEnable()
@@ -147,14 +147,6 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListene
 
 		paintEntityClass(entityClass.id, entityClass);
 		paintingDone();
-	}
-
-	public void onEntityInstanceAdded(EntityInstance entityInstance)
-	{
-	}
-
-	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
-	{
 	}
 
 	void repaintTableTexture()

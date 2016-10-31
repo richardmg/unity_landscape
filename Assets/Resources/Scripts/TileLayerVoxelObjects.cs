@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, ProjectListener 
+public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListener, EntityInstanceListener, ProjectListener 
 {
 	[Range (1, 100)]
 	public int objectCount = 4;
@@ -21,7 +21,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		Root.instance.notificationManager.addProjectListener(this);
-		Root.instance.notificationManager.addEntityListener(this);
+		Root.instance.notificationManager.addEntityClassListener(this);
+		Root.instance.notificationManager.addEntityInstanceListener(this);
 	}
 
 	public void moveTiles(TileDescription[] tilesToMove)
