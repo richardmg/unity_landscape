@@ -94,6 +94,15 @@ public class LandscapeManager : MonoBehaviour,  IProjectIOMember {
 		Root.instance.notificationManager.notifyEntityInstanceAdded(entityInstance);
 	}
 
+	public void swapEntityInstance(EntityInstance from, EntityInstance to)
+	{
+		to.gameObject.transform.position = from.gameObject.transform.position;
+		to.gameObject.transform.rotation = from.gameObject.transform.rotation;
+		worldMatrix[0, 0].entityInstances.Remove(from.gameObject);
+		worldMatrix[0, 0].entityInstances.Add(to.gameObject);
+		Root.instance.notificationManager.notifyEntityInstanceSwapped(from, to);
+	}
+
 	public void initNewProject()
 	{
 		clearWorldMatrix();	

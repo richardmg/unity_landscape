@@ -47,6 +47,14 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		rebuildTileMesh(tile);
 	}
 
+	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
+	{
+		GameObject tile = getTileAtPos(from.gameObject.transform.position);
+		from.hideAndDestroy();
+		to.gameObject.transform.parent = tile.transform;
+		rebuildTileMesh(tile);
+	}
+
 	public void onEntityClassChanged(EntityClass entityClass)
 	{
 		// Rebuild all tiles, since we don't keep track which tiles contains which objects
@@ -67,6 +75,14 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityListener, 
 		removeAllTiles();
 		createAllTiles();
 		m_tileEngine.updateAllTiles();
+	}
+
+	GameObject getTileAtPos(Vector3 pos)
+	{
+		// Find out which tile is currently under the new things position
+		Vector2 matrixCoord = new Vector2();
+		m_tileEngine.matrixCoordFromWorldPos(pos, ref matrixCoord);
+		return m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
 	}
 
 	public void rebuildTileMesh(GameObject tile)

@@ -153,6 +153,10 @@ public class UIEntityClassPicker : MonoBehaviour, EntityListener, ProjectListene
 	{
 	}
 
+	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
+	{
+	}
+
 	void repaintTableTexture()
 	{
 		tableTexture.SetPixels(clearColorArray);

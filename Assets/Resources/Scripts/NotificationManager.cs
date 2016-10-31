@@ -6,6 +6,7 @@ using System;
 public interface EntityListener
 {
 	void onEntityInstanceAdded(EntityInstance entityInstance);
+	void onEntityInstanceSwapped(EntityInstance from, EntityInstance to);
 	void onEntityClassAdded(EntityClass entityClass);
 	void onEntityClassRemoved(EntityClass entityClass);
 	void onEntityClassChanged(EntityClass entityClass);
@@ -37,6 +38,12 @@ public class NotificationManager {
 	{
 		foreach (EntityListener subscriber in entityListeners)
 			subscriber.onEntityInstanceAdded(entityInstance);	
+	}
+
+	public void notifyEntityInstanceSwapped(EntityInstance from, EntityInstance to)
+	{
+		foreach (EntityListener subscriber in entityListeners)
+			subscriber.onEntityInstanceSwapped(from, to);	
 	}
 
 	public void notifyEntityClassAdded(EntityClass entityClass, bool postNotification = true)
