@@ -7,14 +7,17 @@ using EditMode = System.Int32;
 public class EntityPainter : MonoBehaviour {
 	public GameObject thumbnailRowGO;
 
+	EntityClass m_entityClass;
+	EntityInstance m_entityInstance;
+
 	Color color = Color.white;
 	Texture2D m_texture;
-	EntityClass m_entityClass;
 	int m_currentListIndex;
 	public int m_currentAtlasIndex;
 	List<int> m_atlasIndexList;
 	List<RawImage> m_thumbnailImageList;
 	EditMode m_currentMode = kPaintMode;
+
 	bool m_textureDirty = false;
 	bool m_clearToggleOn = false;
 
@@ -79,9 +82,16 @@ public class EntityPainter : MonoBehaviour {
 		}
 	}
 
+	public void setEntityInstance(EntityInstance entityInstance)
+	{
+		setEntityClass(entityInstance.entityClass);
+		m_entityInstance = entityInstance;
+	}
+
 	public void setEntityClass(EntityClass entityClass)
 	{
 		m_entityClass = entityClass;
+		m_entityInstance = null;
 
 		if (entityClass != null) {
 			m_atlasIndexList = m_entityClass.atlasIndexList();
@@ -171,8 +181,8 @@ public class EntityPainter : MonoBehaviour {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
-		if (m_entityClass != null && detach && m_entityClass.instanceCount > 1)
-			detachEntityClass();
+		if (detach && m_entityInstance && m_entityClass.instanceCount > 1)
+			detachEntityInstance();
 
 		int atlasPixelX;
 		int atlasPixelY;
@@ -189,7 +199,7 @@ public class EntityPainter : MonoBehaviour {
 		}
     }
 
-	void detachEntityClass()
+	void detachEntityInstance()
 	{
 		// Create a new entity class, and modify that one instead
 		EntityClass newClass = new EntityClass(m_entityClass);
@@ -198,7 +208,10 @@ public class EntityPainter : MonoBehaviour {
 		m_entityClass = newClass;
 		// Swap instance
 
+		EntityInstance newInstance = newClass.createInstance();
 		Root.instance.uiManager.entityClassPicker.selectEntityClass(newClass);
+		Root.instance.landscapeManager.swapEntityInstance(m_entityInstance, newInstance);
+		m_entityInstance = newInstance;
 	}
 
 	public void onColorButtonClicked()

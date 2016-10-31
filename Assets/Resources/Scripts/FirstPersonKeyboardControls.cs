@@ -24,7 +24,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 				if (entityInstance) {
 					UIManager uiMgr = Root.instance.uiManager;
 					uiMgr.entityClassPicker.selectEntityClass(entityInstance.entityClass);
-					uiMgr.entityPainter.setEntityClass(entityInstance.entityClass);
+					uiMgr.entityPainter.setEntityInstance(entityInstance);
 					uiMgr.push(uiMgr.uiPaintEditorGO, (bool accepted) => {});
 				}
 			} else {
