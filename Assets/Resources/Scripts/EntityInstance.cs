@@ -27,6 +27,7 @@ public class EntityInstance : MonoBehaviour {
 
 	public void hideAndDestroy()
 	{
+		entityClass.instanceCount--;
 		gameObject.SetActive(false);
 		GameObject.Destroy(this.gameObject);
 	}
