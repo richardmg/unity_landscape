@@ -20,6 +20,7 @@ public class EntityPainter : MonoBehaviour {
 
 	bool m_textureDirty = false;
 	bool m_clearToggleOn = false;
+	bool m_detached = false;
 
 	const EditMode kPaintMode = 0;
 	const EditMode kColorSelectMode = 1;
@@ -84,14 +85,22 @@ public class EntityPainter : MonoBehaviour {
 
 	public void setEntityInstance(EntityInstance entityInstance)
 	{
+		if (entityInstance == m_entityInstance)
+			return;
+		
 		setEntityClass(entityInstance.entityClass);
 		m_entityInstance = entityInstance;
+		m_detached = false;
 	}
 
 	public void setEntityClass(EntityClass entityClass)
 	{
+		if (m_entityClass == entityClass)
+			return;
+		
 		m_entityClass = entityClass;
 		m_entityInstance = null;
+		m_detached = false;
 
 		if (entityClass != null) {
 			m_atlasIndexList = m_entityClass.atlasIndexList();
@@ -181,7 +190,7 @@ public class EntityPainter : MonoBehaviour {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
-		if (detach && m_entityInstance && m_entityClass.instanceCount > 1)
+		if (detach && !m_detached && m_entityInstance)
 			detachEntityInstance();
 
 		int atlasPixelX;
@@ -213,6 +222,8 @@ public class EntityPainter : MonoBehaviour {
 		Root.instance.uiManager.entityClassPicker.selectEntityClass(newClass);
 		Root.instance.landscapeManager.swapEntityInstance(m_entityInstance, newInstance);
 		m_entityInstance = newInstance;
+
+		m_detached = true;
 	}
 
 	public void onColorButtonClicked()
