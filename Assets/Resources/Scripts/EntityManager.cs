@@ -76,7 +76,7 @@ public class EntityManager : IProjectIOMember
 
 	public void registerPredefinedEntityClasses()
 	{
-		// Create all entity classes that have  premade subimages  in the texture atlas
+		// Create all entity classes that have premade subimages in the texture atlas
 		string[] prefabNames = getAllEntityPrefabNames();
 		foreach (string prefabName in prefabNames)
 			new EntityClass(prefabName);
