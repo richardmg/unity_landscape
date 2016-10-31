@@ -32,7 +32,7 @@ public class EntityClass {
 	{
 		this.prefabName = prefabName;
 		this.entityName = prefabName;
-		prefab = Root.instance.getPrefab(prefabName);
+		prefab = Root.instance.entityManager.getEntityPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 
@@ -211,7 +211,7 @@ public class EntityClass {
 		prefabName = projectIO.readString();
 		entityName = projectIO.readString();
 
-		prefab = Root.instance.getPrefab(prefabName);
+		prefab = Root.instance.entityManager.getEntityPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 

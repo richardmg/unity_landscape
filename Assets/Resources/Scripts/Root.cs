@@ -77,11 +77,6 @@ public class Root : MonoBehaviour {
 		projectManager.restoreSession();
 	}
 
-	public GameObject getPrefab(string prefabName)
-    {
-		return (GameObject)Resources.Load("Prefabs/" + prefabName, typeof(GameObject));
-    }
-
 	public Material voxelMaterialForLod(Lod lod)
 	{
 		switch (lod) {

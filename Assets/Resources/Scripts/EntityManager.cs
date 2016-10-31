@@ -7,6 +7,8 @@ public class EntityManager : IProjectIOMember
 {
 	public List<EntityClass> allEntityClasses = new List<EntityClass>();
 
+	const string kEntityPrefabFolder = "Prefabs/EntityClassPrefabs";
+
 	public void addEntityClass(EntityClass entityClass, bool notify = true)
 	{
 		int newID = allEntityClasses.Count;
@@ -75,14 +77,25 @@ public class EntityManager : IProjectIOMember
 	public void registerPredefinedEntityClasses()
 	{
 		// Create all entity classes that have  premade subimages  in the texture atlas
-		string entityPrefabPath = Application.dataPath + "/Resources/Prefabs/EntityClassPrefabs";
-		string[] prefabs = Directory.GetFiles(entityPrefabPath, "*.prefab");
-		foreach (string prefabFileName in prefabs) {
-			// Remove path
-			string prefabName = Path.GetFileName(prefabFileName);
+		string[] prefabNames = getAllEntityPrefabNames();
+		foreach (string prefabName in prefabNames)
+			new EntityClass(prefabName);
+	}
+
+	public GameObject getEntityPrefab(string prefabName)
+    {
+		return (GameObject)Resources.Load(kEntityPrefabFolder + "/" + prefabName, typeof(GameObject));
+    }
+
+	public string[] getAllEntityPrefabNames()
+	{
+		string folder = Application.dataPath + "/Resources/" + kEntityPrefabFolder;
+		string[] filePaths = Directory.GetFiles(folder, "*.prefab");
+		for (int i = 0; i < filePaths.Length; ++i) {
+			string fileName = Path.GetFileName(filePaths[i]);
 			// Remove ".prefab"
-			prefabName = prefabName.Remove(prefabName.Length - 7);
-			new EntityClass("EntityClassPrefabs/" + prefabName);
+			filePaths[i] = fileName.Remove(fileName.Length - 7);
 		}
+		return filePaths;
 	}
 }
