@@ -168,7 +168,7 @@ public class ProjectManager {
 	public void restoreSession()
 	{
 		// TODO: read from file
-		string projectName = "World4";
+		string projectName = "defaultworld";
 
 //		createNewProject(projectName, true);
 //		return;
