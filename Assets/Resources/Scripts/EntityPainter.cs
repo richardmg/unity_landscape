@@ -93,11 +93,14 @@ public class EntityPainter : MonoBehaviour {
 
 	public void setEntityClass(EntityClass entityClass)
 	{
+		// Setting class explixit means we should modify
+		// the whole class and not a single instance
+		m_entityInstance = null;
+
 		if (m_entityClass == entityClass)
 			return;
 		
 		m_entityClass = entityClass;
-		m_entityInstance = null;
 
 		if (entityClass != null) {
 			m_atlasIndexList = m_entityClass.atlasIndexList();
