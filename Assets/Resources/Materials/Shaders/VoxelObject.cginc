@@ -17,7 +17,7 @@ sampler2D _DetailTex;
 
 float4 _MainTex_ST;
 
-static float2 _TextureSize = float2(64, 64);
+static float2 _TextureSize = float2(2048, 2048);
 static float2 _SubImageSize = float2(16, 16);
 
 static float2 _UVAtlasOnePixel = 1.0f / _TextureSize;
@@ -100,10 +100,10 @@ inline float3 uvClamped(v2f i)
 	float diffX = i.uvAtlas.x - i.uvPixel.x;
 	float diffY = i.uvAtlas.y - i.uvPixel.y;
 	float3 uvAtlasClamped = i.uvAtlas;
-	uvAtlasClamped.x -= if_gt(diffX, _UVAtlasOnePixel.x - _ClampOffset) * _UVAtlasHalfPixel.x;
-	uvAtlasClamped.y -= if_gt(diffY, _UVAtlasOnePixel.y - _ClampOffset) * _UVAtlasHalfPixel.y;
-	uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * _UVAtlasHalfPixel.x;
-	uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * _UVAtlasHalfPixel.y;
+//	uvAtlasClamped.x -= if_gt(diffX, _UVAtlasOnePixel.x - _ClampOffset) * _UVAtlasHalfPixel.x;
+//	uvAtlasClamped.y -= if_gt(diffY, _UVAtlasOnePixel.y - _ClampOffset) * _UVAtlasHalfPixel.y;
+//	uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * _UVAtlasHalfPixel.x;
+//	uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * _UVAtlasHalfPixel.y;
 	return uvAtlasClamped;
 }
 

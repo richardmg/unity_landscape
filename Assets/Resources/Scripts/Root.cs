@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using Lod = System.Int32;
 
 public class Root : MonoBehaviour {
-	public static readonly int kAtlasWidth = 64;
-	public static readonly int kAtlasHeight = 64;
+	public static readonly int kAtlasWidth = 2048;
+	public static readonly int kAtlasHeight = 2048;
 	public static readonly int kSubImageWidth = 16;
 	public static readonly int kSubImageHeight = 16;
 
