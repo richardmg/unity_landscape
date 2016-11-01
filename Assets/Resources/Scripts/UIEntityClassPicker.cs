@@ -226,7 +226,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectLi
 		if (entityClass == null)
 			return;
 		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
-		Root.instance.uiManager.push(Root.instance.uiManager.uiPaintEditorGO, (bool accepted) => {});
+		Root.instance.uiManager.uiPaintEditorGO.pushDialog();
 	}
 
 }

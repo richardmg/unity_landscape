@@ -227,7 +227,7 @@ public class EntityPainter : MonoBehaviour {
 	public void onColorButtonClicked()
 	{
 		GameObject colorPicker = Root.instance.uiManager.uiColorPickerGO;
-		Root.instance.uiManager.push(colorPicker, (bool accepted) => {
+		colorPicker.pushDialog((bool accepted) => {
 			if (accepted)
 				color = colorPicker.GetComponentInChildren<ColorPicker>().selectedColor;
 		});

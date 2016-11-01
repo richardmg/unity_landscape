@@ -5,6 +5,19 @@ using System.Collections.Generic;
 using UnityStandardAssets.Characters.FirstPerson;
 using UnityEngine.UI;
 
+public static class UIManager_GameObjectExtensions
+{
+	public static void pushDialog(this GameObject go, bool show = true, bool repush = false)
+	{
+		Root.instance.uiManager.push(go, show, repush);
+	}
+
+	public static void pushDialog(this GameObject go, Action<bool> callback, bool show = true, bool repush = false)
+	{
+		Root.instance.uiManager.push(go, callback, show, repush);
+	}
+}
+
 class UIManagerStackItem {
 	public GameObject ui;
 	public Action<bool> callback;
@@ -44,7 +57,7 @@ public class UIManager : MonoBehaviour {
 	void Start()
 	{
 		hideUI();
-		push(uiEntityClassPickerGO, (bool accepted) => {}, false);
+		uiEntityClassPickerGO.pushDialog(false);
 		backButton.SetActive(false);
 		showFirstPersonUI();
 	}
@@ -59,6 +72,11 @@ public class UIManager : MonoBehaviour {
 		uiCommandPromptGO.SetActive(false);
 
 		m_mouseGrab = null;
+	}
+
+	public void push(GameObject ui, bool show = true, bool repush = false)
+	{
+		push(ui, (bool a) => {}, show, repush);
 	}
 
 	public void push(GameObject ui, Action<bool> callback, bool show = true, bool repush = false)

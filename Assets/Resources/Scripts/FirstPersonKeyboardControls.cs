@@ -25,7 +25,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 					UIManager uiMgr = Root.instance.uiManager;
 					uiMgr.entityClassPicker.selectEntityClass(entityInstance.entityClass);
 					uiMgr.entityPainter.setEntityInstance(entityInstance);
-					uiMgr.push(uiMgr.uiPaintEditorGO, (bool accepted) => {});
+					uiMgr.uiPaintEditorGO.pushDialog();
 				}
 			} else {
 				EntityInstance entityInstance = entityClass.createInstance(null, "added by user");

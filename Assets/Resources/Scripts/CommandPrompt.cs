@@ -277,7 +277,7 @@ public class CommandPrompt : MonoBehaviour {
 				UIManager uiMgr = Root.instance.uiManager;
 				uiMgr.entityPainter.setEntityClass(null);
 				uiMgr.entityPainter.setAtlasIndex(atlasIndex);
-				uiMgr.push(uiMgr.uiPaintEditorGO, (bool a) => {}, true);
+				uiMgr.uiPaintEditorGO.pushDialog();
 				log("Set index in entity painter to: " + atlasIndex);
 				accepted = true;
 			} else if (token == "save") {
