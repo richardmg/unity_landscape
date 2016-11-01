@@ -111,7 +111,7 @@ public class VoxelMeshFactory {
 			normals[i] = normalForCode[normalCodeList[i]];
 
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
-			// since each pixel have four corners, one pixel can map to four utAtlas coords.
+			// since each pixel have four corners, one pixel can map to four uvAtlas coords.
 			// We send both as a way to clamp uv inside the subImage in the shader.
 			float uvAtlasX = (startPixelX + v.x) / (float)Root.kAtlasWidth;
 			float uvAtlasY = (startPixelY + v.y) / (float)Root.kAtlasHeight;
@@ -121,7 +121,7 @@ public class VoxelMeshFactory {
 			uvPixels[i] = new Vector2(uvPixelX, uvPixelY);
 
 			// When using object batching, local vertices and normals will be translated on the CPU before
-			// passed down to the GPU. We therefore loose the original values in the shader, which we need.
+			// passed down to the GPU. We therefore lose the original values in the shader, which we need.
 			// We therefore encode this information covered as vertex color.
 			// Also, when combinding meshes, vertex data is truncated to be between 0 and 1. So we therefore
 			// need to normalize some of the value onto that format.
