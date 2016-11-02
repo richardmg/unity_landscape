@@ -23,7 +23,7 @@ public class VoxelMeshFactory {
 	Rect cropRect;
 
 	Mesh mesh = new Mesh();
-	List<Vector3> verticeList = new List<Vector3>(2 * 4 * Root.kSubImageWidth * Root.kSubImageHeight); 
+	List<Vector3> vertexList = new List<Vector3>(2 * 4 * Root.kSubImageWidth * Root.kSubImageHeight); 
 	List<Vector2> vertexPixelList = new List<Vector2>(Root.kSubImageWidth * Root.kSubImageHeight); 
 	List<int> normalCodeList = new List<int>(2 * 4 * Root.kSubImageWidth * Root.kSubImageHeight); 
 	List<int> tri = new List<int>(2 * Root.kSubImageWidth * Root.kSubImageHeight); 
@@ -74,7 +74,7 @@ public class VoxelMeshFactory {
 			texture = Root.instance.textureAtlas;
 
 		mesh = new Mesh();
-		verticeList.Clear();
+		vertexList.Clear();
 		vertexPixelList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
@@ -100,14 +100,14 @@ public class VoxelMeshFactory {
 
 	public void endMesh()
 	{
-		Color[] cubeDesc = new Color[verticeList.Count];
-		Vector3[] normals = new Vector3[verticeList.Count];
-		Vector2[] uvAtlas = new Vector2[verticeList.Count];
-		Vector2[] uvPixels = new Vector2[verticeList.Count];
+		Color[] cubeDesc = new Color[vertexList.Count];
+		Vector3[] normals = new Vector3[vertexList.Count];
+		Vector2[] uvAtlas = new Vector2[vertexList.Count];
+		Vector2[] uvPixels = new Vector2[vertexList.Count];
 		float cull = (voxelDepth == 0 || simplify) ? 0 : 1;
 
-		for (int i = 0; i < verticeList.Count; ++i) {
-			Vector3 v = verticeList[i];
+		for (int i = 0; i < vertexList.Count; ++i) {
+			Vector3 v = vertexList[i];
 			normals[i] = normalForCode[normalCodeList[i]];
 
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
@@ -130,7 +130,7 @@ public class VoxelMeshFactory {
 			cubeDesc[i] = new Color(cull, 0, normalizedNormalCode, normalizedDepth);
 		}
 
-		mesh.vertices = verticeList.ToArray();
+		mesh.vertices = vertexList.ToArray();
 		mesh.triangles = tri.ToArray();
 		mesh.uv = uvAtlas;
 		mesh.uv2 = uvPixels;
@@ -542,7 +542,7 @@ public class VoxelMeshFactory {
 
 	int getVertexIndex(Vector3 v, Vector2 pixel, NormalCode normalCode)
 	{
-		int i = verticeList.FindIndex(v2 => v2 == v);
+		int i = vertexList.FindIndex(v2 => v2 == v);
 		if (i == kNotFound)
 			return kNotFound;
 
@@ -565,11 +565,11 @@ public class VoxelMeshFactory {
 				return index;
 		}
 
-		verticeList.Add(v);
+		vertexList.Add(v);
 		normalCodeList.Add(normalCode);
 		vertexPixelList.Add(pixel);
 
-		return verticeList.Count - 1;
+		return vertexList.Count - 1;
 	}
 
 	void createLeftFace(int pixelX, int pixelY1, int pixelY2)
