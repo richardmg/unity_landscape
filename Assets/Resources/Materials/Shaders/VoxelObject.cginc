@@ -22,7 +22,7 @@ static float2 _SubImageSize = float2(16, 16);
 
 static float2 _UVAtlasOnePixel = 1.0f / _TextureSize;
 static float2 _UVAtlasHalfPixel = _UVAtlasOnePixel / 2;
-static float _ClampOffset = 0.0001;
+static float _ClampOffset = 0.00001;
 static fixed4 red = fixed4(1, 0, 0, 1);
 static float3 _SunPos = normalize(float3(0, 0, 1));
 
