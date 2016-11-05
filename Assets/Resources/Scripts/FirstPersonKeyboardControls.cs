@@ -27,6 +27,10 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 					uiMgr.entityPainter.setEntityInstance(entityInstance);
 					uiMgr.uiPaintEditorGO.pushDialog();
 				}
+			} else if (Input.GetKey(KeyCode.LeftApple) || Input.GetKey(KeyCode.LeftControl)) {
+				EntityInstance entityInstance = gameObject.GetComponent<EntityInstance>();
+				if (entityInstance)
+					entityInstance.hideAndDestroy();
 			} else {
 				EntityInstance entityInstance = entityClass.createInstance(null, "added by user");
 				entityInstance.gameObject.transform.position = worldPos;

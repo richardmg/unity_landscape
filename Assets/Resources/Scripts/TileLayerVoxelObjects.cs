@@ -48,6 +48,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 		rebuildTileMesh(tile);
 	}
 
+	public void onEntityInstanceRemoved(EntityInstance entityInstance)
+	{
+	}
+
 	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
 	{
 		GameObject tile = getTileAtPos(from.gameObject.transform.position);

@@ -13,6 +13,7 @@ public interface EntityClassListener
 public interface EntityInstanceListener
 {
 	void onEntityInstanceAdded(EntityInstance entityInstance);
+	void onEntityInstanceRemoved(EntityInstance entityInstance);
 	void onEntityInstanceSwapped(EntityInstance from, EntityInstance to);
 }
 
@@ -48,6 +49,12 @@ public class NotificationManager {
 	{
 		foreach (EntityInstanceListener subscriber in entityInstanceListeners)
 			subscriber.onEntityInstanceAdded(entityInstance);	
+	}
+
+	public void notifyEntityInstanceRemoved(EntityInstance entityInstance)
+	{
+		foreach (EntityInstanceListener subscriber in entityInstanceListeners)
+			subscriber.onEntityInstanceRemoved(entityInstance);	
 	}
 
 	public void notifyEntityInstanceSwapped(EntityInstance from, EntityInstance to)
