@@ -950,4 +950,11 @@ LANDSCAPE
             The parent can also have a scale that all the child layers listen
             to, to make it easy to scale things as a whole.
 
-    
+TODO:
+    - Create a pool of entity instances in entity manager
+        - dont use EntityClass constructors. Leave it to the manager to create/return instances from the pool.
+    - Be able to resue entity instances to represent different entity classes
+    - Rewrite entitytiles to not have a fixed set of entity instances, but instead query the
+        landscape manager for all entities in a certain tile, and then ask for new
+        entity instances from the manager (reused) to create them
+
