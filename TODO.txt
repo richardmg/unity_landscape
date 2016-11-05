@@ -958,3 +958,8 @@ TODO:
         landscape manager for all entities in a certain tile, and then ask for new
         entity instances from the manager (reused) to create them
 
+    - Create a matrix in landscape manager that holds all entity ids (and geomety)
+        in the world. Start with a simple matrix. Create an API that let this be extended later
+        so that tiles can be loaded/unloaded.
+
+
