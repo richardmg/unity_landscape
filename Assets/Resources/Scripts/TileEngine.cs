@@ -24,7 +24,7 @@ public class TileDescription
 public interface ITileLayer
 {
 	void initTileLayer(TileEngine engine);
-	void moveTiles(TileDescription[] tilesToMove);
+	void updateTiles(TileDescription[] tilesToMove);
 	void removeAllTiles();
 }
 
@@ -48,7 +48,7 @@ public class TileEngine : MonoBehaviour {
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
 
-	ITileLayer[] m_tileLayerArray;
+	List<ITileLayer> m_tileLayerList;
 
 	void Awake()
 	{
@@ -78,12 +78,12 @@ public class TileEngine : MonoBehaviour {
 			updateZTiles(gridCrossedZ);
 	}
 
-	void init()
+	public void init()
 	{
 		m_tileCountHalf = tileCount / 2f;
 		m_worldToGridOffset = new Vector3(tileSize / 2f, 0, tileSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
-		m_tileLayerArray = GetComponentsInChildren<ITileLayer>();
+		m_tileLayerList = new List<ITileLayer>(GetComponentsInChildren<ITileLayer>());
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
 		gridPosFromWorldPosAsInt(player.transform.position, ref m_playerGridPos);
@@ -91,8 +91,13 @@ public class TileEngine : MonoBehaviour {
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
 
-		foreach (ITileLayer tileLayer in m_tileLayerArray)
+		foreach (ITileLayer tileLayer in m_tileLayerList)
 			tileLayer.initTileLayer(this);
+	}
+
+	public void addTileLayer(ITileLayer tileLayer)
+	{
+		m_tileLayerList.Add(tileLayer);
 	}
 
 	public void removeAllTiles()
@@ -168,8 +173,8 @@ public class TileEngine : MonoBehaviour {
 				setNeighbours(m_tileMoveDesc[x].matrixCoord, ref m_tileMoveDesc[x].neighbours);
 			}
 
-			foreach (ITileLayer tileLayer in m_tileLayerArray) {
-				tileLayer.moveTiles(m_tileMoveDesc);
+			foreach (ITileLayer tileLayer in m_tileLayerList) {
+				tileLayer.updateTiles(m_tileMoveDesc);
 				if (tileLayer is ITileTerrainLayer)
 					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
@@ -201,9 +206,9 @@ public class TileEngine : MonoBehaviour {
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
-			foreach (ITileLayer tileLayer in m_tileLayerArray) {
+			foreach (ITileLayer tileLayer in m_tileLayerList) {
 				if (i < nuberOfColsToUpdate)
-					tileLayer.moveTiles(m_tileMoveDesc);
+					tileLayer.updateTiles(m_tileMoveDesc);
 				if (tileLayer is ITileTerrainLayer)
 					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
@@ -235,9 +240,9 @@ public class TileEngine : MonoBehaviour {
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
-			foreach (ITileLayer tileLayer in m_tileLayerArray) {
+			foreach (ITileLayer tileLayer in m_tileLayerList) {
 				if (i < nuberOfRowsToUpdate)
-					tileLayer.moveTiles(m_tileMoveDesc);
+					tileLayer.updateTiles(m_tileMoveDesc);
 				if (tileLayer is ITileTerrainLayer)
 					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
@@ -246,6 +251,6 @@ public class TileEngine : MonoBehaviour {
 
 	public ITileLayer getTileLayer(int index)
 	{
-		return m_tileLayerArray[index];
+		return m_tileLayerList[index];
 	}
 }

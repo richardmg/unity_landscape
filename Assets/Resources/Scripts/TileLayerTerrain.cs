@@ -75,10 +75,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		engine.updateAllTiles();
 	}
 
-	public void moveTiles(TileDescription[] tilesToMove)
+	public void updateTiles(TileDescription[] tilesToUpdate)
 	{
-		for (int i = 0; i < tilesToMove.Length; ++i) {
-			TileDescription desc = tilesToMove[i];
+		for (int i = 0; i < tilesToUpdate.Length; ++i) {
+			TileDescription desc = tilesToUpdate[i];
 			GameObject go = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			go.transform.localPosition = desc.worldPos;
 

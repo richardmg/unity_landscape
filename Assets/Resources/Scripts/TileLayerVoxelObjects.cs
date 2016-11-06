@@ -25,10 +25,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 		Root.instance.notificationManager.addEntityInstanceListener(this);
 	}
 
-	public void moveTiles(TileDescription[] tilesToMove)
+	public void updateTiles(TileDescription[] tilesToUpdate)
 	{
-		for (int i = 0; i < tilesToMove.Length; ++i) {
-			TileDescription desc = tilesToMove[i];
+		for (int i = 0; i < tilesToUpdate.Length; ++i) {
+			TileDescription desc = tilesToUpdate[i];
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
 			moveEntityInstances(tile);
