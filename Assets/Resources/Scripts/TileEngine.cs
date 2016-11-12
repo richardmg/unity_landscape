@@ -58,7 +58,7 @@ public class TileEngine : MonoBehaviour {
 		// project has been loaded.
 	}
 
-	void Update()
+	public void Update()
 	{
 		Vector3 playerWorldPos = player.transform.position;
 		Vector2 prevPlayerGridPos = m_playerGridPos;
@@ -107,14 +107,14 @@ public class TileEngine : MonoBehaviour {
 			tileLayer.removeAllTiles();
 	}
 
-	void worldTilePosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)
+	public void worldTilePosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)
 	{
 		// Note that a single grid coordinate will map to four tiles. And
 		// this function will return the position of the upper right tile.
 		worldPos.Set(gridCoord.x * tileSize, 0, gridCoord.y * tileSize);
 	}
 
-	void gridPosFromWorldPosAsInt(Vector3 worldPos, ref Vector2 gridCoord)
+	public void gridPosFromWorldPosAsInt(Vector3 worldPos, ref Vector2 gridCoord)
 	{
 		// We shift the given worldPos half a tile size up-right to center
 		// the whole tile engine around the player. This means that each
@@ -125,7 +125,7 @@ public class TileEngine : MonoBehaviour {
 			Mathf.FloorToInt((worldPos.z + m_worldToGridOffset.z) / tileSize));
 	}
 
-	public void matrixCoordFromWorldPos(Vector3 worldPos, ref Vector2 matrixCoord)
+	public void matrixCoordFromWorldPos(Vector3 worldPos, out int matrixX, out int matrixY)
 	{
 		// Return the matrix coordinate of the tile underneath worldPos.
 		int gridX = Mathf.FloorToInt(worldPos.x / tileSize);
@@ -135,9 +135,8 @@ public class TileEngine : MonoBehaviour {
 
 		Debug.Assert(Mathf.Abs(gridOffsetX) <= m_tileCountHalf && Mathf.Abs(gridOffsetY) <= m_tileCountHalf, "Worldpos outside current tiles");
 
-		int matrixX = matrixPos((int)m_matrixTopRight.x, (int)(gridOffsetX - m_tileCountHalf + 1));
-		int matrixY = matrixPos((int)m_matrixTopRight.y, (int)(gridOffsetY - m_tileCountHalf + 1));
-		matrixCoord.Set(matrixX, matrixY);
+		matrixX = matrixPos((int)m_matrixTopRight.x, (int)(gridOffsetX - m_tileCountHalf + 1));
+		matrixY = matrixPos((int)m_matrixTopRight.y, (int)(gridOffsetY - m_tileCountHalf + 1));
 	}
 
 	int matrixPos(int top, int rows)

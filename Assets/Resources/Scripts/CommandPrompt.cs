@@ -306,7 +306,7 @@ public class CommandPrompt : MonoBehaviour {
 			token = nextToken();
 			if (token == "indexlist") {
 				int id = nextInt();
-				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				List<int> list = entityClass.atlasIndexList();
 				string s = "Entity index list: ";
 				foreach (int i in list)
@@ -315,31 +315,31 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			} else if (token == "clearcache") {
 				int id = nextInt();
-				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
 				log("Cleard mesh cache (and sendt entity changed notification) for entity: " + id);
 				accepted = true;
 			} else if (token == "name") {
 				int id = nextInt();
-				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				string name = entityClass.entityName;
 				log("Name of entity class: " + name);
 				accepted = true;
 			} else if (token == "prefab") {
 				int id = nextInt();
-				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				string name = entityClass.prefabName;
 				log("Name of entity class prefab: " + name);
 				accepted = true;
 			} else if (token == "classcount") {
-				int count = Root.instance.entityManager.allEntityClasses.Count;
+				int count = Root.instance.entityClassManager.allEntityClasses.Count;
 				log("Number of entity classes: " + count);
 				accepted = true;
 			} else if (token == "vertexcount") {
 				int id = nextInt();
 				int lod = nextInt();
-				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				entityClass.getMesh(lod);
 				log("Vertex count: " + entityClass.getVertexCount(lod));
 				accepted = true;
@@ -353,7 +353,7 @@ public class CommandPrompt : MonoBehaviour {
 			token = nextToken();
 			if (token == "entitychanged") {
 				int id = nextInt();
-				EntityClass entityClass = Root.instance.entityManager.getEntity(id);
+				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
 				log("Sent entitychanged notification for entity: " + id);
 				accepted = true;

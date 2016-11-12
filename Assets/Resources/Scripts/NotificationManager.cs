@@ -3,63 +3,63 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public interface EntityClassListener
+public interface IEntityClassListener
 {
 	void onEntityClassAdded(EntityClass entityClass);
 	void onEntityClassRemoved(EntityClass entityClass);
 	void onEntityClassChanged(EntityClass entityClass);
 }
 
-public interface EntityInstanceListener
+public interface IEntityInstanceListener
 {
 	void onEntityInstanceAdded(EntityInstance entityInstance);
 	void onEntityInstanceRemoved(EntityInstance entityInstance);
 	void onEntityInstanceSwapped(EntityInstance from, EntityInstance to);
 }
 
-public interface ProjectListener
+public interface IProjectListener
 {
 	void onProjectLoaded();
 }
 
 public class NotificationManager {
 
-	private List<EntityClassListener> entityClassListeners = new List<EntityClassListener>();
-	private List<EntityInstanceListener> entityInstanceListeners = new List<EntityInstanceListener>();
-	private List<ProjectListener> projectListeners = new List<ProjectListener>();
+	private List<IEntityClassListener> entityClassListeners = new List<IEntityClassListener>();
+	private List<IEntityInstanceListener> entityInstanceListeners = new List<IEntityInstanceListener>();
+	private List<IProjectListener> projectListeners = new List<IProjectListener>();
 
 	bool m_postNotifications = false;
 
-	public void addEntityClassListener(EntityClassListener listener)
+	public void addEntityClassListener(IEntityClassListener listener)
 	{
 		entityClassListeners.Add(listener);
 	}
 
-	public void addEntityInstanceListener(EntityInstanceListener listener)
+	public void addEntityInstanceListener(IEntityInstanceListener listener)
 	{
 		entityInstanceListeners.Add(listener);
 	}
 
-	public void addProjectListener(ProjectListener listener)
+	public void addProjectListener(IProjectListener listener)
 	{
 		projectListeners.Add(listener);
 	}
 
 	public void notifyEntityInstanceAdded(EntityInstance entityInstance)
 	{
-		foreach (EntityInstanceListener subscriber in entityInstanceListeners)
+		foreach (IEntityInstanceListener subscriber in entityInstanceListeners)
 			subscriber.onEntityInstanceAdded(entityInstance);	
 	}
 
 	public void notifyEntityInstanceRemoved(EntityInstance entityInstance)
 	{
-		foreach (EntityInstanceListener subscriber in entityInstanceListeners)
+		foreach (IEntityInstanceListener subscriber in entityInstanceListeners)
 			subscriber.onEntityInstanceRemoved(entityInstance);	
 	}
 
 	public void notifyEntityInstanceSwapped(EntityInstance from, EntityInstance to)
 	{
-		foreach (EntityInstanceListener subscriber in entityInstanceListeners)
+		foreach (IEntityInstanceListener subscriber in entityInstanceListeners)
 			subscriber.onEntityInstanceSwapped(from, to);	
 	}
 
@@ -67,11 +67,11 @@ public class NotificationManager {
 	{
 		if (m_postNotifications) {
 			UnityEditor.EditorApplication.delayCall += ()=> {
-				foreach (EntityClassListener subscriber in entityClassListeners)
+				foreach (IEntityClassListener subscriber in entityClassListeners)
 					subscriber.onEntityClassAdded(entityClass);	
 			};
 		} else {
-			foreach (EntityClassListener subscriber in entityClassListeners)
+			foreach (IEntityClassListener subscriber in entityClassListeners)
 				subscriber.onEntityClassAdded(entityClass);	
 		}
 	}
@@ -80,24 +80,24 @@ public class NotificationManager {
 	{
 		if (m_postNotifications) {
 			UnityEditor.EditorApplication.delayCall += ()=> {
-				foreach (EntityClassListener subscriber in entityClassListeners)
+				foreach (IEntityClassListener subscriber in entityClassListeners)
 					subscriber.onEntityClassRemoved(entityClass);	
 			};
 		} else {
-			foreach (EntityClassListener subscriber in entityClassListeners)
+			foreach (IEntityClassListener subscriber in entityClassListeners)
 				subscriber.onEntityClassRemoved(entityClass);	
 		}
 	}
 
 	public void notifyEntityClassChanged(EntityClass entityClass)
 	{
-		foreach (EntityClassListener subscriber in entityClassListeners)
+		foreach (IEntityClassListener subscriber in entityClassListeners)
 			subscriber.onEntityClassChanged(entityClass);	
 	}
 
 	public void notifyProjectLoaded()
 	{
-		foreach (ProjectListener subscriber in projectListeners)
+		foreach (IProjectListener subscriber in projectListeners)
 			subscriber.onProjectLoaded();	
 	}
 

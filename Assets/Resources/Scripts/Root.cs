@@ -14,6 +14,7 @@ public class Root : MonoBehaviour {
 	public GameObject landscapeGO;
 	public GameObject snapshotCameraGO;
 	public GameObject commandPromptGO;
+	public GameObject entityInstanceManagerGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
@@ -38,7 +39,9 @@ public class Root : MonoBehaviour {
 	[HideInInspector]
 	public AtlasManager atlasManager;
 	[HideInInspector]
-	public EntityManager entityManager;
+	public EntityClassManager entityClassManager;
+	[HideInInspector]
+	public EntityInstanceManager entityInstanceManager;
 	[HideInInspector]
 	public ProjectManager projectManager;
 	[HideInInspector]
@@ -53,20 +56,24 @@ public class Root : MonoBehaviour {
 	Root()
 	{
 		instance = this;
+
+		// Create notification manager before Awake to let all
+		// subscribers subscribe from their own Awake.
+		notificationManager = new NotificationManager();
 	}
 
 	void Awake()
 	{
 		uiManager = uiGO.GetComponent<UIManager>();
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
+		entityInstanceManager = entityInstanceManagerGO.GetComponent<EntityInstanceManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
 		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
 
 		meshManager = new MeshManager();
-		entityManager = new EntityManager();
+		entityClassManager = new EntityClassManager();
 		projectManager = new ProjectManager();
 		atlasManager = new AtlasManager();
-		notificationManager = new NotificationManager();
 	}
 
 	void Start()

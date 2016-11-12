@@ -17,7 +17,6 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
 	TileEngine m_tileEngine;
-	Vector2 m_vector2 = new Vector2();
 
 	public static TileLayerTerrain worldTerrain;
 
@@ -127,8 +126,9 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 	public float sampleHeight(Vector3 worldPos)
 	{
-		m_tileEngine.matrixCoordFromWorldPos(worldPos, ref m_vector2);
-		return m_terrainMatrix[(int)m_vector2.x, (int)m_vector2.y].SampleHeight(worldPos);
+		int x, y;
+		m_tileEngine.matrixCoordFromWorldPos(worldPos, out x, out y);
+		return m_terrainMatrix[x, y].SampleHeight(worldPos);
 	}
 
 }

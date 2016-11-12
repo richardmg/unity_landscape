@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListener, EntityInstanceListener, ProjectListener 
+public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassListener, IEntityInstanceListener, IProjectListener 
 {
 	[Range (1, 100)]
 	public int objectCount = 4;
@@ -11,7 +11,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 
 	GameObject[,] m_tileMatrix;
 	TileEngine m_tileEngine;
-	EntityClass m_entityClass;
 
 	public void initTileLayer(TileEngine engine)
 	{
@@ -20,6 +19,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
+		createAllTiles();
+
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityClassListener(this);
 		Root.instance.notificationManager.addEntityInstanceListener(this);
@@ -31,7 +32,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 			TileDescription desc = tilesToUpdate[i];
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
-			moveEntityInstances(tile);
+			destroyEntityInstances(tile);
+			createEntityInstances(tile, desc);
 			rebuildTileMesh(tile);
 		}
 	}
@@ -39,9 +41,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 	public void onEntityInstanceAdded(EntityInstance entityInstance)
 	{
 		// Find out which tile is currently under the new things position
-		Vector2 matrixCoord = new Vector2();
-		m_tileEngine.matrixCoordFromWorldPos(entityInstance.gameObject.transform.position, ref matrixCoord);
-		GameObject tile = m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+		int x, y;
+		m_tileEngine.matrixCoordFromWorldPos(entityInstance.gameObject.transform.position, out x, out y);
+		GameObject tile = m_tileMatrix[x, y];
 
 		// Create and position an instance of the thing as a child of the tile
 		entityInstance.gameObject.transform.parent = tile.transform;
@@ -76,18 +78,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 
 	public void onProjectLoaded()
 	{
-		m_entityClass = Root.instance.entityManager.getEntity(0);
-		removeAllTiles();
-		createAllTiles();
 		m_tileEngine.updateAllTiles();
 	}
 
 	GameObject getTileAtPos(Vector3 pos)
 	{
 		// Find out which tile is currently under the new things position
-		Vector2 matrixCoord = new Vector2();
-		m_tileEngine.matrixCoordFromWorldPos(pos, ref matrixCoord);
-		return m_tileMatrix[(int)matrixCoord.x, (int)matrixCoord.y];
+		int x, y;
+		m_tileEngine.matrixCoordFromWorldPos(pos, out x, out y);
+		return m_tileMatrix[x, y];
 	}
 
 	public void rebuildTileMesh(GameObject tile)
@@ -121,8 +120,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 				tile.name = "Tile " + x + ", " + z;
 				tile.transform.parent = transform;
 				m_tileMatrix[x, z] = tile;
-
-				createEntityInstances(tile);
 			}
 		}
 	}
@@ -138,36 +135,26 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, EntityClassListe
 		}
 	}
 
-	void createEntityInstances(GameObject tile)
+	void destroyEntityInstances(GameObject tile)
 	{
-		for (int z = 0; z < objectCount; ++z) {
-			for (int x = 0; x < objectCount; ++x) {
-				EntityInstance e = m_entityClass.createInstance(tile.transform, "VoxelObject: " + x + ", " + z);
-				e.gameObject.isStatic = true;
-			}
+		Transform transform = tile.transform;
+		for (int i = 0; i < transform.childCount; ++i) {
+			GameObject go = transform.GetChild(i).gameObject;
+			UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(go); };
 		}
 	}
 
-	private void moveEntityInstances(GameObject tile)
+	void createEntityInstances(GameObject tile, TileDescription tileDesc)
 	{
-		for (int z = 0; z < objectCount; ++z) {
-			for (int x = 0; x < objectCount; ++x) {
-				Vector3 worldPos = tile.transform.position + new Vector3(x * paddingBetweenObjects, 0, z * paddingBetweenObjects);
-				Transform voTransform = tile.transform.GetChild((int)(z * objectCount) + x);
-				int type = Root.instance.landscapeManager.getLandscapeType(worldPos);
-				if (type == LandscapeManager.kForrest) {
-					worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos);
-					voTransform.position = worldPos;
-					voTransform.gameObject.GetComponent<EntityInstance>().instanceHidden = false;
-				} else {
-					voTransform.gameObject.GetComponent<EntityInstance>().instanceHidden = true;
-				}
+		List<EntityInstanceDescription> instanceDescriptions
+			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
 
-//				debug til engine
-//				Vector2 matrixCoord = new Vector3();
-//				terrainTileEngine.GetComponent<TileEngine>().matrixCoordFromWorldPos(worldPos, ref matrixCoord);
-//				voTransform.gameObject.name = "Sample from: " + terrain.gameObject.name;
-			}
+		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions) {
+			EntityClass entityClass = Root.instance.entityClassManager.getEntity(instanceDesc.entityClassID);
+			EntityInstance entityInstance = entityClass.createInstance(tile.transform);
+			entityInstance.gameObject.isStatic = true;
+			entityInstance.transform.position = instanceDesc.transform.position;
+			entityInstance.transform.rotation = instanceDesc.transform.rotation;
 		}
 	}
 }

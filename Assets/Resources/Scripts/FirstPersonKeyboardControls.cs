@@ -34,7 +34,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 			} else {
 				EntityInstance entityInstance = entityClass.createInstance(null, "added by user");
 				entityInstance.gameObject.transform.position = worldPos;
-				Root.instance.landscapeManager.addEntityInstance(entityInstance);
+				Root.instance.notificationManager.notifyEntityInstanceAdded(entityInstance);
 			}
 		}
 	}

@@ -220,7 +220,7 @@ public class EntityPainter : MonoBehaviour {
 		// Swap out the current instance with a new one based on the new class
 		EntityInstance newInstance = newClass.createInstance();
 		Root.instance.uiManager.entityClassPicker.selectEntityClass(newClass);
-		Root.instance.landscapeManager.swapEntityInstance(m_entityInstance, newInstance);
+		Root.instance.notificationManager.notifyEntityInstanceSwapped(m_entityInstance, newInstance);
 		m_entityInstance = newInstance;
 	}
 

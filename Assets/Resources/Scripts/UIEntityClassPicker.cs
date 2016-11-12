@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectListener {
+public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProjectListener {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
@@ -91,7 +91,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectLi
 	public EntityClass getSelectedEntityClass()
 	{
 		// This is propbably wrong once id doesn't map to index!
-		return Root.instance.entityManager.getEntity(selectedIndex);
+		return Root.instance.entityClassManager.getEntity(selectedIndex);
 	}
 
 	public void selectIndex(int index)
@@ -152,10 +152,10 @@ public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectLi
 	void repaintTableTexture()
 	{
 		tableTexture.SetPixels(clearColorArray);
-		List<EntityClass> entityClasses = Root.instance.entityManager.allEntityClasses;
+		List<EntityClass> entityClasses = Root.instance.entityClassManager.allEntityClasses;
 
 		for (int id = 0; id < entityClasses.Count; ++id)
-			paintEntityClass(id, Root.instance.entityManager.getEntity(id));
+			paintEntityClass(id, Root.instance.entityClassManager.getEntity(id));
 
 		paintingDone();
 	}
@@ -205,7 +205,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectLi
 
 	public void onCloneButtonClicked()
 	{
-		EntityClass originalEntityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		EntityClass originalEntityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		if (originalEntityClass == null)
 			return;
 		EntityClass entityClass = new EntityClass(originalEntityClass);
@@ -214,7 +214,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectLi
 
 	public void onDeleteButtonClicked()
 	{
-		EntityClass entityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		if (entityClass == null)
 			return;
 		entityClass.remove();
@@ -222,7 +222,7 @@ public class UIEntityClassPicker : MonoBehaviour, EntityClassListener, ProjectLi
 
 	public void onPaintButtonClicked()
 	{
-		EntityClass entityClass = Root.instance.entityManager.getEntity(selectedIndex);
+		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		if (entityClass == null)
 			return;
 		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);

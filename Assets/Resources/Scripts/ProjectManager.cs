@@ -72,7 +72,8 @@ public class Project
 	{
 		projectIOMemberList = new List<IProjectIOMember>();
 		projectIOMemberList.Add(Root.instance.atlasManager);
-		projectIOMemberList.Add(Root.instance.entityManager);
+		projectIOMemberList.Add(Root.instance.entityClassManager);
+		projectIOMemberList.Add(Root.instance.entityInstanceManager);
 		projectIOMemberList.Add(Root.instance.player);
 	}
 

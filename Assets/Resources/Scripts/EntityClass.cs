@@ -33,7 +33,7 @@ public class EntityClass {
 	{
 		this.prefabName = prefabName;
 		this.entityName = prefabName;
-		prefab = Root.instance.entityManager.getEntityPrefab(prefabName);
+		prefab = Root.instance.entityClassManager.getEntityPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 
@@ -48,7 +48,7 @@ public class EntityClass {
 			indexSubstitutions[baseIndex] = newIndex;
 		}
 
-		Root.instance.entityManager.addEntityClass(this);
+		Root.instance.entityClassManager.addEntityClass(this);
 
 //		List<int> indices = atlasIndexList();
 //		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);
@@ -73,7 +73,7 @@ public class EntityClass {
 			indexSubstitutions[baseIndex] = newIndex;
 		}
 
-		Root.instance.entityManager.addEntityClass(this);
+		Root.instance.entityClassManager.addEntityClass(this);
 	}
 
 	private EntityClass()
@@ -81,7 +81,7 @@ public class EntityClass {
 
 	public void remove()
 	{
-		Root.instance.entityManager.removeEntityClass(this);
+		Root.instance.entityClassManager.removeEntityClass(this);
 	}
 
 	public EntityInstance createInstance(Transform parent = null, string name = "")
@@ -213,7 +213,7 @@ public class EntityClass {
 		prefabName = projectIO.readString();
 		entityName = projectIO.readString();
 
-		prefab = Root.instance.entityManager.getEntityPrefab(prefabName);
+		prefab = Root.instance.entityClassManager.getEntityPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
 		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
 
@@ -225,7 +225,7 @@ public class EntityClass {
 			indexSubstitutions[atlasIndex] = substitution;
 		}
 
-		Root.instance.entityManager.addEntityClass(this, id, notify);
+		Root.instance.entityClassManager.addEntityClass(this, id, notify);
 	}
 
 	public void save(ProjectIO projectIO)

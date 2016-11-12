@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-public class EntityManager : IProjectIOMember
+public class EntityClassManager : IProjectIOMember
 {
 	public List<EntityClass> allEntityClasses = new List<EntityClass>();
 
