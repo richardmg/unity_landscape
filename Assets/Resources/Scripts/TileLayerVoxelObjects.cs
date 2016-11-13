@@ -147,11 +147,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
 
 		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions) {
-			EntityClass entityClass = Root.instance.entityClassManager.getEntity(instanceDesc.entityClassID);
-			EntityInstance entityInstance = entityClass.createInstance(tile.transform);
+			EntityInstance entityInstance = instanceDesc.createInstance(tile.transform);
 			entityInstance.gameObject.isStatic = true;
-			entityInstance.transform.position = instanceDesc.transform.position;
-			entityInstance.transform.rotation = instanceDesc.transform.rotation;
 		}
 	}
 }

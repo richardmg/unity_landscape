@@ -7,7 +7,27 @@ using LandscapeType = System.Int32;
 public class EntityInstanceDescription
 {
 	public int entityClassID;	
-	public Transform transform;
+	public Vector3 position;
+	public Quaternion rotation;
+
+	public EntityInstanceDescription()
+	{}
+
+	public EntityInstanceDescription(EntityInstance instance)
+	{
+		entityClassID = instance.entityClass.id;
+		position = instance.transform.position;
+		rotation = instance.transform.rotation;
+	}
+
+	public EntityInstance createInstance(Transform parentTransform)
+	{
+		EntityClass entityClass = Root.instance.entityClassManager.getEntity(entityClassID);
+		EntityInstance entityInstance = entityClass.createInstance(parentTransform);
+		entityInstance.transform.position = position;
+		entityInstance.transform.rotation = rotation;
+		return entityInstance;
+	}
 }
 
 public class Tile
@@ -96,9 +116,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 	public void onEntityInstanceAdded(EntityInstance entityInstance)
 	{
-		EntityInstanceDescription desc = new EntityInstanceDescription();
-		desc.entityClassID = entityInstance.entityClass.id;
-		desc.transform = entityInstance.transform;
+		EntityInstanceDescription desc = new EntityInstanceDescription(entityInstance);
 
 		int x, y;
 		Vector3 worldPos = entityInstance.transform.position;
