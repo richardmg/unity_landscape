@@ -27,7 +27,6 @@ public class EntityInstance : MonoBehaviour {
 
 	public void hideAndDestroy()
 	{
-		Root.instance.notificationManager.notifyEntityInstanceRemoved(this);
 		entityClass.instanceCount--;
 		gameObject.SetActive(false);
 		GameObject.Destroy(this.gameObject);

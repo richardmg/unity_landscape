@@ -29,8 +29,10 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 				}
 			} else if (Input.GetKey(KeyCode.LeftApple) || Input.GetKey(KeyCode.LeftControl)) {
 				EntityInstance entityInstance = gameObject.GetComponent<EntityInstance>();
-				if (entityInstance)
+				if (entityInstance) {
 					entityInstance.hideAndDestroy();
+					Root.instance.notificationManager.notifyEntityInstanceRemoved(entityInstance);
+				}
 			} else {
 				EntityInstance entityInstance = entityClass.createInstance(null, "added by user");
 				entityInstance.gameObject.transform.position = worldPos;
