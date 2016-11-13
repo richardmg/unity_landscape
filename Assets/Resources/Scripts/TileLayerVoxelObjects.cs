@@ -4,18 +4,11 @@ using System.Collections.Generic;
 
 public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassListener, IEntityInstanceListener, IProjectListener 
 {
-	[Range (1, 100)]
-	public int objectCount = 4;
-	[Range (0, 100)]
-	public float paddingBetweenObjects = 25;
-
 	GameObject[,] m_tileMatrix;
 	TileEngine m_tileEngine;
 
 	public void initTileLayer(TileEngine engine)
 	{
-		Debug.Assert(paddingBetweenObjects * (objectCount - 1) < engine.tileSize, "Warning: placing voxel objects outside tile bounds: " + gameObject.name);
-
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
