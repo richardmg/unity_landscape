@@ -47,9 +47,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		rebuildTileMesh(tile);
 	}
 
-	public void onEntityInstanceRemoved(EntityInstance entityInstance)
+	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
 	{
-		// entityInstance is already destroyed at this point, so nothing to do
+		desc.destroyInstance();
 	}
 
 	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
@@ -138,7 +138,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		Transform transform = tile.transform;
 		for (int i = 0; i < transform.childCount; ++i) {
 			GameObject go = transform.GetChild(i).gameObject;
-			UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(go); };
+			EntityInstance instance = go.GetComponent<EntityInstance>();
+			instance.entityInstanceDescription.destroyInstance();
 		}
 	}
 
@@ -147,9 +148,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		List<EntityInstanceDescription> instanceDescriptions
 			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
 
-		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions) {
-			EntityInstance entityInstance = instanceDesc.createInstance(tile.transform);
-			entityInstance.gameObject.isStatic = true;
-		}
+		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions)
+			instanceDesc.createInstance(tile.transform);
 	}
 }

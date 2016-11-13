@@ -5,12 +5,20 @@ using Lod = System.Int32;
 
 public class EntityInstanceDescription
 {
-	// A more lightweight structure than EntityInstance for easy storage
+	// EntityInstanceDescription is a shadow structure that doesn't
+	// exist in the scene as a GameObject, like an EntityInstance will be.
+	// This is more convenient when describing, saving, loading etc
+	// entity instances that exists in the world.
+	// It is still possible to create entity instance directly from an
+	// entity class, but a single entity instance description can
+	// only be used to create one instance.
 
 	public int entityClassID;	
 	public Vector3 worldPos;
 	public Quaternion rotation;
 	public bool isStatic;
+
+	EntityInstance instance;
 
 	public EntityInstanceDescription()
 	{}
@@ -23,21 +31,25 @@ public class EntityInstanceDescription
 		this.isStatic = isStatic;
 	}
 
-	public EntityInstanceDescription(EntityInstance instance)
-	{
-		entityClassID = instance.entityClass.id;
-		worldPos = instance.transform.position;
-		rotation = instance.transform.rotation;
-	}
-
 	public EntityInstance createInstance(Transform parentTransform)
 	{
+		Debug.Assert(instance == null, "This description has an instance already");
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(entityClassID);
-		EntityInstance entityInstance = entityClass.createInstance(parentTransform);
-		entityInstance.transform.position = worldPos;
-		entityInstance.transform.rotation = rotation;
-		entityInstance.gameObject.isStatic = isStatic;
-		return entityInstance;
+		instance = entityClass.createInstance(parentTransform);
+		instance.entityInstanceDescription = this;
+		instance.transform.position = worldPos;
+		instance.transform.rotation = rotation;
+		instance.gameObject.isStatic = isStatic;
+		return instance;
+	}
+
+	public void destroyInstance()
+	{
+		if (!instance)
+			return;
+
+		instance.hideAndDestroy();
+		instance = null;
 	}
 }
 
@@ -69,7 +81,8 @@ public class EntityInstance : MonoBehaviour {
 	{
 		entityClass.instanceCount--;
 		gameObject.SetActive(false);
-		GameObject.Destroy(this.gameObject);
+//		GameObject.Destroy(this.gameObject);
+		UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(gameObject); };
 	}
 
 	public void updateMesh()

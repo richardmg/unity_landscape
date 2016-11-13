@@ -106,7 +106,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 		//		Root.instance.notificationManager.notifyEntityInstanceSwapped(from, to);
 	}
 
-	public void onEntityInstanceRemoved(EntityInstance entityInstance)
+	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
 	{
 		Debug.Assert(false, "Not implemented!");
 	}
