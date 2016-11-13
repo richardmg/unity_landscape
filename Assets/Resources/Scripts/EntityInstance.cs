@@ -9,9 +9,6 @@ public class EntityInstanceDescription
 	// exist in the scene as a GameObject, like an EntityInstance will be.
 	// This is more convenient when describing, saving, loading etc
 	// entity instances that exists in the world.
-	// It is still possible to create entity instance directly from an
-	// entity class, but a single entity instance description can
-	// only be used to create one instance.
 
 	public int entityClassID;	
 	public Vector3 worldPos;
@@ -33,6 +30,9 @@ public class EntityInstanceDescription
 
 	public EntityInstance createInstance(Transform parentTransform)
 	{
+		// It is possible to create entity instance directly from an
+		// entity class, but a single entity instance description can
+		// only reference one concrete instance.
 		Debug.Assert(instance == null, "This description has an instance already");
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(entityClassID);
 		instance = entityClass.createInstance(parentTransform);
