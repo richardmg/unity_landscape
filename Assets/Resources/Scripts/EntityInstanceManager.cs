@@ -18,11 +18,12 @@ public class Tile
 public class Page
 {
 	public Tile[,] m_tiles;
-	Vector3 m_pageWorldPos;
+	public Vector3 m_pageWorldPos;
 	float m_tileSize;
 
 	public Page(float tileSize, int tileCount, Vector3 pageWorldPos)
 	{
+		m_pageWorldPos = pageWorldPos;
 		m_tileSize = tileSize;
 		m_tiles = new Tile[tileCount, tileCount];
 		for (int x = 0; x < tileCount; ++x) {
@@ -67,7 +68,6 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 	public void updateTiles(TileDescription[] tilesToUpdate)
 	{
-		Debug.Log("Update entity instance manager tiles");
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {
 			TileDescription desc = tilesToUpdate[i];
 			Page page = new Page(m_tileEngine.tileSize, tilesPerPage, desc.worldPos);

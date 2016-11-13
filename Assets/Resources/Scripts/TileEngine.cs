@@ -81,6 +81,8 @@ public class TileEngine : MonoBehaviour {
 	public void init()
 	{
 		m_tileCountHalf = tileCount / 2f;
+		Debug.Assert(m_tileCountHalf == (int)m_tileCountHalf, "tileCount must be an even number");
+
 		m_worldToGridOffset = new Vector3(tileSize / 2f, 0, tileSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
 		m_tileLayerList = new List<ITileLayer>(GetComponentsInChildren<ITileLayer>());
