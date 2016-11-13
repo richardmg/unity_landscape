@@ -133,6 +133,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		}
 	}
 
+	void createEntityInstances(GameObject tile, TileDescription tileDesc)
+	{
+		List<EntityInstanceDescription> instanceDescriptions
+			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
+
+		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions)
+			instanceDesc.createInstance(tile.transform);
+	}
+
 	void destroyEntityInstances(GameObject tile)
 	{
 		Transform transform = tile.transform;
@@ -141,14 +150,5 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 			EntityInstance instance = go.GetComponent<EntityInstance>();
 			instance.entityInstanceDescription.destroyInstance();
 		}
-	}
-
-	void createEntityInstances(GameObject tile, TileDescription tileDesc)
-	{
-		List<EntityInstanceDescription> instanceDescriptions
-			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
-
-		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions)
-			instanceDesc.createInstance(tile.transform);
 	}
 }
