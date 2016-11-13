@@ -4,32 +4,6 @@ using System.Collections.Generic;
 
 using LandscapeType = System.Int32;
 
-public class EntityInstanceDescription
-{
-	public int entityClassID;	
-	public Vector3 position;
-	public Quaternion rotation;
-
-	public EntityInstanceDescription()
-	{}
-
-	public EntityInstanceDescription(EntityInstance instance)
-	{
-		entityClassID = instance.entityClass.id;
-		position = instance.transform.position;
-		rotation = instance.transform.rotation;
-	}
-
-	public EntityInstance createInstance(Transform parentTransform)
-	{
-		EntityClass entityClass = Root.instance.entityClassManager.getEntity(entityClassID);
-		EntityInstance entityInstance = entityClass.createInstance(parentTransform);
-		entityInstance.transform.position = position;
-		entityInstance.transform.rotation = rotation;
-		return entityInstance;
-	}
-}
-
 public class Tile
 {
 	public List<EntityInstanceDescription> entityInstanceDescriptions = new List<EntityInstanceDescription>();

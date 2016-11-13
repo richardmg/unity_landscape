@@ -3,8 +3,38 @@ using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
 
+public class EntityInstanceDescription
+{
+	// A more lightweight structure than EntityInstance for easy storage
+
+	public int entityClassID;	
+	public Vector3 position;
+	public Quaternion rotation;
+
+	public EntityInstanceDescription()
+	{}
+
+	public EntityInstanceDescription(EntityInstance instance)
+	{
+		entityClassID = instance.entityClass.id;
+		position = instance.transform.position;
+		rotation = instance.transform.rotation;
+	}
+
+	public EntityInstance createInstance(Transform parentTransform)
+	{
+		EntityClass entityClass = Root.instance.entityClassManager.getEntity(entityClassID);
+		EntityInstance entityInstance = entityClass.createInstance(parentTransform);
+		entityInstance.transform.position = position;
+		entityInstance.transform.rotation = rotation;
+		return entityInstance;
+	}
+}
+
 public class EntityInstance : MonoBehaviour {
 	public EntityClass entityClass;
+	public EntityInstanceDescription entityInstanceDescription;
+
 	public bool instanceHidden = false;
 
 	public void makeStandalone(Lod lod)

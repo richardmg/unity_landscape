@@ -49,6 +49,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 
 	public void onEntityInstanceRemoved(EntityInstance entityInstance)
 	{
+		// entityInstance is already destroyed at this point, so nothing to do
 	}
 
 	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
