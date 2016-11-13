@@ -55,7 +55,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		m_heightArray = new float[heightmapResolution, heightmapResolution];
 
 		LandscapeDescription desc = new LandscapeDescription();
-		desc.size = engine.tileSize;
+		desc.size = engine.tileWorldSize;
 		desc.pixelError = pixelError;
 		desc.resolution = heightmapResolution;
 		desc.texture = terrainTexture;

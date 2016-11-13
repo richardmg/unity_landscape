@@ -9,6 +9,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 
 	public void initTileLayer(TileEngine engine)
 	{
+		// Ensure that the tile size matches the tile size of the smallest tiles in entityInstanceManager
+		float baseTileSize = Root.instance.entityInstanceManager.tileEngine.tileWorldSize / Root.instance.entityInstanceManager.tilesPerPage;
+		Debug.Assert(baseTileSize == engine.tileWorldSize, "tile size should match the tiles in entity instance manager");
+
 		m_tileEngine = engine;
 		int tileCount = engine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];

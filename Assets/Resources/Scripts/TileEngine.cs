@@ -38,7 +38,7 @@ public class TileEngine : MonoBehaviour {
 	[Range (2, 10)]
 	public int tileCount = 4;
 	[Range (1, 5000)]
-	public float tileSize = 100;
+	public float tileWorldSize = 100;
 	public GameObject player;
 	public bool showInEditor = false;
 
@@ -83,7 +83,7 @@ public class TileEngine : MonoBehaviour {
 		m_tileCountHalf = tileCount / 2f;
 		Debug.Assert(m_tileCountHalf == (int)m_tileCountHalf, "tileCount must be an even number");
 
-		m_worldToGridOffset = new Vector3(tileSize / 2f, 0, tileSize / 2f);
+		m_worldToGridOffset = new Vector3(tileWorldSize / 2f, 0, tileWorldSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
 		m_tileLayerList = new List<ITileLayer>(GetComponentsInChildren<ITileLayer>());
 
@@ -113,7 +113,7 @@ public class TileEngine : MonoBehaviour {
 	{
 		// Note that a single grid coordinate will map to four tiles. And
 		// this function will return the position of the upper right tile.
-		worldPos.Set(gridCoord.x * tileSize, 0, gridCoord.y * tileSize);
+		worldPos.Set(gridCoord.x * tileWorldSize, 0, gridCoord.y * tileWorldSize);
 	}
 
 	public void gridPosFromWorldPosAsInt(Vector3 worldPos, ref Vector2 gridCoord)
@@ -123,15 +123,15 @@ public class TileEngine : MonoBehaviour {
 		// grid coordinate will overlap with four tiles, which causes some
 		// extra headache in the other functions in this class.
 		gridCoord.Set(
-			Mathf.FloorToInt((worldPos.x + m_worldToGridOffset.x) / tileSize),
-			Mathf.FloorToInt((worldPos.z + m_worldToGridOffset.z) / tileSize));
+			Mathf.FloorToInt((worldPos.x + m_worldToGridOffset.x) / tileWorldSize),
+			Mathf.FloorToInt((worldPos.z + m_worldToGridOffset.z) / tileWorldSize));
 	}
 
 	public void matrixCoordFromWorldPos(Vector3 worldPos, out int matrixX, out int matrixY)
 	{
 		// Return the matrix coordinate of the tile underneath worldPos.
-		int gridX = Mathf.FloorToInt(worldPos.x / tileSize);
-		int gridY = Mathf.FloorToInt(worldPos.z / tileSize);
+		int gridX = Mathf.FloorToInt(worldPos.x / tileWorldSize);
+		int gridY = Mathf.FloorToInt(worldPos.z / tileWorldSize);
 		int gridOffsetX = gridX - (int)m_playerGridPos.x;
 		int gridOffsetY = gridY - (int)m_playerGridPos.y;
 

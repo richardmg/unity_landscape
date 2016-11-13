@@ -41,11 +41,12 @@ public class Page
 	}
 }
 
-public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer, IEntityInstanceListener {
+public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer, IEntityInstanceListener
+{
+	[HideInInspector]
+	public TileEngine tileEngine;
 
 	private Page[,] m_pages;
-
-	TileEngine m_tileEngine;
 
 	// This manager has a set of pages. Each page is divided into a a number of tiles. And each
 	// tile contains a list of EntityInstanceDescriptions. Pages are supposed to be big, and will
@@ -61,7 +62,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 	public void initTileLayer(TileEngine engine)
 	{
-		m_tileEngine = engine;
+		tileEngine = engine;
 		m_pages = new Page[engine.tileCount, engine.tileCount];
 		engine.updateAllTiles();
 	}
@@ -70,7 +71,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 	{
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {
 			TileDescription desc = tilesToUpdate[i];
-			Page page = new Page(m_tileEngine.tileSize, tilesPerPage, desc.worldPos);
+			Page page = new Page(tileEngine.tileWorldSize, tilesPerPage, desc.worldPos);
 			m_pages[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y] = page;
 			// TODO: load tile data from disk async
 		}
@@ -84,7 +85,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 	public List<EntityInstanceDescription> getEntityInstanceDescriptionsForWorldPos(Vector3 worldPos)
 	{
 		int matrixX, matrixY;
-		m_tileEngine.matrixCoordFromWorldPos(worldPos, out matrixX, out matrixY);
+		tileEngine.matrixCoordFromWorldPos(worldPos, out matrixX, out matrixY);
 		Tile tile = m_pages[matrixX, matrixY].getTileForWorldPos(worldPos);
 		return tile.entityInstanceDescriptions;
 	}
@@ -97,7 +98,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 		int x, y;
 		Vector3 worldPos = entityInstance.transform.position;
-		m_tileEngine.matrixCoordFromWorldPos(worldPos, out x, out y);
+		tileEngine.matrixCoordFromWorldPos(worldPos, out x, out y);
 		Tile tile = m_pages[x, y].getTileForWorldPos(worldPos);
 		tile.entityInstanceDescriptions.Add(desc);
 	}
