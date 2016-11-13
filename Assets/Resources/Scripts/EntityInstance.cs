@@ -8,16 +8,25 @@ public class EntityInstanceDescription
 	// A more lightweight structure than EntityInstance for easy storage
 
 	public int entityClassID;	
-	public Vector3 position;
+	public Vector3 worldPos;
 	public Quaternion rotation;
+	public bool isStatic;
 
 	public EntityInstanceDescription()
 	{}
 
+	public EntityInstanceDescription(EntityClass entityClass, Vector3 worldPos, bool isStatic = true)
+	{
+		entityClassID = entityClass.id;
+		this.worldPos = worldPos;
+		rotation = new Quaternion();
+		this.isStatic = isStatic;
+	}
+
 	public EntityInstanceDescription(EntityInstance instance)
 	{
 		entityClassID = instance.entityClass.id;
-		position = instance.transform.position;
+		worldPos = instance.transform.position;
 		rotation = instance.transform.rotation;
 	}
 
@@ -25,8 +34,9 @@ public class EntityInstanceDescription
 	{
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(entityClassID);
 		EntityInstance entityInstance = entityClass.createInstance(parentTransform);
-		entityInstance.transform.position = position;
+		entityInstance.transform.position = worldPos;
 		entityInstance.transform.rotation = rotation;
+		entityInstance.gameObject.isStatic = isStatic;
 		return entityInstance;
 	}
 }

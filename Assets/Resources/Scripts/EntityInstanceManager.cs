@@ -88,14 +88,11 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 		return tile.entityInstanceDescriptions;
 	}
 
-	public void onEntityInstanceAdded(EntityInstance entityInstance)
+	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
-		EntityInstanceDescription desc = new EntityInstanceDescription(entityInstance);
-
 		int x, y;
-		Vector3 worldPos = entityInstance.transform.position;
-		tileEngine.matrixCoordFromWorldPos(worldPos, out x, out y);
-		Tile tile = m_pages[x, y].getTileForWorldPos(worldPos);
+		tileEngine.matrixCoordFromWorldPos(desc.worldPos, out x, out y);
+		Tile tile = m_pages[x, y].getTileForWorldPos(desc.worldPos);
 		tile.entityInstanceDescriptions.Add(desc);
 	}
 

@@ -12,7 +12,7 @@ public interface IEntityClassListener
 
 public interface IEntityInstanceListener
 {
-	void onEntityInstanceAdded(EntityInstance entityInstance);
+	void onEntityInstanceAdded(EntityInstanceDescription entityInstance);
 	void onEntityInstanceRemoved(EntityInstance entityInstance);
 	void onEntityInstanceSwapped(EntityInstance from, EntityInstance to);
 }
@@ -45,10 +45,10 @@ public class NotificationManager {
 		projectListeners.Add(listener);
 	}
 
-	public void notifyEntityInstanceAdded(EntityInstance entityInstance)
+	public void notifyEntityInstanceAdded(EntityInstanceDescription desc)
 	{
 		foreach (IEntityInstanceListener subscriber in entityInstanceListeners)
-			subscriber.onEntityInstanceAdded(entityInstance);	
+			subscriber.onEntityInstanceAdded(desc);	
 	}
 
 	public void notifyEntityInstanceRemoved(EntityInstance entityInstance)

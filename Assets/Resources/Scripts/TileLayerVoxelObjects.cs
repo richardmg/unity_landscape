@@ -35,15 +35,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		}
 	}
 
-	public void onEntityInstanceAdded(EntityInstance entityInstance)
+	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
 		// Find out which tile is currently under the new things position
 		int x, y;
-		m_tileEngine.matrixCoordFromWorldPos(entityInstance.gameObject.transform.position, out x, out y);
+		m_tileEngine.matrixCoordFromWorldPos(desc.worldPos, out x, out y);
 		GameObject tile = m_tileMatrix[x, y];
 
-		// Create and position an instance of the thing as a child of the tile
-		entityInstance.gameObject.transform.parent = tile.transform;
+		desc.createInstance(tile.transform);
+
 		rebuildTileMesh(tile);
 	}
 
