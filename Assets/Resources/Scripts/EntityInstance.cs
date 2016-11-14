@@ -45,9 +45,7 @@ public class EntityInstanceDescription
 
 	public void destroyInstance()
 	{
-		if (!instance)
-			return;
-
+		Debug.Assert(instance != null, "This description has no instance. Create and Destroy calls should be balanced.");
 		instance.hideAndDestroy();
 		instance = null;
 	}
