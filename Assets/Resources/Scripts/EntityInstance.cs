@@ -6,8 +6,8 @@ using Lod = System.Int32;
 public class EntityInstanceDescription
 {
 	// EntityInstanceDescription is a shadow structure that doesn't
-	// exist in the scene as a GameObject, like an EntityInstance will be.
-	// This is more convenient when describing, saving, loading etc
+	// exist in the scene as a GameObject, like an EntityInstance needs
+	// to be. This is more convenient when describing, saving, loading etc
 	// entity instances that exists in the world.
 
 	public int entityClassID;	
