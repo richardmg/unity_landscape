@@ -38,9 +38,11 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
 		// Find out which tile is currently under the new things position
-		int x, y;
-		m_tileEngine.matrixCoordFromWorldPos(desc.worldPos, out x, out y);
-		GameObject tile = m_tileMatrix[x, y];
+		float tileX, tileZ;
+		int matrixX, matrixY;
+		m_tileEngine.tileCoordAtWorldPos(desc.worldPos, out tileX, out tileZ);
+		m_tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);
+		GameObject tile = m_tileMatrix[matrixX, matrixY];
 
 		desc.createInstance(tile.transform);
 
@@ -79,12 +81,14 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		m_tileEngine.updateAllTiles();
 	}
 
-	GameObject getTileAtPos(Vector3 pos)
+	GameObject getTileAtPos(Vector3 worldPos)
 	{
 		// Find out which tile is currently under the new things position
-		int x, y;
-		m_tileEngine.matrixCoordFromWorldPos(pos, out x, out y);
-		return m_tileMatrix[x, y];
+		float tileX, tileZ;
+		int matrixX, matrixY;
+		m_tileEngine.tileCoordAtWorldPos(worldPos, out tileX, out tileZ);
+		m_tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);
+		return m_tileMatrix[matrixX, matrixY];
 	}
 
 	public void rebuildTileMesh(GameObject tile)
