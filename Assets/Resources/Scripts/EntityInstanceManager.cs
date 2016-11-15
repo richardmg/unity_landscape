@@ -63,10 +63,10 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 	public void updateTiles(TileDescription[] tilesToUpdate)
 	{
-		if (Root.instance.player.transform.position.x != 0 && Root.instance.player.transform.position.z != 0) {
-			Debug.Assert(false, "Moving outside entity mananger start tiles is not yet supported!");
-			// TODO: load/save tile data from disk async
-		}
+//		if (Root.instance.player.transform.position.x != 0 && Root.instance.player.transform.position.z != 0) {
+//			Debug.Assert(false, "Moving outside entity mananger start tiles is not yet supported!");
+//			// TODO: load/save tile data from disk async
+//		}
 
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {
 			TileDescription desc = tilesToUpdate[i];

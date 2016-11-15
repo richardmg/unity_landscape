@@ -15,7 +15,6 @@ public class TileDescription
 	// Note that a grid coordinate maps to four tiles.
 	// And the tile described in this class will represent
 	// the one that is upper right.
-	public Vector2 gridCoord = new Vector2();
 	public Vector3 worldPos = new Vector3();
 	public Vector2 matrixCoord = new Vector2();
 	public TileNeighbours neighbours = new TileNeighbours();
@@ -43,8 +42,9 @@ public class TileEngine : MonoBehaviour {
 	public bool showInEditor = false;
 
 	float m_tileCountHalf;
-	Vector3 m_worldToGridOffset;
-	Vector2 m_playerGridPos;
+	Vector3 m_tileCenterOffset;
+	int m_playerShiftedPosX;
+	int m_playerShiftedPosZ;
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
 
@@ -61,10 +61,12 @@ public class TileEngine : MonoBehaviour {
 	public void Update()
 	{
 		Vector3 playerWorldPos = player.transform.position;
-		Vector2 prevPlayerGridPos = m_playerGridPos;
-		gridPosFromWorldPosAsInt(playerWorldPos, ref m_playerGridPos);
-		int gridCrossedX = (int)(m_playerGridPos.x - prevPlayerGridPos.x);
-		int gridCrossedZ = (int)(m_playerGridPos.y - prevPlayerGridPos.y);
+		int prevPlayerShiftedPosX = m_playerShiftedPosX;
+		int prevPlayerShiftedPosZ = m_playerShiftedPosZ;
+		shiftedTilePosFromWorldPos(playerWorldPos, out m_playerShiftedPosX, out m_playerShiftedPosZ);
+
+		int gridCrossedX = m_playerShiftedPosX - prevPlayerShiftedPosX;
+		int gridCrossedZ = m_playerShiftedPosZ - prevPlayerShiftedPosZ;
 
 		if (gridCrossedX == 0 && gridCrossedZ == 0)
 			return;
@@ -83,12 +85,12 @@ public class TileEngine : MonoBehaviour {
 		m_tileCountHalf = tileCount / 2f;
 		Debug.Assert(m_tileCountHalf == (int)m_tileCountHalf, "tileCount must be an even number");
 
-		m_worldToGridOffset = new Vector3(tileWorldSize / 2f, 0, tileWorldSize / 2f);
+		m_tileCenterOffset = new Vector3(tileWorldSize / 2f, 0, tileWorldSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
 		m_tileLayerList = new List<ITileLayer>(GetComponentsInChildren<ITileLayer>());
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		gridPosFromWorldPosAsInt(player.transform.position, ref m_playerGridPos);
+		shiftedTilePosFromWorldPos(player.transform.position, out m_playerShiftedPosX, out m_playerShiftedPosZ);
 
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
@@ -102,6 +104,11 @@ public class TileEngine : MonoBehaviour {
 		m_tileLayerList.Add(tileLayer);
 	}
 
+	public ITileLayer getTileLayer(int index)
+	{
+		return m_tileLayerList[index];
+	}
+
 	public void removeAllTiles()
 	{
 		ITileLayer[] tileLayers = GetComponentsInChildren<ITileLayer>();
@@ -109,36 +116,42 @@ public class TileEngine : MonoBehaviour {
 			tileLayer.removeAllTiles();
 	}
 
-	public void worldTilePosFromGridPos(Vector2 gridCoord, ref Vector3 worldPos)
+	public void worldPosFromTileCoord(float tileX, float tileY, ref Vector3 worldPos)
 	{
-		// Note that a single grid coordinate will map to four tiles. And
-		// this function will return the position of the upper right tile.
-		worldPos.Set(gridCoord.x * tileWorldSize, 0, gridCoord.y * tileWorldSize);
+		worldPos.Set(tileX * tileWorldSize, 0, tileY * tileWorldSize);
 	}
 
-	public void gridPosFromWorldPosAsInt(Vector3 worldPos, ref Vector2 gridCoord)
+	public void tileCoordFromWorldPos(Vector3 worldPos, out float tileX, out float tileY)
 	{
-		// We shift the given worldPos half a tile size up-right to center
-		// the whole tile engine around the player. This means that each
-		// grid coordinate will overlap with four tiles, which causes some
-		// extra headache in the other functions in this class.
-		gridCoord.Set(
-			Mathf.FloorToInt((worldPos.x + m_worldToGridOffset.x) / tileWorldSize),
-			Mathf.FloorToInt((worldPos.z + m_worldToGridOffset.z) / tileWorldSize));
+		tileX = worldPos.x / tileWorldSize;
+		tileY = worldPos.y / tileWorldSize;
 	}
 
 	public void matrixCoordFromWorldPos(Vector3 worldPos, out int matrixX, out int matrixY)
 	{
-		// Return the matrix coordinate of the tile underneath worldPos.
-		int gridX = Mathf.FloorToInt(worldPos.x / tileWorldSize);
-		int gridY = Mathf.FloorToInt(worldPos.z / tileWorldSize);
-		int gridOffsetX = gridX - (int)m_playerGridPos.x;
-		int gridOffsetY = gridY - (int)m_playerGridPos.y;
+		float argTileX, argTileY, playerTileX, playerTileY;
+		tileCoordFromWorldPos(worldPos, out argTileX, out argTileY);
+		tileCoordFromWorldPos(player.transform.position, out playerTileX, out playerTileY);
+		float tileOffsetX = argTileX - playerTileX;
+		float tileOffsetY = argTileY - playerTileY;
 
-		Debug.Assert(Mathf.Abs(gridOffsetX) <= m_tileCountHalf && Mathf.Abs(gridOffsetY) <= m_tileCountHalf, "Worldpos outside current tiles");
+		Debug.Assert(Mathf.Abs(tileOffsetX) <= m_tileCountHalf && Mathf.Abs(tileOffsetY) <= m_tileCountHalf, "Worldpos outside current tiles");
 
-		matrixX = matrixPos((int)m_matrixTopRight.x, (int)(gridOffsetX - m_tileCountHalf + 1));
-		matrixY = matrixPos((int)m_matrixTopRight.y, (int)(gridOffsetY - m_tileCountHalf + 1));
+		matrixX = matrixPos((int)m_matrixTopRight.x, (int)(tileOffsetX - m_tileCountHalf + 1));
+		matrixY = matrixPos((int)m_matrixTopRight.y, (int)(tileOffsetY - m_tileCountHalf + 1));
+	}
+
+	public void worldPosFromMatrixCoord(int matrixX, int matrixY, ref Vector3 worldPos)
+	{
+		// Utilize the fact that the player is always at the center of the matrix
+		Debug.Assert(matrixX >= 0 && matrixX < tileCount && matrixY >= 0 && matrixY < tileCount, "Matrix pos outside matrix");
+
+		float playerTileX, playerTileY;
+		tileCoordFromWorldPos(player.transform.position, out playerTileX, out playerTileY);
+		float tileX = playerTileX - m_tileCountHalf + matrixX; // +1? -1?
+		float tileY = playerTileY - m_tileCountHalf + matrixY;
+
+		worldPosFromTileCoord(tileX, tileY, ref worldPos);
 	}
 
 	int matrixPos(int top, int rows)
@@ -169,8 +182,7 @@ public class TileEngine : MonoBehaviour {
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				m_tileMoveDesc[x].matrixCoord.Set(x, z);
-				m_tileMoveDesc[x].gridCoord.Set(x + m_playerGridPos.x - m_tileCountHalf, z + m_playerGridPos.y - m_tileCountHalf);
-				worldTilePosFromGridPos(m_tileMoveDesc[x].gridCoord, ref m_tileMoveDesc[x].worldPos);
+				worldPosFromMatrixCoord(x, z, ref m_tileMoveDesc[x].worldPos);
 				setNeighbours(m_tileMoveDesc[x].matrixCoord, ref m_tileMoveDesc[x].neighbours);
 			}
 
@@ -180,6 +192,16 @@ public class TileEngine : MonoBehaviour {
 					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
 		}
+	}
+
+	private void shiftedTilePosFromWorldPos(Vector3 worldPos, out int centerPosX, out int centerPosY)
+	{
+		// Note: shiftedTilePos is an internal concept, and is only used to
+		// determine when to update the tile matrix. We use shiftedTilePos to
+		// shift the user position half a tile north-east to roll the matrix
+		// when the user passes the center of a tile, rather than at the tile edge.
+		centerPosX = Mathf.FloorToInt((worldPos.x + m_tileCenterOffset.x) / tileWorldSize);
+		centerPosY = Mathf.FloorToInt((worldPos.z + m_tileCenterOffset.z) / tileWorldSize);
 	}
 
 	private void updateXTiles(int tilesCrossedX)
@@ -192,18 +214,10 @@ public class TileEngine : MonoBehaviour {
 			if (moveDirection < 0)
 				matrixFrontX = matrixPos(matrixFrontX, 1);
 
-			float gridCoordX = moveDirection > 0 ?
-				m_playerGridPos.x + m_tileCountHalf - i - 1 :
-				m_playerGridPos.x - m_tileCountHalf + i;
-
 			for (int j = 0; j < tileCount; ++j) {
 				int matrixFrontZ = matrixPos((int)m_matrixTopRight.y, -j);
-				float gridCoordZ = m_playerGridPos.y + m_tileCountHalf - j - 1;
-
-				m_tileMoveDesc[j].gridCoord.Set(gridCoordX, gridCoordZ);
 				m_tileMoveDesc[j].matrixCoord.Set(matrixFrontX, matrixFrontZ);
-
-				worldTilePosFromGridPos(m_tileMoveDesc[j].gridCoord, ref m_tileMoveDesc[j].worldPos);
+				worldPosFromMatrixCoord(matrixFrontX, matrixFrontZ, ref m_tileMoveDesc[j].worldPos);
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
@@ -226,18 +240,10 @@ public class TileEngine : MonoBehaviour {
 			if (moveDirection < 0)
 				matrixFrontZ = matrixPos(matrixFrontZ, 1);
 
-			float gridCoordZ = moveDirection > 0 ?
-				m_playerGridPos.y + m_tileCountHalf - i - 1 :
-				m_playerGridPos.y - m_tileCountHalf + i;
-
 			for (int j = 0; j < tileCount; ++j) {
 				int matrixFrontX = matrixPos((int)m_matrixTopRight.x, -j);
-				float gridCoordX = m_playerGridPos.x + m_tileCountHalf - j - 1;
-
-				m_tileMoveDesc[j].gridCoord.Set(gridCoordX, gridCoordZ);
 				m_tileMoveDesc[j].matrixCoord.Set(matrixFrontX, matrixFrontZ);
-
-				worldTilePosFromGridPos(m_tileMoveDesc[j].gridCoord, ref m_tileMoveDesc[j].worldPos);
+				worldPosFromMatrixCoord(matrixFrontX, matrixFrontZ, ref m_tileMoveDesc[j].worldPos);
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
@@ -248,10 +254,5 @@ public class TileEngine : MonoBehaviour {
 					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
 			}
 		}
-	}
-
-	public ITileLayer getTileLayer(int index)
-	{
-		return m_tileLayerList[index];
 	}
 }

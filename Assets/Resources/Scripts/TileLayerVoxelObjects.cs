@@ -29,8 +29,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 			TileDescription desc = tilesToUpdate[i];
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
-			destroyEntityInstances(tile);
-			createEntityInstances(tile, desc);
+//			destroyEntityInstances(tile);
+//			createEntityInstances(tile, desc);
 			rebuildTileMesh(tile);
 		}
 	}
