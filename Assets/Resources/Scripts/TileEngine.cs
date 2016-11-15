@@ -123,6 +123,12 @@ public class TileEngine : MonoBehaviour {
 		float playerTileX, playerTileZ;
 		int playerMatrixX, playerMatrixY;
 		tileCoordAtWorldPos(player.transform.position, out playerTileX, out playerTileZ);
+
+		// This call becomes wrong under update. The call will figure out the player
+		// tile according to the new topleft. And therefore the matrix offset will keep
+		// the relative distance. Perhaps we should bookkeep the current tile coord (and
+		// matrix coord), and use those for calculations, and update them at the end
+		// of "Update".
 		matrixCoordForTileCoord(playerTileX, playerTileZ, out playerMatrixX, out playerMatrixY);
 
 		// Normalize arg matrix coord (as if the matrix were unshifted)
@@ -134,7 +140,7 @@ public class TileEngine : MonoBehaviour {
 		tileX = (int)playerTileX + matrixOffsetX;
 		tileZ = (int)playerTileZ + matrixOffsetY;
 
-		Debug.Log("tileCoordForMatrixCoord: " + matrixY + ", " + matrixYNormalized + ", " + matrixOffsetY + ", " + (int)playerTileZ + ", " + tileZ);
+		Debug.Log("tileCoordForMatrixCoord: " + matrixY + ", " + matrixYNormalized + ", " + playerMatrixY + ", " + (int)playerTileZ + ", " + tileZ);
 	}
 
 	int matrixPos(int top, int offset)
