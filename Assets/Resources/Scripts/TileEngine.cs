@@ -43,6 +43,10 @@ public class TileEngine : MonoBehaviour {
 	Vector3 m_tileCenterOffset;
 	int m_playerShiftedPosX;
 	int m_playerShiftedPosZ;
+	int m_playerTileX;
+	int m_playerTileZ;
+	int m_playerMatrixX;
+	int m_playerMatrixY;
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
 
@@ -66,6 +70,8 @@ public class TileEngine : MonoBehaviour {
 		m_tileLayerList = new List<ITileLayer>(GetComponentsInChildren<ITileLayer>());
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
+		tileCoordAtWorldPos(player.transform.position, out m_playerTileX, out m_playerTileZ);
+		matrixCoordForTileCoord(m_playerMatrixX, m_playerTileZ, out m_playerMatrixX, out m_playerMatrixY);
 		shiftedTilePosFromWorldPos(player.transform.position, out m_playerShiftedPosX, out m_playerShiftedPosZ);
 
 		for (int i = 0; i < tileCount; ++i)
@@ -97,50 +103,35 @@ public class TileEngine : MonoBehaviour {
 		worldPos.Set(tileX * tileWorldSize, 0, tileZ * tileWorldSize);
 	}
 
-	public void tileCoordAtWorldPos(Vector3 worldPos, out float tileX, out float tileZ)
+	public void tileCoordAtWorldPos(Vector3 worldPos, out int tileX, out int tileZ)
 	{
-		tileX = worldPos.x / tileWorldSize;
-		tileZ = worldPos.z / tileWorldSize;
+		tileX = (int)(worldPos.x / tileWorldSize);
+		tileZ = (int)(worldPos.z / tileWorldSize);
 	}
 
 	public void matrixCoordForTileCoord(float tileX, float tileZ, out int matrixX, out int matrixY)
 	{
-		// The matrix is always centered around the players position
-		float playerTileX, playerTileY;
-		tileCoordAtWorldPos(player.transform.position, out playerTileX, out playerTileY);
-		float tileOffsetX = tileX - playerTileX;
-		float tileOffsetY = tileZ - playerTileY;
+		float tileOffsetX = tileX - m_playerTileX;
+		float tileOffsetY = tileZ - m_playerTileZ;
 		Debug.Assert(Mathf.Abs(tileOffsetX) <= m_tileCountHalf && Mathf.Abs(tileOffsetY) <= m_tileCountHalf, "tile coordinates outside current matrix window");
-
 		matrixX = matrixPos((int)m_matrixTopRight.x, (int)(tileOffsetX - m_tileCountHalf + 1));
 		matrixY = matrixPos((int)m_matrixTopRight.y, (int)(tileOffsetY - m_tileCountHalf + 1));
-//		Debug.Log("matrixCoordForTileCoord, tileX, tileY, matrixX, matrixY: " + tileX + ", " + tileY + ", " + matrixX + ", " + matrixY);
 	}
 
 	public void tileCoordForMatrixCoord(int matrixX, int matrixY, out float tileX, out float tileZ)
 	{
-		// The matrix is always centered around the players position
-		float playerTileX, playerTileZ;
-		int playerMatrixX, playerMatrixY;
-		tileCoordAtWorldPos(player.transform.position, out playerTileX, out playerTileZ);
-
-		// This call becomes wrong under update. The call will figure out the player
-		// tile according to the new topleft. And therefore the matrix offset will keep
-		// the relative distance. Perhaps we should bookkeep the current tile coord (and
-		// matrix coord), and use those for calculations, and update them at the end
-		// of "Update".
-		matrixCoordForTileCoord(playerTileX, playerTileZ, out playerMatrixX, out playerMatrixY);
-
 		// Normalize arg matrix coord (as if the matrix were unshifted)
 		int matrixXNormalized = matrixPos(matrixX, -(int)m_matrixTopRight.x + (tileCount - 1)); 
 		int matrixYNormalized = matrixPos(matrixY, -(int)m_matrixTopRight.y + (tileCount - 1)); 
+		int playerMatrixXNormalized = matrixPos(m_playerMatrixX, -(int)m_matrixTopRight.x + (tileCount - 1)); 
+		int playerMatrixYNormalized = matrixPos(m_playerMatrixY, -(int)m_matrixTopRight.y + (tileCount - 1)); 
 
-		int matrixOffsetX = matrixXNormalized - (int)m_tileCountHalf;
-		int matrixOffsetY = matrixYNormalized - (int)m_tileCountHalf;
-		tileX = (int)playerTileX + matrixOffsetX;
-		tileZ = (int)playerTileZ + matrixOffsetY;
+		int tileOffsetX = matrixXNormalized - playerMatrixXNormalized;
+		int tileOffsetY = matrixYNormalized - playerMatrixYNormalized;
+		tileX = (int)m_playerTileX + tileOffsetX;
+		tileZ = (int)m_playerTileZ + tileOffsetY;
 
-		Debug.Log("tileCoordForMatrixCoord: " + matrixY + ", " + matrixYNormalized + ", " + playerMatrixY + ", " + (int)playerTileZ + ", " + tileZ);
+		Debug.Log("tileCoordForMatrixCoord: " + matrixY + ", " + playerMatrixYNormalized + ", " + m_playerTileZ + ", " + tileOffsetY);
 	}
 
 	int matrixPos(int top, int offset)
@@ -216,6 +207,11 @@ public class TileEngine : MonoBehaviour {
 
 		if (gridCrossedZ != 0)
 			updateZTiles(gridCrossedZ);
+
+		tileCoordAtWorldPos(playerWorldPos, out m_playerTileX, out m_playerTileZ);
+		matrixCoordForTileCoord(m_playerMatrixX, m_playerTileZ, out m_playerMatrixX, out m_playerMatrixY);
+		Debug.Log("m_playerTileZ updated to: " + m_playerTileZ);
+		Debug.Log("m_playerMatrixY updated to: " + m_playerMatrixY);
 	}
 
 	private void updateXTiles(int tilesCrossedX)
@@ -262,6 +258,7 @@ public class TileEngine : MonoBehaviour {
 				m_tileMoveDesc[j].matrixCoord.Set(matrixFrontX, matrixFrontY);
 				float tileX, tileZ;
 				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, out tileX, out tileZ);
+//				Debug.Log("matrixFrontY: " + matrixFrontY + ", tileZ: " + tileZ);
 				m_tileMoveDesc[j].tileCoord.Set(tileX, tileZ);
 				worldPosForTileCoord(tileX, tileZ, ref m_tileMoveDesc[j].worldPos);
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);

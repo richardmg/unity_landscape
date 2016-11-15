@@ -38,7 +38,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
 		// Find out which tile is currently under the new things position
-		float tileX, tileZ;
+		int tileX, tileZ;
 		int matrixX, matrixY;
 		m_tileEngine.tileCoordAtWorldPos(desc.worldPos, out tileX, out tileZ);
 		m_tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);
@@ -84,7 +84,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 	GameObject getTileAtPos(Vector3 worldPos)
 	{
 		// Find out which tile is currently under the new things position
-		float tileX, tileZ;
+		int tileX, tileZ;
 		int matrixX, matrixY;
 		m_tileEngine.tileCoordAtWorldPos(worldPos, out tileX, out tileZ);
 		m_tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);

@@ -82,7 +82,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 	public List<EntityInstanceDescription> getEntityInstanceDescriptionsForWorldPos(Vector3 worldPos)
 	{
-		float tileX, tileY;
+		int tileX, tileY;
 		int matrixX, matrixY;
 		tileEngine.tileCoordAtWorldPos(worldPos, out tileX, out tileY);
 		tileEngine.matrixCoordForTileCoord(tileX, tileY, out matrixX, out matrixY);
@@ -92,7 +92,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
-		float tileX, tileY;
+		int tileX, tileY;
 		int matrixX, matrixY;
 		tileEngine.tileCoordAtWorldPos(desc.worldPos, out tileX, out tileY);
 		tileEngine.matrixCoordForTileCoord(tileX, tileY, out matrixX, out matrixY);
