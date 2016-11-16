@@ -194,10 +194,12 @@ public class TileEngine : MonoBehaviour {
 		if (shiftedX == 0 && shiftedZ == 0)
 			return;
 
+		// Update matrix top-right
 		m_matrixTopRightTileCoordX += shiftedX;
 		m_matrixTopRightTileCoordZ += shiftedZ;
 		m_matrixTopRight.Set((float)matrixPos((int)m_matrixTopRight.x, shiftedX), (float)matrixPos((int)m_matrixTopRight.y, shiftedZ));
 
+		// Inform listeners about the change
 		if (shiftedX != 0)
 			updateXTiles(shiftedX);
 
