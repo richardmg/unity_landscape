@@ -178,7 +178,7 @@ public class TileEngine : MonoBehaviour {
 		// Note: shiftedTilePos is an internal concept, and is only used to
 		// determine when to update the tile matrix. We use shiftedTilePos to
 		// shift the user position half a tile north-east to roll the matrix
-		// when the user passes the center of a tile, rather than at the tile edge.
+		// when the user passes the center of a tile, rather than at the edge.
 		centerPosX = Mathf.FloorToInt((worldPos.x + m_tileCenterOffset.x) / tileWorldSize);
 		centerPosY = Mathf.FloorToInt((worldPos.z + m_tileCenterOffset.z) / tileWorldSize);
 	}
