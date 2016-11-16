@@ -65,7 +65,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject go = LandscapeTools.createTerrainGameObject(desc);
 				go.transform.SetParent(transform, false);
-				go.name = "Tile " + x + ", " + z;
+				go.name = "MatrixTile " + x + ", " + z;
 				m_tileMatrix[x, z] = go;
 				m_terrainMatrix[x, z] = go.GetComponent<Terrain>();
 			}
@@ -114,7 +114,12 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 			Terrain left = getTerrainSafe(tn.left);
 			Terrain right = getTerrainSafe(tn.right);
 
-			Debug.Log("Update neightbours for matrix coord: " + (int)desc.matrixCoord.x + ", " + (int)desc.matrixCoord.y);
+			Debug.Log("Update neighbours for matrix coord: "
+				+ (int)desc.matrixCoord.x + ", " + (int)desc.matrixCoord.y
+				+ ", tile: " + desc.tileCoord.x + ", " + desc.tileCoord.y
+				+ ", tilepos: " + desc.worldPos
+				+ ", bottom matrix coord: " + tn.bottom);
+
 			Terrain terrain = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			terrain.SetNeighbors(left, top, right, bottom);
 		}
