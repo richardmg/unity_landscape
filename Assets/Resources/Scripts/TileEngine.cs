@@ -131,7 +131,7 @@ public class TileEngine : MonoBehaviour {
 		tileX = (int)m_playerTileX + tileOffsetX;
 		tileZ = (int)m_playerTileZ + tileOffsetY;
 
-		Debug.Log("tileCoordForMatrixCoord: " + matrixY + ", " + playerMatrixYNormalized + ", " + m_playerTileZ + ", " + tileOffsetY);
+//		Debug.Log("tileCoordForMatrixCoord: " + matrixY + ", " + playerMatrixYNormalized + ", " + m_playerTileZ + ", " + tileOffsetY);
 	}
 
 	int matrixPos(int top, int offset)
@@ -201,17 +201,15 @@ public class TileEngine : MonoBehaviour {
 			return;
 
 		m_matrixTopRight.Set((float)matrixPos((int)m_matrixTopRight.x, gridCrossedX), (float)matrixPos((int)m_matrixTopRight.y, gridCrossedZ));
+		tileCoordAtWorldPos(playerWorldPos, out m_playerTileX, out m_playerTileZ);
+		matrixCoordForTileCoord(m_playerMatrixX, m_playerTileZ, out m_playerMatrixX, out m_playerMatrixY);
+		Debug.Log("m_playerTileZ: " + m_playerTileZ + ", m_playerMatrixY: " + m_playerMatrixY);
 
 		if (gridCrossedX != 0)
 			updateXTiles(gridCrossedX);
 
 		if (gridCrossedZ != 0)
 			updateZTiles(gridCrossedZ);
-
-		tileCoordAtWorldPos(playerWorldPos, out m_playerTileX, out m_playerTileZ);
-		matrixCoordForTileCoord(m_playerMatrixX, m_playerTileZ, out m_playerMatrixX, out m_playerMatrixY);
-		Debug.Log("m_playerTileZ updated to: " + m_playerTileZ);
-		Debug.Log("m_playerMatrixY updated to: " + m_playerMatrixY);
 	}
 
 	private void updateXTiles(int tilesCrossedX)
