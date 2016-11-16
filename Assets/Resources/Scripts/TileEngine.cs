@@ -47,6 +47,10 @@ public class TileEngine : MonoBehaviour {
 	int m_playerTileZ;
 	int m_playerMatrixX;
 	int m_playerMatrixY;
+
+	int m_matrixTopRightTileCoordX;
+	int m_matrixTopRightTileCoordZ;
+
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
 
@@ -71,6 +75,8 @@ public class TileEngine : MonoBehaviour {
 
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
 		tileCoordAtWorldPos(player.transform.position, out m_playerTileX, out m_playerTileZ);
+		m_matrixTopRightTileCoordX = (int)(m_playerTileX + m_tileCountHalf);
+		m_matrixTopRightTileCoordZ = (int)(m_playerTileZ + m_tileCountHalf);
 		matrixCoordForTileCoord(m_playerMatrixX, m_playerTileZ, out m_playerMatrixX, out m_playerMatrixY);
 		shiftedTilePosFromWorldPos(player.transform.position, out m_playerShiftedPosX, out m_playerShiftedPosZ);
 
@@ -193,29 +199,38 @@ public class TileEngine : MonoBehaviour {
 		int prevPlayerShiftedPosX = m_playerShiftedPosX;
 		int prevPlayerShiftedPosZ = m_playerShiftedPosZ;
 		shiftedTilePosFromWorldPos(playerWorldPos, out m_playerShiftedPosX, out m_playerShiftedPosZ);
-
-		int gridCrossedX = m_playerShiftedPosX - prevPlayerShiftedPosX;
-		int gridCrossedZ = m_playerShiftedPosZ - prevPlayerShiftedPosZ;
-
-		if (gridCrossedX == 0 && gridCrossedZ == 0)
+		int shiftedX = m_playerShiftedPosX - prevPlayerShiftedPosX;
+		int shiftedZ = m_playerShiftedPosZ - prevPlayerShiftedPosZ;
+		if (shiftedX == 0 && shiftedZ == 0)
 			return;
 
-		m_matrixTopRight.Set((float)matrixPos((int)m_matrixTopRight.x, gridCrossedX), (float)matrixPos((int)m_matrixTopRight.y, gridCrossedZ));
+		m_matrixTopRightTileCoordX += shiftedX;
+		m_matrixTopRightTileCoordZ += shiftedZ;
+		Debug.Log("m_matrixTopRightTileCoordX: " + m_matrixTopRightTileCoordX + ", m_matrixTopRightTileCoordZ: " + m_matrixTopRightTileCoordZ);
+
+
 		tileCoordAtWorldPos(playerWorldPos, out m_playerTileX, out m_playerTileZ);
-		matrixCoordForTileCoord(m_playerMatrixX, m_playerTileZ, out m_playerMatrixX, out m_playerMatrixY);
-		Debug.Log("m_playerTileZ: " + m_playerTileZ + ", m_playerMatrixY: " + m_playerMatrixY);
+		matrixCoordForTileCoord(m_playerTileX, m_playerTileZ, out m_playerMatrixX, out m_playerMatrixY);
 
-		if (gridCrossedX != 0)
-			updateXTiles(gridCrossedX);
+		m_matrixTopRight.Set((float)matrixPos((int)m_matrixTopRight.x, shiftedX), (float)matrixPos((int)m_matrixTopRight.y, shiftedZ));
+//		Debug.Log("m_playerTileZ: " + m_playerTileZ + ", m_playerMatrixY: " + m_playerMatrixY);
 
-		if (gridCrossedZ != 0)
-			updateZTiles(gridCrossedZ);
+		// Output shows that m_playerMatrixY becomes 3 when m_playerTileZ is still 0, after the first shift. This
+		// is wrong, since the matrix tile under the player should not change just because we set a new top-left!
+		// A matrix tile doesn't move inside the matrix, only topleft does. For a normalized matrix, the player
+		// should always be at the center matrix tile.
+
+		if (shiftedX != 0)
+			updateXTiles(shiftedX);
+
+		if (shiftedZ != 0)
+			updateZTiles(shiftedZ);
 	}
 
-	private void updateXTiles(int tilesCrossedX)
+	private void updateXTiles(int shiftedX)
 	{
-		int moveDirection = tilesCrossedX > 0 ? 1 : -1;
-		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedX), tileCount);
+		int moveDirection = shiftedX > 0 ? 1 : -1;
+		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(shiftedX), tileCount);
 
 		for (int i = 0; i < nuberOfColsToUpdate; ++i) {
 			int matrixFrontX = matrixPos((int)m_matrixTopRight.x, i * -moveDirection);
@@ -241,10 +256,10 @@ public class TileEngine : MonoBehaviour {
 		}
 	}
 
-	private void updateZTiles(int tilesCrossedZ)
+	private void updateZTiles(int shiftedZ)
 	{
-		int moveDirection = tilesCrossedZ > 0 ? 1 : -1;
-		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(tilesCrossedZ), tileCount);
+		int moveDirection = shiftedZ > 0 ? 1 : -1;
+		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(shiftedZ), tileCount);
 
 		for (int i = 0; i < nuberOfRowsToUpdate; ++i) {
 			int matrixFrontY = matrixPos((int)m_matrixTopRight.y, i * -moveDirection);
