@@ -8,7 +8,7 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	{
 		if (moveToGround) {
 			Vector3 worldPos = transform.position;
-			worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + 1;
+			worldPos.y = 60;//Root.instance.landscapeManager.sampleHeight(worldPos) + 1;
 			transform.position = worldPos;
 		}
 	}
