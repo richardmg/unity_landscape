@@ -114,6 +114,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 			Terrain left = getTerrainSafe(tn.left);
 			Terrain right = getTerrainSafe(tn.right);
 
+			Debug.Log("Update neightbours for matrix coord: " + (int)desc.matrixCoord.x + ", " + (int)desc.matrixCoord.y);
 			Terrain terrain = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			terrain.SetNeighbors(left, top, right, bottom);
 		}
