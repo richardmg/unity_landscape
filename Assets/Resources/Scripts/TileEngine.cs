@@ -74,10 +74,8 @@ public class TileEngine
 		m_tileMoveDesc = new TileDescription[tileCount];
 		m_matrixTopRight = new IntCoord(tileCount - 1, tileCount - 1);
 		m_matrixTopRightTileCoord = new IntCoord(m_tileCountHalf, m_tileCountHalf);
-		m_shiftedTilePos = new IntCoord();
-		shiftedTilePosFromWorldPos(Vector3.zero, ref m_shiftedTilePos);
-		m_prevShiftedTilePos = new IntCoord();
-		m_prevShiftedTilePos.set(m_shiftedTilePos);
+		m_shiftedTilePos = new IntCoord(0, 0);
+		m_prevShiftedTilePos = new IntCoord(0, 0);
 
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
@@ -143,16 +141,6 @@ public class TileEngine
 		if (onRightEdge) result.right.set(-1, -1); else result.right.set(matrixPos(pos.x, 1), pos.y);
 	}
 
-	private void shiftedTilePosFromWorldPos(Vector3 worldPos, ref IntCoord shiftedTilePos)
-	{
-		// Note: shiftedTilePos is an internal concept, and is only used to
-		// determine when to update the tile matrix. We use shiftedTilePos to
-		// shift the user position half a tile north-east to roll the matrix
-		// when the user passes the center of a tile, rather than at the edge.
-		shiftedTilePos.x = (int)((worldPos.x + m_tileCenterOffset.x) / tileWorldSize);
-		shiftedTilePos.y = (int)((worldPos.z + m_tileCenterOffset.z) / tileWorldSize);
-	}
-
 	public void updateAllTiles(Action<TileDescription[]> callback)
 	{
 		for (int matrixZ = 0; matrixZ < tileCount; ++matrixZ) {
@@ -167,25 +155,35 @@ public class TileEngine
 		}
 	}
 
+	private void shiftedTilePosFromWorldPos(Vector3 worldPos, ref IntCoord shiftedTilePos)
+	{
+		// Note: shiftedTilePos is an internal concept, and is only used to
+		// determine when to update the tile matrix. We use shiftedTilePos to
+		// shift the user position half a tile north-east to roll the matrix
+		// when the user passes the center of a tile, rather than at the edge.
+		shiftedTilePos.x = (int)((worldPos.x + (m_tileCenterOffset.x * Mathf.Sign(worldPos.x))) / tileWorldSize);
+		shiftedTilePos.y = (int)((worldPos.z + (m_tileCenterOffset.z * Mathf.Sign(worldPos.z))) / tileWorldSize);
+	}
+
 	public void updateTiles(Vector3 worldPos, Action<TileDescription[]> callback)
 	{
 		m_prevShiftedTilePos.set(m_shiftedTilePos);
 		shiftedTilePosFromWorldPos(worldPos, ref m_shiftedTilePos);
 		int shiftedX = m_shiftedTilePos.x - m_prevShiftedTilePos.x;
-		int shiftedZ = m_shiftedTilePos.y - m_prevShiftedTilePos.y;
-		if (shiftedX == 0 && shiftedZ == 0)
+		int shiftedY = m_shiftedTilePos.y - m_prevShiftedTilePos.y;
+		if (shiftedX == 0 && shiftedY == 0)
 			return;
 
 		// Update matrix top-right
-		m_matrixTopRightTileCoord.add(shiftedX, shiftedZ);
-		m_matrixTopRight.set(matrixPos(m_matrixTopRight.x, shiftedX), matrixPos(m_matrixTopRight.y, shiftedZ));
+		m_matrixTopRightTileCoord.add(shiftedX, shiftedY);
+		m_matrixTopRight.set(matrixPos(m_matrixTopRight.x, shiftedX), matrixPos(m_matrixTopRight.y, shiftedY));
 
 		// Inform listeners about the change
 		if (shiftedX != 0)
 			updateXTiles(shiftedX, callback);
 
-		if (shiftedZ != 0)
-			updateZTiles(shiftedZ, callback);
+		if (shiftedY != 0)
+			updateZTiles(shiftedY, callback);
 	}
 
 	private void updateXTiles(int shiftedX, Action<TileDescription[]> callback)
