@@ -118,14 +118,14 @@ public class TileLayerTerrain : MonoBehaviour
 			Terrain left = getTerrainSafe(tn.left);
 			Terrain right = getTerrainSafe(tn.right);
 
-			Terrain terrain = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
+			Terrain terrain = m_terrainMatrix[desc.matrixCoord.x, desc.matrixCoord.y];
 			terrain.SetNeighbors(left, top, right, bottom);
 		}
 	}
-
-	Terrain getTerrainSafe(Vector2 matrixPos)
+		
+	Terrain getTerrainSafe(IntCoord matrixPos)
 	{
-		return (int)matrixPos.x == -1 ? null : m_terrainMatrix[(int)matrixPos.x, (int)matrixPos.y];
+		return matrixPos.x == -1 ? null : m_terrainMatrix[matrixPos.x, matrixPos.y];
 	}
 
 	public float sampleHeight(Vector3 worldPos)

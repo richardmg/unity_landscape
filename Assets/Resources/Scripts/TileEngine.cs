@@ -3,49 +3,72 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class IntCoord
+{
+	public IntCoord(int x = 0, int y = 0)
+	{
+		this.x = x;
+		this.y = y;
+	}
+
+	public void set(int x, int y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+
+	public void add(int x, int y)
+	{
+		this.x += x;
+		this.y += y;
+	}
+
+	public int x;
+	public int y;
+}
+
 public class TileNeighbours
 {
-	public Vector2 left = new Vector2();
-	public Vector2 right = new Vector2();
-	public Vector2 top = new Vector2();
-	public Vector2 bottom = new Vector2();
+	public IntCoord left = new IntCoord();
+	public IntCoord right = new IntCoord();
+	public IntCoord top = new IntCoord();
+	public IntCoord bottom = new IntCoord();
 }
 
 public class TileDescription
 {
 	public Vector3 worldPos = new Vector3();
-	public Vector2 tileCoord = new Vector2();
-	public Vector2 matrixCoord = new Vector2();
+	public IntCoord tileCoord = new IntCoord();
+	public IntCoord matrixCoord = new IntCoord();
 	public TileNeighbours neighbours = new TileNeighbours();
 }
 
-public class TileEngine {
+public class TileEngine
+{
 	public int tileCount = 4;
 	public float tileWorldSize = 100;
 
-	float m_tileCountHalf;
+	int m_tileCountHalf;
 	Vector3 m_tileCenterOffset;
 	int m_playerShiftedPosX;
 	int m_playerShiftedPosZ;
 
-	int m_matrixTopRightTileCoordX;
-	int m_matrixTopRightTileCoordZ;
+	IntCoord m_matrixTopRight;
+	IntCoord m_matrixTopRightTileCoord;
 
-	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
 
 	public TileEngine(int tileCount, float tileWorldSize)
 	{
 		this.tileCount = tileCount;
 		this.tileWorldSize = tileWorldSize;
-		m_tileCountHalf = tileCount / 2f;
-		Debug.Assert(m_tileCountHalf == (int)m_tileCountHalf, "tileCount must be an even number");
+		m_tileCountHalf = tileCount / 2;
+		Debug.Assert(m_tileCountHalf == tileCount / 2f, "tileCount must be an even number");
 
 		m_tileCenterOffset = new Vector3(tileWorldSize / 2f, 0, tileWorldSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
-		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		m_matrixTopRightTileCoordX = (int)(m_tileCountHalf);
-		m_matrixTopRightTileCoordZ = (int)(m_tileCountHalf);
+		m_matrixTopRight = new IntCoord(tileCount - 1, tileCount - 1);
+		m_matrixTopRightTileCoord = new IntCoord(m_tileCountHalf, m_tileCountHalf);
 		shiftedTilePosFromWorldPos(Vector3.zero, out m_playerShiftedPosX, out m_playerShiftedPosZ);
 
 		for (int i = 0; i < tileCount; ++i)
@@ -63,23 +86,23 @@ public class TileEngine {
 		tileZ = (int)(worldPos.z / tileWorldSize);
 	}
 
-	public void matrixCoordForTileCoord(float tileX, float tileZ, out int matrixX, out int matrixY)
+	public void matrixCoordForTileCoord(int tileX, int tileZ, out int matrixX, out int matrixY)
 	{
-		int tileOffsetX = (int)(tileX - m_matrixTopRightTileCoordX);
-		int tileOffsetZ = (int)(tileZ - m_matrixTopRightTileCoordZ);
+		int tileOffsetX = tileX - m_matrixTopRightTileCoord.x;
+		int tileOffsetZ = tileZ - m_matrixTopRightTileCoord.y;
 		matrixX = matrixPos((int)m_matrixTopRight.x, -tileOffsetX);
 		matrixY = matrixPos((int)m_matrixTopRight.y, -tileOffsetZ);
 	}
 
-	public void tileCoordForMatrixCoord(int matrixX, int matrixY, out float tileX, out float tileZ)
+	public void tileCoordForMatrixCoord(int matrixX, int matrixY, out int tileX, out int tileZ)
 	{
 		// Normalize arg matrix coord (as if the matrix were unshifted)
 		int matrixXNormalized = matrixPos(matrixX, -(int)m_matrixTopRight.x + (tileCount - 1)); 
 		int matrixYNormalized = matrixPos(matrixY, -(int)m_matrixTopRight.y + (tileCount - 1)); 
 		int tileOffsetX = tileCount - matrixXNormalized;
 		int tileOffsetZ = tileCount - matrixYNormalized;
-		tileX = (int)m_matrixTopRightTileCoordX - tileOffsetX;
-		tileZ = (int)m_matrixTopRightTileCoordZ - tileOffsetZ;
+		tileX = m_matrixTopRightTileCoord.x - tileOffsetX;
+		tileZ = m_matrixTopRightTileCoord.y - tileOffsetZ;
 	}
 
 	int matrixPos(int top, int offset)
@@ -87,7 +110,7 @@ public class TileEngine {
 		return (tileCount + top + (offset % tileCount)) % tileCount;
 	}
 
-	void setNeighbours(Vector2 pos, ref TileNeighbours result)
+	void setNeighbours(IntCoord pos, ref TileNeighbours result)
 	{
 		int matrixTopEdge = (int)m_matrixTopRight.y;
 		int matrixBottomEdge = matrixPos(matrixTopEdge, 1);
@@ -99,10 +122,10 @@ public class TileEngine {
 		bool onLeftEdge = ((int)pos.x == matrixLeftEdge);
 		bool onRightEdge = ((int)pos.x == matrixRightEdge);
 
-		if (onTopEdge) result.top.Set(-1, -1); else result.top.Set(pos.x, matrixPos((int)pos.y, 1));
-		if (onBottomEdge) result.bottom.Set(-1, -1); else result.bottom.Set(pos.x, matrixPos((int)pos.y, -1));
-		if (onLeftEdge) result.left.Set(-1, -1); else result.left.Set(matrixPos((int)pos.x, -1), pos.y);
-		if (onRightEdge) result.right.Set(-1, -1); else result.right.Set(matrixPos((int)pos.x, 1), pos.y);
+		if (onTopEdge) result.top.set(-1, -1); else result.top.set(pos.x, matrixPos((int)pos.y, 1));
+		if (onBottomEdge) result.bottom.set(-1, -1); else result.bottom.set(pos.x, matrixPos((int)pos.y, -1));
+		if (onLeftEdge) result.left.set(-1, -1); else result.left.set(matrixPos((int)pos.x, -1), pos.y);
+		if (onRightEdge) result.right.set(-1, -1); else result.right.set(matrixPos((int)pos.x, 1), pos.y);
 	}
 
 	private void shiftedTilePosFromWorldPos(Vector3 worldPos, out int centerPosX, out int centerPosY)
@@ -119,10 +142,10 @@ public class TileEngine {
 	{
 		for (int matrixZ = 0; matrixZ < tileCount; ++matrixZ) {
 			for (int matrixX = 0; matrixX < tileCount; ++matrixX) {
-				m_tileMoveDesc[matrixX].matrixCoord.Set(matrixX, matrixZ);
-				float tileX, tileZ;
+				m_tileMoveDesc[matrixX].matrixCoord.set(matrixX, matrixZ);
+				int tileX, tileZ;
 				tileCoordForMatrixCoord(matrixX, matrixZ, out tileX, out tileZ);
-				m_tileMoveDesc[matrixX].tileCoord.Set(tileX, tileZ);
+				m_tileMoveDesc[matrixX].tileCoord.set(tileX, tileZ);
 				worldPosForTileCoord(tileX, tileZ, ref m_tileMoveDesc[matrixX].worldPos);
 				setNeighbours(m_tileMoveDesc[matrixX].matrixCoord, ref m_tileMoveDesc[matrixX].neighbours);
 			}
@@ -142,9 +165,8 @@ public class TileEngine {
 			return;
 
 		// Update matrix top-right
-		m_matrixTopRightTileCoordX += shiftedX;
-		m_matrixTopRightTileCoordZ += shiftedZ;
-		m_matrixTopRight.Set((float)matrixPos((int)m_matrixTopRight.x, shiftedX), (float)matrixPos((int)m_matrixTopRight.y, shiftedZ));
+		m_matrixTopRightTileCoord.add(shiftedX, shiftedZ);
+		m_matrixTopRight.set(matrixPos((int)m_matrixTopRight.x, shiftedX), matrixPos((int)m_matrixTopRight.y, shiftedZ));
 
 		// Inform listeners about the change
 		if (shiftedX != 0)
@@ -160,16 +182,16 @@ public class TileEngine {
 		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(shiftedX), tileCount);
 
 		for (int i = 0; i <= nuberOfColsToUpdate; ++i) {
-			int matrixFrontX = matrixPos((int)m_matrixTopRight.x, i * -moveDirection);
+			int matrixFrontX = matrixPos(m_matrixTopRight.x, i * -moveDirection);
 			if (moveDirection < 0)
 				matrixFrontX = matrixPos(matrixFrontX, 1);
 
 			for (int j = 0; j < tileCount; ++j) {
-				int matrixFrontY = matrixPos((int)m_matrixTopRight.y, -j);
-				m_tileMoveDesc[j].matrixCoord.Set(matrixFrontX, matrixFrontY);
-				float tileX, tileZ;
+				int matrixFrontY = matrixPos(m_matrixTopRight.y, -j);
+				m_tileMoveDesc[j].matrixCoord.set(matrixFrontX, matrixFrontY);
+				int tileX, tileZ;
 				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, out tileX, out tileZ);
-				m_tileMoveDesc[j].tileCoord.Set(tileX, tileZ);
+				m_tileMoveDesc[j].tileCoord.set(tileX, tileZ);
 				worldPosForTileCoord(tileX, tileZ, ref m_tileMoveDesc[j].worldPos);
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
@@ -184,16 +206,16 @@ public class TileEngine {
 		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(shiftedZ), tileCount);
 
 		for (int i = 0; i <= nuberOfRowsToUpdate; ++i) {
-			int matrixFrontY = matrixPos((int)m_matrixTopRight.y, i * -moveDirection);
+			int matrixFrontY = matrixPos(m_matrixTopRight.y, i * -moveDirection);
 			if (moveDirection < 0)
 				matrixFrontY = matrixPos(matrixFrontY, 1);
 
 			for (int j = 0; j < tileCount; ++j) {
-				int matrixFrontX = matrixPos((int)m_matrixTopRight.x, -j);
-				m_tileMoveDesc[j].matrixCoord.Set(matrixFrontX, matrixFrontY);
-				float tileX, tileZ;
+				int matrixFrontX = matrixPos(m_matrixTopRight.x, -j);
+				m_tileMoveDesc[j].matrixCoord.set(matrixFrontX, matrixFrontY);
+				int tileX, tileZ;
 				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, out tileX, out tileZ);
-				m_tileMoveDesc[j].tileCoord.Set(tileX, tileZ);
+				m_tileMoveDesc[j].tileCoord.set(tileX, tileZ);
 				worldPosForTileCoord(tileX, tileZ, ref m_tileMoveDesc[j].worldPos);
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
