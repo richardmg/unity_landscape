@@ -83,9 +83,9 @@ public class TileEngine
 			m_tileMoveDesc[i] = new TileDescription();
 	}
 
-	public void worldPosForTileCoord(float tileX, float tileZ, ref Vector3 worldPos)
+	public void worldPosForTileCoord(IntCoord tileCoord, ref Vector3 worldPos)
 	{
-		worldPos.Set(tileX * tileWorldSize, 0, tileZ * tileWorldSize);
+		worldPos.Set(tileCoord.x * tileWorldSize, 0, tileCoord.y * tileWorldSize);
 	}
 
 	public void tileCoordAtWorldPos(Vector3 worldPos, out int tileX, out int tileZ)
@@ -102,15 +102,14 @@ public class TileEngine
 		matrixY = matrixPos((int)m_matrixTopRight.y, -tileOffsetZ);
 	}
 
-	public void tileCoordForMatrixCoord(int matrixX, int matrixY, out int tileX, out int tileZ)
+	public void tileCoordForMatrixCoord(int matrixX, int matrixY, ref IntCoord tileCoord)
 	{
 		// Normalize arg matrix coord (as if the matrix were unshifted)
 		int matrixXNormalized = matrixPos(matrixX, -(int)m_matrixTopRight.x + (tileCount - 1)); 
 		int matrixYNormalized = matrixPos(matrixY, -(int)m_matrixTopRight.y + (tileCount - 1)); 
 		int tileOffsetX = tileCount - matrixXNormalized;
 		int tileOffsetZ = tileCount - matrixYNormalized;
-		tileX = m_matrixTopRightTileCoord.x - tileOffsetX;
-		tileZ = m_matrixTopRightTileCoord.y - tileOffsetZ;
+		tileCoord.set(m_matrixTopRightTileCoord.x - tileOffsetX, m_matrixTopRightTileCoord.y - tileOffsetZ);
 	}
 
 	int matrixPos(int top, int offset)
@@ -151,10 +150,8 @@ public class TileEngine
 		for (int matrixZ = 0; matrixZ < tileCount; ++matrixZ) {
 			for (int matrixX = 0; matrixX < tileCount; ++matrixX) {
 				m_tileMoveDesc[matrixX].matrixCoord.set(matrixX, matrixZ);
-				int tileX, tileZ;
-				tileCoordForMatrixCoord(matrixX, matrixZ, out tileX, out tileZ);
-				m_tileMoveDesc[matrixX].tileCoord.set(tileX, tileZ);
-				worldPosForTileCoord(tileX, tileZ, ref m_tileMoveDesc[matrixX].worldPos);
+				tileCoordForMatrixCoord(matrixX, matrixZ, ref m_tileMoveDesc[matrixX].tileCoord);
+				worldPosForTileCoord(m_tileMoveDesc[matrixX].tileCoord, ref m_tileMoveDesc[matrixX].worldPos);
 				setNeighbours(m_tileMoveDesc[matrixX].matrixCoord, ref m_tileMoveDesc[matrixX].neighbours);
 			}
 
@@ -196,10 +193,8 @@ public class TileEngine
 			for (int j = 0; j < tileCount; ++j) {
 				int matrixFrontY = matrixPos(m_matrixTopRight.y, -j);
 				m_tileMoveDesc[j].matrixCoord.set(matrixFrontX, matrixFrontY);
-				int tileX, tileZ;
-				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, out tileX, out tileZ);
-				m_tileMoveDesc[j].tileCoord.set(tileX, tileZ);
-				worldPosForTileCoord(tileX, tileZ, ref m_tileMoveDesc[j].worldPos);
+				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, ref m_tileMoveDesc[j].tileCoord);
+				worldPosForTileCoord(m_tileMoveDesc[j].tileCoord, ref m_tileMoveDesc[j].worldPos);
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
@@ -220,10 +215,8 @@ public class TileEngine
 			for (int j = 0; j < tileCount; ++j) {
 				int matrixFrontX = matrixPos(m_matrixTopRight.x, -j);
 				m_tileMoveDesc[j].matrixCoord.set(matrixFrontX, matrixFrontY);
-				int tileX, tileZ;
-				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, out tileX, out tileZ);
-				m_tileMoveDesc[j].tileCoord.set(tileX, tileZ);
-				worldPosForTileCoord(tileX, tileZ, ref m_tileMoveDesc[j].worldPos);
+				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, ref m_tileMoveDesc[j].tileCoord);
+				worldPosForTileCoord(m_tileMoveDesc[j].tileCoord, ref m_tileMoveDesc[j].worldPos);
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
