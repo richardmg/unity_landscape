@@ -212,7 +212,7 @@ public class TileEngine : MonoBehaviour {
 		int moveDirection = shiftedX > 0 ? 1 : -1;
 		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(shiftedX), tileCount);
 
-		for (int i = 0; i < nuberOfColsToUpdate; ++i) {
+		for (int i = 0; i <= nuberOfColsToUpdate; ++i) {
 			int matrixFrontX = matrixPos((int)m_matrixTopRight.x, i * -moveDirection);
 			if (moveDirection < 0)
 				matrixFrontX = matrixPos(matrixFrontX, 1);
@@ -241,7 +241,7 @@ public class TileEngine : MonoBehaviour {
 		int moveDirection = shiftedZ > 0 ? 1 : -1;
 		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(shiftedZ), tileCount);
 
-		for (int i = 0; i < nuberOfRowsToUpdate; ++i) {
+		for (int i = 0; i <= nuberOfRowsToUpdate; ++i) {
 			int matrixFrontY = matrixPos((int)m_matrixTopRight.y, i * -moveDirection);
 			if (moveDirection < 0)
 				matrixFrontY = matrixPos(matrixFrontY, 1);
