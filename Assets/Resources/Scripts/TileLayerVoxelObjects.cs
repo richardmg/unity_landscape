@@ -29,8 +29,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 			TileDescription desc = tilesToUpdate[i];
 			GameObject tile = m_tileMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			tile.transform.position = desc.worldPos;
-//			destroyEntityInstances(tile);
-//			createEntityInstances(tile, desc);
+			destroyEntityInstances(tile);
+			createEntityInstances(tile, desc);
 			rebuildTileMesh(tile);
 		}
 	}
@@ -142,6 +142,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		List<EntityInstanceDescription> instanceDescriptions
 			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
 
+		// TODO: get existing game objects / voxel objects from pool
+		// TODO: In the pool, first check if an instance with correct class ID exists, before modifying a different one.
 		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions)
 			instanceDesc.createInstance(tile.transform);
 	}
@@ -150,6 +152,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 	{
 		Transform transform = tile.transform;
 		for (int i = 0; i < transform.childCount; ++i) {
+			// TODO: add to pool
 			GameObject go = transform.GetChild(i).gameObject;
 			EntityInstance instance = go.GetComponent<EntityInstance>();
 			instance.entityInstanceDescription.destroyInstance();
