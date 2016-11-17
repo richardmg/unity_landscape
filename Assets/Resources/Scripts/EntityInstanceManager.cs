@@ -37,21 +37,18 @@ public class Page
 
 public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityInstanceListener
 {
+	public int pageCount = 4;
+	public float pageSize = 1000;
+	public int tilesPerPage = 100;
+
 	[HideInInspector]
 	public TileEngine tileEngine;
 
 	private Page[,] m_pages;
 
-	// This manager has a set of pages. Each page is divided into a a number of tiles. And each
-	// tile contains a list of EntityInstanceDescriptions. Pages are supposed to be big, and will
-	// be loaded and saved to disk as the player moves around. The tiles are small, and will be
-	// aligned with the tiles that contain actual EntityInstances in the scene, so that instance
-	// engines will cover a certain amount of tiles. But they will not be as big as a page.
-	public int tilesPerPage = 100;
-
 	void Awake()
 	{
-		tileEngine = new TileEngine(4, 1000);
+		tileEngine = new TileEngine(pageCount, pageSize);
 		initTiles();
 		tileEngine.updateAllTiles(updateTiles);
 
@@ -60,7 +57,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	public void initTiles()
 	{
-		m_pages = new Page[tileEngine.tileCount, tileEngine.tileCount];
+		m_pages = new Page[pageCount, pageCount];
 	}
 
 	public void Update()

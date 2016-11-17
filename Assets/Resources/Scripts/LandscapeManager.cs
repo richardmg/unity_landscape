@@ -23,8 +23,6 @@ public class LandscapeManager : MonoBehaviour
 	[HideInInspector]
 	public float noiseScaleOct2 = 0.1f;
 
-	int m_tileCount = 4;
-
 	public const LandscapeType kEmpty = 0;
 	public const LandscapeType kSea = 1;
 	public const LandscapeType kGrassLand = 2;

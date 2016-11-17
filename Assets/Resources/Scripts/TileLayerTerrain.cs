@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class TileLayerTerrain : MonoBehaviour
 {
+	public int tileCount = 4;
+	public float tileSize = 1000;
+
 	[Range (33, 512)]
 	public int heightmapResolution = 33;
 	[Range (0, 200)]
@@ -30,15 +33,13 @@ public class TileLayerTerrain : MonoBehaviour
 	public void Awake()
 	{
 		TileLayerTerrain.worldTerrain = this;
-		tileEngine = new TileEngine(4, 1000);
+		tileEngine = new TileEngine(tileCount, tileSize);
 		initTiles();
 		tileEngine.updateAllTiles(updateTiles);
 	}
 
 	public void initTiles()
 	{
-		int tileCount = tileEngine.tileCount;
-
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		m_terrainMatrix = new Terrain[tileCount, tileCount];
 		m_heightArray = new float[heightmapResolution, heightmapResolution];

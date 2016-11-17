@@ -4,12 +4,15 @@ using System.Collections.Generic;
 
 public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntityInstanceListener, IProjectListener 
 {
+	public int tileCount = 4;
+	public float tileSize = 1000;
+
 	GameObject[,] m_tileMatrix;
 	TileEngine m_tileEngine;
 
 	public void Awake()
 	{
-		m_tileEngine = new TileEngine(4, 1000);
+		m_tileEngine = new TileEngine(tileCount, tileSize);
 		initTiles();
 		m_tileEngine.updateAllTiles(updateTiles);
 
@@ -24,7 +27,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		float baseTileSize = Root.instance.entityInstanceManager.tileEngine.tileWorldSize / Root.instance.entityInstanceManager.tilesPerPage;
 		Debug.Assert(baseTileSize == m_tileEngine.tileWorldSize, "tile size should match the tiles in entity instance manager");
 
-		int tileCount = m_tileEngine.tileCount;
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
