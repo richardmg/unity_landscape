@@ -173,7 +173,7 @@ public class TileEngine
 
 		// Update matrix top-right
 		m_matrixTopRightTileCoord.add(shiftedX, shiftedZ);
-		m_matrixTopRight.set(matrixPos((int)m_matrixTopRight.x, shiftedX), matrixPos((int)m_matrixTopRight.y, shiftedZ));
+		m_matrixTopRight.set(matrixPos(m_matrixTopRight.x, shiftedX), matrixPos(m_matrixTopRight.y, shiftedZ));
 
 		// Inform listeners about the change
 		if (shiftedX != 0)
