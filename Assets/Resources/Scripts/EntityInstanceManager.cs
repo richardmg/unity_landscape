@@ -86,21 +86,15 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	public List<EntityInstanceDescription> getEntityInstanceDescriptionsForWorldPos(Vector3 worldPos)
 	{
-		int tileX, tileY;
-		int matrixX, matrixY;
-		tileEngine.tileCoordAtWorldPos(worldPos, out tileX, out tileY);
-		tileEngine.matrixCoordForTileCoord(tileX, tileY, out matrixX, out matrixY);
-		Tile tile = m_pages[matrixX, matrixY].getTileForWorldPos(worldPos);
+		IntCoord matrixCoord = tileEngine.matrixCoordForWorldPos(worldPos);
+		Tile tile = m_pages[matrixCoord.x, matrixCoord.y].getTileForWorldPos(worldPos);
 		return tile.entityInstanceDescriptions;
 	}
 
 	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
-		int tileX, tileY;
-		int matrixX, matrixY;
-		tileEngine.tileCoordAtWorldPos(desc.worldPos, out tileX, out tileY);
-		tileEngine.matrixCoordForTileCoord(tileX, tileY, out matrixX, out matrixY);
-		Tile tile = m_pages[matrixX, matrixY].getTileForWorldPos(desc.worldPos);
+		IntCoord matrixCoord = tileEngine.matrixCoordForWorldPos(desc.worldPos);
+		Tile tile = m_pages[matrixCoord.x, matrixCoord.y].getTileForWorldPos(desc.worldPos);
 		tile.entityInstanceDescriptions.Add(desc);
 	}
 

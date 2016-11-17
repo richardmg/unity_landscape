@@ -62,14 +62,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
 		// Find out which tile is currently under the new things position
-		int tileX, tileZ;
-		int matrixX, matrixY;
-		m_tileEngine.tileCoordAtWorldPos(desc.worldPos, out tileX, out tileZ);
-		m_tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);
-		GameObject tile = m_tileMatrix[matrixX, matrixY];
-
+		IntCoord matrixCoord = m_tileEngine.matrixCoordForWorldPos(desc.worldPos);
+		GameObject tile = m_tileMatrix[matrixCoord.x, matrixCoord.y];
 		desc.createInstance(tile.transform);
-
 		rebuildTileMesh(tile);
 	}
 
@@ -80,7 +75,8 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
 	{
-		GameObject tile = getTileAtPos(from.gameObject.transform.position);
+		IntCoord matrixCoord = m_tileEngine.matrixCoordForWorldPos(from.gameObject.transform.position);
+		GameObject tile = m_tileMatrix[matrixCoord.x, matrixCoord.y];
 		from.hideAndDestroy();
 		to.gameObject.transform.parent = tile.transform;
 		rebuildTileMesh(tile);
@@ -103,16 +99,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 	public void onProjectLoaded()
 	{
 		m_tileEngine.updateAllTiles(updateTiles);
-	}
-
-	GameObject getTileAtPos(Vector3 worldPos)
-	{
-		// Find out which tile is currently under the new things position
-		int tileX, tileZ;
-		int matrixX, matrixY;
-		m_tileEngine.tileCoordAtWorldPos(worldPos, out tileX, out tileZ);
-		m_tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);
-		return m_tileMatrix[matrixX, matrixY];
 	}
 
 	public void rebuildTileMesh(GameObject tile)

@@ -94,19 +94,27 @@ public class TileEngine
 		tileZ = (int)(worldPos.z / tileWorldSize);
 	}
 
-	public void matrixCoordForTileCoord(int tileX, int tileZ, out int matrixX, out int matrixY)
+	public IntCoord matrixCoordForWorldPos(Vector3 worldPos)
+	{
+		int tileX, tileY;
+		IntCoord matrixCoord = new IntCoord();
+		tileCoordAtWorldPos(worldPos, out tileX, out tileY);
+		matrixCoordForTileCoord(tileX, tileY, ref matrixCoord);
+		return matrixCoord;
+	}
+
+	public void matrixCoordForTileCoord(int tileX, int tileY, ref IntCoord matrixCoord)
 	{
 		int tileOffsetX = tileX - m_matrixTopRightTileCoord.x;
-		int tileOffsetZ = tileZ - m_matrixTopRightTileCoord.y;
-		matrixX = matrixPos((int)m_matrixTopRight.x, -tileOffsetX);
-		matrixY = matrixPos((int)m_matrixTopRight.y, -tileOffsetZ);
+		int tileOffsetZ = tileY - m_matrixTopRightTileCoord.y;
+		matrixCoord.set(matrixPos(m_matrixTopRight.x, -tileOffsetX), matrixPos(m_matrixTopRight.y, -tileOffsetZ));
 	}
 
 	public void tileCoordForMatrixCoord(int matrixX, int matrixY, ref IntCoord tileCoord)
 	{
 		// Normalize arg matrix coord (as if the matrix were unshifted)
-		int matrixXNormalized = matrixPos(matrixX, -(int)m_matrixTopRight.x + (tileCount - 1)); 
-		int matrixYNormalized = matrixPos(matrixY, -(int)m_matrixTopRight.y + (tileCount - 1)); 
+		int matrixXNormalized = matrixPos(matrixX, -m_matrixTopRight.x + (tileCount - 1)); 
+		int matrixYNormalized = matrixPos(matrixY, -m_matrixTopRight.y + (tileCount - 1)); 
 		int tileOffsetX = tileCount - matrixXNormalized;
 		int tileOffsetZ = tileCount - matrixYNormalized;
 		tileCoord.set(m_matrixTopRightTileCoord.x - tileOffsetX, m_matrixTopRightTileCoord.y - tileOffsetZ);
@@ -119,20 +127,20 @@ public class TileEngine
 
 	void setNeighbours(IntCoord pos, ref TileNeighbours result)
 	{
-		int matrixTopEdge = (int)m_matrixTopRight.y;
+		int matrixTopEdge = m_matrixTopRight.y;
 		int matrixBottomEdge = matrixPos(matrixTopEdge, 1);
-		int matrixRightEdge = (int)m_matrixTopRight.x;
+		int matrixRightEdge = m_matrixTopRight.x;
 		int matrixLeftEdge = matrixPos(matrixRightEdge, 1);
 
-		bool onTopEdge = ((int)pos.y == matrixTopEdge);
-		bool onBottomEdge = ((int)pos.y == matrixBottomEdge);
-		bool onLeftEdge = ((int)pos.x == matrixLeftEdge);
-		bool onRightEdge = ((int)pos.x == matrixRightEdge);
+		bool onTopEdge = (pos.y == matrixTopEdge);
+		bool onBottomEdge = (pos.y == matrixBottomEdge);
+		bool onLeftEdge = (pos.x == matrixLeftEdge);
+		bool onRightEdge = (pos.x == matrixRightEdge);
 
-		if (onTopEdge) result.top.set(-1, -1); else result.top.set(pos.x, matrixPos((int)pos.y, 1));
-		if (onBottomEdge) result.bottom.set(-1, -1); else result.bottom.set(pos.x, matrixPos((int)pos.y, -1));
-		if (onLeftEdge) result.left.set(-1, -1); else result.left.set(matrixPos((int)pos.x, -1), pos.y);
-		if (onRightEdge) result.right.set(-1, -1); else result.right.set(matrixPos((int)pos.x, 1), pos.y);
+		if (onTopEdge) result.top.set(-1, -1); else result.top.set(pos.x, matrixPos(pos.y, 1));
+		if (onBottomEdge) result.bottom.set(-1, -1); else result.bottom.set(pos.x, matrixPos(pos.y, -1));
+		if (onLeftEdge) result.left.set(-1, -1); else result.left.set(matrixPos(pos.x, -1), pos.y);
+		if (onRightEdge) result.right.set(-1, -1); else result.right.set(matrixPos(pos.x, 1), pos.y);
 	}
 
 	private void shiftedTilePosFromWorldPos(Vector3 worldPos, ref IntCoord shiftedTilePos)
