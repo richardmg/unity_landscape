@@ -56,6 +56,7 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("player entity : print entity held by player");
 		helpList.Add("player pos: print players position");
 		helpList.Add("player move [x] [z]: move player on top of landscape at position");
+		helpList.Add("landscape rebuild : rebuild all landscape tiles");
 		helpList.Add("close : close console");
 		helpList.Add("clear : clear console");
 		helpList.Add("help [keyword] : show help");
@@ -356,6 +357,13 @@ public class CommandPrompt : MonoBehaviour {
 				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
 				log("Sent entitychanged notification for entity: " + id);
+				accepted = true;
+			}
+		} else if (token == "landscape") {
+			token = nextToken();
+			if (token == "rebuild") {
+				TileLayerTerrain.worldTerrain.tileEngine.updateAllTiles();
+				log("Rebuilt landscape tiles");
 				accepted = true;
 			}
 		}

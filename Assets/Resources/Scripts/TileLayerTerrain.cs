@@ -16,7 +16,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	Terrain[,] m_terrainMatrix;
 	TerrainData m_terrainData;
 	public float[,] m_heightArray;
-	TileEngine m_tileEngine;
+	public TileEngine tileEngine;
 
 	public static TileLayerTerrain worldTerrain;
 
@@ -37,17 +37,17 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		TileLayerTerrain.worldTerrain = this;
 		heightmapResolution = 1 + (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(heightmapResolution, 2)));
 
-		if (m_tileEngine == null)
+		if (tileEngine == null)
 			return;
-		if (!m_tileEngine.showInEditor) 
+		if (!tileEngine.showInEditor) 
 			return;
 
-		m_tileEngine.updateAllTiles();
+		tileEngine.updateAllTiles();
 	}
 
 	public void initTileLayer(TileEngine engine)
 	{
-		m_tileEngine = engine;
+		tileEngine = engine;
 		int tileCount = engine.tileCount;
 
 		m_tileMatrix = new GameObject[tileCount, tileCount];
@@ -116,9 +116,10 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 
 			Debug.Log("Update neighbours for matrix coord: "
 				+ (int)desc.matrixCoord.x + ", " + (int)desc.matrixCoord.y
-				+ ", tile: " + desc.tileCoord.x + ", " + desc.tileCoord.y
-				+ ", tilepos: " + desc.worldPos
-				+ ", bottom matrix coord: " + tn.bottom);
+				+ ", top: " + tn.top
+				+ ", bottom: " + tn.bottom
+				+ ", left: " + tn.left
+				+ ", right: " + tn.right);
 
 			Terrain terrain = m_terrainMatrix[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y];
 			terrain.SetNeighbors(left, top, right, bottom);
@@ -134,8 +135,8 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	{
 		int tileX, tileZ;
 		int matrixX, matrixY;
-		m_tileEngine.tileCoordAtWorldPos(worldPos, out tileX, out tileZ);
-		m_tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);
+		tileEngine.tileCoordAtWorldPos(worldPos, out tileX, out tileZ);
+		tileEngine.matrixCoordForTileCoord(tileX, tileZ, out matrixX, out matrixY);
 		return m_terrainMatrix[matrixX, matrixY].SampleHeight(worldPos);
 	}
 
