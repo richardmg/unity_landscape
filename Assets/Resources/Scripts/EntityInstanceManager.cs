@@ -35,7 +35,7 @@ public class Page
 	}
 }
 
-public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer, IEntityInstanceListener
+public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityInstanceListener
 {
 	[HideInInspector]
 	public TileEngine tileEngine;
@@ -51,14 +51,21 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, ITileLayer
 
 	void Awake()
 	{
+		tileEngine = new TileEngine(4, 1000);
+		initTiles();
+		tileEngine.updateAllTiles(updateTiles);
+
 		Root.instance.notificationManager.addEntityInstanceListener(this);
 	}
 
-	public void initTileLayer(TileEngine engine)
+	public void initTiles()
 	{
-		tileEngine = engine;
-		m_pages = new Page[engine.tileCount, engine.tileCount];
-		engine.updateAllTiles();
+		m_pages = new Page[tileEngine.tileCount, tileEngine.tileCount];
+	}
+
+	public void Update()
+	{
+		tileEngine.updateTiles(Root.instance.player.transform.position, updateTiles);
 	}
 
 	public void updateTiles(TileDescription[] tilesToUpdate)

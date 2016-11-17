@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
+public class TileLayerTerrain : MonoBehaviour
 {
 	[Range (33, 512)]
 	public int heightmapResolution = 33;
@@ -30,32 +30,21 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 	public void Awake()
 	{
 		TileLayerTerrain.worldTerrain = this;
+		tileEngine = new TileEngine(4, 1000);
+		initTiles();
+		tileEngine.updateAllTiles(updateTiles);
 	}
 
-	public void OnValidate()
+	public void initTiles()
 	{
-		TileLayerTerrain.worldTerrain = this;
-		heightmapResolution = 1 + (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(heightmapResolution, 2)));
-
-		if (tileEngine == null)
-			return;
-		if (!tileEngine.showInEditor) 
-			return;
-
-		tileEngine.updateAllTiles();
-	}
-
-	public void initTileLayer(TileEngine engine)
-	{
-		tileEngine = engine;
-		int tileCount = engine.tileCount;
+		int tileCount = tileEngine.tileCount;
 
 		m_tileMatrix = new GameObject[tileCount, tileCount];
 		m_terrainMatrix = new Terrain[tileCount, tileCount];
 		m_heightArray = new float[heightmapResolution, heightmapResolution];
 
 		LandscapeDescription desc = new LandscapeDescription();
-		desc.size = engine.tileWorldSize;
+		desc.size = tileEngine.tileWorldSize;
 		desc.pixelError = pixelError;
 		desc.resolution = heightmapResolution;
 		desc.texture = terrainTexture;
@@ -70,11 +59,33 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 				m_terrainMatrix[x, z] = go.GetComponent<Terrain>();
 			}
 		}
-
-		engine.updateAllTiles();
 	}
 
-	public void updateTiles(TileDescription[] tilesToUpdate)
+	public void Update()
+	{
+		tileEngine.updateTiles(Root.instance.player.transform.position, updateTiles);
+	}
+
+	public void removeAllTiles()
+	{
+		for (int i = 0; i < transform.childCount; ++i) {
+			GameObject go = transform.GetChild(i).gameObject;
+			UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(go); };
+		}
+	}
+
+	void updateTiles(TileDescription[] tilesToUpdate)
+	{
+		updateTileGeometry(tilesToUpdate);
+		updateTileNeighbours(tilesToUpdate);
+	}
+
+	public void updateAllTiles()
+	{
+		tileEngine.updateAllTiles(updateTiles);
+	}
+
+	void updateTileGeometry(TileDescription[] tilesToUpdate)
 	{
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {
 			TileDescription desc = tilesToUpdate[i];
@@ -95,15 +106,7 @@ public class TileLayerTerrain : MonoBehaviour, ITileTerrainLayer
 		}
 	}
 
-	public void removeAllTiles()
-	{
-		for (int i = 0; i < transform.childCount; ++i) {
-			GameObject go = transform.GetChild(i).gameObject;
-			UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(go); };
-		}
-	}
-
-	public void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours)
+	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours)
 	{
 		for (int i = 0; i < tilesWithNewNeighbours.Length; ++i) {
 			TileDescription desc = tilesWithNewNeighbours[i];

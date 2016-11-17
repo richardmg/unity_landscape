@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class TileNeighbours
 {
@@ -18,26 +19,9 @@ public class TileDescription
 	public TileNeighbours neighbours = new TileNeighbours();
 }
 
-public interface ITileLayer
-{
-	void initTileLayer(TileEngine engine);
-	void updateTiles(TileDescription[] tilesToMove);
-	void removeAllTiles();
-}
-
-public interface ITileTerrainLayer : ITileLayer
-{
-	void updateTileNeighbours(TileDescription[] tilesWithNewNeighbours);
-	float sampleHeight(Vector3 worldPos);
-}
-
-public class TileEngine : MonoBehaviour {
-	[Range (2, 10)]
+public class TileEngine {
 	public int tileCount = 4;
-	[Range (1, 5000)]
 	public float tileWorldSize = 100;
-	public GameObject player;
-	public bool showInEditor = false;
 
 	float m_tileCountHalf;
 	Vector3 m_tileCenterOffset;
@@ -50,54 +34,22 @@ public class TileEngine : MonoBehaviour {
 	Vector2 m_matrixTopRight = new Vector2();
 	TileDescription[] m_tileMoveDesc;
 
-	List<ITileLayer> m_tileLayerList;
-
-	void Awake()
+	public TileEngine(int tileCount, float tileWorldSize)
 	{
-		init();
-		// Note: tile layer is responsible for calling
-		// updateAllTiles from init, or upon callback that the
-		// project has been loaded.
-	}
-
-	public void init()
-	{
+		this.tileCount = tileCount;
+		this.tileWorldSize = tileWorldSize;
 		m_tileCountHalf = tileCount / 2f;
 		Debug.Assert(m_tileCountHalf == (int)m_tileCountHalf, "tileCount must be an even number");
 
 		m_tileCenterOffset = new Vector3(tileWorldSize / 2f, 0, tileWorldSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
-		m_tileLayerList = new List<ITileLayer>(GetComponentsInChildren<ITileLayer>());
-
 		m_matrixTopRight.Set(tileCount - 1, tileCount - 1);
-		int playerTileX, playerTileZ;
-		tileCoordAtWorldPos(player.transform.position, out playerTileX, out playerTileZ);
-		m_matrixTopRightTileCoordX = (int)(playerTileX + m_tileCountHalf);
-		m_matrixTopRightTileCoordZ = (int)(playerTileZ + m_tileCountHalf);
-		shiftedTilePosFromWorldPos(player.transform.position, out m_playerShiftedPosX, out m_playerShiftedPosZ);
+		m_matrixTopRightTileCoordX = (int)(m_tileCountHalf);
+		m_matrixTopRightTileCoordZ = (int)(m_tileCountHalf);
+		shiftedTilePosFromWorldPos(Vector3.zero, out m_playerShiftedPosX, out m_playerShiftedPosZ);
 
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
-
-		foreach (ITileLayer tileLayer in m_tileLayerList)
-			tileLayer.initTileLayer(this);
-	}
-
-	public void addTileLayer(ITileLayer tileLayer)
-	{
-		m_tileLayerList.Add(tileLayer);
-	}
-
-	public ITileLayer getTileLayer(int index)
-	{
-		return m_tileLayerList[index];
-	}
-
-	public void removeAllTiles()
-	{
-		ITileLayer[] tileLayers = GetComponentsInChildren<ITileLayer>();
-		foreach (ITileLayer tileLayer in tileLayers)
-			tileLayer.removeAllTiles();
 	}
 
 	public void worldPosForTileCoord(float tileX, float tileZ, ref Vector3 worldPos)
@@ -153,7 +105,17 @@ public class TileEngine : MonoBehaviour {
 		if (onRightEdge) result.right.Set(-1, -1); else result.right.Set(matrixPos((int)pos.x, 1), pos.y);
 	}
 
-	public void updateAllTiles()
+	private void shiftedTilePosFromWorldPos(Vector3 worldPos, out int centerPosX, out int centerPosY)
+	{
+		// Note: shiftedTilePos is an internal concept, and is only used to
+		// determine when to update the tile matrix. We use shiftedTilePos to
+		// shift the user position half a tile north-east to roll the matrix
+		// when the user passes the center of a tile, rather than at the edge.
+		centerPosX = Mathf.FloorToInt((worldPos.x + m_tileCenterOffset.x) / tileWorldSize);
+		centerPosY = Mathf.FloorToInt((worldPos.z + m_tileCenterOffset.z) / tileWorldSize);
+	}
+
+	public void updateAllTiles(Action<TileDescription[]> callback)
 	{
 		for (int matrixZ = 0; matrixZ < tileCount; ++matrixZ) {
 			for (int matrixX = 0; matrixX < tileCount; ++matrixX) {
@@ -165,30 +127,15 @@ public class TileEngine : MonoBehaviour {
 				setNeighbours(m_tileMoveDesc[matrixX].matrixCoord, ref m_tileMoveDesc[matrixX].neighbours);
 			}
 
-			foreach (ITileLayer tileLayer in m_tileLayerList) {
-				tileLayer.updateTiles(m_tileMoveDesc);
-				if (tileLayer is ITileTerrainLayer)
-					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
-			}
+			callback(m_tileMoveDesc);
 		}
 	}
 
-	private void shiftedTilePosFromWorldPos(Vector3 worldPos, out int centerPosX, out int centerPosY)
+	public void updateTiles(Vector3 worldPos, Action<TileDescription[]> callback)
 	{
-		// Note: shiftedTilePos is an internal concept, and is only used to
-		// determine when to update the tile matrix. We use shiftedTilePos to
-		// shift the user position half a tile north-east to roll the matrix
-		// when the user passes the center of a tile, rather than at the edge.
-		centerPosX = Mathf.FloorToInt((worldPos.x + m_tileCenterOffset.x) / tileWorldSize);
-		centerPosY = Mathf.FloorToInt((worldPos.z + m_tileCenterOffset.z) / tileWorldSize);
-	}
-
-	public void Update()
-	{
-		Vector3 playerWorldPos = player.transform.position;
 		int prevPlayerShiftedPosX = m_playerShiftedPosX;
 		int prevPlayerShiftedPosZ = m_playerShiftedPosZ;
-		shiftedTilePosFromWorldPos(playerWorldPos, out m_playerShiftedPosX, out m_playerShiftedPosZ);
+		shiftedTilePosFromWorldPos(worldPos, out m_playerShiftedPosX, out m_playerShiftedPosZ);
 		int shiftedX = m_playerShiftedPosX - prevPlayerShiftedPosX;
 		int shiftedZ = m_playerShiftedPosZ - prevPlayerShiftedPosZ;
 		if (shiftedX == 0 && shiftedZ == 0)
@@ -201,13 +148,13 @@ public class TileEngine : MonoBehaviour {
 
 		// Inform listeners about the change
 		if (shiftedX != 0)
-			updateXTiles(shiftedX);
+			updateXTiles(shiftedX, callback);
 
 		if (shiftedZ != 0)
-			updateZTiles(shiftedZ);
+			updateZTiles(shiftedZ, callback);
 	}
 
-	private void updateXTiles(int shiftedX)
+	private void updateXTiles(int shiftedX, Action<TileDescription[]> callback)
 	{
 		int moveDirection = shiftedX > 0 ? 1 : -1;
 		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(shiftedX), tileCount);
@@ -227,16 +174,11 @@ public class TileEngine : MonoBehaviour {
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
-			foreach (ITileLayer tileLayer in m_tileLayerList) {
-				if (i < nuberOfColsToUpdate)
-					tileLayer.updateTiles(m_tileMoveDesc);
-				if (tileLayer is ITileTerrainLayer)
-					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
-			}
+			callback(m_tileMoveDesc);
 		}
 	}
 
-	private void updateZTiles(int shiftedZ)
+	private void updateZTiles(int shiftedZ, Action<TileDescription[]> callback)
 	{
 		int moveDirection = shiftedZ > 0 ? 1 : -1;
 		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(shiftedZ), tileCount);
@@ -256,12 +198,7 @@ public class TileEngine : MonoBehaviour {
 				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
-			foreach (ITileLayer tileLayer in m_tileLayerList) {
-				if (i < nuberOfRowsToUpdate)
-					tileLayer.updateTiles(m_tileMoveDesc);
-				if (tileLayer is ITileTerrainLayer)
-					((ITileTerrainLayer)tileLayer).updateTileNeighbours(m_tileMoveDesc);
-			}
+			callback(m_tileMoveDesc);
 		}
 	}
 }

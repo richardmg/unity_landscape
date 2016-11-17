@@ -2,28 +2,50 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassListener, IEntityInstanceListener, IProjectListener 
+public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntityInstanceListener, IProjectListener 
 {
 	GameObject[,] m_tileMatrix;
 	TileEngine m_tileEngine;
 
-	public void initTileLayer(TileEngine engine)
+	public void Awake()
 	{
-		// Ensure that the tile size matches the tile size of the smallest tiles in entityInstanceManager
-		float baseTileSize = Root.instance.entityInstanceManager.tileEngine.tileWorldSize / Root.instance.entityInstanceManager.tilesPerPage;
-		Debug.Assert(baseTileSize == engine.tileWorldSize, "tile size should match the tiles in entity instance manager");
-
-		m_tileEngine = engine;
-		int tileCount = engine.tileCount;
-		m_tileMatrix = new GameObject[tileCount, tileCount];
-		createAllTiles();
+		m_tileEngine = new TileEngine(4, 1000);
+		initTiles();
+		m_tileEngine.updateAllTiles(updateTiles);
 
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityClassListener(this);
 		Root.instance.notificationManager.addEntityInstanceListener(this);
 	}
 
-	public void updateTiles(TileDescription[] tilesToUpdate)
+	public void initTiles()
+	{
+		// Ensure that the tile size matches the tile size of the smallest tiles in entityInstanceManager
+		float baseTileSize = Root.instance.entityInstanceManager.tileEngine.tileWorldSize / Root.instance.entityInstanceManager.tilesPerPage;
+		Debug.Assert(baseTileSize == m_tileEngine.tileWorldSize, "tile size should match the tiles in entity instance manager");
+
+		int tileCount = m_tileEngine.tileCount;
+		m_tileMatrix = new GameObject[tileCount, tileCount];
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
+				GameObject tile = new GameObject();
+				tile.AddComponent<MeshFilter>();
+				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
+				meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
+
+				tile.name = "Tile " + x + ", " + z;
+				tile.transform.parent = transform;
+				m_tileMatrix[x, z] = tile;
+			}
+		}
+	}
+
+	public void Update()
+	{
+		m_tileEngine.updateTiles(Root.instance.player.transform.position, updateTiles);
+	}
+
+	void updateTiles(TileDescription[] tilesToUpdate)
 	{
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {
 			TileDescription desc = tilesToUpdate[i];
@@ -78,7 +100,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 
 	public void onProjectLoaded()
 	{
-		m_tileEngine.updateAllTiles();
+		m_tileEngine.updateAllTiles(updateTiles);
 	}
 
 	GameObject getTileAtPos(Vector3 worldPos)
@@ -106,23 +128,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, ITileLayer, IEntityClassList
 		for (int i = 0; i < transform.childCount; ++i) {
 			GameObject go = transform.GetChild(i).gameObject;
 			UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(go); };
-		}
-	}
-
-	public void createAllTiles()
-	{
-		int tileCount = m_tileEngine.tileCount;
-		for (int z = 0; z < tileCount; ++z) {
-			for (int x = 0; x < tileCount; ++x) {
-				GameObject tile = new GameObject();
-				tile.AddComponent<MeshFilter>();
-				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
-				meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
-
-				tile.name = "Tile " + x + ", " + z;
-				tile.transform.parent = transform;
-				m_tileMatrix[x, z] = tile;
-			}
 		}
 	}
 
