@@ -11,6 +11,12 @@ public class IntCoord
 		this.y = y;
 	}
 
+	public void set(IntCoord other)
+	{
+		this.x = other.x;
+		this.y = other.y;
+	}
+
 	public void set(int x, int y)
 	{
 		this.x = x;
@@ -50,9 +56,8 @@ public class TileEngine
 
 	int m_tileCountHalf;
 	Vector3 m_tileCenterOffset;
-	int m_playerShiftedPosX;
-	int m_playerShiftedPosZ;
-
+	IntCoord m_shiftedTilePos;
+	IntCoord m_prevShiftedTilePos;
 	IntCoord m_matrixTopRight;
 	IntCoord m_matrixTopRightTileCoord;
 
@@ -69,7 +74,10 @@ public class TileEngine
 		m_tileMoveDesc = new TileDescription[tileCount];
 		m_matrixTopRight = new IntCoord(tileCount - 1, tileCount - 1);
 		m_matrixTopRightTileCoord = new IntCoord(m_tileCountHalf, m_tileCountHalf);
-		shiftedTilePosFromWorldPos(Vector3.zero, out m_playerShiftedPosX, out m_playerShiftedPosZ);
+		m_shiftedTilePos = new IntCoord();
+		shiftedTilePosFromWorldPos(Vector3.zero, ref m_shiftedTilePos);
+		m_prevShiftedTilePos = new IntCoord();
+		m_prevShiftedTilePos.set(m_shiftedTilePos);
 
 		for (int i = 0; i < tileCount; ++i)
 			m_tileMoveDesc[i] = new TileDescription();
@@ -128,14 +136,14 @@ public class TileEngine
 		if (onRightEdge) result.right.set(-1, -1); else result.right.set(matrixPos((int)pos.x, 1), pos.y);
 	}
 
-	private void shiftedTilePosFromWorldPos(Vector3 worldPos, out int centerPosX, out int centerPosY)
+	private void shiftedTilePosFromWorldPos(Vector3 worldPos, ref IntCoord shiftedTilePos)
 	{
 		// Note: shiftedTilePos is an internal concept, and is only used to
 		// determine when to update the tile matrix. We use shiftedTilePos to
 		// shift the user position half a tile north-east to roll the matrix
 		// when the user passes the center of a tile, rather than at the edge.
-		centerPosX = Mathf.FloorToInt((worldPos.x + m_tileCenterOffset.x) / tileWorldSize);
-		centerPosY = Mathf.FloorToInt((worldPos.z + m_tileCenterOffset.z) / tileWorldSize);
+		shiftedTilePos.x = (int)((worldPos.x + m_tileCenterOffset.x) / tileWorldSize);
+		shiftedTilePos.y = (int)((worldPos.z + m_tileCenterOffset.z) / tileWorldSize);
 	}
 
 	public void updateAllTiles(Action<TileDescription[]> callback)
@@ -156,11 +164,10 @@ public class TileEngine
 
 	public void updateTiles(Vector3 worldPos, Action<TileDescription[]> callback)
 	{
-		int prevPlayerShiftedPosX = m_playerShiftedPosX;
-		int prevPlayerShiftedPosZ = m_playerShiftedPosZ;
-		shiftedTilePosFromWorldPos(worldPos, out m_playerShiftedPosX, out m_playerShiftedPosZ);
-		int shiftedX = m_playerShiftedPosX - prevPlayerShiftedPosX;
-		int shiftedZ = m_playerShiftedPosZ - prevPlayerShiftedPosZ;
+		m_prevShiftedTilePos.set(m_shiftedTilePos);
+		shiftedTilePosFromWorldPos(worldPos, ref m_shiftedTilePos);
+		int shiftedX = m_shiftedTilePos.x - m_prevShiftedTilePos.x;
+		int shiftedZ = m_shiftedTilePos.y - m_prevShiftedTilePos.y;
 		if (shiftedX == 0 && shiftedZ == 0)
 			return;
 
