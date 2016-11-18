@@ -81,11 +81,6 @@ public class TileLayerTerrain : MonoBehaviour
 		updateTileNeighbours(tilesToUpdate);
 	}
 
-	public void updateAllTiles()
-	{
-		tileEngine.updateAllTiles();
-	}
-
 	void updateTileGeometry(TileDescription[] tilesToUpdate)
 	{
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {

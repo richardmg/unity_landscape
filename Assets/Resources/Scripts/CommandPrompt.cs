@@ -362,7 +362,7 @@ public class CommandPrompt : MonoBehaviour {
 		} else if (token == "landscape") {
 			token = nextToken();
 			if (token == "rebuild") {
-				TileLayerTerrain.worldTerrain.updateAllTiles();
+				TileLayerTerrain.worldTerrain.tileEngine.updateAllTiles();
 				log("Rebuilt landscape tiles");
 				accepted = true;
 			}
