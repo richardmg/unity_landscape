@@ -83,6 +83,8 @@ public class EntityInstance : MonoBehaviour {
 	public void hideAndDestroy()
 	{
 		entityClass.instanceCount--;
+		EntityClass.globalInstanceCount--;
+
 		gameObject.SetActive(false);
 //		GameObject.Destroy(this.gameObject);
 		UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(gameObject); };
