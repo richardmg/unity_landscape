@@ -59,6 +59,11 @@ public class EntityInstance : MonoBehaviour {
 
 	public void makeStandalone(Lod lod)
 	{
+		// An entity instance does not include any mesh components by default, as
+		// it might just be added to scene as an inactive, hidden game object
+		// that will be grouped into a parent game object mesh through the 'createCombinedMesh'
+		// function. But if the instance is supposed to dynamic, or otherwise not
+		// be a part of a parent mesh, this function can be called to make it a proper game object.
 		gameObject.SetActive(true);
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
 		if (!meshFilter)
