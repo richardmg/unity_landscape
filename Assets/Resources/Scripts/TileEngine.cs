@@ -152,50 +152,31 @@ public class TileEngine
 
 		// Inform listeners about the change
 		if (shiftedX != 0)
-			updateXTiles(shiftedX, callback);
+			updateTiles(shiftedX, m_matrixTopRightCoord.x, m_matrixTopRightCoord.y, false, callback);
 
 		if (shiftedY != 0)
-			updateYTiles(shiftedY, callback);
+			updateTiles(shiftedY, m_matrixTopRightCoord.y, m_matrixTopRightCoord.x, true, callback);
 	}
 
-	private void updateXTiles(int shiftedX, Action<TileDescription[]> callback)
+	private void updateTiles(int shifted, int topRightX, int topRightY, bool updateAxisY, Action<TileDescription[]> callback)
 	{
-		int moveDirection = shiftedX > 0 ? 1 : -1;
-		int nuberOfColsToUpdate = Mathf.Min(Mathf.Abs(shiftedX), tileCount);
+		int moveDirection = shifted > 0 ? 1 : -1;
+		int shiftCount = Mathf.Min(Mathf.Abs(shifted), tileCount);
 
-		for (int i = 0; i <= nuberOfColsToUpdate; ++i) {
-			int matrixFrontX = matrixPos(m_matrixTopRightCoord.x, i * -moveDirection);
+		for (int i = 0; i <= shiftCount; ++i) {
+			int matrixFrontX = matrixPos(topRightX, i * -moveDirection);
 			if (moveDirection < 0)
 				matrixFrontX = matrixPos(matrixFrontX, 1);
 
 			for (int j = 0; j < tileCount; ++j) {
-				int matrixFrontY = matrixPos(m_matrixTopRightCoord.y, -j);
-				m_tileMoveDesc[j].matrixCoord.set(matrixFrontX, matrixFrontY);
-				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, ref m_tileMoveDesc[j].tileCoord);
+				IntCoord matrixCoord = m_tileMoveDesc[j].matrixCoord;
+				matrixCoord.set(matrixFrontX, matrixPos(topRightY, -j));
+				if (updateAxisY)
+					matrixCoord.flip();
+
+				tileCoordForMatrixCoord(matrixCoord.x, matrixCoord.y, ref m_tileMoveDesc[j].tileCoord);
 				worldPosForTileCoord(m_tileMoveDesc[j].tileCoord, ref m_tileMoveDesc[j].worldPos);
-				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
-			}
-
-			callback(m_tileMoveDesc);
-		}
-	}
-
-	private void updateYTiles(int shiftedY, Action<TileDescription[]> callback)
-	{
-		int moveDirection = shiftedY > 0 ? 1 : -1;
-		int nuberOfRowsToUpdate = Mathf.Min(Mathf.Abs(shiftedY), tileCount);
-
-		for (int i = 0; i <= nuberOfRowsToUpdate; ++i) {
-			int matrixFrontY = matrixPos(m_matrixTopRightCoord.y, i * -moveDirection);
-			if (moveDirection < 0)
-				matrixFrontY = matrixPos(matrixFrontY, 1);
-
-			for (int j = 0; j < tileCount; ++j) {
-				int matrixFrontX = matrixPos(m_matrixTopRightCoord.x, -j);
-				m_tileMoveDesc[j].matrixCoord.set(matrixFrontX, matrixFrontY);
-				tileCoordForMatrixCoord(matrixFrontX, matrixFrontY, ref m_tileMoveDesc[j].tileCoord);
-				worldPosForTileCoord(m_tileMoveDesc[j].tileCoord, ref m_tileMoveDesc[j].worldPos);
-				setNeighbours(m_tileMoveDesc[j].matrixCoord, ref m_tileMoveDesc[j].neighbours);
+				setNeighbours(matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
 			callback(m_tileMoveDesc);

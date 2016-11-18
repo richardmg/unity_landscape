@@ -25,6 +25,13 @@ public class IntCoord
 		this.y += y;
 	}
 
+	public void flip()
+	{
+		int tmp = this.x;
+		this.x = this.y;
+		this.y = tmp;
+	}
+
 	public int x;
 	public int y;
 }
