@@ -5,10 +5,10 @@ using UnityEngine;
 
 public class TileNeighbours
 {
-	public IntCoord left = new IntCoord();
-	public IntCoord right = new IntCoord();
-	public IntCoord top = new IntCoord();
-	public IntCoord bottom = new IntCoord();
+	public IntCoord left = new IntCoord(-1, -1);
+	public IntCoord right = new IntCoord(-1, -1);
+	public IntCoord top = new IntCoord(-1, -1);
+	public IntCoord bottom = new IntCoord(-1, -1);
 }
 
 public class TileDescription
@@ -33,13 +33,15 @@ public class TileEngine
 	IntCoord m_matrixTopRightTileCoord;
 
 	TileDescription[] m_tileMoveDesc;
-	Action<TileDescription[]> callback;
+	Action<TileDescription[]> updateCallback;
+	Action<TileDescription[]> neighbourCallback;
 
-	public TileEngine(int tileCount, float tileWorldSize, Action<TileDescription[]> callback)
+	public TileEngine(int tileCount, float tileWorldSize, Action<TileDescription[]> updateCallback, Action<TileDescription[]> neighbourCallback)
 	{
 		this.tileCount = tileCount;
 		this.tileWorldSize = tileWorldSize;
-		this.callback = callback;
+		this.updateCallback = updateCallback;
+		this.neighbourCallback = neighbourCallback;
 
 		m_tileCountHalf = tileCount / 2;
 		Debug.Assert(m_tileCountHalf == tileCount / 2f, "tileCount must be an even number");
@@ -126,7 +128,7 @@ public class TileEngine
 				setNeighbours(m_tileMoveDesc[matrixX].matrixCoord, ref m_tileMoveDesc[matrixX].neighbours);
 			}
 
-			callback(m_tileMoveDesc);
+			updateCallback(m_tileMoveDesc);
 		}
 	}
 
@@ -165,8 +167,9 @@ public class TileEngine
 	{
 		int moveDirection = shifted > 0 ? 1 : -1;
 		int shiftCount = Mathf.Min(Mathf.Abs(shifted), tileCount);
+		int shiftCountIncludingNeighbours = shiftCount + (neighbourCallback != null ? 1 : 0);
 
-		for (int i = 0; i <= shiftCount; ++i) {
+		for (int i = 0; i < shiftCountIncludingNeighbours; ++i) {
 			int matrixFrontX = matrixPos(topRightX, i * -moveDirection);
 			if (moveDirection < 0)
 				matrixFrontX = matrixPos(matrixFrontX, 1);
@@ -179,10 +182,14 @@ public class TileEngine
 
 				tileCoordForMatrixCoord(matrixCoord.x, matrixCoord.y, ref m_tileMoveDesc[j].tileCoord);
 				worldPosForTileCoord(m_tileMoveDesc[j].tileCoord, ref m_tileMoveDesc[j].worldPos);
-				setNeighbours(matrixCoord, ref m_tileMoveDesc[j].neighbours);
+				if (neighbourCallback != null)
+					setNeighbours(matrixCoord, ref m_tileMoveDesc[j].neighbours);
 			}
 
-			callback(m_tileMoveDesc);
+			if (i < shiftCount)
+				updateCallback(m_tileMoveDesc);
+			if (neighbourCallback != null)
+				neighbourCallback(m_tileMoveDesc);
 		}
 	}
 }

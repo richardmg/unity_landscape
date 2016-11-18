@@ -33,7 +33,7 @@ public class TileLayerTerrain : MonoBehaviour
 	public void Awake()
 	{
 		TileLayerTerrain.worldTerrain = this;
-		tileEngine = new TileEngine(tileCount, tileSize, updateTiles);
+		tileEngine = new TileEngine(tileCount, tileSize, updateTiles, updateTileNeighbours);
 		initTiles();
 		tileEngine.updateAllTiles();
 	}
@@ -76,12 +76,6 @@ public class TileLayerTerrain : MonoBehaviour
 	}
 
 	void updateTiles(TileDescription[] tilesToUpdate)
-	{
-		updateTileGeometry(tilesToUpdate);
-		updateTileNeighbours(tilesToUpdate);
-	}
-
-	void updateTileGeometry(TileDescription[] tilesToUpdate)
 	{
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {
 			TileDescription desc = tilesToUpdate[i];

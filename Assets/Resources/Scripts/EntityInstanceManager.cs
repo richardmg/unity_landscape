@@ -48,7 +48,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	void Awake()
 	{
-		tileEngine = new TileEngine(pageCount, pageSize, updateTiles);
+		tileEngine = new TileEngine(pageCount, pageSize, updateTiles, null);
 		initTiles();
 		tileEngine.updateAllTiles();
 

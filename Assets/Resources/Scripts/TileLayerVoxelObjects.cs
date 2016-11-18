@@ -12,7 +12,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void Awake()
 	{
-		m_tileEngine = new TileEngine(tileCount, tileSize, updateTiles);
+		m_tileEngine = new TileEngine(tileCount, tileSize, updateTiles, null);
 		initTiles();
 		m_tileEngine.updateAllTiles();
 
@@ -31,7 +31,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject tile = new GameObject();
-				tile.AddComponent<MeshFilter>();
+				tile.AddComponent<MeshFilter>();	
 				MeshRenderer meshRenderer = (MeshRenderer)tile.AddComponent<MeshRenderer>();
 				meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(Root.kLod0);
 
@@ -40,7 +40,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 				m_tileMatrix[x, z] = tile;
 			}
 		}
-	}
+	}	
 
 	public void Update()
 	{
