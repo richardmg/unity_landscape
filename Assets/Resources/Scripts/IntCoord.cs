@@ -1,6 +1,9 @@
 ﻿
 public class IntCoord
 {
+	public int x;
+	public int y;
+
 	public IntCoord(int x = 0, int y = 0)
 	{
 		this.x = x;
@@ -32,6 +35,8 @@ public class IntCoord
 		this.y = tmp;
 	}
 
-	public int x;
-	public int y;
+	public override string ToString()
+	{
+		return "(" + x + ", " + y + ")";
+	}
 }
