@@ -48,9 +48,9 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	void Awake()
 	{
-		tileEngine = new TileEngine(pageCount, pageSize);
+		tileEngine = new TileEngine(pageCount, pageSize, updateTiles);
 		initTiles();
-		tileEngine.updateAllTiles(updateTiles);
+		tileEngine.updateAllTiles();
 
 		Root.instance.notificationManager.addEntityInstanceListener(this);
 	}
@@ -62,7 +62,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	public void Update()
 	{
-		tileEngine.updateTiles(Root.instance.player.transform.position, updateTiles);
+		tileEngine.updateTiles(Root.instance.player.transform.position);
 	}
 
 	public void updateTiles(TileDescription[] tilesToUpdate)

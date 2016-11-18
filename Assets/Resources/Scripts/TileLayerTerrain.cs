@@ -33,9 +33,9 @@ public class TileLayerTerrain : MonoBehaviour
 	public void Awake()
 	{
 		TileLayerTerrain.worldTerrain = this;
-		tileEngine = new TileEngine(tileCount, tileSize);
+		tileEngine = new TileEngine(tileCount, tileSize, updateTiles);
 		initTiles();
-		tileEngine.updateAllTiles(updateTiles);
+		tileEngine.updateAllTiles();
 	}
 
 	public void initTiles()
@@ -64,7 +64,7 @@ public class TileLayerTerrain : MonoBehaviour
 
 	public void Update()
 	{
-		tileEngine.updateTiles(Root.instance.player.transform.position, updateTiles);
+		tileEngine.updateTiles(Root.instance.player.transform.position);
 	}
 
 	public void removeAllTiles()
@@ -83,7 +83,7 @@ public class TileLayerTerrain : MonoBehaviour
 
 	public void updateAllTiles()
 	{
-		tileEngine.updateAllTiles(updateTiles);
+		tileEngine.updateAllTiles();
 	}
 
 	void updateTileGeometry(TileDescription[] tilesToUpdate)

@@ -33,11 +33,14 @@ public class TileEngine
 	IntCoord m_matrixTopRightTileCoord;
 
 	TileDescription[] m_tileMoveDesc;
+	Action<TileDescription[]> callback;
 
-	public TileEngine(int tileCount, float tileWorldSize)
+	public TileEngine(int tileCount, float tileWorldSize, Action<TileDescription[]> callback)
 	{
 		this.tileCount = tileCount;
 		this.tileWorldSize = tileWorldSize;
+		this.callback = callback;
+
 		m_tileCountHalf = tileCount / 2;
 		Debug.Assert(m_tileCountHalf == tileCount / 2f, "tileCount must be an even number");
 
@@ -113,7 +116,7 @@ public class TileEngine
 		if (onRightEdge) result.right.set(-1, -1); else result.right.set(matrixPos(pos.x, 1), pos.y);
 	}
 
-	public void updateAllTiles(Action<TileDescription[]> callback)
+	public void updateAllTiles()
 	{
 		for (int matrixY = 0; matrixY < tileCount; ++matrixY) {
 			for (int matrixX = 0; matrixX < tileCount; ++matrixX) {
@@ -137,7 +140,7 @@ public class TileEngine
 		shiftedTilePos.y = (int)((worldPos.z + (m_shiftedTileOffset.y * Mathf.Sign(worldPos.z))) / tileWorldSize);
 	}
 
-	public void updateTiles(Vector3 worldPos, Action<TileDescription[]> callback)
+	public void updateTiles(Vector3 worldPos)
 	{
 		m_prevShiftedTileCoord.set(m_shiftedTileCoord);
 		shiftedTilePosFromWorldPos(worldPos, ref m_shiftedTileCoord);
@@ -152,13 +155,13 @@ public class TileEngine
 
 		// Inform listeners about the change
 		if (shiftedX != 0)
-			updateTiles(shiftedX, m_matrixTopRightCoord.x, m_matrixTopRightCoord.y, false, callback);
+			updateTiles(shiftedX, m_matrixTopRightCoord.x, m_matrixTopRightCoord.y, false);
 
 		if (shiftedY != 0)
-			updateTiles(shiftedY, m_matrixTopRightCoord.y, m_matrixTopRightCoord.x, true, callback);
+			updateTiles(shiftedY, m_matrixTopRightCoord.y, m_matrixTopRightCoord.x, true);
 	}
 
-	private void updateTiles(int shifted, int topRightX, int topRightY, bool updateAxisY, Action<TileDescription[]> callback)
+	private void updateTiles(int shifted, int topRightX, int topRightY, bool updateAxisY)
 	{
 		int moveDirection = shifted > 0 ? 1 : -1;
 		int shiftCount = Mathf.Min(Mathf.Abs(shifted), tileCount);

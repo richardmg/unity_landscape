@@ -12,9 +12,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void Awake()
 	{
-		m_tileEngine = new TileEngine(tileCount, tileSize);
+		m_tileEngine = new TileEngine(tileCount, tileSize, updateTiles);
 		initTiles();
-		m_tileEngine.updateAllTiles(updateTiles);
+		m_tileEngine.updateAllTiles();
 
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityClassListener(this);
@@ -44,7 +44,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void Update()
 	{
-		m_tileEngine.updateTiles(Root.instance.player.transform.position, updateTiles);
+		m_tileEngine.updateTiles(Root.instance.player.transform.position);
 	}
 
 	void updateTiles(TileDescription[] tilesToUpdate)
@@ -98,7 +98,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void onProjectLoaded()
 	{
-		m_tileEngine.updateAllTiles(updateTiles);
+		m_tileEngine.updateAllTiles();
 	}
 
 	public void rebuildTileMesh(GameObject tile)
