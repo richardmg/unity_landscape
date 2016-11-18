@@ -55,7 +55,7 @@ public class TileEngine
 	public float tileWorldSize = 100;
 
 	int m_tileCountHalf;
-	Vector3 m_tileCenterOffset;
+	Vector2 m_shiftedTileOffset;
 	IntCoord m_shiftedTilePos;
 	IntCoord m_prevShiftedTilePos;
 	IntCoord m_matrixTopRight;
@@ -70,7 +70,7 @@ public class TileEngine
 		m_tileCountHalf = tileCount / 2;
 		Debug.Assert(m_tileCountHalf == tileCount / 2f, "tileCount must be an even number");
 
-		m_tileCenterOffset = new Vector3(tileWorldSize / 2f, 0, tileWorldSize / 2f);
+		m_shiftedTileOffset = new Vector2(tileWorldSize / 2f, tileWorldSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
 		m_matrixTopRight = new IntCoord(tileCount - 1, tileCount - 1);
 		m_matrixTopRightTileCoord = new IntCoord(m_tileCountHalf, m_tileCountHalf);
@@ -101,10 +101,11 @@ public class TileEngine
 		return matrixCoord;
 	}
 
-	public void matrixCoordForTileCoord(int tileX, int tileY, ref IntCoord matrixCoord)
+	public void matrixCoordForTileCoord(int tileX, int tileZ, ref IntCoord matrixCoord)
 	{
 		int tileOffsetX = tileX - m_matrixTopRightTileCoord.x;
-		int tileOffsetZ = tileY - m_matrixTopRightTileCoord.y;
+		int tileOffsetZ = tileZ - m_matrixTopRightTileCoord.y;
+		Debug.Assert(tileOffsetX < 0 && tileOffsetZ < 0 && tileOffsetX > -tileCount && tileOffsetZ > -tileCount, "Tile coord outside current matrix window");
 		matrixCoord.set(matrixPos(m_matrixTopRight.x, -tileOffsetX), matrixPos(m_matrixTopRight.y, -tileOffsetZ));
 	}
 
@@ -161,8 +162,8 @@ public class TileEngine
 		// determine when to update the tile matrix. We use shiftedTilePos to
 		// shift the user position half a tile north-east to roll the matrix
 		// when the user passes the center of a tile, rather than at the edge.
-		shiftedTilePos.x = (int)((worldPos.x + (m_tileCenterOffset.x * Mathf.Sign(worldPos.x))) / tileWorldSize);
-		shiftedTilePos.y = (int)((worldPos.z + (m_tileCenterOffset.z * Mathf.Sign(worldPos.z))) / tileWorldSize);
+		shiftedTilePos.x = (int)((worldPos.x + (m_shiftedTileOffset.x * Mathf.Sign(worldPos.x))) / tileWorldSize);
+		shiftedTilePos.y = (int)((worldPos.z + (m_shiftedTileOffset.y * Mathf.Sign(worldPos.z))) / tileWorldSize);
 	}
 
 	public void updateTiles(Vector3 worldPos, Action<TileDescription[]> callback)
