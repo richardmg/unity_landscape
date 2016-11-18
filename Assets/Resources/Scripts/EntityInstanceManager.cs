@@ -79,11 +79,6 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		}
 	}
 
-	public void removeAllTiles()
-	{
-		Debug.Assert(false, "Not implemented");
-	}
-
 	public List<EntityInstanceDescription> getEntityInstanceDescriptionsForWorldPos(Vector3 worldPos)
 	{
 		IntCoord matrixCoord = tileEngine.matrixCoordForWorldPos(worldPos);
