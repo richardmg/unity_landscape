@@ -49,7 +49,7 @@ public class TileEngine
 		m_shiftedTileOffset = new Vector2(tileWorldSize / 2f, tileWorldSize / 2f);
 		m_tileMoveDesc = new TileDescription[tileCount];
 		m_matrixTopRightCoord = new IntCoord(tileCount - 1, tileCount - 1);
-		m_matrixTopRightTileCoord = new IntCoord(m_tileCountHalf, m_tileCountHalf);
+		m_matrixTopRightTileCoord = new IntCoord(m_tileCountHalf - 1, m_tileCountHalf - 1);
 		m_shiftedTileCoord = new IntCoord(0, 0);
 		m_prevShiftedTileCoord = new IntCoord(0, 0);
 
@@ -114,8 +114,8 @@ public class TileEngine
 		// Normalize arg matrix coord (as if the matrix were unshifted)
 		int matrixXNormalized = matrixPos(matrixX, -m_matrixTopRightCoord.x + (tileCount - 1)); 
 		int matrixYNormalized = matrixPos(matrixY, -m_matrixTopRightCoord.y + (tileCount - 1)); 
-		int tileOffsetX = tileCount - matrixXNormalized;
-		int tileOffsetY = tileCount - matrixYNormalized;
+		int tileOffsetX = tileCount - matrixXNormalized - 1;
+		int tileOffsetY = tileCount - matrixYNormalized - 1;
 		tileCoord.set(m_matrixTopRightTileCoord.x - tileOffsetX, m_matrixTopRightTileCoord.y - tileOffsetY);
 	}
 
