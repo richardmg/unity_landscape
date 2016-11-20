@@ -88,8 +88,8 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	public void onEntityInstanceAdded(EntityInstanceDescription desc)
 	{
-		IntCoord matrixCoord = tileEngine.matrixCoordForWorldPos(desc.worldPos);
-		Tile tile = m_pages[matrixCoord.x, matrixCoord.y].getTileForWorldPos(desc.worldPos);
+		IntCoord pageCoord = tileEngine.matrixCoordForWorldPos(desc.worldPos);
+		Tile tile = m_pages[pageCoord.x, pageCoord.y].getTileForWorldPos(desc.worldPos);
 		tile.entityInstanceDescriptions.Add(desc);
 	}
 

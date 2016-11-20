@@ -45,7 +45,9 @@ public class EntityInstanceDescription
 
 	public void destroyInstance()
 	{
-		Debug.Assert(instance != null, "This description has no instance. Create and Destroy calls should be balanced.");
+		if (instance == null)
+			return;
+
 		instance.hideAndDestroy();
 		instance = null;
 	}
@@ -86,8 +88,8 @@ public class EntityInstance : MonoBehaviour {
 		EntityClass.globalInstanceCount--;
 
 		gameObject.SetActive(false);
-//		GameObject.Destroy(this.gameObject);
-		UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(gameObject); };
+		GameObject.Destroy(this.gameObject);
+//		UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(gameObject); };
 	}
 
 	public void updateMesh()

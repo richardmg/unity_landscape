@@ -164,6 +164,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 			// TODO: add to pool
 			GameObject go = transform.GetChild(i).gameObject;
 			EntityInstance instance = go.GetComponent<EntityInstance>();
+			Debug.Assert(instance != null, "Found someting else than an enity instance...");
 			instance.entityInstanceDescription.destroyInstance();
 		}
 	}
