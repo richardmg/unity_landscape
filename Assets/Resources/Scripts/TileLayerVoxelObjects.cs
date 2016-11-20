@@ -23,11 +23,15 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void Start()
 	{
+		// Create some dummy trees for debug
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				Transform t = m_tileMatrix[x, z].transform;
-				EntityInstance e = Root.instance.entityClassManager.getEntity(0).createInstance(t);
-				e.transform.localPosition = new Vector3(0, Root.instance.landscapeManager.sampleHeight(t.position), 0);
+				Transform tileTransform = m_tileMatrix[x, z].transform;
+				EntityClass entityClass = Root.instance.entityClassManager.getEntity(0);
+				Vector3 pos = tileTransform.position;
+				pos.y = Root.instance.landscapeManager.sampleHeight(pos);
+				EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, pos);
+				EntityInstance e = desc.createInstance(tileTransform);
 				e.makeStandalone(Root.kLod0);
 			}
 		}
@@ -144,10 +148,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	void createEntityInstances(GameObject tile, TileDescription tileDesc)
 	{
-
-		return;
-
-
 		List<EntityInstanceDescription> instanceDescriptions
 			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
 
