@@ -57,6 +57,38 @@ public class TileEngine
 			m_tileMoveDesc[i] = new TileDescription();
 	}
 
+	public Vector3 worldPosForTileCoord(IntCoord tileCoord)
+	{
+		// Unoptimized convenience
+		return new Vector3(tileCoord.x * tileWorldSize, 0, tileCoord.y * tileWorldSize);
+	}
+
+	public IntCoord tileCoordAtWorldPos(Vector3 worldPos)
+	{
+		// Unoptimized convenience
+		IntCoord tileCoord = new IntCoord();
+		tileCoordAtWorldPos(worldPos, out tileCoord.x, out tileCoord.y);
+		return tileCoord;
+	}
+
+	public IntCoord matrixCoordForWorldPos(Vector3 worldPos)
+	{
+		// Unoptimized convenience
+		int tileX, tileY;
+		IntCoord matrixCoord = new IntCoord();
+		tileCoordAtWorldPos(worldPos, out tileX, out tileY);
+		matrixCoordForTileCoord(tileX, tileY, ref matrixCoord);
+		return matrixCoord;
+	}
+
+	public IntCoord tileCoordForMatrixCoord(IntCoord matrixCoord)
+	{
+		// Unoptimized convenience
+		IntCoord tileCoord = new IntCoord();
+		tileCoordForMatrixCoord(matrixCoord.x, matrixCoord.y, ref tileCoord);
+		return tileCoord;
+	}
+
 	public void worldPosForTileCoord(IntCoord tileCoord, ref Vector3 worldPos)
 	{
 		worldPos.Set(tileCoord.x * tileWorldSize, 0, tileCoord.y * tileWorldSize);
@@ -64,17 +96,9 @@ public class TileEngine
 
 	public void tileCoordAtWorldPos(Vector3 worldPos, out int tileX, out int tileY)
 	{
+		// NB: we here assume that the tile engine is aligned with x, z rather than x, y
 		tileX = (int)(worldPos.x / tileWorldSize);
 		tileY = (int)(worldPos.z / tileWorldSize);
-	}
-
-	public IntCoord matrixCoordForWorldPos(Vector3 worldPos)
-	{
-		int tileX, tileY;
-		IntCoord matrixCoord = new IntCoord();
-		tileCoordAtWorldPos(worldPos, out tileX, out tileY);
-		matrixCoordForTileCoord(tileX, tileY, ref matrixCoord);
-		return matrixCoord;
 	}
 
 	public void matrixCoordForTileCoord(int tileX, int tileY, ref IntCoord matrixCoord)
