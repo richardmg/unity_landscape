@@ -97,8 +97,8 @@ public class TileEngine
 	public void tileCoordAtWorldPos(Vector3 worldPos, out int tileX, out int tileY)
 	{
 		// NB: we here assume that the tile engine is aligned with x, z rather than x, y
-		tileX = (int)Mathf.Floor(worldPos.x / tileWorldSize);
-		tileY = (int)Mathf.Floor(worldPos.z / tileWorldSize);
+		tileX = Mathf.FloorToInt(worldPos.x / tileWorldSize);
+		tileY = Mathf.FloorToInt(worldPos.z / tileWorldSize);
 	}
 
 	public void matrixCoordForTileCoord(int tileX, int tileY, ref IntCoord matrixCoord)
@@ -162,8 +162,8 @@ public class TileEngine
 		// determine when to update the tile matrix. We use shiftedTilePos to
 		// shift the user position half a tile north-east to roll the matrix
 		// when the user passes the center of a tile, rather than at the edge.
-		shiftedTilePos.x = (int)Mathf.Floor((worldPos.x + m_shiftedTileOffset.x) / tileWorldSize);
-		shiftedTilePos.y = (int)Mathf.Floor((worldPos.z + m_shiftedTileOffset.y) / tileWorldSize);
+		shiftedTilePos.x = Mathf.FloorToInt((worldPos.x + m_shiftedTileOffset.x) / tileWorldSize);
+		shiftedTilePos.y = Mathf.FloorToInt((worldPos.z + m_shiftedTileOffset.y) / tileWorldSize);
 	}
 
 	public void updateTiles(Vector3 worldPos)

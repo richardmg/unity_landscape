@@ -92,9 +92,8 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		Tile tile = m_pages[matrixCoord.x, matrixCoord.y].getTileForWorldPos(desc.worldPos);
 		tile.entityInstanceDescriptions.Add(desc);
 //		Debug.Log("add, world pos: " + desc.worldPos);
+		Debug.Log("add: page coord:" + tileEngine.tileCoordForMatrixCoord(matrixCoord) + ", " + tileEngine.tileCoordAtWorldPos(desc.worldPos));
 		Debug.Log("add: matrix coord: " + matrixCoord);
-		Debug.Log("add: tile coord:" + tileEngine.tileCoordForMatrixCoord(matrixCoord) + ", " + tileEngine.tileCoordAtWorldPos(desc.worldPos));
-//		Debug.Log("add: page size: " + tileEngine.tileWorldSize);
 	}
 
 	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
