@@ -74,7 +74,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 		for (int i = 0; i < tilesToUpdate.Length; ++i) {
 			TileDescription desc = tilesToUpdate[i];
-			Page page = new Page(tileEngine.tileWorldSize, tilesPerPage, desc.worldPos);
+			Page page = new Page(tileEngine.tileWorldSize / tilesPerPage, tilesPerPage, desc.worldPos);
 			m_pages[(int)desc.matrixCoord.x, (int)desc.matrixCoord.y] = page;
 		}
 	}
@@ -91,9 +91,6 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		IntCoord matrixCoord = tileEngine.matrixCoordForWorldPos(desc.worldPos);
 		Tile tile = m_pages[matrixCoord.x, matrixCoord.y].getTileForWorldPos(desc.worldPos);
 		tile.entityInstanceDescriptions.Add(desc);
-//		Debug.Log("add, world pos: " + desc.worldPos);
-		Debug.Log("add: page coord:" + tileEngine.tileCoordForMatrixCoord(matrixCoord) + ", " + tileEngine.tileCoordAtWorldPos(desc.worldPos));
-		Debug.Log("add: matrix coord: " + matrixCoord);
 	}
 
 	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
