@@ -25,8 +25,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 	{
 		for (int z = 0; z < tileCount; ++z) {
 			for (int x = 0; x < tileCount; ++x) {
-				EntityInstance e = Root.instance.entityClassManager.getEntity(0).createInstance(m_tileMatrix[x, z].transform);
-				e.transform.localPosition = new Vector3(0, 0, 0);
+				Transform t = m_tileMatrix[x, z].transform;
+				EntityInstance e = Root.instance.entityClassManager.getEntity(0).createInstance(t);
+				e.transform.localPosition = new Vector3(0, Root.instance.landscapeManager.sampleHeight(t.position), 0);
 				e.makeStandalone(Root.kLod0);
 			}
 		}
@@ -143,6 +144,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	void createEntityInstances(GameObject tile, TileDescription tileDesc)
 	{
+
+		return;
+
+
 		List<EntityInstanceDescription> instanceDescriptions
 			= Root.instance.entityInstanceManager.getEntityInstanceDescriptionsForWorldPos(tileDesc.worldPos);
 

@@ -79,9 +79,9 @@ public class TileEngine
 
 	public void matrixCoordForTileCoord(int tileX, int tileY, ref IntCoord matrixCoord)
 	{
-		int tileOffsetX = tileX - m_matrixTopRightTileCoord.x;
-		int tileOffsetY = tileY - m_matrixTopRightTileCoord.y;
-		Debug.Assert(tileOffsetX < 0 && tileOffsetY < 0 && tileOffsetX > -tileCount && tileOffsetY > -tileCount, "Tile coord outside current matrix window");
+		int tileOffsetX = m_matrixTopRightTileCoord.x - tileX;
+		int tileOffsetY = m_matrixTopRightTileCoord.y - tileY;
+		Debug.Assert(tileOffsetX >= 0 && tileOffsetY >= 0 && tileOffsetX <= tileCount && tileOffsetY <= tileCount, "Tile coord outside current matrix window");
 		matrixCoord.set(matrixPos(m_matrixTopRightCoord.x, -tileOffsetX), matrixPos(m_matrixTopRightCoord.y, -tileOffsetY));
 	}
 
