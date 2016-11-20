@@ -21,6 +21,17 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		Root.instance.notificationManager.addEntityInstanceListener(this);
 	}
 
+	public void Start()
+	{
+		for (int z = 0; z < tileCount; ++z) {
+			for (int x = 0; x < tileCount; ++x) {
+				EntityInstance e = Root.instance.entityClassManager.getEntity(0).createInstance(m_tileMatrix[x, z].transform);
+				e.transform.localPosition = new Vector3(0, 0, 0);
+				e.makeStandalone(Root.kLod0);
+			}
+		}
+	}
+
 	public void initTiles()
 	{
 		// Ensure that the tile size matches the tile size of the smallest tiles in entityInstanceManager
