@@ -91,6 +91,7 @@ public class TileEngine
 
 	public void worldPosForTileCoord(IntCoord tileCoord, ref Vector3 worldPos)
 	{
+		// NB: we here assume that the tile engine is aligned with x, z rather than x, y
 		worldPos.Set(tileCoord.x * tileWorldSize, 0, tileCoord.y * tileWorldSize);
 	}
 
