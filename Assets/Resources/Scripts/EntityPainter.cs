@@ -192,7 +192,7 @@ public class EntityPainter : MonoBehaviour {
 
 		m_textureDirty = false;
 
-		if (detach && m_entityInstance && m_entityClass.instanceCount > 1) {
+		if (detach && m_entityInstance && m_entityClass.instanceDescriptionCount > 1) {
 			detachEntityClass();
 			copyPixelsBackToAtlas();
 			Root.instance.uiManager.entityClassPicker.selectEntityClass(m_entityClass);

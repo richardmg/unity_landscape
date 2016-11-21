@@ -22,7 +22,7 @@ public class Fps : MonoBehaviour
 		style.normal.textColor = new Color (0.0f, 0.0f, 0.5f, 1.0f);
 		float fps = 1.0f / deltaTime;
 //		string text = string.Format("Top level: {0}, Cache size: {1}, FPS: {2:0.}", VoxelObject.voxelObjectCount, Root.instance.meshManager.size(), fps);
-		string text = string.Format("Entity instances: {0}, FPS: {1:0.}", EntityClass.globalInstanceCount, fps);
+		string text = string.Format("Entity instances: {0}, FPS: {1:0.}", EntityInstanceManager.globalInstanceDescriptionCount, fps);
 		GUI.Label(rect, text, style);
 	}
 }

@@ -14,8 +14,9 @@ public class EntityClass {
 	public string prefabName;
 	public string entityName;
 
-	public int instanceCount;
-	static public int globalInstanceCount;
+	// instanceCount is the number of EntityInstanceDescriptions using
+	// this EntityClass, not the number of EntityInstances in the scene.
+	public int instanceDescriptionCount;
 
 	// id is set by EntityManager
 	public int id = -1;
@@ -96,9 +97,6 @@ public class EntityClass {
 
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
-
-		instanceCount++;
-		EntityClass.globalInstanceCount++;
 
 //		go.SetActive(false);
 		instance.makeStandalone(Root.kLod0);
@@ -216,6 +214,7 @@ public class EntityClass {
 		id = projectIO.readInt();
 		prefabName = projectIO.readString();
 		entityName = projectIO.readString();
+		instanceDescriptionCount = projectIO.readInt();
 
 		prefab = Root.instance.entityClassManager.getEntityPrefab(prefabName);
 		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
@@ -237,6 +236,7 @@ public class EntityClass {
 		projectIO.writeInt(id);
 		projectIO.writeString(prefabName);
 		projectIO.writeString(entityName);
+		projectIO.writeInt(instanceDescriptionCount);
 
 		var atlasIndexList = indexSubstitutions.Keys;
 		projectIO.writeInt(atlasIndexList.Count);

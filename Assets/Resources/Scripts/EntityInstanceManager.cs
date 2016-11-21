@@ -41,6 +41,8 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 	public float pageSize = 1000;
 	public int tilesPerPage = 100;
 
+	public static int globalInstanceDescriptionCount;
+
 	[HideInInspector]
 	public TileEngine tileEngine;
 
@@ -91,24 +93,33 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		IntCoord pageCoord = tileEngine.matrixCoordForWorldPos(desc.worldPos);
 		Tile tile = m_pages[pageCoord.x, pageCoord.y].getTileForWorldPos(desc.worldPos);
 		tile.entityInstanceDescriptions.Add(desc);
+
+		EntityInstanceManager.globalInstanceDescriptionCount++;
+		Root.instance.entityClassManager.getEntity(desc.entityClassID).instanceDescriptionCount++;
 	}
 
 	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
 	{
 		Debug.Assert(false, "Not implemented!");
+
+		EntityInstanceManager.globalInstanceDescriptionCount--;
+		Root.instance.entityClassManager.getEntity(desc.entityClassID).instanceDescriptionCount--;
 	}
 
-	public void onEntityInstanceChanged(EntityInstanceDescription entityInstance)
+	public void onEntityInstanceChanged(EntityInstanceDescription desc)
 	{
-		Debug.Assert(false, "Not implemented!");
+		// todo: if the position has changed, we will need
+		// to change which tile the instance maps to
 	}
 
 	public void initNewProject()
 	{
+		globalInstanceDescriptionCount = 0;
 	}
 
 	public void load(ProjectIO projectIO)
 	{
+		globalInstanceDescriptionCount = 0;
 	}
 
 	public void save(ProjectIO projectIO)

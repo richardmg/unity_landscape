@@ -41,7 +41,6 @@ public class EntityClassManager : IProjectIOMember
 			entityClass.removed = true;
 
 		allEntityClasses = new List<EntityClass>();
-		EntityClass.globalInstanceCount = 0;
 	}
 
 	public EntityClass getEntity(int id)

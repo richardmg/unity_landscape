@@ -25,8 +25,14 @@ public class EntityInstanceDescription
 	public EntityInstanceDescription()
 	{}
 
+	~EntityInstanceDescription()
+	{
+		Root.instance.entityClassManager.getEntity(entityClassID).instanceDescriptionCount--;
+	}
+
 	public EntityInstanceDescription(EntityClass entityClass, Vector3 worldPos, bool isStatic = true)
 	{
+		entityClass.instanceDescriptionCount++;
 		entityClassID = entityClass.id;
 		this.worldPos = worldPos;
 		rotation = new Quaternion();
@@ -37,7 +43,6 @@ public class EntityInstanceDescription
 public class EntityInstance : MonoBehaviour {
 	public EntityClass entityClass;
 	public EntityInstanceDescription entityInstanceDescription;
-
 	public bool instanceHidden = false;
 
 	public void makeStandalone(Lod lod)
@@ -65,16 +70,11 @@ public class EntityInstance : MonoBehaviour {
 
 	public void changeEntityClass(EntityClass toEntityClass)
 	{
-		entityClass.instanceCount--;
 		entityClass = toEntityClass;
-		toEntityClass.instanceCount++;
 	}
 
 	public void hideAndDestroy()
 	{
-		entityClass.instanceCount--;
-		EntityClass.globalInstanceCount--;
-
 		gameObject.SetActive(false);
 		GameObject.Destroy(this.gameObject);
 //		UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(gameObject); };
