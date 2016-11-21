@@ -112,12 +112,6 @@ public class EntityPainter : MonoBehaviour {
 		updateThumbnails();
 	}
 
-	public void setListIndex(int listIndex)
-    {
-		m_currentListIndex = listIndex;
-		setAtlasIndex(m_atlasIndexList[listIndex]);
-	}
-
 	public void createThumbnails()
 	{
 		int count = 10;
@@ -160,11 +154,17 @@ public class EntityPainter : MonoBehaviour {
 		}
 	}
 
+	public void setListIndex(int listIndex)
+    {
+		saveChanges();
+		m_currentListIndex = listIndex;
+		setAtlasIndex(m_atlasIndexList[listIndex]);
+	}
+
 	public void setAtlasIndex(int atlasIndex)
 	{
-		saveChanges();
-
 		m_currentAtlasIndex = atlasIndex;
+
 		int atlasPixelX, atlasPixelY;
 		AtlasManager.getAtlasPixelForIndex(atlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
@@ -219,8 +219,8 @@ public class EntityPainter : MonoBehaviour {
 	{
 		// Create a new entity class that we modify instead
 		EntityClass newClass = new EntityClass(m_entityClass);
-		List<int> indexList = newClass.atlasIndexList();
-		m_currentAtlasIndex = indexList[m_currentListIndex];
+		m_atlasIndexList = newClass.atlasIndexList();
+		m_currentAtlasIndex = m_atlasIndexList[m_currentListIndex];
 		m_entityClass = newClass;
 	}
 
