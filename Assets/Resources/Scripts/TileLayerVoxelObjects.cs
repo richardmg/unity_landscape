@@ -80,13 +80,13 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		// Find out which tile is currently under the new things position
 		IntCoord matrixCoord = m_tileEngine.matrixCoordForWorldPos(desc.worldPos);
 		GameObject tile = m_tileMatrix[matrixCoord.x, matrixCoord.y];
-		desc.createInstance(tile.transform);
+		createInstance(tile, desc);
 		rebuildTileMesh(tile);
 	}
 
 	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
 	{
-		desc.destroyInstance();
+		destroyInstance(desc);
 	}
 
 	public void onEntityInstanceChanged(EntityInstanceDescription desc)
@@ -141,6 +141,23 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		}
 	}
 
+	EntityInstance createInstance(GameObject tile, EntityInstanceDescription desc)
+	{
+		Debug.Assert(desc.instance == null, "This description already carries an instance");
+
+		EntityClass entityClass = Root.instance.entityClassManager.getEntity(desc.entityClassID);
+		EntityInstance instance = entityClass.createInstance(tile.transform);
+
+		instance.entityInstanceDescription = desc;
+		instance.transform.position = desc.worldPos;
+		instance.transform.rotation = desc.rotation;
+		instance.gameObject.isStatic = desc.isStatic;
+
+		// We abuse the description to carry the instance for easy access
+		desc.instance = instance;
+		return instance;
+	}
+
 	void createEntityInstances(GameObject tile, TileDescription tileDesc)
 	{
 		List<EntityInstanceDescription> instanceDescriptions
@@ -149,7 +166,19 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		// TODO: get existing game objects / voxel objects from pool
 		// TODO: In the pool, first check if an instance with correct class ID exists, before modifying a different one.
 		foreach (EntityInstanceDescription instanceDesc in instanceDescriptions)
-			instanceDesc.createInstance(tile.transform);
+			createInstance(tile, instanceDesc);
+	}
+
+	void destroyInstance(EntityInstanceDescription desc)
+	{
+		if (desc.instance == null) {
+			// This can happen because of an internal
+			// 'destroy' delay inside unity, is seems
+			return;
+		}
+
+		desc.instance.hideAndDestroy();
+		desc.instance = null;
 	}
 
 	void destroyEntityInstances(GameObject tile)
@@ -158,8 +187,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		for (int i = 0; i < transform.childCount; ++i) {
 			// TODO: add to pool
 			GameObject go = transform.GetChild(i).gameObject;
-			EntityInstance instance = go.GetComponent<EntityInstance>();
-			instance.entityInstanceDescription.destroyInstance();
+			destroyInstance(go.GetComponent<EntityInstance>().entityInstanceDescription);
 		}
 	}
 }

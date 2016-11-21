@@ -32,30 +32,6 @@ public class EntityInstanceDescription
 		rotation = new Quaternion();
 		this.isStatic = isStatic;
 	}
-
-	public EntityInstance createInstance(Transform parentTransform)
-	{
-		// It is possible to create entity instance directly from an
-		// entity class, but a single entity instance description can
-		// only reference one concrete instance.
-		Debug.Assert(instance == null, "This description has an instance already");
-		EntityClass entityClass = Root.instance.entityClassManager.getEntity(entityClassID);
-		instance = entityClass.createInstance(parentTransform);
-		instance.entityInstanceDescription = this;
-		instance.transform.position = worldPos;
-		instance.transform.rotation = rotation;
-		instance.gameObject.isStatic = isStatic;
-		return instance;
-	}
-
-	public void destroyInstance()
-	{
-		if (instance == null)
-			return;
-
-		instance.hideAndDestroy();
-		instance = null;
-	}
 }
 
 public class EntityInstance : MonoBehaviour {
