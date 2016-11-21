@@ -193,7 +193,7 @@ public class EntityPainter : MonoBehaviour {
 		m_textureDirty = false;
 
 		if (detach && m_entityInstance && m_entityClass.instanceCount > 1) {
-			detachEntityInstance();
+			detachEntityClass();
 			copyPixelsBackToAtlas();
 			Root.instance.uiManager.entityClassPicker.selectEntityClass(m_entityClass);
 			m_entityInstance.entityInstanceDescription.entityClassID = m_entityClass.id;
@@ -215,7 +215,7 @@ public class EntityPainter : MonoBehaviour {
 		atlasTexture.Apply();
 	}
 
-	void detachEntityInstance()
+	void detachEntityClass()
 	{
 		// Create a new entity class that we modify instead
 		EntityClass newClass = new EntityClass(m_entityClass);

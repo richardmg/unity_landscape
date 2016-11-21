@@ -63,6 +63,13 @@ public class EntityInstance : MonoBehaviour {
 		meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(lod);
 	}
 
+	public void changeEntityClass(EntityClass toEntityClass)
+	{
+		entityClass.instanceCount--;
+		entityClass = toEntityClass;
+		toEntityClass.instanceCount++;
+	}
+
 	public void hideAndDestroy()
 	{
 		entityClass.instanceCount--;
