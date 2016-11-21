@@ -210,18 +210,18 @@ public class EntityPainter : MonoBehaviour {
 
 	void detachEntityInstance()
 	{
-		// Create a new entity class, and modify that one instead
+		// Create a new entity class, and paint on that one instead
 		EntityClass newClass = new EntityClass(m_entityClass);
 		List<int> indexList = newClass.atlasIndexList();
 		m_currentAtlasIndex = indexList[m_currentListIndex];
 		m_entityClass = newClass;
-		// Swap instance
 
-		// Swap out the current instance with a new one based on the new class
-		EntityInstance newInstance = newClass.createInstance();
+		// Make the new class current in the picker as well
 		Root.instance.uiManager.entityClassPicker.selectEntityClass(newClass);
-		Root.instance.notificationManager.notifyEntityInstanceSwapped(m_entityInstance, newInstance);
-		m_entityInstance = newInstance;
+
+		// Change the entity instance, and inform the world
+		m_entityInstance.entityInstanceDescription.entityClassID = newClass.id;
+		Root.instance.notificationManager.notifyEntityInstanceChanged(m_entityInstance.entityInstanceDescription);
 	}
 
 	public void onColorButtonClicked()

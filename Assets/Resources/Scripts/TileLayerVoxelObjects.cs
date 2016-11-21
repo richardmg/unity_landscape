@@ -89,13 +89,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		desc.destroyInstance();
 	}
 
-	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
+	public void onEntityInstanceChanged(EntityInstanceDescription desc)
 	{
-		IntCoord matrixCoord = m_tileEngine.matrixCoordForWorldPos(from.gameObject.transform.position);
-		GameObject tile = m_tileMatrix[matrixCoord.x, matrixCoord.y];
-		from.hideAndDestroy();
-		to.gameObject.transform.parent = tile.transform;
-		rebuildTileMesh(tile);
+		desc.instance.entityClass = Root.instance.entityClassManager.getEntity(desc.entityClassID);
+		desc.instance.updateMesh();
 	}
 
 	public void onEntityClassChanged(EntityClass entityClass)
@@ -105,12 +102,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 	}
 
 	public void onEntityClassAdded(EntityClass entityClass)
-	{
-	}
+	{}
 
 	public void onEntityClassRemoved(EntityClass entityClass)
-	{
-	}
+	{}
 
 	public void onProjectLoaded()
 	{

@@ -15,7 +15,12 @@ public class EntityInstanceDescription
 	public Quaternion rotation;
 	public bool isStatic;
 
-	EntityInstance instance;
+	// There is a one-to-one mapping between an EntityInstance and
+	// a EntityInstanceDescription for simplicity. This can change if we
+	// need to support several windows that draws the world.
+	// Note that 'instance' is owned by the tile layer that creates the
+	// instance, and is just placed here for easy bookkeeping.
+	public EntityInstance instance;
 
 	public EntityInstanceDescription()
 	{}

@@ -93,17 +93,12 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		tile.entityInstanceDescriptions.Add(desc);
 	}
 
-	public void onEntityInstanceSwapped(EntityInstance from, EntityInstance to)
+	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
 	{
 		Debug.Assert(false, "Not implemented!");
-		//		to.gameObject.transform.position = from.gameObject.transform.position;
-		//		to.gameObject.transform.rotation = from.gameObject.transform.rotation;
-		//		m_tiles[0, 0].entityInstances.Remove(from.gameObject);
-		//		m_tiles[0, 0].entityInstances.Add(to.gameObject);
-		//		Root.instance.notificationManager.notifyEntityInstanceSwapped(from, to);
 	}
 
-	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
+	public void onEntityInstanceChanged(EntityInstanceDescription entityInstance)
 	{
 		Debug.Assert(false, "Not implemented!");
 	}
