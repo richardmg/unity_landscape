@@ -190,38 +190,38 @@ public class EntityPainter : MonoBehaviour {
 		if (m_texture == null || !m_textureDirty)
 			return;
 
-		if (detach && m_entityInstance && m_entityClass.instanceCount > 1)
-			detachEntityInstance();
+		m_textureDirty = false;
 
+		if (detach && m_entityInstance && m_entityClass.instanceCount > 1) {
+			detachEntityInstance();
+			copyPixelsBackToAtlas();
+			Root.instance.uiManager.entityClassPicker.selectEntityClass(m_entityClass);
+			m_entityInstance.entityInstanceDescription.entityClassID = m_entityClass.id;
+			Root.instance.notificationManager.notifyEntityInstanceChanged(m_entityInstance.entityInstanceDescription);
+		} else {
+			copyPixelsBackToAtlas();
+			m_entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
+			Root.instance.notificationManager.notifyEntityClassChanged(m_entityClass);
+		}
+    }
+
+	void copyPixelsBackToAtlas()
+	{
 		int atlasPixelX;
 		int atlasPixelY;
 		AtlasManager.getAtlasPixelForIndex(m_currentAtlasIndex, out atlasPixelX, out atlasPixelY);
 		Texture2D texture = Root.instance.atlasManager.textureAtlas;
 		texture.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
 		texture.Apply();
-
-		m_textureDirty = false;
-
-		if (m_entityClass != null) {
-			m_entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
-			Root.instance.notificationManager.notifyEntityClassChanged(m_entityClass);
-		}
-    }
+	}
 
 	void detachEntityInstance()
 	{
-		// Create a new entity class, and paint on that one instead
+		// Create a new entity class that we modify instead
 		EntityClass newClass = new EntityClass(m_entityClass);
 		List<int> indexList = newClass.atlasIndexList();
 		m_currentAtlasIndex = indexList[m_currentListIndex];
 		m_entityClass = newClass;
-
-		// Make the new class current in the picker as well
-		Root.instance.uiManager.entityClassPicker.selectEntityClass(newClass);
-
-		// Change the entity instance, and inform the world
-		m_entityInstance.entityInstanceDescription.entityClassID = newClass.id;
-		Root.instance.notificationManager.notifyEntityInstanceChanged(m_entityInstance.entityInstanceDescription);
 	}
 
 	public void onColorButtonClicked()

@@ -91,6 +91,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void onEntityInstanceChanged(EntityInstanceDescription desc)
 	{
+		Debug.Log("onEntityInstanceChanged");
 		desc.instance.entityClass = Root.instance.entityClassManager.getEntity(desc.entityClassID);
 		desc.instance.updateMesh();
 	}
@@ -116,6 +117,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 	{
 //		Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
 //		tile.GetComponent<MeshFilter>().sharedMesh = mesh;
+		Debug.Log("rebuildTileMesh");
 
 		EntityInstance[] selfAndchildren = tile.GetComponentsInChildren<EntityInstance>(true);
 		for (int i = 0; i < selfAndchildren.Length; ++i)
