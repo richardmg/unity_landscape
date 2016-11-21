@@ -154,6 +154,8 @@ public class TileEngine
 			}
 
 			updateCallback(m_tileMoveDesc);
+			if (neighbourCallback != null)
+				neighbourCallback(m_tileMoveDesc);
 		}
 	}
 
