@@ -210,9 +210,9 @@ public class EntityPainter : MonoBehaviour {
 		int atlasPixelX;
 		int atlasPixelY;
 		AtlasManager.getAtlasPixelForIndex(m_currentAtlasIndex, out atlasPixelX, out atlasPixelY);
-		Texture2D texture = Root.instance.atlasManager.textureAtlas;
-		texture.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
-		texture.Apply();
+		Texture2D atlasTexture = Root.instance.atlasManager.textureAtlas;
+		atlasTexture.SetPixels(atlasPixelX, atlasPixelY, Root.kSubImageWidth, Root.kSubImageHeight, m_texture.GetPixels());
+		atlasTexture.Apply();
 	}
 
 	void detachEntityInstance()
