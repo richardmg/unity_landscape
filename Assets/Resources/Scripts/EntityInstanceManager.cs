@@ -35,7 +35,7 @@ public class Page
 	}
 }
 
-public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityInstanceListener
+public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityInstanceDescriptionListener
 {
 	public int pageCount = 4;
 	public float pageSize = 1000;
@@ -88,7 +88,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		return tile.entityInstanceDescriptions;
 	}
 
-	public void onEntityInstanceAdded(EntityInstanceDescription desc)
+	public void onEntityInstanceDescriptionAdded(EntityInstanceDescription desc)
 	{
 		IntCoord pageCoord = tileEngine.matrixCoordForWorldPos(desc.worldPos);
 		Tile tile = m_pages[pageCoord.x, pageCoord.y].getTileForWorldPos(desc.worldPos);
@@ -98,7 +98,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		Root.instance.entityClassManager.getEntity(desc.entityClassID).instanceDescriptionCount++;
 	}
 
-	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
+	public void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc)
 	{
 		Debug.Assert(false, "Not implemented!");
 
@@ -106,7 +106,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		Root.instance.entityClassManager.getEntity(desc.entityClassID).instanceDescriptionCount--;
 	}
 
-	public void onEntityInstanceChanged(EntityInstanceDescription desc)
+	public void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc)
 	{
 		// todo: if the position has changed, we will need
 		// to change which tile the instance maps to

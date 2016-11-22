@@ -5,10 +5,11 @@ using Lod = System.Int32;
 
 public class EntityInstanceDescription
 {
-	// EntityInstanceDescription is a shadow structure that doesn't
-	// exist in the scene as a GameObject, like an EntityInstance needs
-	// to be. This is more convenient when describing, saving, loading etc
-	// entity instances that exists in the world.
+	// EntityInstanceDescription is a data structure that describes an
+	// entity instance in the world. While the world will be populated with
+	// EntityInstanceDescriptions (tracked by EntityInstanceManager), only a
+	// subset of them will at any time be realized as visible EntityInstances
+	// (normally by a tile layer).
 
 	public int entityClassID;	
 	public Vector3 worldPos;

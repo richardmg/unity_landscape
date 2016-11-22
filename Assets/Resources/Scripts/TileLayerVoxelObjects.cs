@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntityInstanceListener, IProjectListener 
+public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntityInstanceDescriptionListener, IProjectListener 
 {
 	public int tileCount = 4;
 	public float tileSize = 1000;
@@ -75,7 +75,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		}
 	}
 
-	public void onEntityInstanceAdded(EntityInstanceDescription desc)
+	public void onEntityInstanceDescriptionAdded(EntityInstanceDescription desc)
 	{
 		// Find out which tile is currently under the new things position
 		IntCoord matrixCoord = m_tileEngine.matrixCoordForWorldPos(desc.worldPos);
@@ -84,12 +84,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		rebuildTileMesh(tile);
 	}
 
-	public void onEntityInstanceRemoved(EntityInstanceDescription desc)
+	public void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc)
 	{
 		destroyInstance(desc);
 	}
 
-	public void onEntityInstanceChanged(EntityInstanceDescription desc)
+	public void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc)
 	{
 		desc.instance.changeEntityClass(Root.instance.entityClassManager.getEntity(desc.entityClassID));
 		desc.instance.updateMesh();

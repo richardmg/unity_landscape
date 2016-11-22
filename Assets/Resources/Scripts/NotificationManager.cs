@@ -10,11 +10,11 @@ public interface IEntityClassListener
 	void onEntityClassChanged(EntityClass entityClass);
 }
 
-public interface IEntityInstanceListener
+public interface IEntityInstanceDescriptionListener
 {
-	void onEntityInstanceAdded(EntityInstanceDescription desc);
-	void onEntityInstanceRemoved(EntityInstanceDescription desc);
-	void onEntityInstanceChanged(EntityInstanceDescription desc);
+	void onEntityInstanceDescriptionAdded(EntityInstanceDescription desc);
+	void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc);
+	void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc);
 }
 
 public interface IProjectListener
@@ -25,7 +25,7 @@ public interface IProjectListener
 public class NotificationManager {
 
 	private List<IEntityClassListener> entityClassListeners = new List<IEntityClassListener>();
-	private List<IEntityInstanceListener> entityInstanceListeners = new List<IEntityInstanceListener>();
+	private List<IEntityInstanceDescriptionListener> entityInstanceListeners = new List<IEntityInstanceDescriptionListener>();
 	private List<IProjectListener> projectListeners = new List<IProjectListener>();
 
 	bool m_postNotifications = false;
@@ -35,7 +35,7 @@ public class NotificationManager {
 		entityClassListeners.Add(listener);
 	}
 
-	public void addEntityInstanceListener(IEntityInstanceListener listener)
+	public void addEntityInstanceListener(IEntityInstanceDescriptionListener listener)
 	{
 		entityInstanceListeners.Add(listener);
 	}
@@ -45,22 +45,22 @@ public class NotificationManager {
 		projectListeners.Add(listener);
 	}
 
-	public void notifyEntityInstanceAdded(EntityInstanceDescription desc)
+	public void notifyEntityInstanceDescriptionAdded(EntityInstanceDescription desc)
 	{
-		foreach (IEntityInstanceListener subscriber in entityInstanceListeners)
-			subscriber.onEntityInstanceAdded(desc);	
+		foreach (IEntityInstanceDescriptionListener subscriber in entityInstanceListeners)
+			subscriber.onEntityInstanceDescriptionAdded(desc);	
 	}
 
-	public void notifyEntityInstanceRemoved(EntityInstanceDescription desc)
+	public void notifyEntityInstanceDescriptionRemoved(EntityInstanceDescription desc)
 	{
-		foreach (IEntityInstanceListener subscriber in entityInstanceListeners)
-			subscriber.onEntityInstanceRemoved(desc);	
+		foreach (IEntityInstanceDescriptionListener subscriber in entityInstanceListeners)
+			subscriber.onEntityInstanceDescriptionRemoved(desc);	
 	}
 
-	public void notifyEntityInstanceChanged(EntityInstanceDescription desc)
+	public void notifyEntityInstanceDescriptionChanged(EntityInstanceDescription desc)
 	{
-		foreach (IEntityInstanceListener subscriber in entityInstanceListeners)
-			subscriber.onEntityInstanceChanged(desc);
+		foreach (IEntityInstanceDescriptionListener subscriber in entityInstanceListeners)
+			subscriber.onEntityInstanceDescriptionChanged(desc);
 	}
 
 	public void notifyEntityClassAdded(EntityClass entityClass, bool postNotification = true)

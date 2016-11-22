@@ -30,11 +30,11 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 			} else if (Input.GetKey(KeyCode.LeftApple) || Input.GetKey(KeyCode.LeftControl)) {
 				EntityInstance entityInstance = gameObject.GetComponent<EntityInstance>();
 				if (entityInstance) {
-					Root.instance.notificationManager.notifyEntityInstanceRemoved(entityInstance.entityInstanceDescription);
+					Root.instance.notificationManager.notifyEntityInstanceDescriptionRemoved(entityInstance.entityInstanceDescription);
 				}
 			} else {
 				EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos);
-				Root.instance.notificationManager.notifyEntityInstanceAdded(desc);
+				Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);
 			}
 		}
 	}

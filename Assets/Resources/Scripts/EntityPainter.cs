@@ -197,7 +197,7 @@ public class EntityPainter : MonoBehaviour {
 			copyPixelsBackToAtlas();
 			Root.instance.uiManager.entityClassPicker.selectEntityClass(m_entityClass);
 			m_entityInstance.entityInstanceDescription.entityClassID = m_entityClass.id;
-			Root.instance.notificationManager.notifyEntityInstanceChanged(m_entityInstance.entityInstanceDescription);
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(m_entityInstance.entityInstanceDescription);
 		} else {
 			copyPixelsBackToAtlas();
 			m_entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
