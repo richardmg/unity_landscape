@@ -35,6 +35,7 @@
 			ENDCG
 		}
 
+		// Add shadows
 		UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 	}
 }

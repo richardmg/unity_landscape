@@ -6,6 +6,10 @@
 #include "UnityLightingCommon.cginc" // for _LightColor0
 #endif
 
+#ifndef NO_SELF_SHADOW
+#include "AutoLight.cginc"
+#endif
+
 #define M_PI 3.1415926535897932384626433832795
 
 float _Gradient;
@@ -50,8 +54,13 @@ struct v2f
 	float3 objNormal : NORMAL1;
 	float3 uvAtlas : POSITION2;
 	float3 uvPixel : POSITION3;
+
 #ifndef NO_LIGHT
 	fixed4 diff : COLOR0;
+#endif
+
+#ifndef NO_SELF_SHADOW
+	SHADOW_COORDS(1) // put shadows data into TEXCOORD1
 #endif
 };
 
@@ -148,6 +157,10 @@ v2f vert(appdata v)
     o.diff.rgb += ShadeSH9(half4(o.normal ,1));
 #endif
 
+#ifndef NO_SELF_SHADOW
+	TRANSFER_SHADOW(o);
+#endif
+
 	return o;
 }
 
@@ -192,6 +205,10 @@ fixed4 frag(v2f i) : SV_Target
 //		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
 //		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
 //	#endif
+
+#ifndef NO_SELF_SHADOW
+	c *= SHADOW_ATTENUATION(i);
+#endif
 
 #ifndef NO_LIGHT
 	c *= i.diff;

@@ -31,6 +31,7 @@
 			#define NO_LIGHT
 			#define NO_GRADIENT
 			#define NO_DISCARD
+			#define NO_SELF_SHADOW
 			#include "VoxelObject.cginc"
 
 			ENDCG

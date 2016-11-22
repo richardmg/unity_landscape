@@ -28,6 +28,12 @@
 			#pragma vertex vert
 			#pragma fragment frag
 
+			// Should perhaps split this into three shaders:
+			// 1. exact, but without culling (for zero depth faces)
+			// 2. exact, but without shadow and lightning (for mid-range?)
+			// 3. volume, without shadow and lightning (for far-distance)
+			#define NO_LIGHT
+			#define NO_SELF_SHADOW
 			#include "VoxelObject.cginc"
 
 			ENDCG
