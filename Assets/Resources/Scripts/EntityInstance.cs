@@ -18,9 +18,9 @@ public class EntityInstanceDescription
 
 	// There is a one-to-one mapping between an EntityInstance and
 	// a EntityInstanceDescription for simplicity. This can change if we
-	// need to support several windows that draws the world.
+	// want to support e.g split-screen multiplayer in the future.
 	// Note that 'instance' is owned by the tile layer that creates the
-	// instance, and is just placed here for easy bookkeeping.
+	// instance, and is placed here for easy bookkeeping only.
 	public EntityInstance instance;
 
 	public EntityInstanceDescription()
