@@ -57,6 +57,7 @@ struct v2f
 
 #ifndef NO_LIGHT
 	fixed4 diff : COLOR0;
+	fixed3 ambient : COLOR1;
 #endif
 
 #ifndef NO_SELF_SHADOW
@@ -154,7 +155,7 @@ v2f vert(appdata v)
 	// Calculate light by using included Unity functions
 	half nl = max(0, dot(o.normal, _WorldSpaceLightPos0.xyz));
 	o.diff = nl * _LightColor0;
-    o.diff.rgb += ShadeSH9(half4(o.normal ,1));
+    o.ambient = ShadeSH9(half4(o.normal ,1));
 #endif
 
 #ifndef NO_SELF_SHADOW
@@ -207,11 +208,12 @@ fixed4 frag(v2f i) : SV_Target
 //	#endif
 
 #ifndef NO_SELF_SHADOW
-	c *= SHADOW_ATTENUATION(i);
+	c.rgb *= SHADOW_ATTENUATION(i);
 #endif
 
 #ifndef NO_LIGHT
-	c *= i.diff;
+	c.rgb *= i.diff;
+//	c.rgb += i.ambient;
 #endif
 
 	return c;
