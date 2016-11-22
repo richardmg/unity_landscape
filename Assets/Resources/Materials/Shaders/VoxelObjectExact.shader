@@ -22,6 +22,7 @@
 		Pass
 		{
 			Cull Off
+			Tags {"LightMode"="ForwardBase"}
 
 			CGPROGRAM
 
@@ -33,5 +34,7 @@
 
 			ENDCG
 		}
+
+		UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 	}
 }

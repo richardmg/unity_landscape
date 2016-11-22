@@ -1,6 +1,11 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 #include "UnityCG.cginc"
+
+#ifndef NO_LIGHT
+#include "UnityLightingCommon.cginc" // for _LightColor0
+#endif
+
 #define M_PI 3.1415926535897932384626433832795
 
 float _Gradient;
@@ -45,6 +50,9 @@ struct v2f
 	float3 objNormal : NORMAL1;
 	float3 uvAtlas : POSITION2;
 	float3 uvPixel : POSITION3;
+#ifndef NO_LIGHT
+	fixed4 diff : COLOR0;
+#endif
 };
 
 // We only set correct normals for the side exclusive vertices
@@ -126,12 +134,19 @@ v2f vert(appdata v)
 	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
 
-	#ifndef NO_CULL
-		int cull = v.cubeDesc.r;
-		int backface = isBackface(v.vertex, o.normal);
-		o.normal *= if_else(backface, -1, 1);
-		o.vertex *= if_else(backface, if_else(cull, 0, 1), 1);
-	#endif
+#ifndef NO_CULL
+	int cull = v.cubeDesc.r;
+	int backface = isBackface(v.vertex, o.normal);
+	o.normal *= if_else(backface, -1, 1);
+	o.vertex *= if_else(backface, if_else(cull, 0, 1), 1);
+#endif
+
+#ifndef NO_LIGHT
+	// Calculate light by using included Unity functions
+	half nl = max(0, dot(o.normal, _WorldSpaceLightPos0.xyz));
+	o.diff = nl * _LightColor0;
+    o.diff.rgb += ShadeSH9(half4(o.normal ,1));
+#endif
 
 	return o;
 }
@@ -165,26 +180,22 @@ fixed4 frag(v2f i) : SV_Target
 //	else
 //		c = tex2Dlod(_DetailTex, float4(uvVoxel.xz, 0, 0));
 
-	#ifndef NO_DISCARD
-		if (c.a == 0) {
-			discard;
-			return c;
-		}
-	#endif
+#ifndef NO_DISCARD
+	if (c.a == 0) {
+		discard;
+		return c;
+	}
+#endif
 
-	#ifndef NO_LIGHT
-		float sunDist = dot(normalize(i.normal), _SunPos);
-		float normalizedSunDist = (sunDist + 1) / 2;
-		float sunLight = _Sunshine * normalizedSunDist;
-		c *= _AmbientLight + sunLight;
-		c *= _BaseLight;
-	#endif
+//	#ifndef NO_GRADIENT
+//		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
+//		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
+//		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
+//	#endif
 
-	#ifndef NO_GRADIENT
-		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
-		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
-		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
-	#endif
+#ifndef NO_LIGHT
+	c *= i.diff;
+#endif
 
 	return c;
 }
