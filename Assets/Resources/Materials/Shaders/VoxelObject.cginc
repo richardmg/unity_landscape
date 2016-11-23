@@ -1,13 +1,18 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 #include "UnityCG.cginc"
+#include "TestFunctions.cginc"
+
 #ifndef NO_LIGHT
 #include "UnityLightingCommon.cginc" // for _LightColor0
 #endif
+
 #ifndef NO_SELF_SHADOW
+// Docs: https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html
+#pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+//#pragma multi_compile_fwdbase
 #include "AutoLight.cginc"
 #endif
-#include "TestFunctions.cginc"
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -191,12 +196,12 @@ fixed4 frag(v2f i) : SV_Target
 	c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
 #endif
 
-#ifndef NO_SELF_SHADOW
-	c.rgb *= SHADOW_ATTENUATION(i);
-#endif
-
 #ifndef NO_LIGHT
 	c.rgb *= (i.diffuse + i.ambient);
+#endif
+
+#ifndef NO_SELF_SHADOW
+	c.rgb *= SHADOW_ATTENUATION(i);
 #endif
 
 	return c;
