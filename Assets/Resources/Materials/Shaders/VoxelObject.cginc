@@ -86,25 +86,6 @@ inline float if_else(float testValue, float ifExpr, float elseExpr)
 	return elseExpr + if_then(testValue, ifExpr - elseExpr);
 }
 
-inline float3 uvClamped(v2f i)
-{
-	float diffX = i.uvAtlas.x - i.uvPixel.x;
-	float diffY = i.uvAtlas.y - i.uvPixel.y;
-	float3 uvAtlasClamped = i.uvAtlas;
-	uvAtlasClamped.x -= if_gt(diffX, _UVAtlasOnePixel.x - _ClampOffset) * _UVAtlasHalfPixel.x;
-	uvAtlasClamped.y -= if_gt(diffY, _UVAtlasOnePixel.y - _ClampOffset) * _UVAtlasHalfPixel.y;
-	uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * _UVAtlasHalfPixel.x;
-	uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * _UVAtlasHalfPixel.y;
-	return uvAtlasClamped;
-}
-
-inline int isBackface(float4 vertex, float3 worldNormal)
-{
-	float3 worldPos = mul(unity_ObjectToWorld, vertex).xyz;
-	float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
-    return if_else(if_gt(dot(worldNormal, worldViewDir), 0), 0, 1); 
-}
-
 // ---------------------------------------------------------------
 
 struct appdata
@@ -137,6 +118,27 @@ struct v2f
 	SHADOW_COORDS(1)
 #endif
 };
+
+// ---------------------------------------------------------------
+
+inline float3 uvClamped(v2f i)
+{
+	float diffX = i.uvAtlas.x - i.uvPixel.x;
+	float diffY = i.uvAtlas.y - i.uvPixel.y;
+	float3 uvAtlasClamped = i.uvAtlas;
+	uvAtlasClamped.x -= if_gt(diffX, _UVAtlasOnePixel.x - _ClampOffset) * _UVAtlasHalfPixel.x;
+	uvAtlasClamped.y -= if_gt(diffY, _UVAtlasOnePixel.y - _ClampOffset) * _UVAtlasHalfPixel.y;
+	uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * _UVAtlasHalfPixel.x;
+	uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * _UVAtlasHalfPixel.y;
+	return uvAtlasClamped;
+}
+
+inline int isBackface(float4 vertex, float3 worldNormal)
+{
+	float3 worldPos = mul(unity_ObjectToWorld, vertex).xyz;
+	float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
+    return if_else(if_gt(dot(worldNormal, worldViewDir), 0), 0, 1); 
+}
 
 // ---------------------------------------------------------------
 
@@ -196,9 +198,13 @@ fixed4 frag(v2f i) : SV_Target
 
 	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
-#ifndef NO_DETAILS
+#if !defined(NO_DETAILS) || !defined(NO_GRADIENT)
  	float isLeftOrRightSide = if_neq(i.objNormal.x, 0);
-//	fixed4 c = 0;
+ 	float isBottomOrTopSide = if_neq(i.objNormal.y, 0);
+ 	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
+#endif
+
+#ifndef NO_DETAILS
 //	if (isFrontOrBackSide)
 //		c = tex2Dlod(_DetailTex, float4(uvVoxel.xy, 0, 0));
 //	else if (isLeftOrRightSide)
