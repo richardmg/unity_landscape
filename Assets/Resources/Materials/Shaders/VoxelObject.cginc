@@ -183,7 +183,9 @@ v2f vert(appdata v)
 fixed4 frag(v2f i) : SV_Target
 {
 	float3 uvAtlasClamped = uvClamped(i);
+	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
+#ifndef NO_DETAILS
 	float depth = i.uvPixel.z;
 	float3 textureSize = float3(_TextureSize, depth);
 	float3 subImageSize = float3(_SubImageSize, depth);
@@ -196,15 +198,10 @@ fixed4 frag(v2f i) : SV_Target
 	float3 voxel = min(uvSubImage * subImageSize, subImageSize - _ClampOffset);
 	float3 uvVoxel = frac(voxel);
 
-	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
-
-#if !defined(NO_DETAILS) || !defined(NO_GRADIENT)
  	float isLeftOrRightSide = if_neq(i.objNormal.x, 0);
  	float isBottomOrTopSide = if_neq(i.objNormal.y, 0);
  	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
-#endif
 
-#ifndef NO_DETAILS
 //	if (isFrontOrBackSide)
 //		c = tex2Dlod(_DetailTex, float4(uvVoxel.xy, 0, 0));
 //	else if (isLeftOrRightSide)
