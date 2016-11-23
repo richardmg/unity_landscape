@@ -38,37 +38,6 @@ static float3 _SunPos = normalize(float3(0, 0, 1));
 static float _NormalCodeMaxValue = 9;
 static float _VoxelDepthMaxValue = 100;
 
-struct appdata
-{
-	float4 vertex : POSITION;
-	float3 normal : NORMAL;
-	float2 uvAtlas: TEXCOORD0;
-	float2 uvPixel : TEXCOORD1;
-	float4 cubeDesc : COLOR;
-};
-
-struct v2f
-{
-	float4 vertex : SV_POSITION;
-	float3 normal : NORMAL;
-	float3 uvAtlas : POSITION2;
-	float3 uvPixel : POSITION3;
-
-#ifndef NO_DETAILS
-	float3 objNormal : NORMAL1;
-#endif
-
-#ifndef NO_LIGHT
-	fixed4 diff : COLOR0;
-	fixed3 ambient : COLOR1;
-#endif
-
-#ifndef NO_SELF_SHADOW
-	// Put shadows data into TEXCOORD1
-	SHADOW_COORDS(1)
-#endif
-};
-
 // We only set correct normals for the side exclusive vertices
 // to be able to determine correct normals after interpolation
 // in the fragment shader.
@@ -136,6 +105,41 @@ inline int isBackface(float4 vertex, float3 worldNormal)
     return if_else(if_gt(dot(worldNormal, worldViewDir), 0), 0, 1); 
 }
 
+// ---------------------------------------------------------------
+
+struct appdata
+{
+	float4 vertex : POSITION;
+	float3 normal : NORMAL;
+	float2 uvAtlas: TEXCOORD0;
+	float2 uvPixel : TEXCOORD1;
+	float4 cubeDesc : COLOR;
+};
+
+struct v2f
+{
+	float4 vertex : SV_POSITION;
+	float3 normal : NORMAL;
+	float3 uvAtlas : POSITION2;
+	float3 uvPixel : POSITION3;
+
+#ifndef NO_DETAILS
+	float3 objNormal : NORMAL1;
+#endif
+
+#ifndef NO_LIGHT
+	fixed4 diff : COLOR0;
+	fixed3 ambient : COLOR1;
+#endif
+
+#ifndef NO_SELF_SHADOW
+	// Put shadows data into TEXCOORD1
+	SHADOW_COORDS(1)
+#endif
+};
+
+// ---------------------------------------------------------------
+
 v2f vert(appdata v)
 {
 	int normalCode = round(v.cubeDesc.b * _NormalCodeMaxValue);
@@ -171,6 +175,8 @@ v2f vert(appdata v)
 
 	return o;
 }
+
+// ---------------------------------------------------------------
 
 fixed4 frag(v2f i) : SV_Target
 {
