@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using NormalCode = System.Int32;
+using UvCode = System.Int32;
 
 public class VoxelMeshFactory {
 	public int atlasIndex = 0;
@@ -25,7 +26,8 @@ public class VoxelMeshFactory {
 	Mesh mesh = new Mesh();
 	List<Vector3> vertexList = new List<Vector3>(2 * 4 * Root.kSubImageWidth * Root.kSubImageHeight); 
 	List<Vector2> vertexPixelList = new List<Vector2>(Root.kSubImageWidth * Root.kSubImageHeight); 
-	List<int> normalCodeList = new List<int>(2 * 4 * Root.kSubImageWidth * Root.kSubImageHeight); 
+	List<UvCode> normalMapList = new List<int>(2 * 4 * Root.kSubImageWidth * Root.kSubImageHeight); 
+	List<NormalCode> normalCodeList = new List<NormalCode>(2 * 4 * Root.kSubImageWidth * Root.kSubImageHeight); 
 	List<int> tri = new List<int>(2 * Root.kSubImageWidth * Root.kSubImageHeight); 
 
 	const int kMaxVoxelDepth = 100;
@@ -41,6 +43,12 @@ public class VoxelMeshFactory {
 	const NormalCode kBackTop = 7;
 	const NormalCode kFront = 8;
 	const NormalCode kBack = 9;
+
+	const UvCode kUvBottomLeft = 0;
+	const UvCode kUvTopLeft = 1;
+	const UvCode kUvBottomRight = 2;
+	const UvCode kUvTopRight = 3;
+
 	const NormalCode kNormalCodeMaxValue = kBack;
 
 	// Set to true if shader discard operations should be avoided.
@@ -63,6 +71,13 @@ public class VoxelMeshFactory {
 		new Vector3(0, 0, 1)
 	};
 
+	Vector2[] uvForCode = {
+		new Vector2(0, 0),
+		new Vector2(0, 1),
+		new Vector2(1, 0),
+		new Vector2(1, 1),
+	};
+
 	public int readonlyVertexCount = 0;
 	public int readonlyTriangleCount = 0;
 
@@ -76,6 +91,7 @@ public class VoxelMeshFactory {
 		mesh = new Mesh();
 		vertexList.Clear();
 		vertexPixelList.Clear();
+		normalMapList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
 	}
@@ -104,11 +120,13 @@ public class VoxelMeshFactory {
 		Vector3[] normals = new Vector3[vertexList.Count];
 		Vector2[] uvAtlas = new Vector2[vertexList.Count];
 		Vector2[] uvPixels = new Vector2[vertexList.Count];
+		Vector2[] uvNormalMap = new Vector2[vertexList.Count];
 		float cull = (voxelDepth == 0 || simplify) ? 0 : 1;
 
 		for (int i = 0; i < vertexList.Count; ++i) {
 			Vector3 v = vertexList[i];
 			normals[i] = normalForCode[normalCodeList[i]];
+			uvNormalMap[i] = uvForCode[normalMapList[i]];
 
 			// Note that uvPixel specifies which pixel in the atlas the vertex belongs to. And
 			// since each pixel have four corners, one pixel can map to four uvAtlas coords.
@@ -126,7 +144,7 @@ public class VoxelMeshFactory {
 			// Also, when combinding meshes, vertex data is truncated to be between 0 and 1. So we therefore
 			// need to normalize some of the value onto that format.
 			float normalizedNormalCode = (float)normalCodeList[i] / (float)kNormalCodeMaxValue;
-			float normalizedDepth = voxelDepth / kMaxVoxelDepth;
+			float normalizedDepth = voxelDepth;// / kMaxVoxelDepth;
 			cubeDesc[i] = new Color(cull, 0, normalizedNormalCode, normalizedDepth);
 		}
 
@@ -134,6 +152,7 @@ public class VoxelMeshFactory {
 		mesh.triangles = tri.ToArray();
 		mesh.uv = uvAtlas;
 		mesh.uv2 = uvPixels;
+		mesh.uv3 = uvNormalMap;
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
 	}
@@ -555,7 +574,7 @@ public class VoxelMeshFactory {
 		return i;
 	}
 
-	int createVertex(float x, float y, float z, Vector2 pixel, NormalCode normalCode)
+	int createVertex(float x, float y, float z, Vector2 pixel, NormalCode normalCode, UvCode normalMap)
 	{
 		Vector3 v = new Vector3(x, y, z);
 
@@ -568,6 +587,7 @@ public class VoxelMeshFactory {
 		vertexList.Add(v);
 		normalCodeList.Add(normalCode);
 		vertexPixelList.Add(pixel);
+		normalMapList.Add(normalMap);
 
 		return vertexList.Count - 1;
 	}
@@ -577,10 +597,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelBottom = new Vector2(startPixelX + pixelX, startPixelY + pixelY1);
 		Vector2 pixelTop = new Vector2(startPixelX + pixelX, startPixelY + pixelY2);
 
-		int index0 = createVertex(pixelX, pixelY1, 0, pixelBottom, kFrontLeft);
-		int index1 = createVertex(pixelX, pixelY2 + 1, 0, pixelTop, kFrontLeft);
-		int index4 = createVertex(pixelX, pixelY1, voxelDepth, pixelBottom, kBackLeft);
-		int index5 = createVertex(pixelX, pixelY2 + 1, voxelDepth, pixelTop, kBackLeft);
+		int index0 = createVertex(pixelX, pixelY1, 0, pixelBottom, kFrontLeft, kUvBottomRight);
+		int index1 = createVertex(pixelX, pixelY2 + 1, 0, pixelTop, kFrontLeft, kUvTopRight);
+		int index4 = createVertex(pixelX, pixelY1, voxelDepth, pixelBottom, kBackLeft, kUvBottomLeft);
+		int index5 = createVertex(pixelX, pixelY2 + 1, voxelDepth, pixelTop, kBackLeft, kUvTopLeft);
 
 		tri.Add(index4);
 		tri.Add(index5);
@@ -595,10 +615,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelBottom = new Vector2(startPixelX + pixelX, startPixelY + pixelY1);
 		Vector2 pixelTop = new Vector2(startPixelX + pixelX, startPixelY + pixelY2);
 
-		int index2 = createVertex(pixelX + 1, pixelY1, 0, pixelBottom, kFrontRight);
-		int index3 = createVertex(pixelX + 1, pixelY2 + 1, 0, pixelTop, kFrontRight);
-		int index6 = createVertex(pixelX + 1, pixelY1, voxelDepth, pixelBottom, kBackRight);
-		int index7 = createVertex(pixelX + 1, pixelY2 + 1, voxelDepth, pixelTop, kBackRight);
+		int index2 = createVertex(pixelX + 1, pixelY1, 0, pixelBottom, kFrontRight, kUvBottomLeft);
+		int index3 = createVertex(pixelX + 1, pixelY2 + 1, 0, pixelTop, kFrontRight, kUvTopLeft);
+		int index6 = createVertex(pixelX + 1, pixelY1, voxelDepth, pixelBottom, kBackRight, kUvBottomRight);
+		int index7 = createVertex(pixelX + 1, pixelY2 + 1, voxelDepth, pixelTop, kBackRight, kUvTopRight);
 
 		tri.Add(index2);
 		tri.Add(index3);
@@ -613,10 +633,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY);
 		Vector2 pixelRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY);
 
-		int index0 = createVertex(pixelX1, pixelY, 0, pixelLeft, kFrontBottom);
-		int index2 = createVertex(pixelX2 + 1, pixelY, 0, pixelRight, kFrontBottom);
-		int index4 = createVertex(pixelX1, pixelY, voxelDepth, pixelLeft, kBackBottom);
-		int index6 = createVertex(pixelX2 + 1, pixelY, voxelDepth, pixelRight, kBackBottom);
+		int index0 = createVertex(pixelX1, pixelY, 0, pixelLeft, kFrontBottom, kUvTopLeft);
+		int index2 = createVertex(pixelX2 + 1, pixelY, 0, pixelRight, kFrontBottom, kUvTopRight);
+		int index4 = createVertex(pixelX1, pixelY, voxelDepth, pixelLeft, kBackBottom, kUvBottomLeft);
+		int index6 = createVertex(pixelX2 + 1, pixelY, voxelDepth, pixelRight, kBackBottom, kUvBottomRight);
 
 		tri.Add(index4);
 		tri.Add(index0);
@@ -631,10 +651,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY);
 		Vector2 pixelRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY);
 
-		int index1 = createVertex(pixelX1, pixelY + 1, 0, pixelLeft, kFrontTop);
-		int index3 = createVertex(pixelX2 + 1, pixelY + 1, 0, pixelRight, kFrontTop);
-		int index5 = createVertex(pixelX1, pixelY + 1, voxelDepth, pixelLeft, kBackTop);
-		int index7 = createVertex(pixelX2 + 1, pixelY + 1, voxelDepth, pixelRight, kBackTop);
+		int index1 = createVertex(pixelX1, pixelY + 1, 0, pixelLeft, kFrontTop, kUvBottomLeft);
+		int index3 = createVertex(pixelX2 + 1, pixelY + 1, 0, pixelRight, kFrontTop, kUvBottomRight);
+		int index5 = createVertex(pixelX1, pixelY + 1, voxelDepth, pixelLeft, kBackTop, kUvTopLeft);
+		int index7 = createVertex(pixelX2 + 1, pixelY + 1, voxelDepth, pixelRight, kBackTop, kUvTopRight);
 
 		tri.Add(index1);
 		tri.Add(index5);
@@ -651,10 +671,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelTopLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
 		Vector2 pixelTopRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY2);
 
-		int index0 = createVertex(pixelX1, pixelY1, z, pixelBottomLeft, kFront);
-		int index1 = createVertex(pixelX1, pixelY2 + 1, z, pixelTopLeft, kFront);
-		int index2 = createVertex(pixelX2 + 1, pixelY1, z, pixelBottomRight, kFront);
-		int index3 = createVertex(pixelX2 + 1, pixelY2 + 1, z, pixelTopRight, kFront);
+		int index0 = createVertex(pixelX1, pixelY1, z, pixelBottomLeft, kFront, kUvBottomLeft);
+		int index1 = createVertex(pixelX1, pixelY2 + 1, z, pixelTopLeft, kFront, kUvTopLeft);
+		int index2 = createVertex(pixelX2 + 1, pixelY1, z, pixelBottomRight, kFront, kUvBottomRight);
+		int index3 = createVertex(pixelX2 + 1, pixelY2 + 1, z, pixelTopRight, kFront, kUvTopRight);
 
 		tri.Add(index0);
 		tri.Add(index1);
@@ -671,10 +691,10 @@ public class VoxelMeshFactory {
 		Vector2 pixelTopLeft = new Vector2(startPixelX + pixelX1, startPixelY + pixelY2);
 		Vector2 pixelTopRight = new Vector2(startPixelX + pixelX2, startPixelY + pixelY2);
 
-		int index4 = createVertex(pixelX1, pixelY1, voxelDepth, pixelBottomLeft, kBack);
-		int index5 = createVertex(pixelX1, pixelY2 + 1, voxelDepth, pixelTopLeft, kBack);
-		int index6 = createVertex(pixelX2 + 1, pixelY1, voxelDepth, pixelBottomRight, kBack);
-		int index7 = createVertex(pixelX2 + 1, pixelY2 + 1, voxelDepth, pixelTopRight, kBack);
+		int index4 = createVertex(pixelX1, pixelY1, voxelDepth, pixelBottomLeft, kBack, kUvBottomRight);
+		int index5 = createVertex(pixelX1, pixelY2 + 1, voxelDepth, pixelTopLeft, kBack, kUvTopRight);
+		int index6 = createVertex(pixelX2 + 1, pixelY1, voxelDepth, pixelBottomRight, kBack, kUvBottomLeft);
+		int index7 = createVertex(pixelX2 + 1, pixelY2 + 1, voxelDepth, pixelTopRight, kBack, kUvTopLeft);
 
 		tri.Add(index6);
 		tri.Add(index7);
