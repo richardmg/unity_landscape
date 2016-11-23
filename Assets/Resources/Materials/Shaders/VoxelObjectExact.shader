@@ -30,6 +30,9 @@
 			#pragma fragment frag
 
 			#define NO_DISCARD
+			#define NO_GRADIENT
+			#define NO_DETAILS
+
 			#include "VoxelObject.cginc"
 
 			ENDCG

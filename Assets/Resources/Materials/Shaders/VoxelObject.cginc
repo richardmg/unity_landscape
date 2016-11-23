@@ -51,9 +51,12 @@ struct v2f
 {
 	float4 vertex : SV_POSITION;
 	float3 normal : NORMAL;
-	float3 objNormal : NORMAL1;
 	float3 uvAtlas : POSITION2;
 	float3 uvPixel : POSITION3;
+
+#ifndef NO_DETAILS
+	float3 objNormal : NORMAL1;
+#endif
 
 #ifndef NO_LIGHT
 	fixed4 diff : COLOR0;
@@ -61,7 +64,8 @@ struct v2f
 #endif
 
 #ifndef NO_SELF_SHADOW
-	SHADOW_COORDS(1) // put shadows data into TEXCOORD1
+	// Put shadows data into TEXCOORD1
+	SHADOW_COORDS(1)
 #endif
 };
 
@@ -140,9 +144,12 @@ v2f vert(appdata v)
 	v2f o;
 	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 	o.normal = mul(unity_ObjectToWorld, float4(v.normal, 0)).xyz;
-	o.objNormal = normalForCode[normalCode];
 	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
+
+#ifndef NO_DETAILS
+	o.objNormal = normalForCode[normalCode];
+#endif
 
 #ifndef NO_CULL
 	int cull = v.cubeDesc.r;
@@ -181,11 +188,10 @@ fixed4 frag(v2f i) : SV_Target
 	float3 voxel = min(uvSubImage * subImageSize, subImageSize - _ClampOffset);
 	float3 uvVoxel = frac(voxel);
 
- 	float isLeftOrRightSide = if_neq(i.objNormal.x, 0);
- 	float isBottomOrTopSide = if_neq(i.objNormal.y, 0);
- 	float isFrontOrBackSide = if_neq(i.objNormal.z, 0);
-
 	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
+
+#ifndef NO_DETAILS
+ 	float isLeftOrRightSide = if_neq(i.objNormal.x, 0);
 //	fixed4 c = 0;
 //	if (isFrontOrBackSide)
 //		c = tex2Dlod(_DetailTex, float4(uvVoxel.xy, 0, 0));
@@ -193,6 +199,7 @@ fixed4 frag(v2f i) : SV_Target
 //		c = tex2Dlod(_DetailTex, float4(uvVoxel.zy, 0, 0));
 //	else
 //		c = tex2Dlod(_DetailTex, float4(uvVoxel.xz, 0, 0));
+#endif
 
 #ifndef NO_DISCARD
 	if (c.a == 0) {
@@ -201,11 +208,11 @@ fixed4 frag(v2f i) : SV_Target
 	}
 #endif
 
-//	#ifndef NO_GRADIENT
-//		c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
-//		c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
-//		c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
-//	#endif
+#ifndef NO_GRADIENT
+	c *= if_else(isLeftOrRightSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
+	c *= if_else(isBottomOrTopSide, 1 - ((1 - uvSubImage.x) * _Gradient), 1);
+	c *= if_else(isFrontOrBackSide, 1 - ((1 - uvSubImage.y) * _Gradient), 1);
+#endif
 
 #ifndef NO_SELF_SHADOW
 	c.rgb *= SHADOW_ATTENUATION(i);
