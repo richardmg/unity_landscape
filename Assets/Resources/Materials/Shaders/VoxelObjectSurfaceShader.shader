@@ -1,6 +1,5 @@
 ﻿Shader "Custom/VoxelObjectSurfaceShader" {
 	Properties {
-		_Color ("Color", Color) = (1,1,1,1)
 		_MainTex ("Albedo (RGB)", 2D) = "white" {}
 		_MainTex2 ("Albedo (RGB)", 2D) = "white" {}
 		_Glossiness ("Smoothness", Range(0,1)) = 0.5
@@ -29,7 +28,6 @@
 
 		half _Glossiness;
 		half _Metallic;
-		fixed4 _Color;
 
 		void surf (Input IN, inout SurfaceOutputStandard o) {
 			float2 uvAtlasClamped = uvClamped(IN.uv_MainTex, IN.uv2_MainTex2);
