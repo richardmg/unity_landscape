@@ -1,14 +1,13 @@
 ﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 #include "UnityCG.cginc"
-
 #ifndef NO_LIGHT
 #include "UnityLightingCommon.cginc" // for _LightColor0
 #endif
-
 #ifndef NO_SELF_SHADOW
 #include "AutoLight.cginc"
 #endif
+#include "TestFunctions.cginc"
 
 #define M_PI 3.1415926535897932384626433832795
 
@@ -55,36 +54,6 @@ static float3 normalForCode[10] = {
 };
 
 static float depthForCode[10] = { 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 };
-
-inline float if_eq(float x, float y)
-{
-	return 1.0 - abs(sign(x - y));
-}
-
-inline float if_neq(float x, float y)
-{
-	return abs(sign(x - y));
-}
-
-inline float if_gt(float x, float y)
-{
-	return max(sign(x - y), 0.0);
-}
-
-inline float if_lt(float x, float y)
-{
-	return max(sign(y - x), 0.0);
-}
-
-inline float if_then(float testValue, float thenExpr)
-{
-	return if_neq(testValue, 0) * thenExpr;
-}
-
-inline float if_else(float testValue, float ifExpr, float elseExpr)
-{
-	return elseExpr + if_then(testValue, ifExpr - elseExpr);
-}
 
 // ---------------------------------------------------------------
 
@@ -229,7 +198,7 @@ fixed4 frag(v2f i) : SV_Target
 
 #ifndef NO_LIGHT
 	c.rgb *= i.diff;
-//	c.rgb += i.ambient;
+	c.rgb += i.ambient;
 #endif
 
 	return c;
