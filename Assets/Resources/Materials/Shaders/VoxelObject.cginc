@@ -1,7 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-
+﻿
 #include "UnityCG.cginc"
-#include "TestFunctions.cginc"
+#include "VoxelObjectCommon.cginc"
 
 #ifndef NO_LIGHT
 #include "UnityLightingCommon.cginc" // for _LightColor0
@@ -14,30 +13,14 @@
 #include "AutoLight.cginc"
 #endif
 
-#define M_PI 3.1415926535897932384626433832795
-
 float _Gradient;
-
-float _BaseLight;
-float _AmbientLight;
-float _Sunshine;
-float _Specular;
-float _EdgeSharp;
-float _Attenuation;
 
 sampler2D _MainTex;
 sampler2D _DetailTex;
 
 float4 _MainTex_ST;
 
-static float2 _TextureSize = float2(2048, 2048);
-static float2 _SubImageSize = float2(16, 16);
-
-static float2 _UVAtlasOnePixel = 1.0f / _TextureSize;
-static float2 _UVAtlasHalfPixel = _UVAtlasOnePixel / 2;
-static float _ClampOffset = 0.00001;
 static fixed4 red = fixed4(1, 0, 0, 1);
-static float3 _SunPos = normalize(float3(0, 0, 1));
 
 static float _NormalCodeMaxValue = 9;
 static float _VoxelDepthMaxValue = 100;
@@ -95,27 +78,6 @@ struct v2f
 
 // ---------------------------------------------------------------
 
-inline float3 uvClamped(v2f i)
-{
-	float diffX = i.uvAtlas.x - i.uvPixel.x;
-	float diffY = i.uvAtlas.y - i.uvPixel.y;
-	float3 uvAtlasClamped = i.uvAtlas;
-	uvAtlasClamped.x -= if_gt(diffX, _UVAtlasOnePixel.x - _ClampOffset) * _UVAtlasHalfPixel.x;
-	uvAtlasClamped.y -= if_gt(diffY, _UVAtlasOnePixel.y - _ClampOffset) * _UVAtlasHalfPixel.y;
-	uvAtlasClamped.x += if_lt(diffX, _ClampOffset) * _UVAtlasHalfPixel.x;
-	uvAtlasClamped.y += if_lt(diffY, _ClampOffset) * _UVAtlasHalfPixel.y;
-	return uvAtlasClamped;
-}
-
-inline int isBackface(float4 vertex, float3 worldNormal)
-{
-	float3 worldPos = mul(unity_ObjectToWorld, vertex).xyz;
-	float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
-    return if_else(if_gt(dot(worldNormal, worldViewDir), 0), 0, 1); 
-}
-
-// ---------------------------------------------------------------
-
 v2f vert(appdata v)
 {
 	int normalCode = round(v.cubeDesc.b * _NormalCodeMaxValue);
@@ -155,7 +117,7 @@ v2f vert(appdata v)
 
 fixed4 frag(v2f i) : SV_Target
 {
-	float3 uvAtlasClamped = uvClamped(i);
+	float3 uvAtlasClamped = float3(uvClamped(i.uvAtlas.xy, i.uvPixel.xy), i.uvAtlas.z);
 	fixed4 c = tex2Dlod(_MainTex, float4(uvAtlasClamped.xy, 0, 0));
 
 #ifndef NO_DETAILS
