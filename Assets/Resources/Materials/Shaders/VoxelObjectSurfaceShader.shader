@@ -44,6 +44,9 @@
 			o.Smoothness = _Glossiness;
 			o.Alpha = c.a;
 			o.Normal = UnpackNormal(tex2D(_NormalMap, IN.uv3_MainTex3));
+//
+//			if (IN.uv3_MainTex3.y > 3)
+//				o.Albedo.rgb = float3(1, 0, 0);
 		}
 		ENDCG
 	}
