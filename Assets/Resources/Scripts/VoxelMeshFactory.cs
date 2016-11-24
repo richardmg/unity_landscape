@@ -580,8 +580,14 @@ public class VoxelMeshFactory {
 
 	Vector2 createUvNormal(float pixelX1, float pixelY1)
 	{
-		float scale = 0.5f;
-		return new Vector2(pixelX1 * scale / Root.kSubImageWidth, pixelY1 * scale / Root.kSubImageHeight);
+		// When moving to normal map atlas, this must be rewritten so
+		// that we don't scale bottomLeft/bottomRight.
+
+		// Use wood material:
+		float scaleX = 2.0f;
+		float scaleY = 0.8f;
+
+		return new Vector2(pixelX1 * scaleX / Root.kSubImageWidth, pixelY1 * scaleY / Root.kSubImageHeight);
 	}
 
 	void createLeftFace(int pixelX, int pixelY1, int pixelY2)
