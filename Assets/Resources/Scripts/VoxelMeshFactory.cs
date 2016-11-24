@@ -131,7 +131,9 @@ public class VoxelMeshFactory {
 			// need to normalize some of the value onto that format.
 			float normalizedNormalCode = (float)normalCodeList[i] / (float)kNormalCodeMaxValue;
 			float normalizedDepth = voxelDepth;// / kMaxVoxelDepth;
-			cubeDesc[i] = new Color(cull, 0, normalizedNormalCode, normalizedDepth);
+
+			int materialId = 0; // or pass metallic and shininess directly.
+			cubeDesc[i] = new Color(cull, materialId, normalizedNormalCode, normalizedDepth);
 		}
 
 		mesh.vertices = vertexList.ToArray();

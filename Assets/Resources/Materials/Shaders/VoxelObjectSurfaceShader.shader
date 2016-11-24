@@ -39,14 +39,11 @@
 			fixed4 c = tex2D(_MainTex, uvAtlasClamped);
 
 			o.Albedo = c.rgb;
-			// Metallic and smoothness come from slider variables
+			// Fetch these from material passed in through color
 			o.Metallic = _Metallic;
 			o.Smoothness = _Glossiness;
 			o.Alpha = c.a;
 			o.Normal = UnpackNormal(tex2D(_NormalMap, IN.uv3_MainTex3));
-//
-//			if (IN.uv3_MainTex3.y > 3)
-//				o.Albedo.rgb = float3(1, 0, 0);
 		}
 		ENDCG
 	}
