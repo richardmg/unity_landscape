@@ -378,7 +378,7 @@ public class CommandPrompt : MonoBehaviour {
 		}
 
 		inputField.ActivateInputField();
-		UnityEditor.EditorApplication.delayCall += ()=> {inputField.MoveTextEnd(false); };
+//		UnityEditor.EditorApplication.delayCall += ()=> {inputField.MoveTextEnd(false); };
 	}
 
 	public void onInputChanged(InputField inputField)

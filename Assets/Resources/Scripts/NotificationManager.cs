@@ -65,28 +65,28 @@ public class NotificationManager {
 
 	public void notifyEntityClassAdded(EntityClass entityClass, bool postNotification = true)
 	{
-		if (m_postNotifications) {
-			UnityEditor.EditorApplication.delayCall += ()=> {
-				foreach (IEntityClassListener subscriber in entityClassListeners)
-					subscriber.onEntityClassAdded(entityClass);	
-			};
-		} else {
+//		if (m_postNotifications) {
+//			UnityEditor.EditorApplication.delayCall += ()=> {
+//				foreach (IEntityClassListener subscriber in entityClassListeners)
+//					subscriber.onEntityClassAdded(entityClass);	
+//			};
+//		} else {
 			foreach (IEntityClassListener subscriber in entityClassListeners)
 				subscriber.onEntityClassAdded(entityClass);	
-		}
+//		}
 	}
 
 	public void notifyEntityClassRemoved(EntityClass entityClass, bool postNotification = true)
 	{
-		if (m_postNotifications) {
-			UnityEditor.EditorApplication.delayCall += ()=> {
-				foreach (IEntityClassListener subscriber in entityClassListeners)
-					subscriber.onEntityClassRemoved(entityClass);	
-			};
-		} else {
+//		if (m_postNotifications) {
+//			UnityEditor.EditorApplication.delayCall += ()=> {
+//				foreach (IEntityClassListener subscriber in entityClassListeners)
+//					subscriber.onEntityClassRemoved(entityClass);	
+//			};
+//		} else {
 			foreach (IEntityClassListener subscriber in entityClassListeners)
 				subscriber.onEntityClassRemoved(entityClass);	
-		}
+//		}
 	}
 
 	public void notifyEntityClassChanged(EntityClass entityClass)
