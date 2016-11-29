@@ -89,13 +89,19 @@ public class EntityClassManager : IProjectIOMember
 
 	public string[] getAllEntityPrefabNames()
 	{
-		string folder = Application.dataPath + "/Resources/" + kEntityPrefabFolder;
-		string[] filePaths = Directory.GetFiles(folder, "*.prefab");
-		for (int i = 0; i < filePaths.Length; ++i) {
-			string fileName = Path.GetFileName(filePaths[i]);
-			// Remove ".prefab"
-			filePaths[i] = fileName.Remove(fileName.Length - 7);
-		}
-		return filePaths;
+		return new string[] {
+			"BallTree",
+			"Grass",
+			"GrassFlatMini",
+		};
+
+//		string folder = Application.dataPath + "/Resources/" + kEntityPrefabFolder;
+//		string[] filePaths = Directory.GetFiles(folder, "*.prefab");
+//		for (int i = 0; i < filePaths.Length; ++i) {
+//			string fileName = Path.GetFileName(filePaths[i]);
+//			// Remove ".prefab"
+//			filePaths[i] = fileName.Remove(fileName.Length - 7);
+//		}
+//		return filePaths;
 	}
 }
