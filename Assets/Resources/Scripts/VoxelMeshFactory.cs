@@ -17,6 +17,10 @@ public class VoxelMeshFactory {
 	public int volumeFaceCountZ = 2;
 	public bool simplify = false;
 
+	public float centerX = Root.kSubImageWidth / 2;
+	public float centerY = 0;
+	public float centerZ = 0;
+
 	public Texture2D texture;
 
 	int startPixelX;
@@ -82,6 +86,9 @@ public class VoxelMeshFactory {
 		normalMapList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
+
+		// todo: should centerZ be
+		centerZ = voxelDepth / 2;
 	}
 
 	public void buildMesh()
@@ -134,6 +141,12 @@ public class VoxelMeshFactory {
 
 			int materialId = 0; // or pass metallic and shininess directly.
 			cubeDesc[i] = new Color(cull, materialId, normalizedNormalCode, normalizedDepth);
+
+			// Adjust all vertices according to what is center
+			v.x -= centerX;
+			v.y -= centerY;
+			v.z -= centerZ;
+			vertexList[i] = v;
 		}
 
 		mesh.vertices = vertexList.ToArray();
