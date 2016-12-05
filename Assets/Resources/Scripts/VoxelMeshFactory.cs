@@ -153,9 +153,13 @@ public class VoxelMeshFactory {
 		mesh.triangles = tri.ToArray();
 		mesh.uv = uvAtlas;
 		mesh.uv2 = uvPixels;
-		mesh.uv3 = normalMapList.ToArray();
 		mesh.colors = cubeDesc;
 		mesh.normals = normals;
+
+		// TODO: normalMapList is so far only needed when batching meshes and we need to
+		// know if a face is front or back. But since such detail might not be beeded
+		// for far-away objects, it can perhaps be skipped.
+		mesh.uv3 = normalMapList.ToArray();
 	}
 
 	public Mesh createMesh() {
