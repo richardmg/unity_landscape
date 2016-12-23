@@ -39,18 +39,12 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 			clearColorArray[i] = Color.clear;
 
 		// Calculate the size of the selection rectangle
-		Vector2 imageSize = image.rectTransform.sizeDelta;
-		float selectionRectWidth = textureCellWidth * (imageSize.x / textureWidth);
-		float selectionRectHeight = textureCellHeight * (imageSize.y / textureHeight);
-		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
-		print(imageSize.x + ", " +  textureWidth);
-		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 
-//		float selectionWidth = image.rectTransform.rect.width / rowCount;
-//		float selectionHeight = image.rectTransform.rect.height / colCount;
-//		print(selectionWidth + ", " + selectionHeight);
-//		Vector2 selectionRect = new Vector2(selectionWidth, selectionHeight);
-//		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
+		Rect r = image.rectTransform.rect;
+		float selectionRectWidth = r.width / rowCount;
+		float selectionRectHeight = r.height / colCount;
+		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
+		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 
 		selectIndex(selectedIndex);
 
