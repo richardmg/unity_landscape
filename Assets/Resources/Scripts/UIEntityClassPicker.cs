@@ -39,13 +39,22 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 			clearColorArray[i] = Color.clear;
 
 		// Calculate the size of the selection rectangle
-		Vector2 imageSize = image.rectTransform.sizeDelta;
-		float selectionRectWidth = textureCellWidth * (imageSize.x / textureWidth);
-		float selectionRectHeight = textureCellHeight * (imageSize.y / textureHeight);
-		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
-		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
+//		Vector2 imageSize = image.rectTransform.sizeDelta;
+//		float selectionRectWidth = textureCellWidth * (imageSize.x / textureWidth);
+//		float selectionRectHeight = textureCellHeight * (imageSize.y / textureHeight);
+//		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
+//		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 
-		moveSelectionRect(selectedIndex);
+//		x = index % rowCount;
+//		y = index / rowCount;
+//
+//		int rowCount = (int)(tableTexture.width / textureCellWidth);
+//		int colCount = (int)(tableTexture.height / textureCellWidth);
+//
+//		x = (int)(x * (image.rectTransform.rect.width / rowCount));
+//		y = (int)(-y * (image.rectTransform.rect.height / colCount));
+
+		selectIndex(selectedIndex);
 
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityClassListener(this);
@@ -97,18 +106,11 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 	public void selectIndex(int index)
 	{
 		selectedIndex = index;
-		if (tableTexture != null)
-			moveSelectionRect(index);
-	}
-
-	public void moveSelectionRect(int index)
-	{
-		int x, y;
-		textureCellPos(index, out x, out y);
-		x += textureCellWidth / 2;
-		y += textureCellHeight / 2;
-		textureToImagePos(ref x, ref y);
-		selectionRectGO.transform.position = new Vector3(x, y, 0);
+		if (tableTexture != null) {
+			int x, y;
+			anchoredCellPos(index, out x, out y);
+			selectionRectGO.GetComponent<RawImage>().rectTransform.anchoredPosition = new Vector3(x, y, 0);
+		}
 	}
 
 	public void onProjectLoaded()
@@ -182,20 +184,19 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 
 	void textureCellPos(int index, out int x, out int y)
 	{
-		x = (index * textureCellWidth) % tableTexture.width;
-		y = (int)((index * textureCellWidth) / tableTexture.width) * textureCellHeight;
+		x = index % rowCount;
+		y = index / rowCount;
+		x *= textureCellWidth;
+		y *= textureCellHeight;
 		y = (int)tableTexture.height - textureCellHeight - y;
 	}
 
-	void textureToImagePos(ref int x, ref int y)
+	void anchoredCellPos(int index, out int x, out int y)
 	{
-		float w = image.rectTransform.sizeDelta.x;
-		float h = image.rectTransform.sizeDelta.y;
-		float topX = rawImageGO.transform.position.x - (w / 2);
-		float topY = rawImageGO.transform.position.y - (h / 2);
-
-		x = (int)topX + (int)(x * (w / tableTexture.width));
-		y = (int)topY + (int)(y * (h / tableTexture.height));
+		x = index % rowCount;
+		y = index / rowCount;
+		x = (int)(x * (image.rectTransform.rect.width / rowCount));
+		y = (int)(-y * (image.rectTransform.rect.height / colCount));
 	}
 
 	public void onCloseButtonClicked()
