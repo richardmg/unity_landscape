@@ -10,7 +10,7 @@ public class UIBackground : MonoBehaviour {
 			Vector2 uv = UIManager.getMousePosOnImage(backgroundGO.GetComponent<RawImage>(), true);
 			if (UIManager.isInside(uv))
 				return;
-			Root.instance.uiManager.showFirstPersonUI();
+			Root.instance.uiManager.setMenuVisible(false);
 		}
 	}
 

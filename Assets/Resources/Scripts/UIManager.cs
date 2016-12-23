@@ -33,6 +33,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject uiFirstPersonGO;
 	public GameObject uiColorPickerGO;
 	public GameObject uiPaintEditorGO;
+	public GameObject uiConstructionEditorGO;
 	public GameObject uiEntityClassPickerGO;
 	public GameObject uiCommandPromptGO;
 	public GameObject entityPainterGO;
@@ -59,7 +60,7 @@ public class UIManager : MonoBehaviour {
 		hideUI();
 		uiEntityClassPickerGO.pushDialog(false);
 		backButton.SetActive(false);
-		showFirstPersonUI();
+		setMenuVisible(false);
 	}
 
 	void hideUI()
@@ -68,6 +69,7 @@ public class UIManager : MonoBehaviour {
 		uiFirstPersonGO.SetActive(false);
 		uiColorPickerGO.SetActive(false);
 		uiPaintEditorGO.SetActive(false);
+		uiConstructionEditorGO.SetActive(false);
 		uiEntityClassPickerGO.SetActive(false);
 		uiCommandPromptGO.SetActive(false);
 
@@ -85,7 +87,7 @@ public class UIManager : MonoBehaviour {
 			stack.Add(new UIManagerStackItem(ui, callback));
 		currentMenu = ui;
 		if (show)
-			showCurrentMenu();
+			setMenuVisible(true);
 		if (stack.Count > 1)
 			backButton.SetActive(true);
 	}
@@ -97,7 +99,7 @@ public class UIManager : MonoBehaviour {
 		stack.RemoveAt(stack.Count - 1);	
 		UIManagerStackItem itemToShow = stack[stack.Count - 1];
 		currentMenu = itemToShow.ui;
-		showCurrentMenu();
+		setMenuVisible(true);
 		itemToPopOff.callback(accepted);
 		if (stack.Count <= 1)
 			backButton.SetActive(false);
@@ -109,30 +111,20 @@ public class UIManager : MonoBehaviour {
 		backButton.SetActive(false);
 	}
 
-	public void showFirstPersonUI()
-	{
-		hideUI();
-		backgroundGO.SetActive(false);
-		uiFirstPersonGO.SetActive(true);
-		enableCursorMode(false);
-		enableFPSController(true);
-	}
-
 	public void showCommandPromptUI()
 	{
 		hideUI();
 		uiCommandPromptGO.SetActive(true);
 		enableCursorMode(true);
-		enableFPSController(false);
 	}
 
-	public void showCurrentMenu()
+	public void setMenuVisible(bool visible)
 	{
 		hideUI();
-		backgroundGO.SetActive(true);
-		currentMenu.SetActive(true);
-		enableCursorMode(true);
-		enableFPSController(false);
+		backgroundGO.SetActive(visible);
+		currentMenu.SetActive(visible);
+		uiFirstPersonGO.SetActive(!visible);
+		enableCursorMode(visible);
 	}
 
 	public void enableCursorMode(bool on)
@@ -140,32 +132,25 @@ public class UIManager : MonoBehaviour {
 		if (on) {
 			Cursor.lockState = CursorLockMode.None;
 			Cursor.visible = true;
+			Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = false;
 		} else {
 			Cursor.lockState = CursorLockMode.Locked;
 			Cursor.visible = false;
+			Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = true;
 		}
-	}
-
-	void enableFPSController(bool enable)
-	{
-		Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = enable;
 	}
 
 	void Update () {
 		if (uiCommandPromptGO.activeSelf) {
 			if (Input.GetKeyDown(KeyCode.Escape))
-				showFirstPersonUI();
+				setMenuVisible(false);
 			return;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Escape)) {
+		if (Input.GetKeyDown(KeyCode.Escape))
 			showCommandPromptUI();
-		} else if (Input.GetKeyDown(KeyCode.Tab)) {
-			if (uiFirstPersonGO.activeSelf)
-				showCurrentMenu();
-			else
-				showFirstPersonUI();
-		}
+		else if (Input.GetKeyDown(KeyCode.Tab))
+			setMenuVisible(uiFirstPersonGO.activeSelf);
 	}
 
 	static public Vector2 getMousePosOnImage(RawImage image, bool flipY = false)

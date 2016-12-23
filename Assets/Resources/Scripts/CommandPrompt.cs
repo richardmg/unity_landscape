@@ -263,7 +263,7 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			}
 		} else if (token == "close") {
-			Root.instance.uiManager.showFirstPersonUI();
+			Root.instance.uiManager.setMenuVisible(false);
 			accepted = true;
 		} else if (token == "help") {
 			printHelp(nextToken());

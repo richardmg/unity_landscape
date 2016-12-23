@@ -79,7 +79,7 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		else if (Input.GetKey(KeyCode.LeftControl))
 			onCloneButtonClicked();
 		else if (prevIndex == selectedIndex)
-			Root.instance.uiManager.showFirstPersonUI();
+			Root.instance.uiManager.setMenuVisible(false);
 	}
 
 	public void selectEntityClass(EntityClass entityClass)
@@ -200,7 +200,7 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 
 	public void onCloseButtonClicked()
 	{
-		Root.instance.uiManager.showFirstPersonUI();
+		Root.instance.uiManager.setMenuVisible(false);
 	}
 
 	public void onCloneButtonClicked()
