@@ -133,9 +133,9 @@ public class VoxelMeshFactory {
 
 			// When using object batching, local vertices and normals will be translated on the CPU before
 			// passed down to the GPU. We therefore lose the original values in the shader, which we need.
-			// We therefore encode this information covered as vertex color.
-			// Also, when combinding meshes, vertex data is truncated to be between 0 and 1. So we therefore
-			// need to normalize some of the value onto that format.
+			// We therefore encode this information disguised as vertex color.
+			// Also, when combining meshes, vertex data is truncated to be between 0 and 1. So we
+			// need to normalize some of the values onto that format.
 			float normalizedNormalCode = (float)normalCodeList[i] / (float)kNormalCodeMaxValue;
 			float normalizedDepth = voxelDepth;// / kMaxVoxelDepth;
 
@@ -158,7 +158,7 @@ public class VoxelMeshFactory {
 
 		// TODO: normalMapList is so far only needed when batching meshes and we need to
 		// know if a face is front or back. But since such detail might not be beeded
-		// for far-away objects, it can perhaps be skipped.
+		// for far-away objects, perhaps it can be skipped?
 		mesh.uv3 = normalMapList.ToArray();
 	}
 
