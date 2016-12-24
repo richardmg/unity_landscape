@@ -38,18 +38,19 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		for (int i = 0; i < clearColorArray.Length; i++)
 			clearColorArray[i] = Color.clear;
 
-		// Calculate the size of the selection rectangle
-
-		Rect r = image.rectTransform.rect;
-		float selectionRectWidth = r.width / rowCount;
-		float selectionRectHeight = r.height / colCount;
-		Vector2 selectionRect = new Vector2(selectionRectWidth, selectionRectHeight);
-		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
-
-		selectIndex(selectedIndex);
+		selectIndex(0);
 
 		Root.instance.notificationManager.addProjectListener(this);
 		Root.instance.notificationManager.addEntityClassListener(this);
+	}
+
+	void Start()
+	{
+		// Calculate size of selection rect. This has to be done on Start
+		// to ensure that the geometry of the image has been set and scaled correctly
+		Rect r = image.rectTransform.rect;
+		Vector2 selectionRect = new Vector2(r.width / rowCount, r.height / colCount);
+		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
 	}
 
 	void OnEnable()
@@ -185,10 +186,13 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 
 	void anchoredCellPos(int index, out int x, out int y)
 	{
-		x = index % rowCount;
-		y = index / rowCount;
-		x = (int)(x * (image.rectTransform.rect.width / rowCount));
-		y = (int)(-y * (image.rectTransform.rect.height / colCount));
+		anchoredCellPos(index % rowCount, index / rowCount, out x, out y);
+	}
+
+	void anchoredCellPos(int tableX, int tableY, out int x, out int y)
+	{
+		x = (int)(tableX * (image.rectTransform.rect.width / rowCount));
+		y = (int)(-tableY * (image.rectTransform.rect.height / colCount));
 	}
 
 	public void onCloseButtonClicked()
