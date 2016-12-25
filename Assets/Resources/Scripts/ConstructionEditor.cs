@@ -83,8 +83,8 @@ public class ConstructionEditor : MonoBehaviour {
 
 	void addEntityClass(EntityClass entityClass)
 	{
-		print("add: " + entityClass.ToString());
-		EntityInstance instance = entityClass.createInstance(transform);
+		EntityInstance instance = entityClass.createInstance(transform, entityClass.entityName);
+		instance.gameObject.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 		instance.makeStandalone(Root.kLod0);
 	}
 }
