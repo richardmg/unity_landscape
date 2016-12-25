@@ -37,6 +37,8 @@ public class ConstructionEditor : MonoBehaviour {
 //		m_instance.makeStandalone(Root.kLodLit, true);
 
 
+		// Create root to hold the children in the scene. Note that we
+		// only end up with direct children of the root, and no grandchildren.
 		GameObject rootGo = new GameObject();
 		rootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 		rootGo.transform.parent = transform;

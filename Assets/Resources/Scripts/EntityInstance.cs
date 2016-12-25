@@ -46,25 +46,14 @@ public class EntityInstance : MonoBehaviour {
 	public EntityInstanceDescription entityInstanceDescription;
 	public bool instanceHidden = false;
 
-	public void makeStandalone(Lod lod, bool recursive)
+	public void makeStandalone(Lod lod)
 	{
 		// An entity instance does not include any mesh components by default, as
 		// it might just be added to scene as an inactive, hidden game object
 		// that will be grouped into a parent game object mesh through the 'createCombinedMesh'
 		// function. But if the instance is supposed to dynamic, or otherwise not
 		// be a part of a parent mesh, this function can be called to make it a proper game object.
-		if (recursive) {
-			print("Not implemented");
-			// Let all children voxel objects be stand-alone
-			//VoxelObjectRoot root = entityClass.getVoxelObjectRoot().deepCopy();
-			//root.transform.parent = transform;
-			//root.makeStandaloneRecursive();
-		} else {
-			// Let this instance be stand-alone, and combine all children
-			// voxel object meshes into one big mesh.
-			gameObject.addMeshComponents(lod, entityClass.getMesh(lod));
-		}
-
+		gameObject.addMeshComponents(lod, entityClass.getMesh(lod));
 		gameObject.SetActive(true);
 	}
 
