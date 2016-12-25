@@ -233,4 +233,13 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		Root.instance.uiManager.uiPaintEditorGO.pushDialog();
 	}
 
+	public void onEditButtonClicked()
+	{
+		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
+		if (entityClass == null)
+			return;
+		//Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
+		Root.instance.uiManager.uiConstructionEditorGO.pushDialog();
+	}
+
 }
