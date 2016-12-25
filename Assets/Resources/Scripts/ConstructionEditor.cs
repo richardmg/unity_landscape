@@ -5,11 +5,12 @@ using UnityEngine.UI;
 public class ConstructionEditor : MonoBehaviour {
 
 	public GameObject constructionCameraGO;
+	public GameObject zoomSlider;
 	EntityInstance m_instance;
 
 	// Use this for initialization
 	void Start () {
-	
+		zoomSlider.GetComponent<Slider>().normalizedValue = 0.5f;
 	}
 	
 	// Update is called once per frame
