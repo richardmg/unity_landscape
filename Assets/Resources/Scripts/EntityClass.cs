@@ -98,10 +98,16 @@ public class EntityClass {
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
 
-//		go.SetActive(false);
-		instance.makeStandalone(Root.kLod0);
+		// Disable it as it will either be a part of a combined mesh, or
+		// made stand-alone explicit
+		go.SetActive(false);
 
 		return instance;
+	}
+
+	public VoxelObjectRoot getVoxelObjectRoot()
+	{
+		return m_voxelObjectRoot;
 	}
 
 	public int getVertexCount(Lod lod)
@@ -188,7 +194,7 @@ public class EntityClass {
 	public Texture2D takeSnapshot(SnapshotCamera camera)
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
-		instance.makeStandalone(Root.kLodLit);
+		instance.makeStandalone(Root.kLodLit, false);
 		Texture2D snapshot = camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset);
 		instance.hideAndDestroy();
 		return snapshot;
@@ -197,7 +203,7 @@ public class EntityClass {
 	public void takeSnapshot(SnapshotCamera camera, Texture2D destTexture, int destX, int destY)
 	{
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
-		instance.makeStandalone(Root.kLodLit);
+		instance.makeStandalone(Root.kLodLit, false);
 		camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset, destTexture, destX, destY);
 		instance.hideAndDestroy();
 	}

@@ -13,7 +13,7 @@ public class VoxelObjectEditor : Editor
 		if (GUILayout.Button("Rebuild")) {
 			VoxelObject[] selfAndchildren = voRoot.gameObject.GetComponentsInChildren<VoxelObject>(true);
 			for (int i = 0; i < selfAndchildren.Length; ++i)
-				selfAndchildren[i].makeStandalone();
+				selfAndchildren[i].makeStandalone(Root.kLod0);
 		}
 	}
 }

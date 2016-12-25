@@ -148,6 +148,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(desc.entityClassID);
 		EntityInstance instance = entityClass.createInstance(tile.transform);
 
+		// Make all entities stand-alone for now
+		instance.makeStandalone(Root.kLod0, false);
+
 		instance.entityInstanceDescription = desc;
 		instance.transform.position = desc.worldPos;
 		instance.transform.rotation = desc.rotation;

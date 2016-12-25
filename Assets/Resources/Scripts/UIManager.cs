@@ -5,19 +5,6 @@ using System.Collections.Generic;
 using UnityStandardAssets.Characters.FirstPerson;
 using UnityEngine.UI;
 
-public static class UIManager_GameObjectExtensions
-{
-	public static void pushDialog(this GameObject go, bool show = true, bool repush = false)
-	{
-		Root.instance.uiManager.push(go, show, repush);
-	}
-
-	public static void pushDialog(this GameObject go, Action<bool> callback, bool show = true, bool repush = false)
-	{
-		Root.instance.uiManager.push(go, callback, show, repush);
-	}
-}
-
 class UIManagerStackItem {
 	public GameObject ui;
 	public Action<bool> callback;

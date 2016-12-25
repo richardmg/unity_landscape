@@ -46,27 +46,26 @@ public class EntityInstance : MonoBehaviour {
 	public EntityInstanceDescription entityInstanceDescription;
 	public bool instanceHidden = false;
 
-	public void makeStandalone(Lod lod)
+	public void makeStandalone(Lod lod, bool recursive)
 	{
 		// An entity instance does not include any mesh components by default, as
 		// it might just be added to scene as an inactive, hidden game object
 		// that will be grouped into a parent game object mesh through the 'createCombinedMesh'
 		// function. But if the instance is supposed to dynamic, or otherwise not
 		// be a part of a parent mesh, this function can be called to make it a proper game object.
-		gameObject.SetActive(true);
-		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-		if (!meshFilter)
-			meshFilter = gameObject.AddComponent<MeshFilter>();
-		meshFilter.sharedMesh = entityClass.getMesh(lod);
-		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-		if (!meshRenderer)
-			meshRenderer = gameObject.AddComponent<MeshRenderer>();
-		MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
-		if (!meshCollider)
-			meshCollider = gameObject.AddComponent<MeshCollider>();
-		meshCollider.sharedMesh = meshFilter.sharedMesh;
+		if (recursive) {
+			print("Not implemented");
+			// Let all children voxel objects be stand-alone
+			//VoxelObjectRoot root = entityClass.getVoxelObjectRoot().deepCopy();
+			//root.transform.parent = transform;
+			//root.makeStandaloneRecursive();
+		} else {
+			// Let this instance be stand-alone, and combine all children
+			// voxel object meshes into one big mesh.
+			gameObject.addMeshComponents(lod, entityClass.getMesh(lod));
+		}
 
-		meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(lod);
+		gameObject.SetActive(true);
 	}
 
 	public void changeEntityClass(EntityClass toEntityClass)

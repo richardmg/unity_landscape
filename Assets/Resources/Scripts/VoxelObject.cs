@@ -19,12 +19,7 @@ public class VoxelObject : MonoBehaviour {
 			return;
 		}
 
-		makeStandalone();
-	}
-
-	public void Start()
-	{
-		Debug.Assert(false, "Don't add VoxelObjects (" + name + ") directly to scene. Use EntityClass/Instance instead");
+		makeStandalone(Root.kLod0);
 	}
 
 	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions = null)
@@ -54,19 +49,8 @@ public class VoxelObject : MonoBehaviour {
 		return voxelMeshFactory.createMesh();
 	}
 
-	public void makeStandalone()
+	public void makeStandalone(Lod lod)
 	{
-		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-		if (!meshFilter)
-			meshFilter = (MeshFilter)gameObject.AddComponent<MeshFilter>();
-		meshFilter.sharedMesh = createMesh(Root.kLod0);
-
-		MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
-		if (!meshRenderer)
-			meshRenderer = (MeshRenderer)gameObject.AddComponent<MeshRenderer>();
-
-		// Use separate material to let atlas stay unchanged after playing in editor
-		Material mat = (Material)Resources.Load("Materials/VoxelObjectEditor", typeof(Material));
-		meshRenderer.sharedMaterial = mat;
+		gameObject.addMeshComponents(lod, createMesh(lod));
 	}
 }
