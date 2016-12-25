@@ -95,4 +95,9 @@ public class EntityInstance : MonoBehaviour {
 
 		return topLevelMesh;
 	}
+
+	override public string ToString()
+	{
+		return "Instance from " +  entityClass.ToString();
+	}
 }

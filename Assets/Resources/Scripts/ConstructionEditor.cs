@@ -37,6 +37,7 @@ public class ConstructionEditor : MonoBehaviour {
 //		m_instance.makeStandalone(Root.kLodLit, true);
 
 
+		/*
 		// Create root to hold the children in the scene. Note that we
 		// only end up with direct children of the root, and no grandchildren.
 		GameObject rootGo = new GameObject();
@@ -62,6 +63,7 @@ public class ConstructionEditor : MonoBehaviour {
 		childRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 		childRootGo.transform.parent = rootGo.transform;
 		childRootGo.transform.localPosition = Vector3.zero;
+		*/
 	}
 
 	public void onZoomSliderChanged(Slider slider)
@@ -73,9 +75,16 @@ public class ConstructionEditor : MonoBehaviour {
 	public void onAddButtonClicked()
 	{
 		Root.instance.uiManager.uiEntityClassPickerGO.pushDialog((bool accepted) => {
-			print("dialog accepted: " + accepted);
 			if (!accepted)
 				return;
+			addEntityClass(Root.instance.uiManager.entityClassPicker.getSelectedEntityClass());	
 		});
+	}
+
+	void addEntityClass(EntityClass entityClass)
+	{
+		print("add: " + entityClass.ToString());
+		EntityInstance instance = entityClass.createInstance(transform);
+		instance.makeStandalone(Root.kLod0);
 	}
 }

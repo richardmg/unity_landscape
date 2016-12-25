@@ -251,4 +251,9 @@ public class EntityClass {
 			projectIO.writeInt(indexSubstitutions[atlasIndex]);
 		}
 	}
+
+	override public string ToString()
+	{
+		return entityName + " (prefab: " + prefabName + ")";
+	}
 }
