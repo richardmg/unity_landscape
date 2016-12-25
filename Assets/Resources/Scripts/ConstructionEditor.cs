@@ -69,4 +69,13 @@ public class ConstructionEditor : MonoBehaviour {
 		Vector3 cameraPos = new Vector3(0, 0, slider.normalizedValue * -200);
 		constructionCameraGO.transform.localPosition = cameraPos;
 	}
+
+	public void onAddButtonClicked()
+	{
+		Root.instance.uiManager.uiEntityClassPickerGO.pushDialog((bool accepted) => {
+			print("dialog accepted: " + accepted);
+			if (!accepted)
+				return;
+		});
+	}
 }

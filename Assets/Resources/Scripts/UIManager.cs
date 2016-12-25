@@ -84,15 +84,23 @@ public class UIManager : MonoBehaviour {
 
 	public void pop(bool accepted)
 	{
-		Debug.Assert(stack.Count > 1);	
+		Debug.Assert(stack.Count > 0);	
 		UIManagerStackItem itemToPopOff = stack[stack.Count - 1];
 		stack.RemoveAt(stack.Count - 1);	
-		UIManagerStackItem itemToShow = stack[stack.Count - 1];
-		currentMenu = itemToShow.ui;
-		setMenuVisible(true);
-		itemToPopOff.callback(accepted);
-		if (stack.Count <= 1)
+
+		if (stack.Count == 0) {
+			// The dialog pushed from constructor was popped off.
+			// Just push it back again.
+			setMenuVisible(false);
 			backButton.SetActive(false);
+			currentMenu = null;
+			uiEntityClassPickerGO.pushDialog(false);
+		} else {
+			itemToPopOff.callback(accepted);
+			UIManagerStackItem itemToShow = stack[stack.Count - 1];
+			currentMenu = itemToShow.ui;
+			setMenuVisible(true);
+		}
 	}
 
 	public void popAll()

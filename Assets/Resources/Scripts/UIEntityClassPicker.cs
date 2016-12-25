@@ -86,7 +86,7 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		else if (Input.GetKey(KeyCode.LeftControl))
 			onCloneButtonClicked();
 		else if (prevIndex == selectedIndex)
-			Root.instance.uiManager.setMenuVisible(false);
+			onAcceptButtonClicked();
 	}
 
 	public void selectEntityClass(EntityClass entityClass)
@@ -202,9 +202,9 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		y = (int)(-tableY * (image.rectTransform.rect.height / colCount));
 	}
 
-	public void onCloseButtonClicked()
+	public void onAcceptButtonClicked()
 	{
-		Root.instance.uiManager.setMenuVisible(false);
+		Root.instance.uiManager.pop(true);
 	}
 
 	public void onCloneButtonClicked()
