@@ -12,7 +12,6 @@ public class Root : MonoBehaviour {
 	public GameObject playerGO;
 	public GameObject uiGO;
 	public GameObject landscapeGO;
-	public GameObject constructionCameraGO;
 	public GameObject snapshotCameraGO;
 	public GameObject commandPromptGO;
 	public GameObject entityInstanceManagerGO;
