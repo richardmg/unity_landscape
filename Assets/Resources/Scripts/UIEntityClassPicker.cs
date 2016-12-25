@@ -21,6 +21,8 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 	const int textureCellWidth = 64;
 	const int textureCellHeight = 64;
 
+	const int selectionRectMargin = 5;
+
 	void Awake()
 	{
 		int textureWidth = textureCellWidth * colCount;
@@ -49,8 +51,11 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		// Calculate size of selection rect. This has to be done on Start
 		// to ensure that the geometry of the image has been set and scaled correctly
 		Rect r = image.rectTransform.rect;
-		Vector2 selectionRect = new Vector2(r.width / rowCount, r.height / colCount);
-		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = selectionRect;
+		float w = r.width / rowCount;
+		float h = r.height / colCount;
+		w += selectionRectMargin * 2;
+		h += selectionRectMargin * 2;
+		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = new Vector2(w, h);
 	}
 
 	void OnEnable()
@@ -102,6 +107,8 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		if (tableTexture != null) {
 			int x, y;
 			anchoredCellPos(index, out x, out y);
+			x -= selectionRectMargin;
+			y += selectionRectMargin;
 			selectionRectGO.GetComponent<RawImage>().rectTransform.anchoredPosition = new Vector3(x, y, 0);
 		}
 	}
