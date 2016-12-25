@@ -22,6 +22,11 @@ public class VoxelObject : MonoBehaviour {
 		makeStandalone(Root.kLod0);
 	}
 
+	public void makeStandalone(Lod lod)
+	{
+		gameObject.addMeshComponents(lod, createMesh(lod));
+	}
+
 	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions = null)
 	{
 		if (voxelMeshFactory == null) 
@@ -47,10 +52,5 @@ public class VoxelObject : MonoBehaviour {
 		}
 
 		return voxelMeshFactory.createMesh();
-	}
-
-	public void makeStandalone(Lod lod)
-	{
-		gameObject.addMeshComponents(lod, createMesh(lod));
 	}
 }
