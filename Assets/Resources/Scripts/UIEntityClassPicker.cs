@@ -238,7 +238,7 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		if (entityClass == null)
 			return;
-		//Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
+		Root.instance.uiManager.constructionEditor.setEntityClass(entityClass);
 		Root.instance.uiManager.uiConstructionEditorGO.pushDialog();
 	}
 

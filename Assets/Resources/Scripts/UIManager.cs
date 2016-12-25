@@ -45,6 +45,8 @@ public class UIManager : MonoBehaviour {
 	public UIEntityClassPicker entityClassPicker;
 	[HideInInspector]
 	public EntityPainter entityPainter;
+	[HideInInspector]
+	public ConstructionEditor constructionEditor;
 
 	List<UIManagerStackItem> stack = new List<UIManagerStackItem>();
 	MonoBehaviour m_mouseGrab = null;
@@ -53,6 +55,7 @@ public class UIManager : MonoBehaviour {
 	{
 		entityClassPicker = uiEntityClassPickerGO.GetComponent<UIEntityClassPicker>();
 		entityPainter = entityPainterGO.GetComponent<EntityPainter>();
+		constructionEditor = uiConstructionEditorGO.GetComponent<ConstructionEditor>();
 	}
 
 	void Start()
