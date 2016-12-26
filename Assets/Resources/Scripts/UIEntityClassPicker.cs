@@ -225,7 +225,11 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		if (entityClass == null)
 			return;
 		Root.instance.uiManager.constructionEditor.setEntityClass(entityClass);
-		Root.instance.uiManager.uiConstructionEditorGO.pushDialog();
+		Root.instance.uiManager.uiConstructionEditorGO.pushDialog((bool accepted) => {
+			if (entityClass.removed)
+				return;
+			selectEntityClass(entityClass);
+		});
 	}
 
 }
