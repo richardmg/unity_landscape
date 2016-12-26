@@ -49,8 +49,8 @@ public class UIManager : MonoBehaviour {
 	{
 		hideUI();
 		uiEntityClassPickerGO.pushDialog(false);
-		backButton.SetActive(false);
 		setMenuVisible(false);
+		updateBackButton();
 	}
 
 	void hideUI()
@@ -66,6 +66,11 @@ public class UIManager : MonoBehaviour {
 		m_mouseGrab = null;
 	}
 
+	void updateBackButton()
+	{
+		backButton.SetActive(stack.Count > 0);
+	}
+
 	public void push(GameObject ui, bool show = true, bool repush = false)
 	{
 		push(ui, (bool a) => {}, show, repush);
@@ -78,8 +83,7 @@ public class UIManager : MonoBehaviour {
 		currentMenu = ui;
 		if (show)
 			setMenuVisible(true);
-		if (stack.Count > 1)
-			backButton.SetActive(true);
+		updateBackButton();
 	}
 
 	public void pop(bool accepted)
@@ -92,7 +96,6 @@ public class UIManager : MonoBehaviour {
 			// The dialog pushed from constructor was popped off.
 			// Just push it back again.
 			setMenuVisible(false);
-			backButton.SetActive(false);
 			currentMenu = null;
 			uiEntityClassPickerGO.pushDialog(false);
 		} else {
@@ -101,12 +104,13 @@ public class UIManager : MonoBehaviour {
 			currentMenu = itemToShow.ui;
 			setMenuVisible(true);
 		}
+		updateBackButton();
 	}
 
 	public void popAll()
 	{
 		stack = new List<UIManagerStackItem>();
-		backButton.SetActive(false);
+		updateBackButton();
 	}
 
 	public void showCommandPromptUI()
