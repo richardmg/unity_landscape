@@ -27,12 +27,12 @@ public class VoxelObject : MonoBehaviour {
 		gameObject.addMeshComponents(lod, createMesh(lod));
 	}
 
-	public Mesh createMesh(Lod lod, Dictionary<int, int> indexSubstitutions = null)
+	public Mesh createMesh(Lod lod)
 	{
 		if (voxelMeshFactory == null) 
 			voxelMeshFactory = new VoxelMeshFactory();
 
-		voxelMeshFactory.atlasIndex = indexSubstitutions == null ? atlasIndex : indexSubstitutions[atlasIndex];
+		voxelMeshFactory.atlasIndex = atlasIndex;
 		voxelMeshFactory.voxelDepth = voxelDepth;
 		voxelMeshFactory.xFaces = voxelDepth != 0;
 		voxelMeshFactory.yFaces = voxelDepth != 0;

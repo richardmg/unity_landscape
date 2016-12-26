@@ -8,10 +8,7 @@ using Lod = System.Int32;
 using EntityClassID = System.Int32;
 
 public class EntityClass {
-	public Dictionary<int, int> indexSubstitutions;
-	public GameObject prefab;
 	MeshCollider meshCollider;
-	public string prefabName;
 	public string entityName;
 
 	// instanceCount is the number of EntityInstanceDescriptions using
@@ -32,50 +29,16 @@ public class EntityClass {
 		Mesh = 1
 	}
 
-	public EntityClass(string prefabName)
+	public EntityClass(string name)
 	{
-		this.prefabName = prefabName;
-		this.entityName = prefabName;
-		prefab = Root.instance.entityClassManager.getEntityPrefab(prefabName);
-		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
-		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
-
-		// Allocate indices in the TextureAtlas for this prefab variant
-		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
-		indexSubstitutions = new Dictionary<int, int>();
-
-		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
-			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
-			int newIndex = Root.instance.atlasManager.acquireIndex();
-			Root.instance.atlasManager.copySubImageFromProjectToProject(baseIndex, newIndex);
-			indexSubstitutions[baseIndex] = newIndex;
-		}
-
+		this.entityName = name;
 		Root.instance.entityClassManager.addEntityClass(this);
-
-//		List<int> indices = atlasIndexList();
-//		Debug.Log("Created new entity class from prefab: " + prefabName + ". Index range: " + indices[0] + " -> " + indices[indices.Count - 1]);
 	}
 
 	public EntityClass(EntityClass originalEntityClass)
 	{
-		this.prefabName = originalEntityClass.prefabName;
+		Debug.Log("not supported. Need to copy all children voxel objects");
 		this.entityName = originalEntityClass.entityName + "_clone";
-		prefab = originalEntityClass.prefab;
-		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
-
-		// Allocate indices in the TextureAtlas for this prefab variant
-		List<VoxelObject> uniqueVoxelObjects = getUniqueVoxelObjects();
-		indexSubstitutions = new Dictionary<int, int>();
-
-		for (int i = 0; i < uniqueVoxelObjects.Count; ++i) {
-			int baseIndex = uniqueVoxelObjects[i].atlasIndex;
-			int newIndex = Root.instance.atlasManager.acquireIndex();
-			int indexToCopy = originalEntityClass.indexSubstitutions[baseIndex];
-			Root.instance.atlasManager.copySubImageFromProjectToProject(indexToCopy, newIndex);
-			indexSubstitutions[baseIndex] = newIndex;
-		}
-
 		Root.instance.entityClassManager.addEntityClass(this);
 	}
 
@@ -127,16 +90,9 @@ public class EntityClass {
 		return m.vertexCount;
 	}
 
-	public List<int> atlasIndexList()
-	{
-		var list = new List<int>();
-		list.AddRange(indexSubstitutions.Values);
-		return list;
-	}
-
 	List<VoxelObject> getUniqueVoxelObjects()
 	{
-		VoxelObject[] voxelObjects = prefab.GetComponentsInChildren<VoxelObject>(true);
+		VoxelObject[] voxelObjects = m_voxelObjectRoot.GetComponentsInChildren<VoxelObject>(true);
 		List<VoxelObject> uniqueVoxelObjects = new List<VoxelObject>();
 
 		for (int i = 0; i < voxelObjects.Length; ++i) {
@@ -154,9 +110,6 @@ public class EntityClass {
 			if (unique)
 				uniqueVoxelObjects.Add(voxelObjects[i]);
 		}
-
-		if (uniqueVoxelObjects.Count == 0)
-			MonoBehaviour.print("Could not find any non-toplevel voxel objects in prefab: " + prefab.name);
 
 		return uniqueVoxelObjects;
 	}
@@ -182,7 +135,7 @@ public class EntityClass {
 
 		Mesh mesh = m_mesh[lod];
 		if (mesh == null) {
-			mesh = m_voxelObjectRoot.createMesh(lod, indexSubstitutions);
+			mesh = m_voxelObjectRoot.createMesh(lod);
 			m_mesh[lod] = mesh;
 		}
 
@@ -224,43 +177,27 @@ public class EntityClass {
 
 	void initFromLoad(ProjectIO projectIO, bool notify)
 	{
+		Debug.Log("Load entity class not implemented");
+
 		id = projectIO.readInt();
-		prefabName = projectIO.readString();
 		entityName = projectIO.readString();
 		instanceDescriptionCount = projectIO.readInt();
 
-		prefab = Root.instance.entityClassManager.getEntityPrefab(prefabName);
-		Debug.Assert(prefab != null, "Could not find prefab: " + prefabName);
-		m_voxelObjectRoot = prefab.GetComponent<VoxelObjectRoot>();
-
-		indexSubstitutions = new Dictionary<int, int>();
-		int substitutionKeysCount = projectIO.readInt();
-		for (int i = 0; i < substitutionKeysCount; ++i) {
-			int atlasIndex = projectIO.readInt();
-			int substitution = projectIO.readInt();
-			indexSubstitutions[atlasIndex] = substitution;
-		}
+		m_voxelObjectRoot = null;
 
 		Root.instance.entityClassManager.addEntityClass(this, id, notify);
 	}
 
 	public void save(ProjectIO projectIO)
 	{
-		projectIO.writeInt(id);
-		projectIO.writeString(prefabName);
-		projectIO.writeString(entityName);
-		projectIO.writeInt(instanceDescriptionCount);
+		Debug.Log("Save entity class not implemented");
 
-		var atlasIndexList = indexSubstitutions.Keys;
-		projectIO.writeInt(atlasIndexList.Count);
-		foreach (int atlasIndex in atlasIndexList) {
-			projectIO.writeInt(atlasIndex);
-			projectIO.writeInt(indexSubstitutions[atlasIndex]);
-		}
+		projectIO.writeInt(id);
+		projectIO.writeString(entityName);
 	}
 
 	override public string ToString()
 	{
-		return entityName + " (ID: " + id + ", prefab: " + prefabName + ")";
+		return entityName + " (ID: " + id + ")";
 	}
 }

@@ -53,7 +53,6 @@ public class EntityClassManager : IProjectIOMember
 	public void initNewProject()
 	{
 		removeAllEntityClasses();
-		registerPredefinedEntityClasses();
 	}
 
 	public void load(ProjectIO projectIO)
@@ -72,36 +71,5 @@ public class EntityClassManager : IProjectIOMember
 
 		for (int i = 0; i < classCount; ++i)
 			allEntityClasses[i].save(projectIO);
-	}
-
-	public void registerPredefinedEntityClasses()
-	{
-		// Create all entity classes that have premade subimages in the texture atlas
-		string[] prefabNames = getAllEntityPrefabNames();
-		foreach (string prefabName in prefabNames)
-			new EntityClass(prefabName);
-	}
-
-	public GameObject getEntityPrefab(string prefabName)
-    {
-		return (GameObject)Resources.Load(kEntityPrefabFolder + "/" + prefabName, typeof(GameObject));
-    }
-
-	public string[] getAllEntityPrefabNames()
-	{
-		return new string[] {
-			"BallTree",
-			"Grass",
-			"GrassFlatMini",
-		};
-
-//		string folder = Application.dataPath + "/Resources/" + kEntityPrefabFolder;
-//		string[] filePaths = Directory.GetFiles(folder, "*.prefab");
-//		for (int i = 0; i < filePaths.Length; ++i) {
-//			string fileName = Path.GetFileName(filePaths[i]);
-//			// Remove ".prefab"
-//			filePaths[i] = fileName.Remove(fileName.Length - 7);
-//		}
-//		return filePaths;
 	}
 }

@@ -45,13 +45,10 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("project save : save project");
 		helpList.Add("project saveAs [name] : save a copy of the project");
 		helpList.Add("project list [pattern] : list all project that conforms to pattern");
-		helpList.Add("entity indexlist [id] : print atlas indecies used by entity");
 		helpList.Add("entity clearcache [id] : clear entity mesh cache");
 		helpList.Add("entity vertexcount [id] [lod]: print the enity class' vertex count for the given lod");
 		helpList.Add("entity classcount : print number of entity classes");
 		helpList.Add("entity name [id]: print the name of entity class");
-		helpList.Add("entity prefab [id]: print the name of the prefab the entity is based on");
-		helpList.Add("entity new [prefab]: create a new entity class based on the given prefab");
 		helpList.Add("notify entitychanged [id] : update listeners that entity changed");
 		helpList.Add("player entity : print entity held by player");
 		helpList.Add("player pos: print players position");
@@ -305,16 +302,7 @@ public class CommandPrompt : MonoBehaviour {
 			}
 		} else if (token == "entity") {
 			token = nextToken();
-			if (token == "indexlist") {
-				int id = nextInt();
-				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
-				List<int> list = entityClass.atlasIndexList();
-				string s = "Entity index list: ";
-				foreach (int i in list)
-					s += i + ", ";
-				log(s);
-				accepted = true;
-			} else if (token == "clearcache") {
+			if (token == "clearcache") {
 				int id = nextInt();
 				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				entityClass.markDirty(EntityClass.DirtyFlags.Mesh);
@@ -327,12 +315,6 @@ public class CommandPrompt : MonoBehaviour {
 				string name = entityClass.entityName;
 				log("Name of entity class: " + name);
 				accepted = true;
-			} else if (token == "prefab") {
-				int id = nextInt();
-				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
-				string name = entityClass.prefabName;
-				log("Name of entity class prefab: " + name);
-				accepted = true;
 			} else if (token == "classcount") {
 				int count = Root.instance.entityClassManager.allEntityClasses.Count;
 				log("Number of entity classes: " + count);
@@ -343,11 +325,6 @@ public class CommandPrompt : MonoBehaviour {
 				EntityClass entityClass = Root.instance.entityClassManager.getEntity(id);
 				entityClass.getMesh(lod);
 				log("Vertex count: " + entityClass.getVertexCount(lod));
-				accepted = true;
-			} else if (token == "new") {
-				string prefabName = nextToken();
-				EntityClass entityClass = new EntityClass(prefabName);
-				log("Created new entity class with id: " + entityClass.id);
 				accepted = true;
 			}
 		} else if (token == "notify") {

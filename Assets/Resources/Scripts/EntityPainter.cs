@@ -102,13 +102,9 @@ public class EntityPainter : MonoBehaviour {
 		
 		m_entityClass = entityClass;
 
-		if (entityClass != null) {
-			m_atlasIndexList = m_entityClass.atlasIndexList();
-			setListIndex(0);
-		} else {
-			// Since atlas index paint support
-			m_atlasIndexList = new List<int>(); 
-		}
+		Debug.Log("Not implemenbted");
+		m_atlasIndexList = new List<int>(); 
+
 		updateThumbnails();
 	}
 
@@ -212,9 +208,10 @@ public class EntityPainter : MonoBehaviour {
 
 	void detachEntityClass()
 	{
+		Debug.Log("not implemented");
 		// Create a new entity class that we modify instead
 		EntityClass newClass = new EntityClass(m_entityClass);
-		m_atlasIndexList = newClass.atlasIndexList();
+		//m_atlasIndexList = newClass.atlasIndexList();
 		m_currentAtlasIndex = m_atlasIndexList[m_currentListIndex];
 		m_entityClass = newClass;
 	}
