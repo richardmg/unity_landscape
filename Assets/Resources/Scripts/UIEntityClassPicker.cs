@@ -82,11 +82,11 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 			selectIndex(index);
 
 		if (Input.GetKey(KeyCode.LeftShift))
-			onPaintButtonClicked();
+			onEditButtonClicked();
 		else if (Input.GetKey(KeyCode.LeftControl))
 			onCloneButtonClicked();
 		else if (prevIndex == selectedIndex)
-			onAcceptButtonClicked();
+			Root.instance.uiManager.background.onOkButtonClicked();
 	}
 
 	public void selectEntityClass(EntityClass entityClass)
@@ -202,11 +202,6 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		y = (int)(-tableY * (image.rectTransform.rect.height / colCount));
 	}
 
-	public void onAcceptButtonClicked()
-	{
-		Root.instance.uiManager.pop(true);
-	}
-
 	public void onCloneButtonClicked()
 	{
 		EntityClass originalEntityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
@@ -222,15 +217,6 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		if (entityClass == null)
 			return;
 		entityClass.remove();
-	}
-
-	public void onPaintButtonClicked()
-	{
-		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
-		if (entityClass == null)
-			return;
-		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
-		Root.instance.uiManager.uiPaintEditorGO.pushDialog();
 	}
 
 	public void onEditButtonClicked()

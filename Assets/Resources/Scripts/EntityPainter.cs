@@ -180,11 +180,6 @@ public class EntityPainter : MonoBehaviour {
 		m_textureDirty = false;
 	}
 
-	public void onDiscardButtonClicked()
-	{
-		setListIndex(m_currentListIndex);
-	}
-
 	public void saveChanges(bool detach = true)
     {
 		if (m_texture == null || !m_textureDirty)
@@ -254,13 +249,6 @@ public class EntityPainter : MonoBehaviour {
 
 		m_texture.Apply();
 		m_textureDirty = true;
-	}
-
-	public void onCloneButtonClicked()
-	{
-		EntityClass entityClass = new EntityClass(m_entityClass);
-		setEntityClass(entityClass);
-		Root.instance.uiManager.entityClassPicker.selectEntityClass(entityClass);
 	}
 
 }

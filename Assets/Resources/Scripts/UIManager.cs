@@ -29,6 +29,8 @@ public class UIManager : MonoBehaviour {
 	public GameObject currentMenu;
 
 	[HideInInspector]
+	public UIBackground background;
+	[HideInInspector]
 	public UIEntityClassPicker entityClassPicker;
 	[HideInInspector]
 	public EntityPainter entityPainter;
@@ -40,6 +42,7 @@ public class UIManager : MonoBehaviour {
 
 	void Awake()
 	{
+		background = backgroundGO.GetComponent<UIBackground>();
 		entityClassPicker = uiEntityClassPickerGO.GetComponent<UIEntityClassPicker>();
 		entityPainter = entityPainterGO.GetComponent<EntityPainter>();
 		constructionEditor = uiConstructionEditorGO.GetComponent<ConstructionEditor>();
