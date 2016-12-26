@@ -48,14 +48,8 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 
 	void Start()
 	{
-		// Calculate size of selection rect. This has to be done on Start
-		// to ensure that the geometry of the image has been set and scaled correctly
-		Rect r = image.rectTransform.rect;
-		float w = r.width / rowCount;
-		float h = r.height / colCount;
-		w += selectionRectMargin * 2;
-		h += selectionRectMargin * 2;
-		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = new Vector2(w, h);
+		// Note: geometry calculations cannot be done on Awake()
+		OnRectTransformDimensionsChange();
 	}
 
 	void OnEnable()
@@ -87,6 +81,20 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 			onCloneButtonClicked();
 		else if (prevIndex == selectedIndex)
 			Root.instance.uiManager.background.onOkButtonClicked();
+	}
+
+	void OnRectTransformDimensionsChange()
+	{
+		// Recalculate size of selection rect when canvas rect is resized
+		if (!image)
+			return;
+		
+		Rect r = image.rectTransform.rect;
+		float w = r.width / rowCount;
+		float h = r.height / colCount;
+		w += selectionRectMargin * 2;
+		h += selectionRectMargin * 2;
+		selectionRectGO.GetComponent<RawImage>().rectTransform.sizeDelta = new Vector2(w, h);
 	}
 
 	public void selectEntityClass(EntityClass entityClass)
