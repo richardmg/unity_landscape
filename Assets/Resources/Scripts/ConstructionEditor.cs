@@ -6,7 +6,10 @@ public class ConstructionEditor : MonoBehaviour {
 
 	public GameObject constructionCameraGO;
 	public GameObject zoomSlider;
+	public GameObject worldEntityButton;
+
 	EntityInstance m_instance;
+	bool m_moveEntity = false;
 
 	// Use this for initialization
 	void Start () {
@@ -71,6 +74,12 @@ public class ConstructionEditor : MonoBehaviour {
 	{
 		Vector3 cameraPos = new Vector3(0, 0, slider.normalizedValue * -200);
 		constructionCameraGO.transform.localPosition = cameraPos;
+	}
+
+	public void onWorldEntityButtonClicked()
+	{
+		m_moveEntity = !m_moveEntity;
+		worldEntityButton.GetComponentInChildren<Text>().text = m_moveEntity ? "Entity" : "World";
 	}
 
 	public void onAddButtonClicked()
