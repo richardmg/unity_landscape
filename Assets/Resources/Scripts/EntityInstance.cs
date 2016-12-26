@@ -62,13 +62,6 @@ public class EntityInstance : MonoBehaviour {
 		entityClass = toEntityClass;
 	}
 
-	public void hideAndDestroy()
-	{
-		gameObject.SetActive(false);
-		GameObject.Destroy(this.gameObject);
-//		UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(gameObject); };
-	}
-
 	public void updateMesh()
 	{
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();

@@ -236,6 +236,13 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		Root.instance.uiManager.uiConstructionEditorGO.pushDialog((bool accepted) => {
 			if (entityClass.removed)
 				return;
+			
+			if (accepted) {
+				VoxelObjectRoot root = Root.instance.uiManager.constructionEditor.takeVoxelObjectRoot();	
+				entityClass.setVoxelObjectRoot(root);
+				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
+			}
+
 			selectEntityClass(entityClass);
 		});
 	}

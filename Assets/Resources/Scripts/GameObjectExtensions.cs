@@ -5,6 +5,13 @@ using Lod = System.Int32;
 
 public static class UIManager_GameObjectExtensions
 {
+	public static void hideAndDestroy(this GameObject go)
+	{
+		go.SetActive(false);
+		GameObject.Destroy(go);
+//		UnityEditor.EditorApplication.delayCall += ()=> { DestroyImmediate(go); };
+	}
+
 	public static void pushDialog(this GameObject go, bool show = true, bool repush = false)
 	{
 		Root.instance.uiManager.push(go, show, repush);

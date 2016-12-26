@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ public class ConstructionEditor : MonoBehaviour {
 	public GameObject zoomSlider;
 	public GameObject worldEntityButton;
 
-	EntityInstance m_instance;
+	VoxelObjectRoot m_root;
 	bool m_moveEntity = false;
 
 	// Use this for initialization
@@ -33,23 +34,23 @@ public class ConstructionEditor : MonoBehaviour {
 		// - Tror jeg dropper at man kan bygge hierarki med VoxelObjects, kun
 		// 		med VoxelObjectRoot.
 		// - VoxelObject blir dermed leaf-noder.
-		if (m_instance)
-			m_instance.hideAndDestroy();
+		if (m_root)
+			m_root.gameObject.hideAndDestroy();
 
 //		m_instance = entityClass.createInstance(transform, "ConstructionEntity");
 //		m_instance.transform.localPosition = Vector3.zero;
 //		m_instance.makeStandalone(Root.kLodLit, true);
 
 
-		/*
 		// Create root to hold the children in the scene. Note that we
 		// only end up with direct children of the root, and no grandchildren.
 		GameObject rootGo = new GameObject();
 		rootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 		rootGo.transform.parent = transform;
 		rootGo.transform.localPosition = Vector3.zero;
-		rootGo.AddComponent<VoxelObjectRoot>();
+		m_root = rootGo.AddComponent<VoxelObjectRoot>();
 
+		/*
 		// Foreach child voxelobject (leafs);
 		// Copy voxel object and add to root
 		GameObject voxelObjectGo = new GameObject();
@@ -70,6 +71,20 @@ public class ConstructionEditor : MonoBehaviour {
 		*/
 	}
 
+	public VoxelObjectRoot takeVoxelObjectRoot()
+	{
+		Transform rootTransform = m_root.transform;
+		int childCount = rootTransform.childCount;
+		for (int i = 0; i < childCount; ++i) {
+			Transform child = rootTransform.GetChild(i);
+			child.gameObject.layer = LayerMask.NameToLayer("Default");
+		}
+
+		VoxelObjectRoot ret = m_root;
+		m_root = null;
+		return ret;
+	}
+
 	public void onZoomSliderChanged(Slider slider)
 	{
 		Vector3 cameraPos = new Vector3(0, 0, slider.normalizedValue * -200);
@@ -83,6 +98,21 @@ public class ConstructionEditor : MonoBehaviour {
 	}
 
 	public void onAddButtonClicked()
+	{
+		GameObject voxelObjectGo = new GameObject();
+		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
+		voxelObjectGo.transform.parent = m_root.transform;
+		voxelObjectGo.transform.localPosition = Vector3.zero;
+		System.Random rnd = new System.Random();
+		float x = rnd.Next(0, 30);
+		float y = rnd.Next(0, 30);
+		voxelObjectGo.transform.localPosition = new Vector3(x, y, 0);
+		VoxelObject vo = voxelObjectGo.AddComponent<VoxelObject>();
+		vo.atlasIndex = 0;
+		vo.makeStandalone(Root.kLod0);
+	}
+
+	public void onAddEntityButtonClicked()
 	{
 		Root.instance.uiManager.uiEntityClassPickerGO.pushDialog((bool accepted) => {
 			if (!accepted)

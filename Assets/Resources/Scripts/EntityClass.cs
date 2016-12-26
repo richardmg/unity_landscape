@@ -106,6 +106,12 @@ public class EntityClass {
 		return instance;
 	}
 
+	public void setVoxelObjectRoot(VoxelObjectRoot root)
+	{
+		m_voxelObjectRoot = root;
+		markDirty(DirtyFlags.Mesh);
+	}
+
 	public VoxelObjectRoot getVoxelObjectRoot()
 	{
 		return m_voxelObjectRoot;
@@ -197,7 +203,7 @@ public class EntityClass {
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone(Root.kLodLit);
 		Texture2D snapshot = camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset);
-		instance.hideAndDestroy();
+		instance.gameObject.hideAndDestroy();
 		return snapshot;
 	}
 
@@ -206,7 +212,7 @@ public class EntityClass {
 		EntityInstance instance = createInstance(null, "SnapshotEntity");
 		instance.makeStandalone(Root.kLodLit);
 		camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset, destTexture, destX, destY);
-		instance.hideAndDestroy();
+		instance.gameObject.hideAndDestroy();
 	}
 
 	public static EntityClass load(ProjectIO projectIO, bool notify = true)

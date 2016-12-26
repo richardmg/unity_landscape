@@ -180,7 +180,7 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 			return;
 		}
 
-		desc.instance.hideAndDestroy();
+		desc.instance.gameObject.hideAndDestroy();
 		desc.instance = null;
 	}
 
