@@ -255,6 +255,6 @@ public class EntityClass {
 
 	override public string ToString()
 	{
-		return entityName + " (prefab: " + prefabName + ")";
+		return entityName + " (ID: " + id + ", prefab: " + prefabName + ")";
 	}
 }

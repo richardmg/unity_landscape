@@ -51,7 +51,7 @@ public class UIManager : MonoBehaviour {
 	void Start()
 	{
 		hideUI();
-		uiEntityClassPickerGO.pushDialog(false);
+		uiEntityClassPickerGO.pushDialog(rootDialogCallback, false);
 		setMenuVisible(false);
 		updateBackButton();
 	}
@@ -95,18 +95,16 @@ public class UIManager : MonoBehaviour {
 		UIManagerStackItem itemToPopOff = stack[stack.Count - 1];
 		stack.RemoveAt(stack.Count - 1);	
 
-		if (stack.Count == 0) {
-			// The dialog pushed from constructor was popped off.
-			// Just push it back again.
-			setMenuVisible(false);
-			currentMenu = null;
-			uiEntityClassPickerGO.pushDialog(false);
-		} else {
-			itemToPopOff.callback(accepted);
+		int count = stack.Count;
+		itemToPopOff.callback(accepted);
+		bool stackUnchanged = (stack.Count == count);
+
+		if (stack.Count > 0 && stackUnchanged) {
 			UIManagerStackItem itemToShow = stack[stack.Count - 1];
 			currentMenu = itemToShow.ui;
 			setMenuVisible(true);
 		}
+
 		updateBackButton();
 	}
 
@@ -114,6 +112,20 @@ public class UIManager : MonoBehaviour {
 	{
 		stack = new List<UIManagerStackItem>();
 		updateBackButton();
+	}
+
+	void rootDialogCallback(bool accepted)
+	{
+		setMenuVisible(false);
+		currentMenu = null;
+
+		UIEntityClassPicker picker = Root.instance.uiManager.entityClassPicker;
+		if (accepted)
+			Root.instance.player.entityClassInUse = picker.getSelectedEntityClass();
+		else
+			picker.selectEntityClass(Root.instance.player.entityClassInUse);
+
+		uiEntityClassPickerGO.pushDialog(rootDialogCallback, false);
 	}
 
 	public void showCommandPromptUI()

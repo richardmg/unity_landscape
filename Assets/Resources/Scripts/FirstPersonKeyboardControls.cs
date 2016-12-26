@@ -15,7 +15,7 @@ public class FirstPersonKeyboardControls : MonoBehaviour {
 			if (!getRayWorldPos(out worldPos, out gameObject))
 				return;
 
-			EntityClass entityClass = Root.instance.player.currentEntityClass();
+			EntityClass entityClass = Root.instance.player.entityClassInUse;
 			if (entityClass == null)
 				return;
 

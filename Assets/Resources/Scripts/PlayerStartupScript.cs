@@ -3,6 +3,7 @@ using System.Collections;
 
 public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
+	public EntityClass entityClassInUse = null;
 
 	void Start()
 	{
@@ -13,23 +14,24 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 		}
 	}
 
-	public EntityClass currentEntityClass()
+	public void setEntityClassInUse(EntityClass entityClass)
 	{
-		return Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
+		entityClassInUse = entityClass;
 	}
 
 	public void initNewProject()
 	{
+		entityClassInUse = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
 	}
 
 	public void load(ProjectIO projectIO)
 	{
-		int id = projectIO.readInt();
+		entityClassInUse = Root.instance.entityClassManager.getEntity(projectIO.readInt());
 	}
 
 	public void save(ProjectIO projectIO)
 	{
-		projectIO.writeInt(currentEntityClass().id);
+		projectIO.writeInt(entityClassInUse.id);
 	}
 
 }
