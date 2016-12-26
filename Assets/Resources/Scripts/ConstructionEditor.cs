@@ -78,7 +78,9 @@ public class ConstructionEditor : MonoBehaviour {
 		Root.instance.uiManager.uiEntityClassPickerGO.pushDialog((bool accepted) => {
 			if (!accepted)
 				return;
-			addEntityClass(Root.instance.uiManager.entityClassPicker.getSelectedEntityClass());	
+			EntityClass entityClass = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
+			if (entityClass != null)
+				addEntityClass(entityClass);	
 		});
 	}
 

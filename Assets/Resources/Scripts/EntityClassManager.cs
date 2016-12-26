@@ -30,7 +30,7 @@ public class EntityClassManager : IProjectIOMember
 		allEntityClasses.Remove(entityClass);
 
 		if (notify)
-			Root.instance.notificationManager.notifyEntityClassAdded(entityClass);
+			Root.instance.notificationManager.notifyEntityClassRemoved(entityClass);
 	}
 
 	public void removeAllEntityClasses()
