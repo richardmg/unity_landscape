@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class ConstructionEditor : MonoBehaviour {
@@ -10,6 +11,7 @@ public class ConstructionEditor : MonoBehaviour {
 	public GameObject worldEntityButton;
 
 	GameObject m_voxelObjectRootGo;
+	List<VoxelObject> m_voxelObjects;
 
 	bool m_moveEntity = false;
 
@@ -27,15 +29,33 @@ public class ConstructionEditor : MonoBehaviour {
 	{
 		if (m_voxelObjectRootGo != null)
 			m_voxelObjectRootGo.hideAndDestroy();
-		
-		m_voxelObjectRootGo = entityClass.getVoxelObjectRoot().createGameObject(transform, Root.kLod0);
+
+		VoxelObjectRoot root = entityClass.getVoxelObjectRoot();
+		m_voxelObjects = new List<VoxelObject>();
+		m_voxelObjectRootGo = root.createGameObject(transform, Root.kLod0);
 		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
+
+		for (int i = 0; i < root.voxelObjects.Count; ++i) {
+			VoxelObject vo = root.voxelObjects[i];
+			GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
+			voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
+		}
 	}
 
-	public VoxelObjectRoot takeVoxelObjectRoot()
+	public VoxelObjectRoot createVoxelObjectRoot()
 	{
 		// Copy GameObject transforms back into VoxelObjectRoot
 		VoxelObjectRoot root = new VoxelObjectRoot();
+		VoxelObjectMonoBehaviour[] vombs = m_voxelObjectRootGo.GetComponentsInChildren<VoxelObjectMonoBehaviour>(true);
+
+		for (int i = 0; i < vombs.Length; ++i) {
+			VoxelObjectMonoBehaviour vomb = vombs[i];
+			VoxelObject vo = new VoxelObject(vomb.voxelObject.atlasIndex, vomb.voxelObject.voxelDepth);
+			vo.localPosition = vomb.transform.localPosition;
+			vo.localRotation = vomb.transform.localRotation;
+			root.voxelObjects.Add(vo);
+		}
+
 		return root;
 	}
 

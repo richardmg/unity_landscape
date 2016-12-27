@@ -3,12 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
 
+public class VoxelObjectMonoBehaviour : MonoBehaviour
+{
+	[HideInInspector]
+	public VoxelObject voxelObject;
+}
+
 public class VoxelObject
 {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
 
-	public Vector3 localPos;
+	public Vector3 localPosition;
 	public Quaternion localRotation;
 
 	static VoxelMeshFactory voxelMeshFactory;
@@ -50,8 +56,9 @@ public class VoxelObject
 	{
 		GameObject go = new GameObject("VoxelObject: " + atlasIndex);
 		go.addMeshComponents(lod, createMesh(lod));
+		go.AddComponent<VoxelObjectMonoBehaviour>().voxelObject = this;
 		go.transform.parent = parent;
-		go.transform.localPosition = localPos;
+		go.transform.localPosition = localPosition;
 		go.transform.localRotation = localRotation;
 		return go;
 	}

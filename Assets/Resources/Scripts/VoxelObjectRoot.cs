@@ -3,9 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
 
+public class VoxelObjectRootMonoBehaviour : MonoBehaviour
+{
+	[HideInInspector]
+	public VoxelObjectRoot voxelObjectRoot;
+}
+
 public class VoxelObjectRoot
 {
-	public List<VoxelObject> m_voxelObjects = new List<VoxelObject>();
+	public List<VoxelObject> voxelObjects = new List<VoxelObject>();
 	public Vector3 snapshotOffset = new Vector3(0, 0, -7);
 
 	public Vector3 scale = new Vector3(1, 1, 1);
@@ -22,10 +28,11 @@ public class VoxelObjectRoot
 	public GameObject createGameObject(Transform parent, Lod lod)
 	{
 		GameObject go = new GameObject("VoxelObjectRoot");
+		go.AddComponent<VoxelObjectRootMonoBehaviour>().voxelObjectRoot = this;
 		go.transform.parent = parent;
 		go.transform.localScale = scale;
 		go.transform.localPosition = Vector3.zero;
-		foreach (VoxelObject vo in m_voxelObjects)
+		foreach (VoxelObject vo in voxelObjects)
 			vo.createGameObject(go.transform, lod);
 		return go;
 	}

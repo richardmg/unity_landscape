@@ -240,7 +240,7 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 				return;
 			
 			if (accepted) {
-				VoxelObjectRoot root = Root.instance.uiManager.constructionEditor.takeVoxelObjectRoot();	
+				VoxelObjectRoot root = Root.instance.uiManager.constructionEditor.createVoxelObjectRoot();	
 				entityClass.setVoxelObjectRoot(root);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
 			} else if (createTemporary) {
