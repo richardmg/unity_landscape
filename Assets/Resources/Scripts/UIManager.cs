@@ -122,7 +122,7 @@ public class UIManager : MonoBehaviour {
 		UIEntityClassPicker picker = Root.instance.uiManager.entityClassPicker;
 		if (accepted)
 			Root.instance.player.entityClassInUse = picker.getSelectedEntityClass();
-		else
+		else if (Root.instance.player.entityClassInUse != null)
 			picker.selectEntityClass(Root.instance.player.entityClassInUse);
 
 		uiEntityClassPickerGO.pushDialog(rootDialogCallback, false);
