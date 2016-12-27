@@ -37,13 +37,19 @@ public class SnapshotCamera {
 		m_cameraGO.transform.parent = targetGO.transform.parent;
 		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset + bounds.center;
 		m_cameraGO.transform.LookAt(bounds.center);
-		targetGO.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
+
+		MeshFilter[] filters = targetGO.GetComponentsInChildren<MeshFilter>();
+		foreach (MeshFilter filter in filters) {
+			Debug.Assert(filter.gameObject.layer == prevLayer);
+			filter.gameObject.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
+		}
 
 		m_camera.Render();
 		destTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), destX, destY);
 //		destTexture.Apply() - remember to do this in the end
 
-		targetGO.layer = prevLayer;
+		foreach (MeshFilter filter in filters)
+			filter.gameObject.layer = prevLayer;
         RenderTexture.active = currentRT;
 	}
 }
