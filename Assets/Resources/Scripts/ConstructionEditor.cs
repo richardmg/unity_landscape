@@ -46,6 +46,7 @@ public class ConstructionEditor : MonoBehaviour {
 	{
 		// Copy GameObject transforms back into VoxelObjectRoot
 		VoxelObjectRoot root = new VoxelObjectRoot();
+		root.snapshotOffset = constructionCameraGO.transform.localPosition;
 		VoxelObjectMonoBehaviour[] vombs = m_voxelObjectRootGo.GetComponentsInChildren<VoxelObjectMonoBehaviour>(true);
 
 		for (int i = 0; i < vombs.Length; ++i) {

@@ -36,7 +36,7 @@ public class SnapshotCamera {
 
 		m_cameraGO.transform.parent = targetGO.transform.parent;
 		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset + bounds.center;
-		m_cameraGO.transform.LookAt(bounds.center);
+		m_cameraGO.transform.LookAt(targetGO.transform.localPosition + bounds.center);
 
 		MeshFilter[] filters = targetGO.GetComponentsInChildren<MeshFilter>();
 		foreach (MeshFilter filter in filters) {
