@@ -111,16 +111,19 @@ public class EntityClass {
 	{
 		Debug.Assert(!removed, "This entity class has beed removed from project. The caller has and old reference!");
 
-		if (unmarkDirty(DirtyFlags.Mesh))
-			m_mesh = new Mesh[Root.kLodCount];
+		Debug.Assert(false, "This needs rework!");
+		return new Mesh();
 
-		Mesh mesh = m_mesh[lod];
-		if (mesh == null) {
-			mesh = m_voxelObjectRoot.createMesh(lod);
-			m_mesh[lod] = mesh;
-		}
-
-		return mesh;
+//		if (unmarkDirty(DirtyFlags.Mesh))
+//			m_mesh = new Mesh[Root.kLodCount];
+//
+//		Mesh mesh = m_mesh[lod];
+//		if (mesh == null) {
+//			mesh = m_voxelObjectRoot.createCombinedMesh(lod);
+//			m_mesh[lod] = mesh;
+//		}
+//
+//		return mesh;
 	}
 
 	public MeshCollider getMeshCollider()
