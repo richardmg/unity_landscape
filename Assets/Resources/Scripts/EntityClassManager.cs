@@ -11,13 +11,9 @@ public class EntityClassManager : IProjectIOMember
 
 	public void addEntityClass(EntityClass entityClass, bool notify = true)
 	{
-		int newID = allEntityClasses.Count;
-		addEntityClass(entityClass, newID, notify);
-	}
+		if (entityClass.id == -1)
+			entityClass.id = allEntityClasses.Count;
 
-	public void addEntityClass(EntityClass entityClass, int id, bool notify = true)
-	{
-		entityClass.id = id;
 		allEntityClasses.Add(entityClass);
 
 		if (notify)
@@ -61,7 +57,7 @@ public class EntityClassManager : IProjectIOMember
 
 		int classCount = projectIO.readInt();
 		for (int i = 0; i < classCount; ++i)
-			EntityClass.load(projectIO, false);
+			EntityClass.load(projectIO);
 	}
 
 	public void save(ProjectIO projectIO)

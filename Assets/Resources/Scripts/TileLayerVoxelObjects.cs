@@ -141,24 +141,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		}
 	}
 
-	EntityInstance createInstance(GameObject tile, EntityInstanceDescription desc)
+	GameObject createInstance(GameObject tile, EntityInstanceDescription desc)
 	{
 		Debug.Assert(desc.instance == null, "This description already carries an instance");
 
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(desc.entityClassID);
-		EntityInstance instance = entityClass.createInstance(tile.transform);
-
-		// Make all entities stand-alone for now
-		instance.makeStandalone(Root.kLod0);
-
-		instance.entityInstanceDescription = desc;
-		instance.transform.position = desc.worldPos;
-		instance.transform.rotation = desc.rotation;
-		instance.gameObject.isStatic = desc.isStatic;
-
-		// We abuse the description to carry the instance for easy access
-		desc.instance = instance;
-		return instance;
+		return entityClass.createGameObject(tile.transform, Root.kLod0);
 	}
 
 	void createEntityInstances(GameObject tile, TileDescription tileDesc)

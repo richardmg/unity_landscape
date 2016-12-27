@@ -31,7 +31,9 @@ public class SnapshotCamera {
 		RenderTexture.active = renderTexture;
 		int prevLayer = targetGO.layer;
 
-		Bounds bounds = targetGO.GetComponent<Renderer>().bounds;
+		// Todo; need to calculate center in a different way
+		Bounds bounds = new Bounds();//targetGO.GetComponent<Renderer>().bounds;
+
 		m_cameraGO.transform.parent = targetGO.transform.parent;
 		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset + bounds.center;
 		m_cameraGO.transform.LookAt(bounds.center);

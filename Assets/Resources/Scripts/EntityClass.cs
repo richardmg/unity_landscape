@@ -29,48 +29,53 @@ public class EntityClass {
 		Mesh = 1
 	}
 
-	public EntityClass(string name)
+	public EntityClass(string name = "", int id = -1, bool notify = true)
 	{
-		this.entityName = name;
-		Root.instance.entityClassManager.addEntityClass(this);
+		entityName = name != "" ? name : "EntityClass " + id;
+		m_voxelObjectRoot = new VoxelObjectRoot();
+		Root.instance.entityClassManager.addEntityClass(this, notify);
 	}
 
 	public EntityClass(EntityClass originalEntityClass)
 	{
 		Debug.Log("not supported. Need to copy all children voxel objects");
 		this.entityName = originalEntityClass.entityName + "_clone";
+		m_voxelObjectRoot = new VoxelObjectRoot();
 		Root.instance.entityClassManager.addEntityClass(this);
 	}
-
-	private EntityClass()
-	{}
 
 	public void remove()
 	{
 		Root.instance.entityClassManager.removeEntityClass(this);
 	}
 
-	public EntityInstance createInstance(Transform parent = null, string name = "")
+	public GameObject createGameObject(Transform parent, Lod lod, string name = "")
 	{
-		GameObject go = new GameObject(name);
-		go.transform.parent = parent;
-		Vector3 localScale = m_voxelObjectRoot.transform.localScale;
+		GameObject go = m_voxelObjectRoot.createGameObject(parent, lod);
+		Vector3 localScale = go.transform.localScale;
 		localScale.Scale(Root.instance.entityBaseScale);
 		go.transform.localScale = localScale;
-		go.transform.localPosition = Vector3.zero;
 
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
+		return go;
+	}
 
-		// Disable it as it will either be a part of a combined mesh, or
-		// made stand-alone explicit
-		go.SetActive(false);
+	public GameObject createGameObject(Transform parent, EntityInstanceDescription desc, Lod lod, string name = "")
+	{
+		GameObject go = createGameObject(parent, lod, name);
+		go.transform.position = desc.worldPos;
+		go.transform.rotation = desc.rotation;
+		go.isStatic = desc.isStatic;
 
-		return instance;
+		EntityInstance instance = go.GetComponent<EntityInstance>();
+		instance.entityInstanceDescription = desc;
+		return go;
 	}
 
 	public void setVoxelObjectRoot(VoxelObjectRoot root)
 	{
+		Debug.Assert(root != null);
 		m_voxelObjectRoot = root;
 		markDirty(DirtyFlags.Mesh);
 	}
@@ -88,30 +93,6 @@ public class EntityClass {
 		if (m == null)
 			return -1;
 		return m.vertexCount;
-	}
-
-	List<VoxelObject> getUniqueVoxelObjects()
-	{
-		VoxelObject[] voxelObjects = m_voxelObjectRoot.GetComponentsInChildren<VoxelObject>(true);
-		List<VoxelObject> uniqueVoxelObjects = new List<VoxelObject>();
-
-		for (int i = 0; i < voxelObjects.Length; ++i) {
-			int atlasIndex = voxelObjects[i].atlasIndex;
-			if (atlasIndex < 0)
-				continue;
-			
-			bool unique = true;
-			for (int v = 0; v < uniqueVoxelObjects.Count; ++v) {
-				if (uniqueVoxelObjects[v].atlasIndex == atlasIndex) {
-					unique = false;
-					break;
-				}
-			}
-			if (unique)
-				uniqueVoxelObjects.Add(voxelObjects[i]);
-		}
-
-		return uniqueVoxelObjects;
 	}
 
 	public void markDirty(DirtyFlags flags)
@@ -153,39 +134,33 @@ public class EntityClass {
 
 	public Texture2D takeSnapshot(SnapshotCamera camera)
 	{
-		EntityInstance instance = createInstance(null, "SnapshotEntity");
-		instance.makeStandalone(Root.kLodLit);
-		Texture2D snapshot = camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset);
-		instance.gameObject.hideAndDestroy();
+		GameObject go = createGameObject(null, Root.kLodLit, "SnapshotEntity");
+		Texture2D snapshot = camera.takeSnapshot(go, m_voxelObjectRoot.snapshotOffset);
+		go.hideAndDestroy();
 		return snapshot;
 	}
 
 	public void takeSnapshot(SnapshotCamera camera, Texture2D destTexture, int destX, int destY)
 	{
-		EntityInstance instance = createInstance(null, "SnapshotEntity");
-		instance.makeStandalone(Root.kLodLit);
-		camera.takeSnapshot(instance.gameObject, m_voxelObjectRoot.snapshotOffset, destTexture, destX, destY);
-		instance.gameObject.hideAndDestroy();
+		GameObject go = createGameObject(null, Root.kLodLit, "SnapshotEntity");
+		camera.takeSnapshot(go, m_voxelObjectRoot.snapshotOffset, destTexture, destX, destY);
+		go.hideAndDestroy();
 	}
 
-	public static EntityClass load(ProjectIO projectIO, bool notify = true)
+	public static EntityClass load(ProjectIO projectIO)
 	{
-		EntityClass c = new EntityClass();
-		c.initFromLoad(projectIO, notify);
+		int id = projectIO.readInt();
+		string name = projectIO.readString();
+		EntityClass c = new EntityClass(name, id, false);
+		c.initFromLoad(projectIO);
 		return c;
 	}
 
-	void initFromLoad(ProjectIO projectIO, bool notify)
+	void initFromLoad(ProjectIO projectIO)
 	{
 		Debug.Log("Load entity class not implemented");
 
-		id = projectIO.readInt();
-		entityName = projectIO.readString();
-		instanceDescriptionCount = projectIO.readInt();
-
 		m_voxelObjectRoot = null;
-
-		Root.instance.entityClassManager.addEntityClass(this, id, notify);
 	}
 
 	public void save(ProjectIO projectIO)

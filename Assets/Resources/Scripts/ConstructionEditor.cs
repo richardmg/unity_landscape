@@ -9,7 +9,8 @@ public class ConstructionEditor : MonoBehaviour {
 	public GameObject zoomSlider;
 	public GameObject worldEntityButton;
 
-	VoxelObjectRoot m_root;
+	GameObject m_voxelObjectRootGo;
+
 	bool m_moveEntity = false;
 
 	// Use this for initialization
@@ -24,65 +25,18 @@ public class ConstructionEditor : MonoBehaviour {
 
 	public void setEntityClass(EntityClass entityClass)
 	{
-		// - Ønsker å fjerne index substitutions
-		// - Ønsker å fjerne prefab
-		// - Ønsker å kunne bygge hierarki med VoxelObjectRoot-s
-		// - EntityClass vil fortsatt bare ha en (master) root.
-		// - Constructor vil bare jobbe på barn direkte under entity class root
-		// - Ergo ønsker jeg her ikke deep copy, men bare copy av direkte barn
-		// - VoxelObjectRoot vil dermed også ha en transform
-		// - Tror jeg dropper at man kan bygge hierarki med VoxelObjects, kun
-		// 		med VoxelObjectRoot.
-		// - VoxelObject blir dermed leaf-noder.
-		if (m_root)
-			m_root.gameObject.hideAndDestroy();
-
-//		m_instance = entityClass.createInstance(transform, "ConstructionEntity");
-//		m_instance.transform.localPosition = Vector3.zero;
-//		m_instance.makeStandalone(Root.kLodLit, true);
-
-
-		// Create root to hold the children in the scene. Note that we
-		// only end up with direct children of the root, and no grandchildren.
-		GameObject rootGo = new GameObject();
-		rootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
-		rootGo.transform.parent = transform;
-		rootGo.transform.localPosition = Vector3.zero;
-		m_root = rootGo.AddComponent<VoxelObjectRoot>();
-
-		/*
-		// Foreach child voxelobject (leafs);
-		// Copy voxel object and add to root
-		GameObject voxelObjectGo = new GameObject();
-		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
-		voxelObjectGo.transform.parent = rootGo.transform;
-		voxelObjectGo.transform.localPosition = Vector3.zero;
-		VoxelObject vo = voxelObjectGo.AddComponent<VoxelObject>();
-		vo.atlasIndex = 0;
-		vo.makeStandalone(Root.kLod0);
-
-		// Foreach child voxelobjectroot:
-		Mesh childRootMesh = null; // shilcRoot.createMesh();
-		GameObject childRootGo = new GameObject();
-		childRootGo.addMeshComponents(Root.kLod0, childRootMesh);
-		childRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
-		childRootGo.transform.parent = rootGo.transform;
-		childRootGo.transform.localPosition = Vector3.zero;
-		*/
+		if (m_voxelObjectRootGo != null)
+			m_voxelObjectRootGo.hideAndDestroy();
+		
+		m_voxelObjectRootGo = entityClass.getVoxelObjectRoot().createGameObject(transform, Root.kLod0);
+		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 	}
 
 	public VoxelObjectRoot takeVoxelObjectRoot()
 	{
-		Transform rootTransform = m_root.transform;
-		int childCount = rootTransform.childCount;
-		for (int i = 0; i < childCount; ++i) {
-			Transform child = rootTransform.GetChild(i);
-			child.gameObject.layer = LayerMask.NameToLayer("Default");
-		}
-
-		VoxelObjectRoot ret = m_root;
-		m_root = null;
-		return ret;
+		// Copy GameObject transforms back into VoxelObjectRoot
+		VoxelObjectRoot root = new VoxelObjectRoot();
+		return root;
 	}
 
 	public void onZoomSliderChanged(Slider slider)
@@ -99,34 +53,28 @@ public class ConstructionEditor : MonoBehaviour {
 
 	public void onAddButtonClicked()
 	{
-		GameObject voxelObjectGo = new GameObject();
+		VoxelObject vo = new VoxelObject(0, 4);
+		GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
-		voxelObjectGo.transform.parent = m_root.transform;
-		voxelObjectGo.transform.localPosition = Vector3.zero;
+
 		System.Random rnd = new System.Random();
 		float x = rnd.Next(0, 30);
 		float y = rnd.Next(0, 30);
 		voxelObjectGo.transform.localPosition = new Vector3(x, y, 0);
-		VoxelObject vo = voxelObjectGo.AddComponent<VoxelObject>();
-		vo.atlasIndex = 0;
-		vo.makeStandalone(Root.kLod0);
 	}
 
 	public void onAddEntityButtonClicked()
 	{
-		Root.instance.uiManager.uiEntityClassPickerGO.pushDialog((bool accepted) => {
-			if (!accepted)
-				return;
-			EntityClass entityClass = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
-			if (entityClass != null)
-				addEntityClass(entityClass);	
-		});
+//		Root.instance.uiManager.uiEntityClassPickerGO.pushDialog((bool accepted) => {
+//			if (!accepted)
+//				return;
+//			EntityClass entityClass = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
+//			if (entityClass != null)
+//				addVoxelObject(entityClass);	
+//		});
 	}
 
-	void addEntityClass(EntityClass entityClass)
+	void addVoxelObject(VoxelObject vo)
 	{
-		EntityInstance instance = entityClass.createInstance(transform, entityClass.entityName);
-		instance.gameObject.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
-		instance.makeStandalone(Root.kLod0);
 	}
 }

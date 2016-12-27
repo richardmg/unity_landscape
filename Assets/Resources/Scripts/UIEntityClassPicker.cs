@@ -230,8 +230,10 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 	public void onEditButtonClicked()
 	{
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
-		if (entityClass == null)
-			return;
+		bool createTemporary = (entityClass == null);
+		if (createTemporary)
+			entityClass = new EntityClass("", selectedIndex);
+
 		Root.instance.uiManager.constructionEditor.setEntityClass(entityClass);
 		Root.instance.uiManager.uiConstructionEditorGO.pushDialog((bool accepted) => {
 			if (entityClass.removed)
@@ -241,6 +243,8 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 				VoxelObjectRoot root = Root.instance.uiManager.constructionEditor.takeVoxelObjectRoot();	
 				entityClass.setVoxelObjectRoot(root);
 				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
+			} else if (createTemporary) {
+				entityClass.remove();
 			}
 
 			selectEntityClass(entityClass);

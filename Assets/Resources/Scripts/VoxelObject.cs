@@ -3,28 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
 
-public class VoxelObject : MonoBehaviour {
-
+public class VoxelObject
+{
 	public int atlasIndex = 0;
-
-	[Range (0f, 20f)]
 	public float voxelDepth = 4;
+
+	public Vector3 localPos;
+	public Quaternion localRotation;
 
 	static VoxelMeshFactory voxelMeshFactory;
 
-	void OnValidate()
+	public VoxelObject(int atlasIndex, float voxelDepth)
 	{
-		if (gameObject.scene.name == null || !gameObject.activeSelf) {
-			// Don't modify prefabs or inactive objects
-			return;
-		}
-
-		makeStandalone(Root.kLod0);
-	}
-
-	public void makeStandalone(Lod lod)
-	{
-		gameObject.addMeshComponents(lod, createMesh(lod));
+		this.atlasIndex = atlasIndex;
+		this.voxelDepth = voxelDepth;
 	}
 
 	public Mesh createMesh(Lod lod)
@@ -52,5 +44,15 @@ public class VoxelObject : MonoBehaviour {
 		}
 
 		return voxelMeshFactory.createMesh();
+	}
+
+	public GameObject createGameObject(Transform parent, Lod lod)
+	{
+		GameObject go = new GameObject("VoxelObject: " + atlasIndex);
+		go.addMeshComponents(lod, createMesh(lod));
+		go.transform.parent = parent;
+		go.transform.localPosition = localPos;
+		go.transform.localRotation = localRotation;
+		return go;
 	}
 }
