@@ -76,11 +76,11 @@ public class ConstructionEditor : MonoBehaviour {
 		VoxelObject vo = new VoxelObject(0, 4);
 		GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
-
-		System.Random rnd = new System.Random();
-		float x = rnd.Next(0, 30);
-		float y = rnd.Next(0, 30);
-		voxelObjectGo.transform.localPosition = new Vector3(x, y, 0);
+//
+//		System.Random rnd = new System.Random();
+//		float x = 0;//rnd.Next(0, 30);
+//		float y = 2;//rnd.Next(0, 30);
+//		voxelObjectGo.transform.localPosition = new Vector3(x, y, 0);
 	}
 
 	public void onAddEntityButtonClicked()
