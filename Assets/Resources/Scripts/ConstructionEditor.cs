@@ -36,15 +36,20 @@ public class ConstructionEditor : MonoBehaviour {
 		m_voxelObjectRootGo = root.createGameObject(transform, Root.kLod0);
 		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
-		constructionCameraGO.transform.localPosition = root.snapshotOffset;
-		float zoomNormalized = (-root.snapshotOffset.z - zoomMin) / (float)(zoomMax - zoomMin);
-		zoomSliderGo.GetComponent<Slider>().normalizedValue = zoomNormalized;
+		Vector3 cameraPos = root.snapshotOffset;
+		constructionCameraGO.transform.localPosition = cameraPos;
 
+		// Create VoxelObject GameObjects for each voxel object inside root
 		for (int i = 0; i < root.voxelObjects.Count; ++i) {
 			VoxelObject vo = root.voxelObjects[i];
 			GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
 			voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 		}
+
+		// Set zoom slider at correct position
+		float camDist = Mathf.Abs(Mathf.Sqrt((cameraPos.x * cameraPos.x) + (cameraPos.y * cameraPos.y) + (cameraPos.z * cameraPos.z)));
+		float zoomNormalized = (camDist - zoomMin) / (zoomMax - zoomMin);
+		zoomSliderGo.GetComponent<Slider>().normalizedValue = zoomNormalized;
 	}
 
 	public VoxelObjectRoot createVoxelObjectRoot()
