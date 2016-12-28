@@ -7,8 +7,11 @@ using UnityEngine.UI;
 public class ConstructionEditor : MonoBehaviour {
 
 	public GameObject constructionCameraGO;
-	public GameObject zoomSlider;
+	public GameObject zoomSliderGo;
 	public GameObject worldEntityButton;
+
+	public float zoomMin = 0f;
+	public float zoomMax = 200f;
 
 	GameObject m_voxelObjectRootGo;
 
@@ -16,7 +19,7 @@ public class ConstructionEditor : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		zoomSlider.GetComponent<Slider>().normalizedValue = 0.5f;
+		zoomSliderGo.GetComponent<Slider>().normalizedValue = 0.5f;
 	}
 	
 	// Update is called once per frame
@@ -34,6 +37,8 @@ public class ConstructionEditor : MonoBehaviour {
 		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
 		constructionCameraGO.transform.localPosition = root.snapshotOffset;
+		float zoomNormalized = (-root.snapshotOffset.z - zoomMin) / (float)(zoomMax - zoomMin);
+		zoomSliderGo.GetComponent<Slider>().normalizedValue = zoomNormalized;
 
 		for (int i = 0; i < root.voxelObjects.Count; ++i) {
 			VoxelObject vo = root.voxelObjects[i];
@@ -62,7 +67,8 @@ public class ConstructionEditor : MonoBehaviour {
 
 	public void onZoomSliderChanged(Slider slider)
 	{
-		Vector3 cameraPos = new Vector3(0, 0, slider.normalizedValue * -200);
+		float zoom = zoomMin + (slider.normalizedValue * -zoomMax);
+		Vector3 cameraPos = new Vector3(0, 0, zoom);
 		constructionCameraGO.transform.localPosition = cameraPos;
 	}
 
