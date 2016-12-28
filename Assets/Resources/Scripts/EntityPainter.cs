@@ -34,7 +34,7 @@ public class EntityPainter : MonoBehaviour {
 		if (!Root.instance.uiManager.grabMouse(this))
 			return;
 
-		Vector2 uv = UIManager.getMousePosOnImage(GetComponent<RawImage>());
+		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RawImage>().rectTransform);
 
 		if (UIManager.isInside(uv)) {
 			if (Input.GetKey(KeyCode.C) || m_currentMode == kColorSelectMode)
@@ -76,7 +76,7 @@ public class EntityPainter : MonoBehaviour {
 	{
 		for (int i = 0; i < m_atlasIndexList.Count; ++i) {
 			RawImage image = m_thumbnailImageList[i];
-			Vector2 thumbUv = UIManager.getMousePosOnImage(image);
+			Vector2 thumbUv = UIManager.getMousePosInsideRect(image.rectTransform);
 			if (UIManager.isInside(thumbUv))
 				setListIndex(i);
 		}

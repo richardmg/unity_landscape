@@ -12,7 +12,7 @@ public class ColorPicker : MonoBehaviour {
 			return;
 
 		RawImage image = GetComponent<RawImage>();
-		Vector2 uv = UIManager.getMousePosOnImage(image);
+		Vector2 uv = UIManager.getMousePosInsideRect(image.rectTransform);
 
 		if (!UIManager.isInside(uv))
 			return;

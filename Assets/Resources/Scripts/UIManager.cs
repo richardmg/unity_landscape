@@ -170,10 +170,10 @@ public class UIManager : MonoBehaviour {
 			setMenuVisible(uiFirstPersonGO.activeSelf);
 	}
 
-	static public Vector2 getMousePosOnImage(RawImage image, bool flipY = false)
+	static public Vector2 getMousePosInsideRect(RectTransform rect, bool flipY = false)
 	{
 		Vector3[] corners = new Vector3[4];
-		image.rectTransform.GetWorldCorners(corners);
+		rect.GetWorldCorners(corners);
 		float uvx = (Input.mousePosition.x - corners[0].x) / (corners[2].x - corners[0].x);
 		float uvy = (Input.mousePosition.y - corners[0].y) / (corners[2].y - corners[0].y);
 		return new Vector2(uvx, flipY ? 1 - uvy : uvy);
