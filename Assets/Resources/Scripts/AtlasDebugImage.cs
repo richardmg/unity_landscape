@@ -13,7 +13,7 @@ public class AtlasDebugImage : MonoBehaviour {
 		if (!Input.GetMouseButtonDown(0))
 			return;
 
-		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RawImage>().rectTransform, true);
+		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RectTransform>(), true);
 		if (!UIManager.isInside(uv))
 			return;
 

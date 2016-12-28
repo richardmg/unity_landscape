@@ -63,7 +63,7 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 		if (!Input.GetMouseButtonDown(0))
 			return;
 
-		Vector2 uv = UIManager.getMousePosInsideRect(rawImageGO.GetComponent<RawImage>().rectTransform, true);
+		Vector2 uv = UIManager.getMousePosInsideRect(rawImageGO.GetComponent<RectTransform>(), true);
 		if (!UIManager.isInside(uv))
 			return;
 

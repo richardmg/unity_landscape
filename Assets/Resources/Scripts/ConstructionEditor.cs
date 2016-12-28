@@ -24,7 +24,15 @@ public class ConstructionEditor : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		if (!Root.instance.uiManager.grabMouse(this))
+			return;
+
+		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RectTransform>());
+
+		if (UIManager.isInside(uv)) {
+			// need better focus handling
+		}
+			
 	}
 
 	public void setEntityClass(EntityClass entityClass)

@@ -34,7 +34,7 @@ public class EntityPainter : MonoBehaviour {
 		if (!Root.instance.uiManager.grabMouse(this))
 			return;
 
-		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RawImage>().rectTransform);
+		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RectTransform>());
 
 		if (UIManager.isInside(uv)) {
 			if (Input.GetKey(KeyCode.C) || m_currentMode == kColorSelectMode)
