@@ -55,8 +55,7 @@ public class ConstructionEditor : MonoBehaviour {
 		}
 
 		// Set zoom slider at correct position
-		float camDist = Mathf.Abs(Mathf.Sqrt((cameraPos.x * cameraPos.x) + (cameraPos.y * cameraPos.y) + (cameraPos.z * cameraPos.z)));
-		float zoomNormalized = (camDist - zoomMin) / (zoomMax - zoomMin);
+		float zoomNormalized = (cameraPos.magnitude - zoomMin) / (zoomMax - zoomMin);
 		zoomSliderGo.GetComponent<Slider>().normalizedValue = zoomNormalized;
 	}
 
