@@ -16,7 +16,7 @@ class UIManagerStackItem {
 }
 
 public class UIManager : MonoBehaviour {
-	public GameObject backgroundGO;
+	public GameObject uiForegroundGO;
 	public GameObject uiFirstPersonGO;
 	public GameObject uiColorPickerGO;
 	public GameObject uiPaintEditorGO;
@@ -42,7 +42,7 @@ public class UIManager : MonoBehaviour {
 
 	void Awake()
 	{
-		background = backgroundGO.GetComponent<UIBackground>();
+		background = uiForegroundGO.GetComponent<UIBackground>();
 		entityClassPicker = uiEntityClassPickerGO.GetComponent<UIEntityClassPicker>();
 		entityPainter = entityPainterGO.GetComponent<EntityPainter>();
 		constructionEditor = uiConstructionEditorGO.GetComponent<ConstructionEditor>();
@@ -58,7 +58,7 @@ public class UIManager : MonoBehaviour {
 
 	void hideUI()
 	{
-		backgroundGO.SetActive(false);
+		uiForegroundGO.SetActive(false);
 		uiFirstPersonGO.SetActive(false);
 		uiColorPickerGO.SetActive(false);
 		uiPaintEditorGO.SetActive(false);
@@ -138,7 +138,7 @@ public class UIManager : MonoBehaviour {
 	public void setMenuVisible(bool visible)
 	{
 		hideUI();
-		backgroundGO.SetActive(visible);
+		uiForegroundGO.SetActive(visible);
 		currentMenu.SetActive(visible);
 		uiFirstPersonGO.SetActive(!visible);
 		enableCursorMode(visible);
