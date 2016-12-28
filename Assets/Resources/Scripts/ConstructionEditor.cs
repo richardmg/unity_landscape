@@ -35,6 +35,8 @@ public class ConstructionEditor : MonoBehaviour {
 		m_voxelObjectRootGo = root.createGameObject(transform, Root.kLod0);
 		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
+		constructionCameraGO.transform.localPosition = root.snapshotOffset;
+
 		for (int i = 0; i < root.voxelObjects.Count; ++i) {
 			VoxelObject vo = root.voxelObjects[i];
 			GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
