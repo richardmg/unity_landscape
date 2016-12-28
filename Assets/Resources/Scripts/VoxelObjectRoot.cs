@@ -12,7 +12,7 @@ public class VoxelObjectRootMonoBehaviour : MonoBehaviour
 public class VoxelObjectRoot
 {
 	public List<VoxelObject> voxelObjects = new List<VoxelObject>();
-	public Vector3 snapshotOffset = new Vector3(0, 0, -7);
+	public Vector3 snapshotOffset = new Vector3(0, 0, -10);
 
 	public Vector3 scale = new Vector3(1, 1, 1);
 

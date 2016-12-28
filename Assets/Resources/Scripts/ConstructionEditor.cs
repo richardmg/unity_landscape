@@ -11,7 +11,6 @@ public class ConstructionEditor : MonoBehaviour {
 	public GameObject worldEntityButton;
 
 	GameObject m_voxelObjectRootGo;
-	List<VoxelObject> m_voxelObjects;
 
 	bool m_moveEntity = false;
 
@@ -31,7 +30,6 @@ public class ConstructionEditor : MonoBehaviour {
 			m_voxelObjectRootGo.hideAndDestroy();
 
 		VoxelObjectRoot root = entityClass.getVoxelObjectRoot();
-		m_voxelObjects = new List<VoxelObject>();
 		m_voxelObjectRootGo = root.createGameObject(transform, Root.kLod0);
 		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
@@ -79,10 +77,10 @@ public class ConstructionEditor : MonoBehaviour {
 		VoxelObject vo = new VoxelObject(0, 4);
 		GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
-//
+
 //		System.Random rnd = new System.Random();
-//		float x = 0;//rnd.Next(0, 30);
-//		float y = 2;//rnd.Next(0, 30);
+//		float x = rnd.Next(0, 200) - 100;
+//		float y = rnd.Next(0, 200) - 100;
 //		voxelObjectGo.transform.localPosition = new Vector3(x, y, 0);
 	}
 
