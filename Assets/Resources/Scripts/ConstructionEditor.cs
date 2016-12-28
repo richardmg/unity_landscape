@@ -3,17 +3,20 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
-public class ConstructionEditor : MonoBehaviour {
-
+public class ConstructionEditor : MonoBehaviour, IDragHandler	
+{
 	public GameObject constructionCameraGO;
 	public GameObject zoomSliderGo;
 	public GameObject worldEntityButton;
 
+	public float dragSpeed = 0.3f;
 	public float zoomMin = 0f;
 	public float zoomMax = 200f;
 
 	GameObject m_voxelObjectRootGo;
+	GameObject m_selectedGameObject;
 
 	bool m_moveEntity = false;
 
@@ -22,17 +25,12 @@ public class ConstructionEditor : MonoBehaviour {
 		zoomSliderGo.GetComponent<Slider>().normalizedValue = 0.5f;
 	}
 	
-	// Update is called once per frame
-	void Update () {
-		if (!Root.instance.uiManager.grabMouse(this))
-			return;
-
-		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RectTransform>());
-
-		if (UIManager.isInside(uv)) {
-			// need better focus handling
-		}
-			
+	public void OnDrag(PointerEventData data)
+	{
+		Vector3 pos = m_selectedGameObject.transform.localPosition;
+		pos.x += data.delta.x * dragSpeed;
+		pos.y += data.delta.y * dragSpeed;
+		m_selectedGameObject.transform.localPosition = pos;
 	}
 
 	public void setEntityClass(EntityClass entityClass)
@@ -95,6 +93,8 @@ public class ConstructionEditor : MonoBehaviour {
 		VoxelObject vo = new VoxelObject(0, 4);
 		GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
+
+		m_selectedGameObject = voxelObjectGo;
 
 //		System.Random rnd = new System.Random();
 //		float x = rnd.Next(0, 200) - 100;

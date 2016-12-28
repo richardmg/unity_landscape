@@ -2,8 +2,9 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
-public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProjectListener {
+public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler,  IEntityClassListener, IProjectListener {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
@@ -58,11 +59,8 @@ public class UIEntityClassPicker : MonoBehaviour, IEntityClassListener, IProject
 			repaintTableTexture();
 	}
 
-	void Update()
-    {
-		if (!Input.GetMouseButtonDown(0))
-			return;
-
+	public void OnPointerDown(PointerEventData eventData)
+	{
 		Vector2 uv = UIManager.getMousePosInsideRect(rawImageGO.GetComponent<RectTransform>(), true);
 		if (!UIManager.isInside(uv))
 			return;
