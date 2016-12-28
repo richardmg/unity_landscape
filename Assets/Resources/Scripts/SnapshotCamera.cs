@@ -35,6 +35,7 @@ public class SnapshotCamera {
 		m_cameraGO.transform.localPosition = targetGO.transform.localPosition + cameraOffset + bounds.center;
 		m_cameraGO.transform.LookAt(targetGO.transform.localPosition + bounds.center);
 
+		// Ensure the snapshot camera can see the target (and nothing else)
 		int prevLayer = targetGO.layer;
 		MeshFilter[] filters = targetGO.GetComponentsInChildren<MeshFilter>();
 		foreach (MeshFilter filter in filters) {
@@ -42,13 +43,14 @@ public class SnapshotCamera {
 			filter.gameObject.layer = LayerMask.NameToLayer("SnapshotCameraLayer");
 		}
 
+		// Take the snapshot
 		m_camera.Render();
 
 		foreach (MeshFilter filter in filters)
 			filter.gameObject.layer = prevLayer;
 
-		// Make the render texture the active render
-		// target, and read pixels from it into destTexture.
+		// Make the render texture the active render target, and
+		// read the pixels from the snapshot into destTexture.
 		RenderTexture prevActive = RenderTexture.active;
 		RenderTexture.active = renderTexture;
 		destTexture.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), destX, destY);
