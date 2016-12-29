@@ -26,6 +26,9 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 
 	public void OnDrag(PointerEventData data)
 	{
+		if (m_selectedGameObject == null)
+			return;
+		
 		float sliderValue = zoomSliderGo.GetComponent<Slider>().normalizedValue;
 		float dragSpeed = dragSpeedMin + (sliderValue * (dragSpeedMax - dragSpeedMin));
 		
