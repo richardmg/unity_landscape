@@ -11,7 +11,8 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 	public GameObject zoomSliderGo;
 	public GameObject worldEntityButton;
 
-	public float dragSpeed = 0.3f;
+	public float dragSpeedMin = 0.01f;
+	public float dragSpeedMax = 0.2f;
 	public float zoomMin = 10f;
 	public float zoomMax = 200f;
 
@@ -25,6 +26,9 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 
 	public void OnDrag(PointerEventData data)
 	{
+		float sliderValue = zoomSliderGo.GetComponent<Slider>().normalizedValue;
+		float dragSpeed = dragSpeedMin + (sliderValue * (dragSpeedMax - dragSpeedMin));
+		
 		m_dragPosX += data.delta.x * dragSpeed;
 		m_dragPosY += data.delta.y * dragSpeed;
 
@@ -78,7 +82,7 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 
 	public void onZoomSliderChanged(Slider slider)
 	{
-		float zoom = -zoomMin + (slider.normalizedValue * -zoomMax);
+		float zoom = -zoomMin + (slider.normalizedValue * -(zoomMax - zoomMin));
 		Vector3 cameraPos = new Vector3(0, 0, zoom);
 		constructionCameraGO.transform.localPosition = cameraPos;
 		constructionCameraGO.transform.LookAt(m_voxelObjectRootGo.transform.position);
