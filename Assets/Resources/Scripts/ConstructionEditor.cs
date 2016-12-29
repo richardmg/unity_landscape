@@ -48,16 +48,16 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 
 		VoxelObjectRoot root = entityClass.getVoxelObjectRoot();
 		m_voxelObjectRootGo = root.createGameObject(transform, Root.kLod0);
-		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
 		Vector3 cameraPos = root.snapshotOffset;
 		constructionCameraGO.transform.localPosition = cameraPos;
 
 		// Create VoxelObject GameObjects for each voxel object inside root
-		for (int i = 0; i < root.voxelObjects.Count; ++i) {
-			VoxelObject vo = root.voxelObjects[i];
-			GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0, false);
-			voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
+		m_voxelObjectRootGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
+		Transform[] selfAndchildren = m_voxelObjectRootGo.GetComponentsInChildren<Transform>(true);
+		for (int i = 0; i < selfAndchildren.Length; ++i) {
+			GameObject go = selfAndchildren[i].gameObject;
+			go.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 		}
 
 		// Set zoom slider at correct position
@@ -101,6 +101,7 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 	{
 		VoxelObject vo = new VoxelObject(0, 4);
 		GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0, false);
+
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
 		m_selectedGameObject = voxelObjectGo;

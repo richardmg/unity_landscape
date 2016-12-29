@@ -60,6 +60,7 @@ public class VoxelObject
 		go.transform.parent = parent;
 		go.transform.localPosition = localPosition;
 		go.transform.localRotation = localRotation;
+		go.transform.localScale = Vector3.one;
 		if (applyGlobalScale) {
 			// Only apply global scale if go will exist as
 			// standalone, and not as a child of a VoxelObjectRoot.

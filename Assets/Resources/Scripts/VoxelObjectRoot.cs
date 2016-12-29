@@ -28,6 +28,9 @@ public class VoxelObjectRoot
 	public GameObject createGameObject(Transform parent, Lod lod)
 	{
 		GameObject go = new GameObject("VoxelObjectRoot");
+		foreach (VoxelObject vo in voxelObjects)
+			vo.createGameObject(go.transform, lod, false);
+
 		go.AddComponent<VoxelObjectRootMonoBehaviour>().voxelObjectRoot = this;
 		go.transform.parent = parent;
 		Vector3 localScale = Vector3.one;
@@ -35,8 +38,7 @@ public class VoxelObjectRoot
 		localScale.Scale(Root.instance.entityBaseScale);
 		go.transform.localScale = localScale;
 		go.transform.localPosition = Vector3.zero;
-		foreach (VoxelObject vo in voxelObjects)
-			vo.createGameObject(go.transform, lod, false);
+
 		return go;
 	}
 
