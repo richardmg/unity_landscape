@@ -53,7 +53,7 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 		// Create VoxelObject GameObjects for each voxel object inside root
 		for (int i = 0; i < root.voxelObjects.Count; ++i) {
 			VoxelObject vo = root.voxelObjects[i];
-			GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
+			GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0, false);
 			voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 		}
 
@@ -97,7 +97,7 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 	public void onAddButtonClicked()
 	{
 		VoxelObject vo = new VoxelObject(0, 4);
-		GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0);
+		GameObject voxelObjectGo = vo.createGameObject(m_voxelObjectRootGo.transform, Root.kLod0, false);
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
 		m_selectedGameObject = voxelObjectGo;

@@ -30,10 +30,13 @@ public class VoxelObjectRoot
 		GameObject go = new GameObject("VoxelObjectRoot");
 		go.AddComponent<VoxelObjectRootMonoBehaviour>().voxelObjectRoot = this;
 		go.transform.parent = parent;
-		go.transform.localScale = scale;
+		Vector3 localScale = Vector3.one;
+		localScale.Scale(scale);
+		localScale.Scale(Root.instance.entityBaseScale);
+		go.transform.localScale = localScale;
 		go.transform.localPosition = Vector3.zero;
 		foreach (VoxelObject vo in voxelObjects)
-			vo.createGameObject(go.transform, lod);
+			vo.createGameObject(go.transform, lod, false);
 		return go;
 	}
 

@@ -52,7 +52,7 @@ public class VoxelObject
 		return voxelMeshFactory.createMesh();
 	}
 
-	public GameObject createGameObject(Transform parent, Lod lod)
+	public GameObject createGameObject(Transform parent, Lod lod, bool applyGlobalScale)
 	{
 		GameObject go = new GameObject("VoxelObject: " + atlasIndex);
 		go.addMeshComponents(lod, createMesh(lod));
@@ -60,6 +60,11 @@ public class VoxelObject
 		go.transform.parent = parent;
 		go.transform.localPosition = localPosition;
 		go.transform.localRotation = localRotation;
+		if (applyGlobalScale) {
+			// Only apply global scale if go will exist as
+			// standalone, and not as a child of a VoxelObjectRoot.
+			go.transform.localScale = Root.instance.entityBaseScale;
+		}
 		return go;
 	}
 }

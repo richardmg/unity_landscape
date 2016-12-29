@@ -52,10 +52,6 @@ public class EntityClass {
 	public GameObject createGameObject(Transform parent, Lod lod, string name = "")
 	{
 		GameObject go = m_voxelObjectRoot.createGameObject(parent, lod);
-		Vector3 localScale = go.transform.localScale;
-		localScale.Scale(Root.instance.entityBaseScale);
-		go.transform.localScale = localScale;
-
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
 		return go;
