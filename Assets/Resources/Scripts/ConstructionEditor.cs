@@ -15,6 +15,9 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 	public float zoomMin = 0f;
 	public float zoomMax = 200f;
 
+	float m_dragPosX = 0;
+	float m_dragPosY = 0;
+
 	GameObject m_voxelObjectRootGo;
 	GameObject m_selectedGameObject;
 
@@ -27,9 +30,12 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 	
 	public void OnDrag(PointerEventData data)
 	{
+		m_dragPosX += data.delta.x * dragSpeed;
+		m_dragPosY += data.delta.y * dragSpeed;
+
 		Vector3 pos = m_selectedGameObject.transform.localPosition;
-		pos.x += data.delta.x * dragSpeed;
-		pos.y += data.delta.y * dragSpeed;
+		pos.x = Mathf.Floor(m_dragPosX);
+		pos.y = Mathf.Floor(m_dragPosY);
 		m_selectedGameObject.transform.localPosition = pos;
 	}
 
@@ -95,6 +101,8 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
 		m_selectedGameObject = voxelObjectGo;
+		m_dragPosX = m_selectedGameObject.transform.localPosition.x;
+		m_dragPosY = m_selectedGameObject.transform.localPosition.y;
 
 //		System.Random rnd = new System.Random();
 //		float x = rnd.Next(0, 200) - 100;
