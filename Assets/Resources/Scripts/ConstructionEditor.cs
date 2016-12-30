@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class ConstructionEditor : MonoBehaviour, IDragHandler	
+public class ConstructionEditor : MonoBehaviour, IDragHandler, IPointerClickHandler
 {
 	public GameObject constructionCameraGO;
 	public GameObject zoomSliderGo;
@@ -23,6 +23,24 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 	GameObject m_selectedGameObject;
 
 	bool m_moveEntity = false;
+
+	void selectGameObject(GameObject go)
+	{
+		m_selectedGameObject = go;
+		m_dragPosX = m_selectedGameObject.transform.localPosition.x;
+		m_dragPosY = m_selectedGameObject.transform.localPosition.y;
+	}
+
+	public void OnPointerClick(PointerEventData eventData)
+	{
+		RaycastHit hit;
+		Camera camera = constructionCameraGO.GetComponent<Camera>();
+		Ray ray = camera.ScreenPointToRay(new Vector3(eventData.pressPosition.x, eventData.pressPosition.y, Camera.main.nearClipPlane));
+		LayerMask layerMask = ~LayerMask.NameToLayer("ConstructionCameraLayer");
+
+		if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+			selectGameObject(hit.transform.gameObject);
+	}
 
 	public void OnDrag(PointerEventData data)
 	{
@@ -104,25 +122,7 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler
 
 		voxelObjectGo.layer = LayerMask.NameToLayer("ConstructionCameraLayer");
 
-		m_selectedGameObject = voxelObjectGo;
-		m_dragPosX = m_selectedGameObject.transform.localPosition.x;
-		m_dragPosY = m_selectedGameObject.transform.localPosition.y;
-
-//		System.Random rnd = new System.Random();
-//		float x = rnd.Next(0, 200) - 100;
-//		float y = rnd.Next(0, 200) - 100;
-//		voxelObjectGo.transform.localPosition = new Vector3(x, y, 0);
-	}
-
-	public void onAddEntityButtonClicked()
-	{
-//		Root.instance.uiManager.uiEntityClassPickerGO.pushDialog((bool accepted) => {
-//			if (!accepted)
-//				return;
-//			EntityClass entityClass = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
-//			if (entityClass != null)
-//				addVoxelObject(entityClass);	
-//		});
+		selectGameObject(voxelObjectGo);
 	}
 
 	void addVoxelObject(VoxelObject vo)
