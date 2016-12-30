@@ -27,19 +27,24 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler, IPointerClickHand
 	void selectGameObject(GameObject go)
 	{
 		m_selectedGameObject = go;
-		m_dragPosX = m_selectedGameObject.transform.localPosition.x;
-		m_dragPosY = m_selectedGameObject.transform.localPosition.y;
+		if (go) {
+			m_dragPosX = m_selectedGameObject.transform.localPosition.x;
+			m_dragPosY = m_selectedGameObject.transform.localPosition.y;
+		}
 	}
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
+		if (eventData.dragging)
+			return;
+
 		RaycastHit hit;
 		Camera camera = constructionCameraGO.GetComponent<Camera>();
 		Ray ray = camera.ScreenPointToRay(new Vector3(eventData.pressPosition.x, eventData.pressPosition.y, Camera.main.nearClipPlane));
 		LayerMask layerMask = ~LayerMask.NameToLayer("ConstructionCameraLayer");
 
-		if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
-			selectGameObject(hit.transform.gameObject);
+		Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask);
+		selectGameObject(hit.transform ? hit.transform.gameObject : null);
 	}
 
 	public void OnDrag(PointerEventData data)
