@@ -44,7 +44,10 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler, IPointerClickHand
 		LayerMask layerMask = ~LayerMask.NameToLayer("ConstructionCameraLayer");
 
 		Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask);
-		selectGameObject(hit.transform ? hit.transform.gameObject : null);
+		if (!hit.transform || hit.transform.gameObject == m_selectedGameObject)
+			selectGameObject(null);
+		else
+			selectGameObject(hit.transform.gameObject);
 	}
 
 	public void OnDrag(PointerEventData data)
