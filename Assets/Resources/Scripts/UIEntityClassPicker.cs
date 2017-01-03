@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler,  IEntityClassListener, IProjectListener {
+public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler, IEntityClassListener, IProjectListener {
 
 	public GameObject uiEntityPickerCameraGO;
 	public GameObject rawImageGO;
