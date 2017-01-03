@@ -9,7 +9,8 @@ public class EntityInstanceDescription
 	// entity instance in the world. While the world will be populated with
 	// EntityInstanceDescriptions (tracked by EntityInstanceManager), only a
 	// subset of them will at any time be realized as visible EntityInstances
-	// (normally by a tile layer).
+	// (normally by a tile layer). And those EntityInstances will live as
+	// components of GameObjects.
 
 	public int entityClassID;	
 	public Vector3 worldPos;
