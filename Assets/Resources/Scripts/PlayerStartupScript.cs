@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
 	public EntityClass entityClassInUse = null;
+	public GameObject gameObjectInUse;
 
 	void Start()
 	{
@@ -16,22 +17,22 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 
 	public void setEntityClassInUse(EntityClass entityClass)
 	{
-		entityClassInUse = entityClass;
+//		entityClassInUse = entityClass;
 	}
 
 	public void initNewProject()
 	{
-		entityClassInUse = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
+//		entityClassInUse = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
 	}
 
 	public void load(ProjectIO projectIO)
 	{
-		entityClassInUse = Root.instance.entityClassManager.getEntity(projectIO.readInt());
+//		entityClassInUse = Root.instance.entityClassManager.getEntity(projectIO.readInt());
 	}
 
 	public void save(ProjectIO projectIO)
 	{
-		projectIO.writeInt(entityClassInUse.id);
+//		projectIO.writeInt(entityClassInUse.id);
 	}
 
 }

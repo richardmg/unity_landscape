@@ -5,18 +5,11 @@ using System.Collections;
 
 public class BillboardScript : MonoBehaviour {
 
-    public GameObject target;        //The target of the rotation (An example would be your camera)
-    public int rotSpeed = 1;        //How quickly the trees rotate
-    private Transform myTransform;  //Current object's transform
-
-    void Awake()
-    {
-       myTransform = transform;
-    }
+    public GameObject target;
 
     void Update () 
     {
-        //Look at Player on the X and Z axis
-        myTransform.rotation = Quaternion.Slerp(myTransform.rotation, Quaternion.LookRotation(new Vector3(target.transform.position.x, 0, target.transform.position.z) - new Vector3(myTransform.position.x, 0, myTransform.position.z)), rotSpeed * Time.deltaTime);
+		transform.LookAt(transform.position + target.transform.rotation * Vector3.forward,
+			target.transform.rotation * Vector3.up);
     }
 }

@@ -15,6 +15,7 @@ public class Root : MonoBehaviour {
 	public GameObject snapshotCameraGO;
 	public GameObject commandPromptGO;
 	public GameObject entityInstanceManagerGO;
+	public GameObject entityUiGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
