@@ -8,9 +8,10 @@ public class FirstPersonKeyboardControls : MonoBehaviour
 {
 	void Update()
 	{
-		if (Root.instance.player.gameObjectInUse != null)
+		GameObject ui = Root.instance.entityUiGO;
+		if (ui.activeSelf)
 			return;
-		
+
 		if (Input.GetMouseButtonDown(0)) {
 			// Create new entity:
 			Vector3 pos = Camera.main.transform.position + (Camera.main.transform.forward * 5);
@@ -19,13 +20,19 @@ public class FirstPersonKeyboardControls : MonoBehaviour
 			GameObject go = vo.createGameObject(null, Root.kLod0, true);
 			go.transform.position = pos;
 
-			GameObject ui = Root.instance.entityUiGO;
-			ui.SetActive(true);
-			ui.transform.SetParent(go.transform);
-			ui.transform.localPosition = new Vector3(0, 0, 0);
-
 			Root.instance.player.gameObjectInUse = go;
+
+			if (Input.GetKey(KeyCode.LeftApple))
+				showEntityUI();
 		}	
+	}
+
+	void showEntityUI()
+	{
+		GameObject ui = Root.instance.entityUiGO;
+		ui.SetActive(true);
+		ui.transform.SetParent(Root.instance.player.gameObjectInUse.transform);
+		ui.transform.localPosition = new Vector3(0, 0, 0);
 	}
 
 //	Vector3 getRayLandscapePos()

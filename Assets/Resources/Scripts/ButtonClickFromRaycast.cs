@@ -12,7 +12,14 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 
 	void Update()
 	{
-		if (!Input.GetMouseButtonDown(0))
+		// Flytt ui nærmere camera...
+
+//		GameObject ui = Root.instance.entityUiGO;
+//		Vector3 pos = Root.instance.playerGO.transform.position;
+//
+//		ui.transform.position = pos;
+
+		if (!Input.GetMouseButtonUp(0))
 			return;
 	
 		PointerEventData ped = new PointerEventData(null);

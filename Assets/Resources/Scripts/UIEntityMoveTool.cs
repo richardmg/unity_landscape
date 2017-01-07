@@ -20,6 +20,22 @@ public class UIEntityMoveTool : MonoBehaviour {
 		selectedGo.transform.position = pos;
 	}
 
+	public void onForwardButtonClicked()
+	{
+		GameObject selectedGo = Root.instance.player.gameObjectInUse;
+		Vector3 pos = selectedGo.transform.position;
+		pos.z += Root.instance.entityBaseScale.z;
+		selectedGo.transform.position = pos;
+	}
+
+	public void onBackwardButtonClicked()
+	{
+		GameObject selectedGo = Root.instance.player.gameObjectInUse;
+		Vector3 pos = selectedGo.transform.position;
+		pos.z -= Root.instance.entityBaseScale.z;
+		selectedGo.transform.position = pos;
+	}
+
 	public void onDoneButtonClicked()
 	{
 		Root.instance.player.gameObjectInUse = null;
