@@ -26,11 +26,11 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		moveToolGo.SetActive(false);
 	}
 
-	public void onEntityInstanceSelectionChanged()
+	public void onSelectionChanged()
 	{
-		List<EntityInstance> selectedInstances = Root.instance.player.selectedEntityInstances;
+		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		if (selectedInstances.Count != 0) {
-			transform.SetParent(selectedInstances[0].transform);
+			transform.SetParent(selectedInstances[0].instance.transform);
 			transform.localPosition = Vector3.zero;
 			gameObject.SetActive(true);
 			Root.instance.player.currentTool.SetActive(true);

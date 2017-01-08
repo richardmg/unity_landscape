@@ -14,7 +14,7 @@ public class EntitySelectionTool : MonoBehaviour
 		if (Input.GetKey(KeyCode.LeftApple)) {
 			EntityInstance entityInstance = getClickedEntityInstance();
 			if (entityInstance)
-				Root.instance.player.selectEntityInstance(entityInstance);
+				Root.instance.player.selectEntityInstance(entityInstance.entityInstanceDescription);
 		} else if (!Root.instance.player.currentTool.activeSelf) {
 			// FACTOR OUT IN SEPARATE TOOL
 			createNewEntityInstance();

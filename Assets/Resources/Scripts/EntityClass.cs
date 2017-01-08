@@ -31,7 +31,7 @@ public class EntityClass {
 
 	public EntityClass(string name = "", int id = -1, bool notify = true)
 	{
-		entityName = name != "" ? name : "EntityClass " + id;
+		entityName = name != "" ? name : "Unnamed EntityClass";
 		m_voxelObjectRoot = new VoxelObjectRoot();
 		Root.instance.entityClassManager.addEntityClass(this, notify);
 	}
@@ -64,8 +64,8 @@ public class EntityClass {
 		go.transform.rotation = desc.rotation;
 		go.isStatic = desc.isStatic;
 
-		EntityInstance instance = go.GetComponent<EntityInstance>();
-		instance.entityInstanceDescription = desc;
+		desc.instance = go.GetComponent<EntityInstance>();
+		desc.instance.entityInstanceDescription = desc;
 		return go;
 	}
 

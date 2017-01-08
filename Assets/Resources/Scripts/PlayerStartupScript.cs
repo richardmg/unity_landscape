@@ -6,7 +6,7 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
 	public EntityClass entityClassInUse = null;
 	public GameObject currentTool;
-	public List<EntityInstance> selectedEntityInstances;
+	public List<EntityInstanceDescription> selectedEntityInstances;
 
 	void Start()
 	{
@@ -19,21 +19,20 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 		}
 	}
 
-	public void selectEntityInstance(EntityInstance entityInstance)
+	public void selectEntityInstance(EntityInstanceDescription entityInstance)
 	{
 		selectedEntityInstances.Add(entityInstance);
-		Root.instance.notificationManager.notifyEntityInstanceSelectionChanged();
+		Root.instance.notificationManager.notifySelectionChanged();
 	}
 
-	public void unselectEntityInstance(EntityInstance entityInstance)
+	public void unselectEntityInstance(EntityInstanceDescription entityInstance)
 	{
 		if (entityInstance == null)
 			selectedEntityInstances.Clear();
 		else
 			selectedEntityInstances.Remove(entityInstance);
 
-		if (Root.instance.player.selectedEntityInstances.Count == 0)
-			currentTool.SetActive(false);
+		Root.instance.notificationManager.notifySelectionChanged();
 	}
 
 	public void setEntityClassInUse(EntityClass entityClass)
@@ -44,13 +43,13 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public void initNewProject()
 	{
 //		entityClassInUse = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
-		selectedEntityInstances = new List<EntityInstance>();
+		selectedEntityInstances = new List<EntityInstanceDescription>();
 	}
 
 	public void load(ProjectIO projectIO)
 	{
 //		entityClassInUse = Root.instance.entityClassManager.getEntity(projectIO.readInt());
-		selectedEntityInstances = new List<EntityInstance>();
+		selectedEntityInstances = new List<EntityInstanceDescription>();
 	}
 
 	public void save(ProjectIO projectIO)

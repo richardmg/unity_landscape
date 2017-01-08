@@ -19,7 +19,7 @@ public interface IEntityInstanceDescriptionListener
 
 public interface IEntityInstanceSelectionListener
 {
-	void onEntityInstanceSelectionChanged();
+	void onSelectionChanged();
 }
 
 public interface IProjectListener
@@ -106,10 +106,10 @@ public class NotificationManager {
 			listener.onEntityClassChanged(entityClass);	
 	}
 
-	public void notifyEntityInstanceSelectionChanged()
+	public void notifySelectionChanged()
 	{
 		foreach (IEntityInstanceSelectionListener listener in entityInstanceSelectionListeners)
-			listener.onEntityInstanceSelectionChanged();
+			listener.onSelectionChanged();
 	}
 
 	public void notifyProjectLoaded()

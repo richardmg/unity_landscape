@@ -12,33 +12,29 @@ public class EntityMoveTool : MonoBehaviour
 
 	public void onLeftButtonClicked()
 	{
-		GameObject selectedGo = Root.instance.player.selectedEntityInstances[0].gameObject;
-		Vector3 pos = selectedGo.transform.position;
-		pos.x -= Root.instance.entityBaseScale.x;
-		selectedGo.transform.position = pos;
+		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
+		desc.worldPos.x -= Root.instance.entityBaseScale.x;
+		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 	}
 
 	public void onRightButtonClicked()
 	{
-		GameObject selectedGo = Root.instance.player.selectedEntityInstances[0].gameObject;
-		Vector3 pos = selectedGo.transform.position;
-		pos.x += Root.instance.entityBaseScale.x;
-		selectedGo.transform.position = pos;
+		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
+		desc.worldPos.x += Root.instance.entityBaseScale.x;
+		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 	}
 
 	public void onForwardButtonClicked()
 	{
-		GameObject selectedGo = Root.instance.player.selectedEntityInstances[0].gameObject;
-		Vector3 pos = selectedGo.transform.position;
-		pos.z += Root.instance.entityBaseScale.z;
-		selectedGo.transform.position = pos;
+		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
+		desc.worldPos.z -= Root.instance.entityBaseScale.z;
+		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 	}
 
 	public void onBackwardButtonClicked()
 	{
-		GameObject selectedGo = Root.instance.player.selectedEntityInstances[0].gameObject;
-		Vector3 pos = selectedGo.transform.position;
-		pos.z -= Root.instance.entityBaseScale.z;
-		selectedGo.transform.position = pos;
+		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
+		desc.worldPos.z += Root.instance.entityBaseScale.z;
+		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 	}
 }

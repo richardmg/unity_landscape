@@ -40,6 +40,11 @@ public class EntityInstanceDescription
 		rotation = new Quaternion();
 		this.isStatic = isStatic;
 	}
+
+	override public string ToString()
+	{
+		return "EntityInstanceDescription (" + (instance ? instance.ToString() : "null") + ")";
+	}
 }
 
 public class EntityInstance : MonoBehaviour {
