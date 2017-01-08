@@ -19,6 +19,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener {
 			transform.SetParent(selectedInstances[0].transform);
 			gameObject.SetActive(true);
 		} else {
+			transform.SetParent(Root.instance.entityToolManagerGO.transform);
 			gameObject.SetActive(false);
 		}
 	}
