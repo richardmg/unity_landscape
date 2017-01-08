@@ -25,7 +25,7 @@ public class VoxelObjectRoot
 	public GameObject createCombinedGameObject(Transform parent, Lod lod)
 	{
 		GameObject go = createGameObject(parent, lod);
-		go.addMeshComponents(lod, VoxelObjectRoot.createCombinedMesh(go, lod));
+		go.addMeshComponents(lod, go.createCombinedMesh(lod));
 		while (go.transform.childCount > 0)
 			go.transform.GetChild(0).gameObject.hideAndDestroy();
 		return go;
@@ -46,23 +46,5 @@ public class VoxelObjectRoot
 		go.transform.localPosition = Vector3.zero;
 
 		return go;
-	}
-
-	public static Mesh createCombinedMesh(GameObject go, Lod lod)
-	{
-		MeshFilter[] selfAndchildren = go.GetComponentsInChildren<MeshFilter>(true);
-		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
-		Matrix4x4 parentTransform = go.transform.worldToLocalMatrix;
-
-		for (int i = 0; i < selfAndchildren.Length; ++i) {
-			MeshFilter filter = selfAndchildren[i];
-			combine[i].mesh = filter.sharedMesh;
-			combine[i].transform = parentTransform * filter.transform.localToWorldMatrix;
-		}
-
-		Mesh topLevelMesh = new Mesh();
-		topLevelMesh.CombineMeshes(combine);
-
-		return topLevelMesh;
 	}
 }

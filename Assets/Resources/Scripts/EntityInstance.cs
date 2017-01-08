@@ -52,13 +52,24 @@ public class EntityInstance : MonoBehaviour {
 	public EntityInstanceDescription entityInstanceDescription;
 	public bool instanceHidden = false;
 
-	public void changeEntityClass(EntityClass toEntityClass)
+	// Using a combined mesh is treated per instance, and should
+	// probably be the case for instances that are not selected
+	// but still close to the camera. Instances far away should
+	// not be realized as EntityInstances as all, but instead
+	// be a part of a tiles combined mesh.
+	// todo: Currently this is not in use
+	public bool hasCombinedMesh = false;
+
+	public void syncTransformWithDescription()
 	{
-		entityClass = toEntityClass;
+		transform.position = entityInstanceDescription.worldPos;
+		transform.rotation = entityInstanceDescription.rotation;
 	}
 
 	public void updateMesh()
 	{
+		Debug.Assert(hasCombinedMesh);
+
 		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
 		MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
 		meshFilter.sharedMesh = entityClass.getMesh(Root.kLod0);

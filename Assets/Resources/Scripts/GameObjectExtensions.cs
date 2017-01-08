@@ -38,4 +38,22 @@ public static class UIManager_GameObjectExtensions
 		meshRenderer.sharedMaterial = Root.instance.voxelMaterialForLod(lod);
 	}
 
+	public static Mesh createCombinedMesh(this GameObject go, Lod lod)
+	{
+		MeshFilter[] selfAndchildren = go.GetComponentsInChildren<MeshFilter>(true);
+		CombineInstance[] combine = new CombineInstance[selfAndchildren.Length];
+		Matrix4x4 parentTransform = go.transform.worldToLocalMatrix;
+
+		for (int i = 0; i < selfAndchildren.Length; ++i) {
+			MeshFilter filter = selfAndchildren[i];
+			combine[i].mesh = filter.sharedMesh;
+			combine[i].transform = parentTransform * filter.transform.localToWorldMatrix;
+		}
+
+		Mesh topLevelMesh = new Mesh();
+		topLevelMesh.CombineMeshes(combine);
+
+		return topLevelMesh;
+	}
+
 }
