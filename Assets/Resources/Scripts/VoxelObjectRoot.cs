@@ -22,7 +22,7 @@ public class VoxelObjectRoot
 		vo.voxelObjectRoot = this;
 	}
 
-	public GameObject createCombinedGameObject(Transform parent, Lod lod)
+	public GameObject createCombinedGameObject(Transform parent, Lod lod, string name = "VoxelObjectRoot")
 	{
 		GameObject go = createGameObject(parent, lod);
 		go.addMeshComponents(lod, go.createCombinedMesh(lod));
@@ -31,9 +31,9 @@ public class VoxelObjectRoot
 		return go;
 	}
 
-	public GameObject createGameObject(Transform parent, Lod lod)
+	public GameObject createGameObject(Transform parent, Lod lod, string name = "VoxelObjectRoot")
 	{
-		GameObject go = new GameObject("VoxelObjectRoot");
+		GameObject go = new GameObject(name);
 		foreach (VoxelObject vo in voxelObjects)
 			vo.createGameObject(go.transform, lod, false);
 

@@ -49,15 +49,15 @@ public class EntityClass {
 		Root.instance.entityClassManager.removeEntityClass(this);
 	}
 
-	public GameObject createGameObject(Transform parent, Lod lod, string name = "")
+	public GameObject createGameObject(Transform parent, Lod lod, string name = "EntityInstance")
 	{
-		GameObject go = m_voxelObjectRoot.createGameObject(parent, lod);
+		GameObject go = m_voxelObjectRoot.createGameObject(parent, lod, name);
 		EntityInstance instance = go.AddComponent<EntityInstance>();
 		instance.entityClass = this;
 		return go;
 	}
 
-	public GameObject createGameObject(Transform parent, EntityInstanceDescription desc, Lod lod, string name = "")
+	public GameObject createGameObject(Transform parent, EntityInstanceDescription desc, Lod lod, string name = "EntityInstance")
 	{
 		GameObject go = createGameObject(parent, lod, name);
 		go.transform.position = desc.worldPos;
