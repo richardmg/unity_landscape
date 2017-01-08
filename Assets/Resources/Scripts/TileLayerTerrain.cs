@@ -55,7 +55,7 @@ public class TileLayerTerrain : MonoBehaviour
 			for (int x = 0; x < tileCount; ++x) {
 				GameObject go = LandscapeTools.createTerrainGameObject(desc);
 				go.transform.SetParent(transform, false);
-				go.layer = LayerMask.NameToLayer("LandscapeGround");
+				//go.layer = LayerMask.NameToLayer("LandscapeGround");
 				go.name = "MatrixTile " + x + ", " + z;
 				m_tileMatrix[x, z] = go;
 				m_terrainMatrix[x, z] = go.GetComponent<Terrain>();
