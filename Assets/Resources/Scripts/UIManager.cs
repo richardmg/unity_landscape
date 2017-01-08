@@ -26,6 +26,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject entityPainterGO;
 	public GameObject backButton;
 
+	[HideInInspector]
 	public GameObject currentMenu;
 
 	[HideInInspector]

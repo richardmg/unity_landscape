@@ -11,11 +11,11 @@ public class Root : MonoBehaviour {
 
 	public GameObject playerGO;
 	public GameObject uiGO;
+	public GameObject entityToolManagerGO;
 	public GameObject landscapeGO;
 	public GameObject snapshotCameraGO;
 	public GameObject commandPromptGO;
 	public GameObject entityInstanceManagerGO;
-	public GameObject entityUiGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
@@ -33,6 +33,8 @@ public class Root : MonoBehaviour {
 	public MeshManager meshManager;
 	[HideInInspector]
 	public UIManager uiManager;
+	[HideInInspector]
+	public EntityToolManager entityToolManager;
 	[HideInInspector]
 	public LandscapeManager landscapeManager;
 	[HideInInspector]
@@ -66,6 +68,7 @@ public class Root : MonoBehaviour {
 	void Awake()
 	{
 		uiManager = uiGO.GetComponent<UIManager>();
+		entityToolManager = entityToolManagerGO.GetComponent<EntityToolManager>();
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
 		entityInstanceManager = entityInstanceManagerGO.GetComponent<EntityInstanceManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();

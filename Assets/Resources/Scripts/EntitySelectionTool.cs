@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FirstPersonKeyboardControls : MonoBehaviour
+public class EntitySelectionTool : MonoBehaviour
 {
 	void Update()
 	{
@@ -14,33 +14,10 @@ public class FirstPersonKeyboardControls : MonoBehaviour
 		if (Input.GetKey(KeyCode.LeftApple)) {
 			EntityInstance entityInstance = getClickedEntityInstance();
 			if (entityInstance)
-				selectEntityInstance(entityInstance);
-		} else if (!Root.instance.entityUiGO.activeSelf) {
+				Root.instance.player.selectEntityInstance(entityInstance);
+		} else if (!Root.instance.player.currentTool.activeSelf) {
+			// FACTOR OUT IN SEPARATE TOOL
 			createNewEntityInstance();
-		}
-	}
-
-	void selectEntityInstance(EntityInstance entityInstance)
-	{
-		Root.instance.player.selectedEntityInstances.Add(entityInstance);
-		// todo: check which tool the user holds. But for now it will always be "move" tool
-		GameObject ui = Root.instance.entityUiGO;
-		ui.SetActive(true);
-		ui.transform.SetParent(entityInstance.transform);
-		ui.transform.localPosition = new Vector3(0, 0, 0);
-	}
-
-	void unselectEntityInstance(EntityInstance entityInstance)
-	{
-		if (entityInstance == null)
-			Root.instance.player.selectedEntityInstances.Clear();
-		else
-			Root.instance.player.selectedEntityInstances.Remove(entityInstance);
-
-		if (Root.instance.player.selectedEntityInstances.Count == 0) {
-			GameObject ui = Root.instance.entityUiGO;
-			ui.transform.SetParent(null);
-			ui.SetActive(false);
 		}
 	}
 

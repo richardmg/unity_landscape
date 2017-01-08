@@ -17,6 +17,11 @@ public interface IEntityInstanceDescriptionListener
 	void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc);
 }
 
+public interface IEntityInstanceSelectionListener
+{
+	void onEntityInstanceSelectionChanged();
+}
+
 public interface IProjectListener
 {
 	void onProjectLoaded();
@@ -26,6 +31,7 @@ public class NotificationManager {
 
 	private List<IEntityClassListener> entityClassListeners = new List<IEntityClassListener>();
 	private List<IEntityInstanceDescriptionListener> entityInstanceListeners = new List<IEntityInstanceDescriptionListener>();
+	private List<IEntityInstanceSelectionListener> entityInstanceSelectionListeners = new List<IEntityInstanceSelectionListener>();
 	private List<IProjectListener> projectListeners = new List<IProjectListener>();
 
 	bool m_postNotifications = false;
@@ -40,6 +46,11 @@ public class NotificationManager {
 		entityInstanceListeners.Add(listener);
 	}
 
+	public void addEntitySelectionListener(IEntityInstanceSelectionListener listener)
+	{
+		entityInstanceSelectionListeners.Add(listener);
+	}
+
 	public void addProjectListener(IProjectListener listener)
 	{
 		projectListeners.Add(listener);
@@ -47,20 +58,20 @@ public class NotificationManager {
 
 	public void notifyEntityInstanceDescriptionAdded(EntityInstanceDescription desc)
 	{
-		foreach (IEntityInstanceDescriptionListener subscriber in entityInstanceListeners)
-			subscriber.onEntityInstanceDescriptionAdded(desc);	
+		foreach (IEntityInstanceDescriptionListener listener in entityInstanceListeners)
+			listener.onEntityInstanceDescriptionAdded(desc);	
 	}
 
 	public void notifyEntityInstanceDescriptionRemoved(EntityInstanceDescription desc)
 	{
-		foreach (IEntityInstanceDescriptionListener subscriber in entityInstanceListeners)
-			subscriber.onEntityInstanceDescriptionRemoved(desc);	
+		foreach (IEntityInstanceDescriptionListener listener in entityInstanceListeners)
+			listener.onEntityInstanceDescriptionRemoved(desc);	
 	}
 
 	public void notifyEntityInstanceDescriptionChanged(EntityInstanceDescription desc)
 	{
-		foreach (IEntityInstanceDescriptionListener subscriber in entityInstanceListeners)
-			subscriber.onEntityInstanceDescriptionChanged(desc);
+		foreach (IEntityInstanceDescriptionListener listener in entityInstanceListeners)
+			listener.onEntityInstanceDescriptionChanged(desc);
 	}
 
 	public void notifyEntityClassAdded(EntityClass entityClass, bool postNotification = true)
@@ -71,8 +82,8 @@ public class NotificationManager {
 //					subscriber.onEntityClassAdded(entityClass);	
 //			};
 //		} else {
-			foreach (IEntityClassListener subscriber in entityClassListeners)
-				subscriber.onEntityClassAdded(entityClass);	
+		foreach (IEntityClassListener listener in entityClassListeners)
+				listener.onEntityClassAdded(entityClass);	
 //		}
 	}
 
@@ -84,15 +95,21 @@ public class NotificationManager {
 //					subscriber.onEntityClassRemoved(entityClass);	
 //			};
 //		} else {
-			foreach (IEntityClassListener subscriber in entityClassListeners)
-				subscriber.onEntityClassRemoved(entityClass);	
+		foreach (IEntityClassListener listener in entityClassListeners)
+				listener.onEntityClassRemoved(entityClass);	
 //		}
 	}
 
 	public void notifyEntityClassChanged(EntityClass entityClass)
 	{
-		foreach (IEntityClassListener subscriber in entityClassListeners)
-			subscriber.onEntityClassChanged(entityClass);	
+		foreach (IEntityClassListener listener in entityClassListeners)
+			listener.onEntityClassChanged(entityClass);	
+	}
+
+	public void notifyEntityInstanceSelectionChanged()
+	{
+		foreach (IEntityInstanceSelectionListener listener in entityInstanceSelectionListeners)
+			listener.onEntityInstanceSelectionChanged();
 	}
 
 	public void notifyProjectLoaded()
