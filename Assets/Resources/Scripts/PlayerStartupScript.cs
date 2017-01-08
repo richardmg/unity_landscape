@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
 	public EntityClass entityClassInUse = null;
-	public GameObject gameObjectInUse;
+	public List<EntityInstance> selectedEntityInstances;
 
 	void Start()
 	{
@@ -23,11 +24,13 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public void initNewProject()
 	{
 //		entityClassInUse = Root.instance.uiManager.entityClassPicker.getSelectedEntityClass();
+		selectedEntityInstances = new List<EntityInstance>();
 	}
 
 	public void load(ProjectIO projectIO)
 	{
 //		entityClassInUse = Root.instance.entityClassManager.getEntity(projectIO.readInt());
+		selectedEntityInstances = new List<EntityInstance>();
 	}
 
 	public void save(ProjectIO projectIO)

@@ -72,7 +72,7 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler, IPointerClickHand
 		if (m_voxelObjectRootGo != null)
 			m_voxelObjectRootGo.hideAndDestroy();
 
-		VoxelObjectRoot root = entityClass.getVoxelObjectRoot();
+		VoxelObjectRoot root = entityClass.voxelObjectRoot;
 		m_voxelObjectRootGo = root.createGameObject(transform, Root.kLod0);
 
 		Vector3 cameraPos = root.snapshotOffset;
@@ -103,7 +103,7 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler, IPointerClickHand
 			VoxelObject vo = new VoxelObject(vomb.voxelObject.atlasIndex, vomb.voxelObject.voxelDepth);
 			vo.localPosition = vomb.transform.localPosition;
 			vo.localRotation = vomb.transform.localRotation;
-			root.voxelObjects.Add(vo);
+			root.add(vo);
 		}
 
 		return root;

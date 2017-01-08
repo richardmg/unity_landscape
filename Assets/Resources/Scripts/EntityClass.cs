@@ -71,14 +71,16 @@ public class EntityClass {
 
 	public void setVoxelObjectRoot(VoxelObjectRoot root)
 	{
-		Debug.Assert(root != null);
-		m_voxelObjectRoot = root;
-		markDirty(DirtyFlags.Mesh);
 	}
 
-	public VoxelObjectRoot getVoxelObjectRoot()
+	public VoxelObjectRoot voxelObjectRoot
 	{
-		return m_voxelObjectRoot;
+		get { return m_voxelObjectRoot; }
+		set {
+			Debug.Assert(value != null);
+			m_voxelObjectRoot = value;
+			markDirty(DirtyFlags.Mesh);
+		}
 	}
 
 	public int getVertexCount(Lod lod)

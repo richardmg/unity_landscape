@@ -13,6 +13,7 @@ public class VoxelObject
 {
 	public int atlasIndex = 0;
 	public float voxelDepth = 4;
+	public VoxelObjectRoot voxelObjectRoot;
 
 	public Vector3 localPosition;
 	public Quaternion localRotation;

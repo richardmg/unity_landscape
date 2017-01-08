@@ -11,10 +11,16 @@ public class VoxelObjectRootMonoBehaviour : MonoBehaviour
 
 public class VoxelObjectRoot
 {
-	public List<VoxelObject> voxelObjects = new List<VoxelObject>();
 	public Vector3 snapshotOffset = new Vector3(0, 0, -15);
-
 	public Vector3 scale = new Vector3(1, 1, 1);
+
+	private List<VoxelObject> voxelObjects = new List<VoxelObject>();
+
+	public void add(VoxelObject vo)
+	{
+		voxelObjects.Add(vo);
+		vo.voxelObjectRoot = this;
+	}
 
 	public GameObject createCombinedGameObject(Transform parent, Lod lod)
 	{
