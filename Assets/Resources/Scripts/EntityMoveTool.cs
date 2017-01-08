@@ -2,30 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener {
-
-	public void Awake()
-	{
-		Root.instance.notificationManager.addEntitySelectionListener(this);
-	}
-
-	public void onEntityInstanceSelectionChanged()
-	{
-		if (Root.instance.player.currentTool != gameObject)
-			return;
-		
-		List<EntityInstance> selectedInstances = Root.instance.player.selectedEntityInstances;
-		if (selectedInstances.Count != 0) {
-			transform.SetParent(selectedInstances[0].transform);
-			gameObject.SetActive(true);
-		} else {
-			transform.SetParent(Root.instance.entityToolManagerGO.transform);
-			gameObject.SetActive(false);
-		}
-	}
-
+public class EntityMoveTool : MonoBehaviour
+{
 	public void onDoneButtonClicked()
 	{
+		// todo: Move to selection tool?
 		Root.instance.player.unselectEntityInstance(null);
 	}
 
