@@ -32,11 +32,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		if (selectedInstances.Count != 0) {
 			transform.SetParent(selectedInstances[0].instance.transform);
 			transform.localPosition = Vector3.zero;
-			gameObject.SetActive(true);
 			Root.instance.player.currentTool.SetActive(true);
 		} else {
 			transform.SetParent(null);
-			gameObject.SetActive(false);
 			Root.instance.player.currentTool.SetActive(false);
 		}
 	}
