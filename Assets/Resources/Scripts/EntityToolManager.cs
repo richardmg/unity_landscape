@@ -6,16 +6,20 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	public GameObject selectionToolGo;
 	public GameObject moveToolGo;
+	public GameObject createToolGo;
 
 	[HideInInspector]
 	public EntitySelectionTool selectionTool;
 	[HideInInspector]
 	public EntityMoveTool moveTool;
+	[HideInInspector]
+	public EntityCreateTool createTool;
 
 	void Awake()
 	{
 		selectionTool = selectionToolGo.GetComponent<EntitySelectionTool>();
 		moveTool = moveToolGo.GetComponent<EntityMoveTool>();
+		createTool = moveToolGo.GetComponent<EntityCreateTool>();
 
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
@@ -24,6 +28,15 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		// Hide all tools not in use
 		moveToolGo.SetActive(false);
+		selectionToolGo.SetActive(false);
+		createToolGo.SetActive(false);
+	}
+
+	void Update()
+	{
+		// Selection and Create tools are exclusive, but one of them is always on
+		selectionToolGo.SetActive(Input.GetKey(KeyCode.LeftApple));
+		createToolGo.SetActive(!selectionToolGo.activeSelf && !Root.instance.player.currentTool.activeSelf);
 	}
 
 	public void onSelectionChanged()

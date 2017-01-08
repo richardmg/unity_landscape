@@ -8,7 +8,7 @@ public class EntitySelectionTool : MonoBehaviour
 {
 	void Update()
 	{
-		if (!(Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftApple)))
+		if (!Input.GetMouseButtonDown(0))
 			return;
 
 		EntityInstance entityInstance = getClickedEntityInstance();
