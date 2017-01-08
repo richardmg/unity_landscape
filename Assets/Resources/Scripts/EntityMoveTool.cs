@@ -12,29 +12,33 @@ public class EntityMoveTool : MonoBehaviour
 
 	public void onLeftButtonClicked()
 	{
-		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
-		desc.worldPos.x -= Root.instance.entityBaseScale.x;
-		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.worldPos.x -= Root.instance.entityBaseScale.x;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
 	}
 
 	public void onRightButtonClicked()
 	{
-		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
-		desc.worldPos.x += Root.instance.entityBaseScale.x;
-		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.worldPos.x += Root.instance.entityBaseScale.x;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
 	}
 
 	public void onForwardButtonClicked()
 	{
-		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
-		desc.worldPos.z -= Root.instance.entityBaseScale.z;
-		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.worldPos.z += Root.instance.entityBaseScale.x;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
 	}
 
 	public void onBackwardButtonClicked()
 	{
-		EntityInstanceDescription desc = Root.instance.player.selectedEntityInstances[0];
-		desc.worldPos.z += Root.instance.entityBaseScale.z;
-		Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.worldPos.z -= Root.instance.entityBaseScale.x;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
 	}
 }
