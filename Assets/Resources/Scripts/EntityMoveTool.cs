@@ -4,6 +4,15 @@ using System.Collections.Generic;
 
 public class EntityMoveTool : MonoBehaviour
 {
+
+	Vector3 m_targetPos;
+
+	public void OnEnable()
+	{
+		if (Root.instance.player.selectedEntityInstances.Count > 0)
+			m_targetPos = Root.instance.player.selectedEntityInstances[0].worldPos;
+	}
+
 	public void onDoneButtonClicked()
 	{
 		// todo: Move to selection tool?
@@ -62,10 +71,7 @@ public class EntityMoveTool : MonoBehaviour
 
 	public void handleLeftOrRightButtonClicked(int leftButton)
 	{
-		EntityInstanceDescription mainDesc = Root.instance.player.selectedEntityInstances[0];
-		Vector3 targetPos = mainDesc.worldPos;
-		Vector3 playerPos = Root.instance.playerGO.transform.position;
-		Vector3 relativePos = targetPos - playerPos;
+		Vector3 relativePos = m_targetPos - transform.position;
 
 		bool playerInFront = relativePos.z > 0;
 		bool playerOnRight = relativePos.x > 0;

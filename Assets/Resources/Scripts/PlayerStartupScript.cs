@@ -6,7 +6,7 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
 	public EntityClass entityClassInUse = null;
 	public GameObject currentTool;
-	public List<EntityInstanceDescription> selectedEntityInstances;
+	public List<EntityInstanceDescription> selectedEntityInstances = new List<EntityInstanceDescription>();
 
 	void Start()
 	{
