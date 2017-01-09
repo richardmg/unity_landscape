@@ -43,8 +43,11 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		if (selectedInstances.Count != 0) {
-			transform.SetParent(selectedInstances[0].instance.transform);
-			transform.localPosition = Vector3.zero;
+			//transform.SetParent(selectedInstances[0].instance.transform);
+			//transform.SetParent(Root.instance.playerGO.transform);
+			//transform.localPosition = new Vector3(0, 0, 5);
+			Vector3 pos = Root.instance.playerGO.transform.position + (Root.instance.playerGO.transform.forward * 5);
+			transform.position = pos;
 			Root.instance.player.currentTool.SetActive(true);
 		} else {
 			transform.SetParent(null);
