@@ -37,7 +37,7 @@ public class EntityInstanceDescription
 		entityClass.instanceDescriptionCount++;
 		entityClassID = entityClass.id;
 		this.worldPos = worldPos;
-		rotation = new Quaternion();
+		rotation = Quaternion.Euler(0, 0, 0);
 		this.isStatic = isStatic;
 	}
 

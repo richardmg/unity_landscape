@@ -10,17 +10,17 @@ public class EntityMoveTool : MonoBehaviour
 		Root.instance.player.unselectEntityInstance(null);
 	}
 
-	public void onLeftButtonClicked()
+	public void onMoveLeftButtonClicked()
 	{
 		handleLeftOrRightButtonClicked(1);
 	}
 
-	public void onRightButtonClicked()
+	public void onMoveRightButtonClicked()
 	{
 		handleLeftOrRightButtonClicked(-1);
 	}
 
-	public void onUpButtonClicked()
+	public void onMoveUpButtonClicked()
 	{
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.worldPos.y += Root.instance.entityBaseScale.y;
@@ -28,10 +28,34 @@ public class EntityMoveTool : MonoBehaviour
 		}
 	}
 
-	public void onDownButtonClicked()
+	public void onMoveDownButtonClicked()
 	{
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.worldPos.y -= Root.instance.entityBaseScale.y;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
+	}
+
+	public void onRotateLeftButtonClicked()
+	{
+	}
+
+	public void onRotateRightButtonClicked()
+	{
+	}
+
+	public void onRotateUpButtonClicked()
+	{
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.rotation = Quaternion.Euler(22.5f, 0, 0) * desc.rotation;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
+	}
+
+	public void onRotateDownButtonClicked()
+	{
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.rotation = Quaternion.Euler(-22.5f, 0, 0) * desc.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
