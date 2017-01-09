@@ -17,10 +17,6 @@ public class VoxelMeshFactory {
 	public int volumeFaceCountZ = 2;
 	public bool simplify = false;
 
-	public float centerX = Root.kSubImageWidth / 2;
-	public float centerY = 0;
-	public float centerZ = 0;
-
 	public Texture2D texture;
 
 	int startPixelX;
@@ -86,9 +82,6 @@ public class VoxelMeshFactory {
 		normalMapList.Clear();
 		normalCodeList.Clear();
 		tri.Clear();
-
-		// todo: should centerZ be
-		centerZ = voxelDepth / 2;
 	}
 
 	public void buildMesh()
@@ -117,6 +110,8 @@ public class VoxelMeshFactory {
 		Vector2[] uvPixels = new Vector2[vertexList.Count];
 		float cull = (voxelDepth == 0 || simplify) ? 0 : 1;
 
+		Vector3 center = new Vector3(cropRect.x + cropRect.center.x, 0, voxelDepth / 2);
+
 		for (int i = 0; i < vertexList.Count; ++i) {
 			Vector3 v = vertexList[i];
 			normals[i] = normalForCode[normalCodeList[i]];
@@ -143,10 +138,7 @@ public class VoxelMeshFactory {
 			cubeDesc[i] = new Color(cull, materialId, normalizedNormalCode, normalizedDepth);
 
 			// Adjust all vertices according to what is center
-			v.x -= centerX;
-			v.y -= centerY;
-			v.z -= centerZ;
-			vertexList[i] = v;
+			vertexList[i] = v - center;
 		}
 
 		mesh.vertices = vertexList.ToArray();
