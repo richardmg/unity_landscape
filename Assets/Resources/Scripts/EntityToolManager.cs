@@ -43,12 +43,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		if (selectedInstances.Count != 0) {
-			//transform.SetParent(selectedInstances[0].instance.transform);
-			//transform.SetParent(Root.instance.playerGO.transform);
-			//transform.localPosition = new Vector3(0, 0, 5);
 			Vector3 pos = Root.instance.playerGO.transform.position
-				+ (Root.instance.playerGO.transform.forward * 5)
-				+ (Root.instance.playerGO.transform.up * -2);
+				+ (Root.instance.playerHeadGO.transform.forward * 5)
+				+ (Root.instance.playerHeadGO.transform.up * -2);
 			transform.position = pos;
 			transform.rotation = Quaternion.Euler(60, 0, 0);
 			transform.LookAt(2 * transform.position - Root.instance.playerGO.transform.position);

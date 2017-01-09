@@ -10,6 +10,7 @@ public class Root : MonoBehaviour {
 	public static readonly int kSubImageHeight = 16;
 
 	public GameObject playerGO;
+	public GameObject playerHeadGO;
 	public GameObject uiGO;
 	public GameObject entityToolManagerGO;
 	public GameObject landscapeGO;

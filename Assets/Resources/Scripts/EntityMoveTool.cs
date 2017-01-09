@@ -78,9 +78,9 @@ public class EntityMoveTool : MonoBehaviour
 		bool moreFrontThanSide = Mathf.Abs(relativePos.z) > Mathf.Abs(relativePos.x);
 
 		if (moreFrontThanSide)
-			moveAlongX(playerInFront ? -leftButton : leftButton);
+			moveAlongX(playerInFront ? leftButton : -leftButton);
 		else
-			moveAlongZ(playerOnRight ? leftButton : -leftButton);
+			moveAlongZ(playerOnRight ? -leftButton : leftButton);
 	}
 
 	void moveAlongX(int direction)
