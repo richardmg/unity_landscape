@@ -98,4 +98,11 @@ public class EntityMoveTool : MonoBehaviour
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
+
+	public void OnMouseDrag()
+	{
+		// get distance dragged. if more than one scale length, call onMoveLeftButtonClicked
+		print("drag");	
+	}
+
 }
