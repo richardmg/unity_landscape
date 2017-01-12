@@ -98,4 +98,16 @@ public class Root : MonoBehaviour {
 		}
 	}
 
+	public void alignToVoxel(ref float v)
+	{
+		v = Mathf.Round(v / entityBaseScale.x) * entityBaseScale.x;
+	}
+
+	public void alignToVoxel(ref Vector3 v)
+	{
+		alignToVoxel(ref v.x);
+		alignToVoxel(ref v.y);
+		alignToVoxel(ref v.z);
+	}
+
 }

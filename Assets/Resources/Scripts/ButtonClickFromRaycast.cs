@@ -23,17 +23,19 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 			m_grab = true;
 		}
 		if (Input.GetMouseButtonUp(0)) {
-			if (m_button)
-				m_button.GetComponent<Button>().OnPointerClick(m_ped);
+			if (m_button) {
+				EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
+				foreach (EventTrigger t in triggers)
+					t.OnPointerClick(m_ped);
+			}
 			m_grab = false;
 			m_button = null;
 		}
 		if (m_grab) {
 			if (m_button) {
-				// Assume only one EventTrigger until a need arise
-				EventTrigger trigger = m_button.GetComponent<EventTrigger>();
-				if (trigger)
-					trigger.OnDrag(m_ped);
+				EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
+				foreach (EventTrigger t in triggers)
+					t.OnDrag(m_ped);
 			}
 		}
 	}
