@@ -152,8 +152,8 @@ public class UIManager : MonoBehaviour {
 			Cursor.visible = true;
 			Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = false;
 		} else {
-			Cursor.lockState = CursorLockMode.Locked;
-			Cursor.visible = false;
+//			Cursor.lockState = CursorLockMode.Locked;
+//			Cursor.visible = false;
 			Root.instance.playerGO.GetComponent<FirstPersonController>().enabled = true;
 		}
 	}

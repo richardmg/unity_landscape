@@ -19,6 +19,7 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			m_ped = new PointerEventData(null);
 			m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
+			m_ped.delta.Set(0, 0);
 			m_button = getButtonUnderPointer();
 			m_grab = true;
 		}
@@ -33,9 +34,12 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 		}
 		if (m_grab) {
 			if (m_button) {
+				m_ped.delta.Set(0.1f, 0.1f);
 				EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
-				foreach (EventTrigger t in triggers)
+				foreach (EventTrigger t in triggers) {
+					print("calling ondrag: " + t);
 					t.OnDrag(m_ped);
+				}
 			}
 		}
 	}
