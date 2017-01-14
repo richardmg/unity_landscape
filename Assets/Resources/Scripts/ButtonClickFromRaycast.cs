@@ -20,7 +20,7 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)) {
 			m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
 			m_button = getButtonUnderPointer();
-			m_playerRotation = Root.instance.playerGO.transform.rotation.eulerAngles;
+			m_playerRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles;
 			m_ped.dragging = true;
 		}
 
