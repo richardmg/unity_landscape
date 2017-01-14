@@ -27,52 +27,71 @@ public class EntityMoveTool : MonoBehaviour
 	public void onMoveLeftButtonClicked(BaseEventData bed)
 	{
 		PointerEventData pointerData = bed as PointerEventData;
-		if (pointerData.dragging) {
-			print("dragging");
+		if (pointerData.dragging)
 			return;
-		}
 		handleLeftOrRightButtonClicked(1);
 	}
 
-	public void onMoveRightButtonClicked()
+	public void onMoveRightButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
 		handleLeftOrRightButtonClicked(-1);
 	}
 
-	public void onMoveUpButtonClicked()
+	public void onMoveUpButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.worldPos.y += Root.instance.entityBaseScale.y;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 
-	public void onMoveDownButtonClicked()
+	public void onMoveDownButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.worldPos.y -= Root.instance.entityBaseScale.y;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 
-	public void onRotateLeftButtonClicked()
+	public void onRotateLeftButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
 	}
 
-	public void onRotateRightButtonClicked()
+	public void onRotateRightButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
 	}
 
-	public void onRotateUpButtonClicked()
+	public void onRotateUpButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.rotation = Quaternion.Euler(22.5f, 0, 0) * desc.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 
-	public void onRotateDownButtonClicked()
+	public void onRotateDownButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.rotation = Quaternion.Euler(-22.5f, 0, 0) * desc.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);

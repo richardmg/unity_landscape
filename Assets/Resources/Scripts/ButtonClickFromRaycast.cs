@@ -11,35 +11,39 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 	// perform the click
 
 	GameObject m_button;
-	bool m_grab = false;
-	PointerEventData m_ped;
+	PointerEventData m_ped = new PointerEventData(null);
+	Vector3 m_playerRotation;
+	float dragScale = 4f;
 
 	void Update()
 	{
 		if (Input.GetMouseButtonDown(0)) {
-			m_ped = new PointerEventData(null);
 			m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
-			m_ped.delta.Set(0, 0);
 			m_button = getButtonUnderPointer();
-			m_grab = true;
+			m_playerRotation = Root.instance.playerGO.transform.rotation.eulerAngles;
+			m_ped.dragging = true;
 		}
+
 		if (Input.GetMouseButtonUp(0)) {
 			if (m_button) {
 				EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
 				foreach (EventTrigger t in triggers)
 					t.OnPointerClick(m_ped);
 			}
-			m_grab = false;
+			m_ped.dragging = false;
 			m_button = null;
 		}
-		if (m_grab) {
+
+		if (m_ped.dragging) {
 			if (m_button) {
-				m_ped.delta.Set(0.1f, 0.1f);
+				Vector3 newRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles;
+				float deltaX = Mathf.DeltaAngle(newRotation.x, m_playerRotation.x);
+				float deltaY = Mathf.DeltaAngle(newRotation.y, m_playerRotation.y);
+				m_playerRotation = newRotation;
+				m_ped.delta = new Vector2(deltaY * -dragScale, deltaX * dragScale);
 				EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
-				foreach (EventTrigger t in triggers) {
-					print("calling ondrag: " + t);
+				foreach (EventTrigger t in triggers)
 					t.OnDrag(m_ped);
-				}
 			}
 		}
 	}
@@ -55,4 +59,5 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 		}
 		return null;
 	}
+
 }
