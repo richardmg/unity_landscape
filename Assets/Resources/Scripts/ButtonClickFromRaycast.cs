@@ -8,44 +8,61 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 
 	// Since the mouse pointer is hidden, we pretende that
 	// the mouse is at screen center, issues a ray cast, and
-	// perform the click
+	// perform the click / drag
+
+	public float dragSpeed = 4f;
+	public float dragStartDistance = 10f;
 
 	GameObject m_button;
 	PointerEventData m_ped = new PointerEventData(null);
 	Vector3 m_playerRotation;
-	float dragScale = 4f;
+	Vector2 m_accumulatedDragDistance = Vector2.zero;
 
 	void Update()
 	{
-		if (Input.GetMouseButtonDown(0)) {
-			m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
+		if (!m_button) {
+			if (!Input.GetMouseButtonDown(0))
+				return;
 			m_button = getButtonUnderPointer();
+			m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
+			m_ped.dragging = false;
 			m_playerRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles;
-			m_ped.dragging = true;
+			m_accumulatedDragDistance.Set(0, 0);
 		}
 
+		if (!m_button)
+			return;
+
 		if (Input.GetMouseButtonUp(0)) {
-			if (m_button) {
-				EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
-				foreach (EventTrigger t in triggers)
-					t.OnPointerClick(m_ped);
-			}
-			m_ped.dragging = false;
+			EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
+			foreach (EventTrigger t in triggers)
+				t.OnPointerClick(m_ped);
 			m_button = null;
+			return;
+		}
+
+		m_ped.delta = calculateDragDelta();
+
+		if (!m_ped.dragging) {
+			m_accumulatedDragDistance += m_ped.delta;
+			if (m_accumulatedDragDistance.magnitude > dragStartDistance)
+				m_ped.dragging = true;
 		}
 
 		if (m_ped.dragging) {
-			if (m_button) {
-				Vector3 newRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles;
-				float deltaX = Mathf.DeltaAngle(newRotation.x, m_playerRotation.x);
-				float deltaY = Mathf.DeltaAngle(newRotation.y, m_playerRotation.y);
-				m_playerRotation = newRotation;
-				m_ped.delta = new Vector2(deltaY * -dragScale, deltaX * dragScale);
-				EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
-				foreach (EventTrigger t in triggers)
-					t.OnDrag(m_ped);
-			}
+			EventTrigger[] triggers = m_button.GetComponents<EventTrigger>();
+			foreach (EventTrigger t in triggers)
+				t.OnDrag(m_ped);
 		}
+	}
+
+	Vector2 calculateDragDelta()
+	{
+		Vector3 newRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles;
+		float deltaX = Mathf.DeltaAngle(newRotation.x, m_playerRotation.x);
+		float deltaY = Mathf.DeltaAngle(newRotation.y, m_playerRotation.y);
+		m_playerRotation = newRotation;
+		return new Vector2(deltaY * -dragSpeed, deltaX * dragSpeed);
 	}
 
 	GameObject getButtonUnderPointer()
