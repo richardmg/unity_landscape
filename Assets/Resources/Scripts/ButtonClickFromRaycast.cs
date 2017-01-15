@@ -42,11 +42,15 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 		}
 
 		m_ped.delta = calculateDragDelta();
+		m_ped.clickCount = 0;
 
 		if (!m_ped.dragging) {
 			m_accumulatedDragDistance += m_ped.delta;
-			if (m_accumulatedDragDistance.magnitude > dragStartDistance)
+			if (m_accumulatedDragDistance.magnitude > dragStartDistance) {
 				m_ped.dragging = true;
+				// clickCount = -1 means first drag event
+				m_ped.clickCount = -1;
+			}
 		}
 
 		if (m_ped.dragging) {
