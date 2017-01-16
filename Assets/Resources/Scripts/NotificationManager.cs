@@ -51,6 +51,11 @@ public class NotificationManager {
 		entityInstanceSelectionListeners.Add(listener);
 	}
 
+	public void removeEntitySelectionListener(IEntityInstanceSelectionListener listener)
+	{
+		entityInstanceSelectionListeners.Remove(listener);
+	}
+
 	public void addProjectListener(IProjectListener listener)
 	{
 		projectListeners.Add(listener);

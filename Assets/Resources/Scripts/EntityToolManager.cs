@@ -21,6 +21,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Awake()
 	{
+		// Only show entity menus when there is a entity selection
+		GetComponent<Canvas>().enabled = false;
+
 		selectionTool = selectionToolGo.GetComponent<EntitySelectionTool>();
 		moveTool = moveToolGo.GetComponent<EntityMoveTool>();
 		createTool = moveToolGo.GetComponent<EntityCreateTool>();
@@ -30,30 +33,44 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Start()
 	{
-		// Hide all tools not in use
-		moveToolGo.SetActive(false);
-		selectionToolGo.SetActive(false);
-		createToolGo.SetActive(false);
+		deactivateAllTools();
+
+		// Selection tool is handled on the side, and is always active
+		selectionToolGo.SetActive(true);
+		// Start with create tool active
+		activateTool(createToolGo);
 	}
 
 	void Update()
 	{
-		// Selection and Create tools are exclusive, but one of them is always on
-		selectionToolGo.SetActive(Input.GetKey(KeyCode.LeftApple));
-		createToolGo.SetActive(!selectionToolGo.activeSelf && !Root.instance.player.currentTool.activeSelf);
+		if (Input.GetKeyDown(KeyCode.Alpha1))
+			activateTool(createToolGo);
+		else if (Input.GetKeyDown(KeyCode.Alpha2))
+			activateTool(moveToolGo);
+
 		moveMenuToSelection();
+	}
+
+	public void deactivateAllTools()
+	{
+		createToolGo.SetActive(false);
+		moveToolGo.SetActive(false);
+	}
+
+	public void activateTool(GameObject tool)
+	{
+		Root.instance.player.currentTool = tool;
+		deactivateAllTools();
+		tool.SetActive(true);	
+		print("Activated " + tool.name);
 	}
 
 	public void onSelectionChanged()
 	{
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
-		if (selectedInstances.Count != 0) {
-			Root.instance.player.currentTool.SetActive(true);
+		GetComponent<Canvas>().enabled = selectedInstances.Count != 0;	
+		if (selectedInstances.Count != 0)
 			moveMenuToSelection();
-		} else {
-			transform.SetParent(null);
-			Root.instance.player.currentTool.SetActive(false);
-		}
 	}
 
 	void moveMenuToSelection()

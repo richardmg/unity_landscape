@@ -6,9 +6,14 @@ using UnityEngine.UI;
 
 public class EntitySelectionTool : MonoBehaviour
 {
+	[HideInInspector]
+	public bool inSelectionMode;
+
 	void Update()
 	{
-		if (!Input.GetMouseButtonDown(0))
+		inSelectionMode = Input.GetKey(KeyCode.LeftApple);
+
+		if (!inSelectionMode || !Input.GetMouseButtonDown(0))
 			return;
 
 		EntityInstance entityInstance = getClickedEntityInstance();

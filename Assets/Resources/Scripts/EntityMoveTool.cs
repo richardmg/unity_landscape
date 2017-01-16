@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class EntityMoveTool : MonoBehaviour
+public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
 
 	Vector3 m_targetStartPos;
@@ -14,9 +14,28 @@ public class EntityMoveTool : MonoBehaviour
 
 	public void OnEnable()
 	{
+		registerSelection();
+		Root.instance.notificationManager.addEntitySelectionListener(this);
+	}
+
+	public void OnDisable()
+	{
+		Root.instance.notificationManager.removeEntitySelectionListener(this);
+	}
+
+	public void onSelectionChanged()
+	{
+		registerSelection();
+	}
+
+	void registerSelection()
+	{
+		print("register");
 		if (Root.instance.player.selectedEntityInstances.Count > 0) {
 			m_targetStartPos = Root.instance.player.selectedEntityInstances[0].worldPos;
 			m_targetPos = m_targetStartPos;
+		} else {
+			// Remove from internal list
 		}
 	}
 
