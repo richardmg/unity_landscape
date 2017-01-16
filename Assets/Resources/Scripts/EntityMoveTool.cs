@@ -46,12 +46,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	/***************** CLICK *******************/
 
-	public void onDoneButtonClicked()
-	{
-		// todo: Move to selection tool?
-		Root.instance.player.unselectEntityInstance(null);
-	}
-
 	public void onMoveLeftButtonClicked(BaseEventData bed)
 	{
 		PointerEventData pointerData = bed as PointerEventData;
