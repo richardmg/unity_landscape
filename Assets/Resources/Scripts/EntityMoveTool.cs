@@ -3,45 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
-public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
+public class EntityMoveTool : MonoBehaviour
 {
-
-	Vector3 m_targetStartPos;
-	Vector3 m_targetPos;
+	Vector3 m_dragDistance;
 	float dragScale = 0.1f;
 	bool flipped = false;
 	bool backSide = false;
 
 	public void OnEnable()
 	{
-		registerSelection();
-		Root.instance.notificationManager.addEntitySelectionListener(this);
-	}
-
-	public void OnDisable()
-	{
-		Root.instance.notificationManager.removeEntitySelectionListener(this);
+		m_dragDistance = Vector3.zero;
 	}
 
 	void Update()
 	{
 		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.updateSelection();
-	}
-
-	public void onSelectionChanged()
-	{
-		registerSelection();
-	}
-
-	void registerSelection()
-	{
-		if (Root.instance.player.selectedEntityInstances.Count > 0) {
-			m_targetStartPos = Root.instance.player.selectedEntityInstances[0].worldPos;
-			m_targetPos = m_targetStartPos;
-		} else {
-			// Remove from internal list
-		}
 	}
 
 	/***************** CLICK *******************/
@@ -142,30 +119,39 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void moveX(float distance)
 	{
+		m_dragDistance.x += Root.instance.entityBaseScale.x * distance;
+		float alignedDistance = m_dragDistance.x;
+		Root.instance.alignToVoxel(ref alignedDistance);
+		m_dragDistance.x -= alignedDistance;
+
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			m_targetPos.x += Root.instance.entityBaseScale.x * distance;
-			desc.worldPos.x = m_targetPos.x;
-			Root.instance.alignToVoxel(ref desc.worldPos.x);
+			desc.worldPos.x += alignedDistance;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 
 	void moveY(float distance)
 	{
+		m_dragDistance.y += Root.instance.entityBaseScale.y * distance;
+		float alignedDistance = m_dragDistance.y;
+		Root.instance.alignToVoxel(ref alignedDistance);
+		m_dragDistance.y -= alignedDistance;
+
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			m_targetPos.y += Root.instance.entityBaseScale.y * distance;
-			desc.worldPos.y = m_targetPos.y;
-			Root.instance.alignToVoxel(ref desc.worldPos.y);
+			desc.worldPos.y += alignedDistance;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 
 	void moveZ(float distance)
 	{
+		m_dragDistance.z += Root.instance.entityBaseScale.z * distance;
+		float alignedDistance = m_dragDistance.z;
+		Root.instance.alignToVoxel(ref alignedDistance);
+		m_dragDistance.z -= alignedDistance;
+
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			m_targetPos.z += Root.instance.entityBaseScale.z * distance;
-			desc.worldPos.z = m_targetPos.z;
-			Root.instance.alignToVoxel(ref desc.worldPos.z);
+			desc.worldPos.z += alignedDistance;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
