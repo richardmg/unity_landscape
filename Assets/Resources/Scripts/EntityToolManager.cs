@@ -41,10 +41,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		// Selection and Create tools are exclusive, but one of them is always on
 		selectionToolGo.SetActive(Input.GetKey(KeyCode.LeftApple));
 		createToolGo.SetActive(!selectionToolGo.activeSelf && !Root.instance.player.currentTool.activeSelf);
-
-		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
-		if (selectedInstances.Count != 0)
-			transform.position = selectedInstances[0].instance.transform.position;
+		moveMenuToSelection();
 	}
 
 	public void onSelectionChanged()
@@ -52,10 +49,18 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		if (selectedInstances.Count != 0) {
 			Root.instance.player.currentTool.SetActive(true);
+			moveMenuToSelection();
 		} else {
 			transform.SetParent(null);
 			Root.instance.player.currentTool.SetActive(false);
 		}
+	}
+
+	void moveMenuToSelection()
+	{
+		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
+		if (selectedInstances.Count != 0)
+			transform.position = selectedInstances[0].instance.transform.position;
 	}
 }
 
