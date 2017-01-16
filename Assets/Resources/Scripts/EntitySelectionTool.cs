@@ -6,19 +6,25 @@ using UnityEngine.UI;
 
 public class EntitySelectionTool : MonoBehaviour
 {
-	[HideInInspector]
-	public bool inSelectionMode;
-
-	void Update()
+	public void updateSelection()
 	{
-		inSelectionMode = Input.GetKey(KeyCode.LeftApple);
-
-		if (!inSelectionMode || !Input.GetMouseButtonDown(0))
-			return;
-
+		PlayerStartupScript player = Root.instance.player;
 		EntityInstance entityInstance = getClickedEntityInstance();
-		if (entityInstance)
-			Root.instance.player.selectEntityInstance(entityInstance.entityInstanceDescription);
+
+		if (entityInstance) {
+			if (player.selectedEntityInstances.Contains(entityInstance.entityInstanceDescription)) {
+				if (Input.GetKey(KeyCode.LeftShift))
+					player.selectEntityInstance(entityInstance.entityInstanceDescription);
+				else
+					player.unselectEntityInstance(entityInstance.entityInstanceDescription);
+			} else {
+				if (!Input.GetKey(KeyCode.LeftShift))
+					player.unselectAllEntityInstances();
+				player.selectEntityInstance(entityInstance.entityInstanceDescription);
+			}
+		} else {
+			player.unselectAllEntityInstances();
+		}
 	}
 
 	EntityInstance getClickedEntityInstance()

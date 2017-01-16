@@ -27,11 +27,13 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 
 	public void unselectEntityInstance(EntityInstanceDescription entityInstance)
 	{
-		if (entityInstance == null)
-			selectedEntityInstances.Clear();
-		else
-			selectedEntityInstances.Remove(entityInstance);
+		selectedEntityInstances.Remove(entityInstance);
+		Root.instance.notificationManager.notifySelectionChanged();
+	}
 
+	public void unselectAllEntityInstances()
+	{
+		selectedEntityInstances.Clear();
 		Root.instance.notificationManager.notifySelectionChanged();
 	}
 

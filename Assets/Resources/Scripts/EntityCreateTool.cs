@@ -8,8 +8,6 @@ public class EntityCreateTool : MonoBehaviour
 {
 	void Update()
 	{
-		if (Root.instance.entityToolManager.selectionTool.inSelectionMode)
-			return;
 		if (!Input.GetMouseButtonDown(0))
 			return;
 

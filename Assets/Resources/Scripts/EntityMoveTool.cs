@@ -23,6 +23,12 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Root.instance.notificationManager.removeEntitySelectionListener(this);
 	}
 
+	void Update()
+	{
+		if (Input.GetKey(KeyCode.LeftApple) && Input.GetMouseButtonDown(0))
+			Root.instance.entityToolManager.selectionTool.updateSelection();
+	}
+
 	public void onSelectionChanged()
 	{
 		registerSelection();
@@ -30,7 +36,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void registerSelection()
 	{
-		print("register");
 		if (Root.instance.player.selectedEntityInstances.Count > 0) {
 			m_targetStartPos = Root.instance.player.selectedEntityInstances[0].worldPos;
 			m_targetPos = m_targetStartPos;

@@ -17,6 +17,9 @@ public class EntityInstanceDescription
 	public Quaternion rotation;
 	public bool isStatic;
 
+	private static int s_debugId = 0;
+	private int debugId;
+
 	// There is a one-to-one mapping between an EntityInstance and
 	// a EntityInstanceDescription for simplicity. This can change if we
 	// want to support e.g split-screen multiplayer in the future.
@@ -25,7 +28,9 @@ public class EntityInstanceDescription
 	public EntityInstance instance;
 
 	public EntityInstanceDescription()
-	{}
+	{
+		debugId = s_debugId++;
+	}
 
 	~EntityInstanceDescription()
 	{
@@ -34,6 +39,7 @@ public class EntityInstanceDescription
 
 	public EntityInstanceDescription(EntityClass entityClass, Vector3 worldPos, bool isStatic = true)
 	{
+		debugId = s_debugId++;
 		entityClass.instanceDescriptionCount++;
 		entityClassID = entityClass.id;
 		this.worldPos = worldPos;
@@ -43,7 +49,7 @@ public class EntityInstanceDescription
 
 	override public string ToString()
 	{
-		return "EntityInstanceDescription (" + (instance ? instance.ToString() : "null") + ")";
+		return "EntityInstanceDescription " + debugId + " (" + (instance ? instance.ToString() : "null") + ")";
 	}
 }
 

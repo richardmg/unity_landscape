@@ -35,7 +35,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		deactivateAllTools();
 
-		// Selection tool is handled on the side, and is always active
+		// Selection tool is controlled by each
+		// tool individually, and is always active
 		selectionToolGo.SetActive(true);
 		// Start with create tool active
 		activateTool(createToolGo);
