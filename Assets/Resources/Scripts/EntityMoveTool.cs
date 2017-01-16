@@ -25,7 +25,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
-		if (Input.GetKey(KeyCode.LeftApple) && Input.GetMouseButtonDown(0))
+		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.updateSelection();
 	}
 

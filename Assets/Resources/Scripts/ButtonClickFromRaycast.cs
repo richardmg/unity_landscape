@@ -23,7 +23,7 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 		if (!m_button) {
 			if (!Input.GetMouseButtonDown(0))
 				return;
-			m_button = getButtonUnderPointer();
+			m_button = Root.instance.entityToolManager.getButtonUnderPointer();
 			m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
 			m_ped.dragging = false;
 			m_playerRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles;
@@ -67,18 +67,6 @@ public class ButtonClickFromRaycast : MonoBehaviour {
 		float deltaY = Mathf.DeltaAngle(newRotation.y, m_playerRotation.y);
 		m_playerRotation = newRotation;
 		return new Vector2(deltaY * -dragSpeed, deltaX * dragSpeed);
-	}
-
-	GameObject getButtonUnderPointer()
-	{
-		List<RaycastResult> results = new List<RaycastResult>();
-		GraphicRaycaster gr = GetComponentInParent<GraphicRaycaster>();
-		gr.Raycast(m_ped, results);
-		foreach (RaycastResult r in results) {
-			if (r.gameObject.GetComponent<Button>())
-				return r.gameObject;
-		}
-		return null;
 	}
 
 }

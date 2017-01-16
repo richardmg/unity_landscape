@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 {
@@ -19,6 +21,10 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	[HideInInspector]
 	public EntityCreateTool createTool;
 
+	GameObject m_buttonUnderPointer;
+	int m_buttonUnderPointerFrameTime;
+	PointerEventData m_ped = new PointerEventData(null);
+
 	void Awake()
 	{
 		// Only show entity menus when there is a entity selection
@@ -33,6 +39,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Start()
 	{
+		m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
+
 		deactivateAllTools();
 
 		// Selection tool is controlled by each
@@ -79,6 +87,29 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		if (selectedInstances.Count != 0)
 			transform.position = selectedInstances[0].instance.transform.position;
+	}
+
+	public GameObject getButtonUnderPointer()
+	{
+		// Cache raycast result
+		if (Time.frameCount == m_buttonUnderPointerFrameTime)
+			return m_buttonUnderPointer;
+
+		m_buttonUnderPointer = null;
+		m_buttonUnderPointerFrameTime = Time.frameCount;
+
+		List<RaycastResult> results = new List<RaycastResult>();
+		GraphicRaycaster gr = GetComponentInParent<GraphicRaycaster>();
+		gr.Raycast(m_ped, results);
+
+		foreach (RaycastResult r in results) {
+			if (r.gameObject.GetComponent<Button>()) {
+				m_buttonUnderPointer = r.gameObject;
+				return m_buttonUnderPointer;
+			}
+		}
+
+		return null;
 	}
 }
 
