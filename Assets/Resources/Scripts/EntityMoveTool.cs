@@ -28,25 +28,7 @@ public class EntityMoveTool : MonoBehaviour
 		PointerEventData pointerData = bed as PointerEventData;
 		if (pointerData.dragging)
 			return;
-
-		Vector3 menuDirection = Root.instance.entityToolManagerGO.transform.forward;
-		print(menuDirection.x);
-		int x = Mathf.RoundToInt(menuDirection.x);
-		int y = Mathf.RoundToInt(menuDirection.y);
-		int z = Mathf.RoundToInt(menuDirection.z);
-
-		if (z == 1)
-			moveX(-1);
-		else if (z == -1)
-			moveX(1);
-		else if (x == 1)
-			moveZ(1);
-		else if (x == -1)
-			moveZ(-1);
-		else if (y == 1)
-			moveX(1);
-		else
-			moveX(-1);
+		moveLeftOrRight(1);
 	}
 
 	public void onMoveRightButtonClicked(BaseEventData bed)
@@ -54,10 +36,7 @@ public class EntityMoveTool : MonoBehaviour
 		PointerEventData pointerData = bed as PointerEventData;
 		if (pointerData.dragging)
 			return;
-		if (flipped)
-			moveZ(1);
-		else
-			moveX(1);
+		moveLeftOrRight(-1);
 	}
 
 	public void onMoveUpButtonClicked(BaseEventData bed)
@@ -73,10 +52,7 @@ public class EntityMoveTool : MonoBehaviour
 		PointerEventData pointerData = bed as PointerEventData;
 		if (pointerData.dragging)
 			return;
-		if (flipped)
-			moveX(1);
-		else
-			moveZ(1);
+		moveInOrOut(-1);
 	}
 
 	public void onMoveOutButtonClicked(BaseEventData bed)
@@ -84,10 +60,7 @@ public class EntityMoveTool : MonoBehaviour
 		PointerEventData pointerData = bed as PointerEventData;
 		if (pointerData.dragging)
 			return;
-		if (flipped)
-			moveX(-1);
-		else
-			moveZ(-1);
+		moveInOrOut(1);
 	}
 
 	/***************** DRAG *******************/
@@ -96,17 +69,7 @@ public class EntityMoveTool : MonoBehaviour
 	{
 		PointerEventData pointerData = bed as PointerEventData;
 		float distance = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y) ? pointerData.delta.x : pointerData.delta.y;
-		distance *= dragScale;
-
-		if (pointerData.clickCount == -1)
-			backSide = playerIsOnBackside();
-		if (backSide)
-			distance *= -1;
-
-		if (flipped)
-			moveZ(distance);
-		else
-			moveX(distance);
+		moveLeftOrRight(-distance * dragScale);
 	}
 
 	public void OnVerticalDrag(BaseEventData bed)
@@ -117,20 +80,56 @@ public class EntityMoveTool : MonoBehaviour
 	{
 		PointerEventData pointerData = bed as PointerEventData;
 		float distance = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y) ? pointerData.delta.x : pointerData.delta.y;
-		distance *= dragScale;
-
-		if (pointerData.clickCount == -1)
-			backSide = playerIsOnBackside();
-		if (backSide)
-			distance *= -1;
-
-		if (flipped)
-			moveX(distance);
-		else
-			moveZ(distance);
+		moveInOrOut(-distance * dragScale);
 	}
 
 	/***************** MOVE *******************/
+
+	void fillWithMenuDirection(out int x, out int y, out int z)
+	{
+		Vector3 menuDirection = Root.instance.entityToolManagerGO.transform.forward;
+		x = Mathf.RoundToInt(menuDirection.x);
+		y = Mathf.RoundToInt(menuDirection.y);
+		z = Mathf.RoundToInt(menuDirection.z);
+	}
+
+	void moveLeftOrRight(float distance)
+	{
+		int x, y, z;
+		fillWithMenuDirection(out x, out y, out z);
+
+		if (z == 1)
+			moveX(-distance);
+		else if (z == -1)
+			moveX(distance);
+		else if (x == 1)
+			moveZ(distance);
+		else if (x == -1)
+			moveZ(-distance);
+		else if (y == 1)
+			moveX(distance);
+		else
+			moveX(-distance);
+	}
+
+	void moveInOrOut(float distance)
+	{
+		int x, y, z;
+		fillWithMenuDirection(out x, out y, out z);
+
+		if (z == 1)
+			moveZ(-distance);
+		else if (z == -1)
+			moveZ(distance);
+		else if (x == 1)
+			moveX(-distance);
+		else if (x == -1)
+			moveX(distance);
+		else if (y == 1)
+			moveZ(distance);
+		else
+			moveZ(-distance);
+	}
 
 	void moveX(float distance)
 	{
@@ -143,6 +142,8 @@ public class EntityMoveTool : MonoBehaviour
 			desc.worldPos.x += alignedDistance;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
+
+		syncMenuPosition(new Vector3(alignedDistance, 0, 0));
 	}
 
 	void moveY(float distance)
@@ -156,6 +157,8 @@ public class EntityMoveTool : MonoBehaviour
 			desc.worldPos.y += alignedDistance;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
+
+		syncMenuPosition(new Vector3(0, alignedDistance, 0));
 	}
 
 	void moveZ(float distance)
@@ -169,6 +172,8 @@ public class EntityMoveTool : MonoBehaviour
 			desc.worldPos.z += alignedDistance;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
+
+		syncMenuPosition(new Vector3(0, 0, alignedDistance));
 	}
 
 	/***************** ROTATE *******************/
@@ -216,5 +221,11 @@ public class EntityMoveTool : MonoBehaviour
 		return flipped ?
 			Root.instance.player.transform.position.x > transform.position.x :
 			Root.instance.player.transform.position.z > transform.position.z;
+	}
+
+	void syncMenuPosition(Vector3 delta)
+	{
+		Vector3 pos = Root.instance.entityToolManagerGO.transform.position;
+		Root.instance.entityToolManagerGO.transform.position = pos + delta;
 	}
 }

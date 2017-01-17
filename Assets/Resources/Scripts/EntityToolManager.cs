@@ -56,8 +56,6 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 			activateTool(createToolGo);
 		else if (Input.GetKeyDown(KeyCode.Alpha2))
 			activateTool(moveToolGo);
-
-		moveMenuToSelection();
 	}
 
 	public void deactivateAllTools()
@@ -79,14 +77,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		GetComponent<Canvas>().enabled = selectedInstances.Count != 0;	
 		if (selectedInstances.Count != 0) {
-			moveMenuToSelection();
+			transform.position = selectionTool.lastHit.point;
 			transform.rotation = Quaternion.LookRotation(selectionTool.lastHit.normal * -1);
 		}
-	}
-
-	void moveMenuToSelection()
-	{
-		transform.position = selectionTool.lastHit.point;
 	}
 
 	public GameObject getButtonUnderPointer()
