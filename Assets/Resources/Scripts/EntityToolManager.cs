@@ -91,7 +91,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public GameObject getButtonUnderPointer()
 	{
-		// Cache raycast result
+		// Cache raycast result per frame
 		if (Time.frameCount == m_buttonUnderPointerFrameTime)
 			return m_buttonUnderPointer;
 
