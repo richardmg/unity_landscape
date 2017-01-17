@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class EntitySelectionTool : MonoBehaviour
 {
+	[HideInInspector]
+	public RaycastHit lastHit;
+
 	public void updateSelection()
 	{
 		PlayerStartupScript player = Root.instance.player;
@@ -29,10 +32,9 @@ public class EntitySelectionTool : MonoBehaviour
 
 	EntityInstance getClickedEntityInstance()
 	{
-		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane));
-		if (Physics.Raycast(ray, out hit)) {
-			GameObject go = hit.transform.gameObject;
+		if (Physics.Raycast(ray, out lastHit)) {
+			GameObject go = lastHit.transform.gameObject;
 			EntityInstance entityInstance = go.GetComponent<EntityInstance>();
 			if (entityInstance)
 				return entityInstance;

@@ -78,15 +78,15 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		GetComponent<Canvas>().enabled = selectedInstances.Count != 0;	
-		if (selectedInstances.Count != 0)
+		if (selectedInstances.Count != 0) {
 			moveMenuToSelection();
+			transform.rotation = Quaternion.LookRotation(selectionTool.lastHit.normal * -1);
+		}
 	}
 
 	void moveMenuToSelection()
 	{
-		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
-		if (selectedInstances.Count != 0)
-			transform.position = selectedInstances[0].instance.transform.position;
+		transform.position = selectionTool.lastHit.point;
 	}
 
 	public GameObject getButtonUnderPointer()

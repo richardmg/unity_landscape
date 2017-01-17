@@ -28,10 +28,21 @@ public class EntityMoveTool : MonoBehaviour
 		PointerEventData pointerData = bed as PointerEventData;
 		if (pointerData.dragging)
 			return;
-		if (flipped)
-			moveZ(-1);
-		else
+
+		Vector3 menuDirection = Root.instance.entityToolManagerGO.transform.forward;
+		print(menuDirection.x);
+		int x = Mathf.RoundToInt(menuDirection.x);
+		int y = Mathf.RoundToInt(menuDirection.y);
+		int z = Mathf.RoundToInt(menuDirection.z);
+
+		if (z == 1)
 			moveX(-1);
+		else if (z == -1)
+			moveX(1);
+		else if (x == 1)
+			moveZ(1);
+		else if (x == -1)
+			moveZ(-1);
 	}
 
 	public void onMoveRightButtonClicked(BaseEventData bed)
