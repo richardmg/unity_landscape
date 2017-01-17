@@ -43,6 +43,10 @@ public class EntityMoveTool : MonoBehaviour
 			moveZ(1);
 		else if (x == -1)
 			moveZ(-1);
+		else if (y == 1)
+			moveX(1);
+		else
+			moveX(-1);
 	}
 
 	public void onMoveRightButtonClicked(BaseEventData bed)
