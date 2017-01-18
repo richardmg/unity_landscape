@@ -164,7 +164,8 @@ public class EntityMoveTool : MonoBehaviour
 		m_dragDistance.x -= alignedDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.worldPos.x += alignedDistance;
+			desc.instance.transform.position += desc.instance.transform.right * alignedDistance;
+			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 
@@ -179,7 +180,8 @@ public class EntityMoveTool : MonoBehaviour
 		m_dragDistance.y -= alignedDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.worldPos.y += alignedDistance;
+			desc.instance.transform.position += desc.instance.transform.up * alignedDistance;
+			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 
@@ -194,7 +196,8 @@ public class EntityMoveTool : MonoBehaviour
 		m_dragDistance.z -= alignedDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.worldPos.z += alignedDistance;
+			desc.instance.transform.position += desc.instance.transform.forward * alignedDistance;
+			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 
