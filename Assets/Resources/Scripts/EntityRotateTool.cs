@@ -168,7 +168,8 @@ public class EntityRotateTool : MonoBehaviour
 		m_dragDistance.x -= alignedDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.rotation = Quaternion.Euler(alignedDistance, 0, 0) * desc.rotation;
+			desc.instance.transform.Rotate(alignedDistance, 0, 0, Space.Self);
+			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 
@@ -183,7 +184,8 @@ public class EntityRotateTool : MonoBehaviour
 		m_dragDistance.y -= alignedDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.rotation = Quaternion.Euler(0, alignedDistance, 0) * desc.rotation;
+			desc.instance.transform.Rotate(0, alignedDistance, 0, Space.Self);
+			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 
@@ -198,7 +200,8 @@ public class EntityRotateTool : MonoBehaviour
 		m_dragDistance.z -= alignedDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.rotation = Quaternion.Euler(0, 0, alignedDistance) * desc.rotation;
+			desc.instance.transform.Rotate(0, 0, alignedDistance, Space.Self);
+			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 
