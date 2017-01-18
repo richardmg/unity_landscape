@@ -106,28 +106,30 @@ public class EntityRotateTool : MonoBehaviour
 	void rotateLeftOrRight(float distance)
 	{
 		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
+		int rotationY = Mathf.RoundToInt(rotation.y); 
 
-		if (rotation.y == 0)
+		if (rotationY == 0)
 			rotateZ(-distance);
-		else if (rotation.y == 90)
+		else if (rotationY == 90)
 			rotateX(-distance);
-		else if (rotation.y == 180)
+		else if (rotationY == 180)
 			rotateZ(distance);
-		else if (rotation.y == 270)
+		else if (rotationY == 270)
 			rotateX(distance);
 	}
 
 	void rotateInOrOut(float distance)
 	{
 		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
+		int rotationY = Mathf.RoundToInt(rotation.y); 
 
-		if (rotation.y == 0)
+		if (rotationY == 0)
 			rotateX(-distance);
-		else if (rotation.y == 90)
+		else if (rotationY == 90)
 			rotateZ(distance);
-		else if (rotation.y == 180)
+		else if (rotationY == 180)
 			rotateX(distance);
-		else if (rotation.y == 270)
+		else if (rotationY == 270)
 			rotateZ(-distance);
 	}
 
