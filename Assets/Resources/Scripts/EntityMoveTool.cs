@@ -168,8 +168,6 @@ public class EntityMoveTool : MonoBehaviour
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
-
-		syncMenuPosition(new Vector3(alignedDistance, 0, 0));
 	}
 
 	void moveY(float distance)
@@ -184,8 +182,6 @@ public class EntityMoveTool : MonoBehaviour
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
-
-		syncMenuPosition(new Vector3(0, alignedDistance, 0));
 	}
 
 	void moveZ(float distance)
@@ -200,13 +196,5 @@ public class EntityMoveTool : MonoBehaviour
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
-
-		syncMenuPosition(new Vector3(0, 0, alignedDistance));
-	}
-
-	void syncMenuPosition(Vector3 delta)
-	{
-		Vector3 pos = Root.instance.entityToolManagerGO.transform.position;
-		Root.instance.entityToolManagerGO.transform.position = pos + delta;
 	}
 }

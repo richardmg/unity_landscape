@@ -84,8 +84,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		GetComponent<Canvas>().enabled = selectedInstances.Count != 0;	
 		if (selectedInstances.Count != 0) {
+			transform.SetParent(selectedInstances[0].instance.transform);
 			transform.position = selectionTool.lastHit.point;
-			transform.rotation = Quaternion.LookRotation(selectionTool.lastHit.normal * -1);
+			transform.rotation = Quaternion.LookRotation(selectionTool.lastHit.normal * -1, transform.parent.up);
 		}
 	}
 
