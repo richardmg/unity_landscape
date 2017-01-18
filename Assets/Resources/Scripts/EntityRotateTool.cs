@@ -105,59 +105,35 @@ public class EntityRotateTool : MonoBehaviour
 
 	void rotateLeftOrRight(float distance)
 	{
-		int x, y, z;
-		fillWithMenuDirection(out x, out y, out z);
+		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
 
-		if (z == 1)
+		if (rotation.y == 0)
 			rotateZ(-distance);
-		else if (z == -1)
-			rotateZ(distance);
-		else if (x == 1)
+		else if (rotation.y == 90)
 			rotateX(-distance);
-		else if (x == -1)
-			rotateX(distance);
-		else if (y == 1)
+		else if (rotation.y == 180)
 			rotateZ(distance);
-		else
-			rotateZ(-distance);
+		else if (rotation.y == 270)
+			rotateX(distance);
 	}
 
 	void rotateInOrOut(float distance)
 	{
-		int x, y, z;
-		fillWithMenuDirection(out x, out y, out z);
+		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
 
-		if (z == 1)
+		if (rotation.y == 0)
 			rotateX(-distance);
-		else if (z == -1)
-			rotateX(distance);
-		else if (x == 1)
-			rotateZ(-distance);
-		else if (x == -1)
+		else if (rotation.y == 90)
 			rotateZ(distance);
-		else if (y == 1)
+		else if (rotation.y == 180)
 			rotateX(distance);
-		else
-			rotateX(-distance);
+		else if (rotation.y == 270)
+			rotateZ(-distance);
 	}
 
 	void rotateZenitLeftOrRight(float distance)
 	{
-		int x, y, z;
-		fillWithMenuDirection(out x, out y, out z);
-
-		if (z == 1)
-			rotateY(-distance);
-		else if (z == -1)
-			rotateY(-distance);
-		else if (x == 1)
-			rotateY(-distance);
-		else if (x == -1)
-			rotateY(-distance);
-		else if (y == 1)
-			rotateY(-distance);
-		else
-			rotateY(-distance);
+		rotateY(-distance);
 	}
 
 	void rotateX(float distance)
