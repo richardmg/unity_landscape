@@ -91,69 +91,37 @@ public class EntityMoveTool : MonoBehaviour
 
 	/***************** MOVE *******************/
 
-	void fillWithMenuDirection(out int x, out int y, out int z)
-	{
-		Vector3 menuDirection = Root.instance.entityToolManagerGO.transform.forward;
-		x = Mathf.RoundToInt(menuDirection.x);
-		y = Mathf.RoundToInt(menuDirection.y);
-		z = Mathf.RoundToInt(menuDirection.z);
-	}
-
 	void moveLeftOrRight(float distance)
 	{
-		int x, y, z;
-		fillWithMenuDirection(out x, out y, out z);
+		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
 
-		if (z == 1)
+		if (rotation.y == 0)
 			moveX(-distance);
-		else if (z == -1)
-			moveX(distance);
-		else if (x == 1)
+		else if (rotation.y == 90)
 			moveZ(distance);
-		else if (x == -1)
-			moveZ(-distance);
-		else if (y == 1)
+		else if (rotation.y == 180)
 			moveX(distance);
-		else
-			moveX(-distance);
+		else if (rotation.y == 270)
+			moveZ(-distance);
 	}
 
 	void moveInOrOut(float distance)
 	{
-		int x, y, z;
-		fillWithMenuDirection(out x, out y, out z);
+		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
 
-		if (z == 1)
+		if (rotation.y == 0)
 			moveZ(-distance);
-		else if (z == -1)
-			moveZ(distance);
-		else if (x == 1)
+		else if (rotation.y == 90)
 			moveX(-distance);
-		else if (x == -1)
-			moveX(distance);
-		else if (y == 1)
+		else if (rotation.y == 180)
 			moveZ(distance);
-		else
-			moveZ(-distance);
+		else if (rotation.y == 270)
+			moveX(distance);
 	}
 
 	void moveUpOrDown(float distance)
 	{
-		int x, y, z;
-		fillWithMenuDirection(out x, out y, out z);
-
-		if (z == 1)
-			moveY(distance);
-		else if (z == -1)
-			moveY(distance);
-		else if (x == 1)
-			moveY(distance);
-		else if (x == -1)
-			moveY(distance);
-		else if (y == 1)
-			moveY(distance);
-		else
-			moveY(distance);
+		moveY(distance);
 	}
 
 	void moveX(float distance)
