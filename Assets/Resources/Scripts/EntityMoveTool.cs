@@ -7,8 +7,6 @@ public class EntityMoveTool : MonoBehaviour
 {
 	Vector3 m_dragDistance;
 	float dragScale = 0.1f;
-	bool flipped = false;
-	bool backSide = false;
 
 	public void OnEnable()
 	{
@@ -41,10 +39,15 @@ public class EntityMoveTool : MonoBehaviour
 
 	public void onMoveUpButtonClicked(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		if (pointerData.dragging)
+			return;
+		moveUpOrDown(1);
 	}
 
 	public void onMoveDownButtonClicked(BaseEventData bed)
 	{
+		moveUpOrDown(-1);
 	}
 
 	public void onMoveInButtonClicked(BaseEventData bed)
@@ -72,8 +75,11 @@ public class EntityMoveTool : MonoBehaviour
 		moveLeftOrRight(-distance * dragScale);
 	}
 
-	public void onVerticalDrag(BaseEventData bed)
+	public void onUpDownDrag(BaseEventData bed)
 	{
+		PointerEventData pointerData = bed as PointerEventData;
+		float distance = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y) ? pointerData.delta.x : pointerData.delta.y;
+		moveUpOrDown(distance * dragScale);
 	}
 
 	public void onInOutDrag(BaseEventData bed)
@@ -129,6 +135,25 @@ public class EntityMoveTool : MonoBehaviour
 			moveZ(distance);
 		else
 			moveZ(-distance);
+	}
+
+	void moveUpOrDown(float distance)
+	{
+		int x, y, z;
+		fillWithMenuDirection(out x, out y, out z);
+
+		if (z == 1)
+			moveY(distance);
+		else if (z == -1)
+			moveY(distance);
+		else if (x == 1)
+			moveY(distance);
+		else if (x == -1)
+			moveY(distance);
+		else if (y == 1)
+			moveY(distance);
+		else
+			moveY(distance);
 	}
 
 	void moveX(float distance)
