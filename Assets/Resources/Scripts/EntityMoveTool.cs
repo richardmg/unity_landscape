@@ -7,6 +7,9 @@ public class EntityMoveTool : MonoBehaviour
 {
 	Vector3 m_dragDistance;
 	float dragScale = 0.1f;
+	bool inHoriontalDrag = false;
+	bool inDrag = false;
+	float dragStoppedTime = 0;
 
 	public void OnEnable()
 	{
@@ -68,11 +71,34 @@ public class EntityMoveTool : MonoBehaviour
 
 	/***************** DRAG *******************/
 
+	void updateDragStatus(PointerEventData pointerData)
+	{
+		bool pointerMoved = (pointerData.delta.x != 0 || pointerData.delta.y != 0);
+
+		if (inDrag) {
+			if (pointerMoved)
+				dragStoppedTime = Time.unscaledTime;
+
+			if (dragStoppedTime > 2) {
+				inDrag = false;
+			}
+		} if (pointerMoved) {
+			inDrag = true;
+			inHoriontalDrag = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y);
+		}
+	}
+
 	public void onHorizontalDrag(BaseEventData bed)
 	{
 		PointerEventData pointerData = bed as PointerEventData;
-		float distance = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y) ? pointerData.delta.x : pointerData.delta.y;
-		moveLeftOrRight(-distance * dragScale);
+		updateDragStatus(pointerData);
+
+		if (inDrag) {
+			if (inHoriontalDrag)
+				moveLeftOrRight(-pointerData.delta.x * dragScale);
+			else
+				moveInOrOut(-pointerData.delta.y * dragScale);
+		}
 	}
 
 	public void onUpDownDrag(BaseEventData bed)
