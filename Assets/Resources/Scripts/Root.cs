@@ -17,13 +17,12 @@ public class Root : MonoBehaviour {
 	public GameObject snapshotCameraGO;
 	public GameObject commandPromptGO;
 	public GameObject entityInstanceManagerGO;
+	public GameObject worldScaleManagerGO;
 
 	public Material voxelMaterialExact;
 	public Material voxelMaterialVolume;
 	public Material voxelMaterialLit;
 	public Texture2D textureAtlas;
-
-	public Vector3 entityBaseScale = new Vector3(0.2f, 0.2f, 0.2f);
 
 	[HideInInspector]
 	public static Root instance;
@@ -50,6 +49,8 @@ public class Root : MonoBehaviour {
 	public ProjectManager projectManager;
 	[HideInInspector]
 	public CommandPrompt commandPrompt;
+	[HideInInspector]
+	public WorldScaleManager worldScaleManager;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -74,6 +75,7 @@ public class Root : MonoBehaviour {
 		entityInstanceManager = entityInstanceManagerGO.GetComponent<EntityInstanceManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
 		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
+		worldScaleManager = worldScaleManagerGO.GetComponent<WorldScaleManager>();
 
 		meshManager = new MeshManager();
 		entityClassManager = new EntityClassManager();
@@ -96,18 +98,6 @@ public class Root : MonoBehaviour {
 		case kLod1: return voxelMaterialVolume;
 		default: return voxelMaterialLit;
 		}
-	}
-
-	public void alignToVoxel(ref float v)
-	{
-		v = Mathf.Round(v / entityBaseScale.x) * entityBaseScale.x;
-	}
-
-	public void alignToVoxel(ref Vector3 v)
-	{
-		alignToVoxel(ref v.x);
-		alignToVoxel(ref v.y);
-		alignToVoxel(ref v.z);
 	}
 
 }

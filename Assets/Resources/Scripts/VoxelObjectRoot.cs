@@ -41,7 +41,7 @@ public class VoxelObjectRoot
 		go.transform.parent = parent;
 		Vector3 localScale = Vector3.one;
 		localScale.Scale(scale);
-		localScale.Scale(Root.instance.entityBaseScale);
+		localScale.Scale(Root.instance.worldScaleManager.entityBaseScale);
 		go.transform.localScale = localScale;
 		go.transform.localPosition = Vector3.zero;
 

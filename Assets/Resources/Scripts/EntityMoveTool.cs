@@ -7,19 +7,10 @@ public class EntityMoveTool : MonoBehaviour
 {
 	Vector3 m_dragDistance;
 	float dragScale = 0.1f;
-	GameObject m_worldCenter;
 
 	public void OnEnable()
 	{
 		m_dragDistance = Vector3.zero;
-		if (!m_worldCenter)
-			m_worldCenter = new GameObject();
-		m_worldCenter.SetActive(true);
-	}
-
-	public void OnDisable()
-	{
-		m_worldCenter.SetActive(false);
 	}
 
 	void Update()
@@ -137,32 +128,27 @@ public class EntityMoveTool : MonoBehaviour
 
 	void moveX(float distance)
 	{
-		m_dragDistance.x += Root.instance.entityBaseScale.x * distance;
-		float dragDistance = m_dragDistance.x;
-		Root.instance.alignToVoxel(ref dragDistance);
+		m_dragDistance.x += Root.instance.worldScaleManager.entityBaseScale.x * distance;
+		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.x);
 		m_dragDistance.x -= dragDistance;
 
-		GameObject centerCube = new GameObject();
-
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			moveAndAlign(desc.instance.transform, desc.instance.transform.right, dragDistance);
+			desc.instance.transform.position += desc.instance.transform.right * dragDistance;
+			Root.instance.worldScaleManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
-
-		// do this onDisable
-		centerCube.hideAndDestroy();
 	}
 
 	void moveY(float distance)
 	{
-		m_dragDistance.y += Root.instance.entityBaseScale.y * distance;
-		float alignedDistance = m_dragDistance.y;
-		Root.instance.alignToVoxel(ref alignedDistance);
-		m_dragDistance.y -= alignedDistance;
+		m_dragDistance.y += Root.instance.worldScaleManager.entityBaseScale.y * distance;
+		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.y);
+		m_dragDistance.y -= dragDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.instance.transform.position += desc.instance.transform.up * alignedDistance;
+			desc.instance.transform.position += desc.instance.transform.up * dragDistance;
+			Root.instance.worldScaleManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
@@ -170,27 +156,15 @@ public class EntityMoveTool : MonoBehaviour
 
 	void moveZ(float distance)
 	{
-		m_dragDistance.z += Root.instance.entityBaseScale.z * distance;
-		float alignedDistance = m_dragDistance.z;
-		Root.instance.alignToVoxel(ref alignedDistance);
-		m_dragDistance.z -= alignedDistance;
+		m_dragDistance.z += Root.instance.worldScaleManager.entityBaseScale.z * distance;
+		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.z);
+		m_dragDistance.z -= dragDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.instance.transform.position += desc.instance.transform.forward * alignedDistance;
+			desc.instance.transform.position += desc.instance.transform.forward * dragDistance;
+			Root.instance.worldScaleManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
-	}
-
-	void moveAndAlign(Transform targetTransform, Vector3 worldDirection, float distance)
-	{
-		Transform descParent = targetTransform.parent;
-		m_worldCenter.transform.rotation = targetTransform.rotation;
-		targetTransform.SetParent(m_worldCenter.transform, true);
-		targetTransform.position += worldDirection * distance;
-		Vector3 localPos = targetTransform.localPosition;
-		Root.instance.alignToVoxel(ref localPos);
-		targetTransform.localPosition = localPos;
-		targetTransform.SetParent(descParent, true);
 	}
 }
