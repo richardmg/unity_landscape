@@ -16,10 +16,7 @@ public class EntitySelectionTool : MonoBehaviour
 
 		if (entityInstance) {
 			if (player.selectedEntityInstances.Contains(entityInstance.entityInstanceDescription)) {
-				if (Input.GetKey(KeyCode.LeftShift))
-					player.selectEntityInstance(entityInstance.entityInstanceDescription);
-				else
-					player.unselectEntityInstance(entityInstance.entityInstanceDescription);
+				Root.instance.entityToolManager.repositionMenuAccordingToSelection();
 			} else {
 				if (!Input.GetKey(KeyCode.LeftShift))
 					player.unselectAllEntityInstances();

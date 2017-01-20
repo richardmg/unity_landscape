@@ -79,7 +79,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		print("Activated " + tool.name);
 	}
 
-	public void onSelectionChanged()
+	public void repositionMenuAccordingToSelection()
 	{
 		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
 		GetComponent<Canvas>().enabled = selectedInstances.Count != 0;	
@@ -88,6 +88,11 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 			transform.position = selectionTool.lastHit.point;
 			transform.rotation = Quaternion.LookRotation(selectionTool.lastHit.normal * -1, transform.parent.up);
 		}
+	}
+
+	public void onSelectionChanged()
+	{
+		repositionMenuAccordingToSelection();
 	}
 
 	public GameObject getButtonUnderPointer()
