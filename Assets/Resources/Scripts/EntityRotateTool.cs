@@ -9,6 +9,9 @@ public class EntityRotateTool : MonoBehaviour
 	float dragScale = 0.1f;
 	float angleStep = 10f;
 
+	bool inHoriontalDrag = false;
+	bool inDrag = false;
+
 	public void OnEnable()
 	{
 		m_dragDistance = Vector3.zero;
@@ -72,11 +75,30 @@ public class EntityRotateTool : MonoBehaviour
 
 	/***************** DRAG *******************/
 
+	void updateDragStatus(PointerEventData pointerData)
+	{
+		bool pointerMoved = (pointerData.delta.x != 0 || pointerData.delta.y != 0);
+
+		if (inDrag) {
+			if (!pointerMoved)
+				inDrag = false;
+		} else if (pointerMoved) {
+			inDrag = true;
+			inHoriontalDrag = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y);
+		}
+	}
+
 	public void onHorizontalDrag(BaseEventData bed)
 	{
 		PointerEventData pointerData = bed as PointerEventData;
-		float distance = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y) ? pointerData.delta.x : pointerData.delta.y;
-		rotateLeftOrRight(distance * dragScale);
+		updateDragStatus(pointerData);
+
+		if (inDrag) {
+			if (inHoriontalDrag)
+				rotateLeftOrRight(pointerData.delta.x * dragScale);
+			else
+				rotateInOrOut(-pointerData.delta.y * dragScale);
+		}
 	}
 
 	public void onZenitDrag(BaseEventData bed)
