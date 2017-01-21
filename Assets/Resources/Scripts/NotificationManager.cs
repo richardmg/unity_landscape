@@ -19,7 +19,7 @@ public interface IEntityInstanceDescriptionListener
 
 public interface IEntityInstanceSelectionListener
 {
-	void onSelectionChanged();
+	void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection);
 }
 
 public interface IProjectListener
@@ -111,10 +111,11 @@ public class NotificationManager {
 			listener.onEntityClassChanged(entityClass);	
 	}
 
-	public void notifySelectionChanged()
+	public void notifySelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
-		foreach (IEntityInstanceSelectionListener listener in entityInstanceSelectionListeners)
-			listener.onSelectionChanged();
+		List<IEntityInstanceSelectionListener> lockedList = new List<IEntityInstanceSelectionListener>(entityInstanceSelectionListeners);
+		foreach (IEntityInstanceSelectionListener listener in lockedList)
+			listener.onSelectionChanged(oldSelection, newSelection);
 	}
 
 	public void notifyProjectLoaded()

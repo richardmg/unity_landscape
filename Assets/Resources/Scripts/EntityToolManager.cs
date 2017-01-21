@@ -84,20 +84,21 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		return true;
 	}
 
-	public void repositionMenuAccordingToSelection()
+	public void repositionMenuAccordingToSelection(List<EntityInstanceDescription> selection)
 	{
-		List<EntityInstanceDescription> selectedInstances = Root.instance.player.selectedEntityInstances;
-		GetComponent<Canvas>().enabled = selectedInstances.Count != 0;	
-		if (selectedInstances.Count != 0) {
-			transform.SetParent(selectedInstances[0].instance.transform);
+		GetComponent<Canvas>().enabled = selection.Count != 0;	
+		if (selection.Count != 0) {
+			transform.SetParent(selection[0].instance.transform);
 			transform.position = selectionTool.lastHit.point;
 			transform.rotation = Quaternion.LookRotation(selectionTool.lastHit.normal * -1, transform.parent.up);
 		}
 	}
 
-	public void onSelectionChanged()
+	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
-		repositionMenuAccordingToSelection();
+		repositionMenuAccordingToSelection(newSelection);
+		if (newSelection.Count == 0)
+			activateSwitchTool();
 	}
 
 	public GameObject getButtonUnderPointer()

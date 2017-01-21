@@ -21,20 +21,23 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 
 	public void selectEntityInstance(EntityInstanceDescription entityInstance)
 	{
+		List<EntityInstanceDescription> oldSelection = new List<EntityInstanceDescription>(selectedEntityInstances);
 		selectedEntityInstances.Add(entityInstance);
-		Root.instance.notificationManager.notifySelectionChanged();
+		Root.instance.notificationManager.notifySelectionChanged(oldSelection, selectedEntityInstances);
 	}
 
 	public void unselectEntityInstance(EntityInstanceDescription entityInstance)
 	{
+		List<EntityInstanceDescription> oldSelection = new List<EntityInstanceDescription>(selectedEntityInstances);
 		selectedEntityInstances.Remove(entityInstance);
-		Root.instance.notificationManager.notifySelectionChanged();
+		Root.instance.notificationManager.notifySelectionChanged(oldSelection, selectedEntityInstances);
 	}
 
 	public void unselectAllEntityInstances()
 	{
+		List<EntityInstanceDescription> oldSelection = new List<EntityInstanceDescription>(selectedEntityInstances);
 		selectedEntityInstances.Clear();
-		Root.instance.notificationManager.notifySelectionChanged();
+		Root.instance.notificationManager.notifySelectionChanged(oldSelection, selectedEntityInstances);
 	}
 
 	public void setEntityClassInUse(EntityClass entityClass)

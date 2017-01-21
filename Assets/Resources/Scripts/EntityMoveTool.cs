@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class EntityMoveTool : MonoBehaviour
+public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	Vector3 m_dragDistance;
 	Vector3 m_prevPlayerPos;
@@ -26,16 +26,15 @@ public class EntityMoveTool : MonoBehaviour
 		m_prevPlayerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
 		m_prevPlayerXRotationReminder = 0;
 		m_idleTime = Time.unscaledTime;
+		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
+		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
 
 	public void OnDisable()
 	{
 		Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
-		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			Root.instance.worldScaleManager.align(desc.instance.transform);
-			desc.worldPos = desc.instance.transform.position;
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
-		}
+		alignSelection(Root.instance.player.selectedEntityInstances);
+		Root.instance.notificationManager.removeEntitySelectionListener(this);
 	}
 
 	void Update()
@@ -43,15 +42,6 @@ public class EntityMoveTool : MonoBehaviour
 		// Resolve which objects should be seleced
 		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.updateSelection();
-
-		// Slow down player when there is a selection
-		if (Root.instance.player.selectedEntityInstances.Count > 0) {
-			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 1;
-		} else {
-			if (Root.instance.entityToolManager.activateSwitchTool())
-				return;
-			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
-		}
 
 		// Get the players position, but ignore height
 		float startHeight = m_prevPlayerPos.y;
@@ -84,6 +74,27 @@ public class EntityMoveTool : MonoBehaviour
 			desc.instance.transform.position += playerPosDelta;
 			if (align)
 				Root.instance.worldScaleManager.align(desc.instance.transform);
+			desc.worldPos = desc.instance.transform.position;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
+	}
+
+	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
+	{
+		alignSelection(oldSelection);
+
+		// Slow down player when there is a selection
+		if (newSelection.Count > 0) {
+			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 1;
+		} else {
+			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
+		}
+	}
+
+	void alignSelection(List<EntityInstanceDescription> selection)
+	{
+		foreach (EntityInstanceDescription desc in selection) {
+			Root.instance.worldScaleManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
