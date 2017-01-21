@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class EntityMoveTool : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class EntityMoveTool : MonoBehaviour
 	Vector3 m_prevPlayerPosReminder;
 	float m_prevPlayerXRotation;
 	float m_prevPlayerXRotationReminder;
+	float m_idleTime;
 
 	float dragScale = 0.1f;
 
@@ -25,6 +27,7 @@ public class EntityMoveTool : MonoBehaviour
 
 		m_prevPlayerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
 		m_prevPlayerXRotationReminder = 0;
+		m_idleTime = Time.unscaledTime;
 	}
 
 	void Update()
@@ -33,16 +36,27 @@ public class EntityMoveTool : MonoBehaviour
 		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.updateSelection();
 
+		// Slow down player when there is a selection
+		if (Root.instance.player.selectedEntityInstances.Count > 0)
+			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 1;
+		else
+			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
+
 		// Get the players position, but ignore height
 		float startHeight = m_prevPlayerPos.y;
 		Vector3 playerPos = Root.instance.playerGO.transform.position;
 		playerPos.y = startHeight;
 
 		// Calculate how much the player moved sine last update
-		Vector3 playerPosDelta = playerPos - m_prevPlayerPos + m_prevPlayerPosReminder;
-		Vector3 deltaAligned = Root.instance.worldScaleManager.align(playerPosDelta);
-		m_prevPlayerPosReminder = playerPosDelta - deltaAligned;
+		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
 		m_prevPlayerPos = playerPos;
+
+		// Only align when movement has subsided
+		bool align = false;
+		if (playerPosDelta.magnitude > 0f)
+			m_idleTime = Time.unscaledTime;
+		else if (Time.unscaledTime - m_idleTime > 0.2f)
+			align = true;
 
 		// Calculate the elevation of the object. We allow only one voxel object up / down
 		float playerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
@@ -51,13 +65,14 @@ public class EntityMoveTool : MonoBehaviour
 		m_prevPlayerXRotationReminder = playerXRotation - xRotDeltaAligned;
 		m_prevPlayerXRotation = playerXRotation;
 
-		deltaAligned.y = -xRotDeltaAligned;
-		print(deltaAligned.y);
+		//deltaAligned.y = -xRotDeltaAligned;
+		//print(deltaAligned.y);
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.instance.transform.position += deltaAligned;
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			desc.instance.transform.position += playerPosDelta;
+			if (align)
+				Root.instance.worldScaleManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
