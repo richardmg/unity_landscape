@@ -30,6 +30,16 @@ public class EntityMoveTool : MonoBehaviour
 		m_idleTime = Time.unscaledTime;
 	}
 
+	public void OnDisable()
+	{
+		Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			Root.instance.worldScaleManager.align(desc.instance.transform);
+			desc.worldPos = desc.instance.transform.position;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
+	}
+
 	void Update()
 	{
 		// Resolve which objects should be seleced
