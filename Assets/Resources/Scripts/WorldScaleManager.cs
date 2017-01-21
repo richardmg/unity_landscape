@@ -11,8 +11,7 @@ public class WorldScaleManager : MonoBehaviour
 		transform.rotation = targetTransform.rotation;
 		Transform descParent = targetTransform.parent;
 		targetTransform.SetParent(transform, true);
-		Vector3 localPos = targetTransform.localPosition;
-		align(ref localPos);
+		Vector3 localPos = align(targetTransform.localPosition);
 		targetTransform.localPosition = localPos;
 		targetTransform.SetParent(descParent, true);
 	}
@@ -22,11 +21,9 @@ public class WorldScaleManager : MonoBehaviour
 		return Mathf.Round(v / entityBaseScale.x) * entityBaseScale.x;
 	}
 
-	public void align(ref Vector3 v)
+	public Vector3 align(Vector3 v)
 	{
-		v.x = align(v.x);
-		v.y = align(v.y);
-		v.z = align(v.z);
+		return new Vector3(align(v.x), align(v.y), align(v.z));
 	}
 
 }

@@ -6,6 +6,11 @@ using UnityEngine.EventSystems;
 public class EntityMoveTool : MonoBehaviour
 {
 	Vector3 m_dragDistance;
+	Vector3 m_prevPlayerPos;
+	Vector3 m_prevPlayerPosReminder;
+	float m_prevPlayerXRotation;
+	float m_prevPlayerXRotationReminder;
+
 	float dragScale = 0.1f;
 
 	bool inHoriontalDrag = false;
@@ -14,12 +19,48 @@ public class EntityMoveTool : MonoBehaviour
 	public void OnEnable()
 	{
 		m_dragDistance = Vector3.zero;
+
+		m_prevPlayerPosReminder = Vector3.zero;
+		m_prevPlayerPos = Root.instance.playerGO.transform.position;
+
+		m_prevPlayerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
+		m_prevPlayerXRotationReminder = 0;
 	}
 
 	void Update()
 	{
+		// Resolve which objects should be seleced
 		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.updateSelection();
+
+		// Get the players position, but ignore height
+		float startHeight = m_prevPlayerPos.y;
+		Vector3 playerPos = Root.instance.playerGO.transform.position;
+		playerPos.y = startHeight;
+
+		// Calculate how much the player moved sine last update
+		Vector3 playerPosDelta = playerPos - m_prevPlayerPos + m_prevPlayerPosReminder;
+		Vector3 deltaAligned = Root.instance.worldScaleManager.align(playerPosDelta);
+		m_prevPlayerPosReminder = playerPosDelta - deltaAligned;
+		m_prevPlayerPos = playerPos;
+
+		// Calculate the elevation of the object. We allow only one voxel object up / down
+		float playerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
+		float xRotDelta = playerXRotation - m_prevPlayerXRotation;
+		float xRotDeltaAligned = Root.instance.worldScaleManager.align(xRotDelta);
+		m_prevPlayerXRotationReminder = playerXRotation - xRotDeltaAligned;
+		m_prevPlayerXRotation = playerXRotation;
+
+		deltaAligned.y = -xRotDeltaAligned;
+		print(deltaAligned.y);
+
+		// Inform the app about the position update of the selected objects
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.instance.transform.position += deltaAligned;
+			Root.instance.worldScaleManager.align(desc.instance.transform);
+			desc.worldPos = desc.instance.transform.position;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
 	}
 
 	/***************** CLICK *******************/
