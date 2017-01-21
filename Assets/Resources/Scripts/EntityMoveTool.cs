@@ -8,7 +8,6 @@ public class EntityMoveTool : MonoBehaviour
 {
 	Vector3 m_dragDistance;
 	Vector3 m_prevPlayerPos;
-	Vector3 m_prevPlayerPosReminder;
 	float m_prevPlayerXRotation;
 	float m_prevPlayerXRotationReminder;
 	float m_idleTime;
@@ -22,7 +21,6 @@ public class EntityMoveTool : MonoBehaviour
 	{
 		m_dragDistance = Vector3.zero;
 
-		m_prevPlayerPosReminder = Vector3.zero;
 		m_prevPlayerPos = Root.instance.playerGO.transform.position;
 
 		m_prevPlayerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
@@ -47,10 +45,13 @@ public class EntityMoveTool : MonoBehaviour
 			Root.instance.entityToolManager.selectionTool.updateSelection();
 
 		// Slow down player when there is a selection
-		if (Root.instance.player.selectedEntityInstances.Count > 0)
+		if (Root.instance.player.selectedEntityInstances.Count > 0) {
 			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 1;
-		else
+		} else {
+			if (Root.instance.entityToolManager.activateSwitchTool())
+				return;
 			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
+		}
 
 		// Get the players position, but ignore height
 		float startHeight = m_prevPlayerPos.y;

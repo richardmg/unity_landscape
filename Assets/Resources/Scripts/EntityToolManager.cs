@@ -15,15 +15,12 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public float offsetY = -2f;
 	public float rotation = 0f;
 
-	[HideInInspector]
-	public EntitySelectionTool selectionTool;
-	[HideInInspector]
-	public EntityCreateTool createTool;
-	[HideInInspector]
-	public EntityMoveTool moveTool;
-	[HideInInspector]
-	public EntityRotateTool rotateTool;
+	[HideInInspector] public EntitySelectionTool selectionTool;
+	[HideInInspector] public EntityCreateTool createTool;
+	[HideInInspector] public EntityMoveTool moveTool;
+	[HideInInspector] public EntityRotateTool rotateTool;
 
+	GameObject m_switchToolOnUnselect = null;
 	GameObject m_buttonUnderPointer;
 	int m_buttonUnderPointerFrameTime;
 	PointerEventData m_ped = new PointerEventData(null);
@@ -71,12 +68,20 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		rotateToolGo.SetActive(false);
 	}
 
-	public void activateTool(GameObject tool)
+	public void activateTool(GameObject tool, GameObject switchToolOnUnselect = null)
 	{
+		m_switchToolOnUnselect = switchToolOnUnselect;	
 		Root.instance.player.currentTool = tool;
 		deactivateAllTools();
 		tool.SetActive(true);	
-		print("Activated " + tool.name);
+	}
+
+	public bool activateSwitchTool()
+	{
+		if (!m_switchToolOnUnselect)
+			return false;
+		activateTool(m_switchToolOnUnselect);
+		return true;
 	}
 
 	public void repositionMenuAccordingToSelection()
