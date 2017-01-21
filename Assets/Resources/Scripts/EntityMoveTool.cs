@@ -9,7 +9,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	Vector3 m_dragDistance;
 	Vector3 m_prevPlayerPos;
 	float m_prevPlayerXRotation;
-	float m_prevPlayerXRotationReminder;
+	Quaternion m_prevPlayerRotation;
 	float m_idleTime;
 
 	float dragScale = 0.1f;
@@ -22,9 +22,8 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		m_dragDistance = Vector3.zero;
 
 		m_prevPlayerPos = Root.instance.playerGO.transform.position;
+		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
 
-		m_prevPlayerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
-		m_prevPlayerXRotationReminder = 0;
 		m_idleTime = Time.unscaledTime;
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
@@ -52,22 +51,18 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
 		m_prevPlayerPos = playerPos;
 
+		// Calculate how much the head has tilted up/down
+		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
+		float xAngleDelta = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
+		m_prevPlayerRotation = playerRotation;
+		playerPosDelta.y = xAngleDelta * 0.1f;
+
 		// Only align when movement has subsided
 		bool align = false;
-		if (playerPosDelta.magnitude > 0f)
+		if (playerPosDelta.magnitude > 0f || xAngleDelta != 0)
 			m_idleTime = Time.unscaledTime;
 		else if (Time.unscaledTime - m_idleTime > 0.2f)
 			align = true;
-
-		// Calculate the elevation of the object. We allow only one voxel object up / down
-		float playerXRotation = Root.instance.playerHeadGO.transform.rotation.eulerAngles.x;
-		float xRotDelta = playerXRotation - m_prevPlayerXRotation;
-		float xRotDeltaAligned = Root.instance.worldScaleManager.align(xRotDelta);
-		m_prevPlayerXRotationReminder = playerXRotation - xRotDeltaAligned;
-		m_prevPlayerXRotation = playerXRotation;
-
-		//deltaAligned.y = -xRotDeltaAligned;
-		//print(deltaAligned.y);
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
