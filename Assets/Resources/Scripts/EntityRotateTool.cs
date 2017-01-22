@@ -2,209 +2,104 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
+using ToolMode = System.Int32;
 
-public class EntityRotateTool : MonoBehaviour
+public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
-	Vector3 m_dragDistance;
-	float dragScale = 0.1f;
-	float angleStep = 10f;
+	Vector3 m_prevPlayerPos;
+	float m_prevPlayerXRotation;
+	Quaternion m_prevPlayerRotation;
+	float m_idleTime;
 
-	bool inHoriontalDrag = false;
-	bool inDrag = false;
+	Quaternion m_alignmentRotation;
+	Vector3 m_alignmentPosition;
+	bool m_alignmentNeeded;
 
 	public void OnEnable()
 	{
-		m_dragDistance = Vector3.zero;
+		m_alignmentNeeded = false;
+		resetToolState();
+		Root.instance.player.setWalkSpeed(1);
+		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
+		Root.instance.notificationManager.addEntitySelectionListener(this);
+	}
+
+	public void OnDisable()
+	{
+		Root.instance.player.setDefaultWalkSpeed();
+		Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
+		Root.instance.notificationManager.removeEntitySelectionListener(this);
 	}
 
 	void Update()
 	{
-		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
-			Root.instance.entityToolManager.selectionTool.updateSelection();
+		updateRotate();
+		updateAlignment();
 	}
 
-	/***************** CLICK *******************/
-
-	public void onRotateLeftButtonClicked(BaseEventData bed)
+	void updateRotate()
 	{
-		PointerEventData pointerData = bed as PointerEventData;
-		if (pointerData.dragging)
-			return;
-		rotateLeftOrRight(-1);
-	}
+		// Get the players position, but ignore height
+		float startHeight = m_prevPlayerPos.y;
+		Vector3 playerPos = Root.instance.playerGO.transform.position;
+		playerPos.y = startHeight;
 
-	public void onRotateRightButtonClicked(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		if (pointerData.dragging)
-			return;
-		rotateLeftOrRight(1);
-	}
+		// Calculate how much the player moved sine last update
+		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
+		m_prevPlayerPos = playerPos;
 
-	public void onRotateZenitLeftButtonClicked(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		if (pointerData.dragging)
-			return;
-		rotateZenitLeftOrRight(-1);
-	}
+		// Calculate how much the head has tilted left/right
+		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
+		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
+		m_prevPlayerRotation = playerRotation;
 
-	public void onRotateZenitRightButtonClicked(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		if (pointerData.dragging)
-			return;
-		rotateZenitLeftOrRight(1);
-	}
+		playerPosDelta.Scale(new Vector3(-30, 4, 30));
 
-	public void onRotateInButtonClicked(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		if (pointerData.dragging)
-			return;
-		rotateInOrOut(-1);
-	}
-
-	public void onRotateOutButtonClicked(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		if (pointerData.dragging)
-			return;
-		rotateInOrOut(1);
-	}
-
-	/***************** DRAG *******************/
-
-	void updateDragStatus(PointerEventData pointerData)
-	{
-		bool pointerMoved = (pointerData.delta.x != 0 || pointerData.delta.y != 0);
-
-		if (inDrag) {
-			if (!pointerMoved)
-				inDrag = false;
-		} else if (pointerMoved) {
-			inDrag = true;
-			inHoriontalDrag = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y);
-		}
-	}
-
-	public void onHorizontalDrag(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		updateDragStatus(pointerData);
-
-		if (inDrag) {
-			if (inHoriontalDrag)
-				rotateLeftOrRight(pointerData.delta.x * dragScale);
-			else
-				rotateInOrOut(-pointerData.delta.y * dragScale);
-		}
-	}
-
-	public void onZenitDrag(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		float distance = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y) ? pointerData.delta.x : pointerData.delta.y;
-		rotateZenitLeftOrRight(distance * dragScale);
-	}
-
-	public void onInOutDrag(BaseEventData bed)
-	{
-		PointerEventData pointerData = bed as PointerEventData;
-		float distance = Mathf.Abs(pointerData.delta.x) > Mathf.Abs(pointerData.delta.y) ? pointerData.delta.x : pointerData.delta.y;
-		rotateInOrOut(-distance * dragScale);
-	}
-
-	/***************** MOVE *******************/
-
-	void fillWithMenuDirection(out int x, out int y, out int z)
-	{
-		Vector3 menuDirection = Root.instance.entityToolManagerGO.transform.forward;
-		x = Mathf.RoundToInt(menuDirection.x);
-		y = Mathf.RoundToInt(menuDirection.y);
-		z = Mathf.RoundToInt(menuDirection.z);
-	}
-
-	void rotateLeftOrRight(float distance)
-	{
-		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
-		int rotationY = Mathf.RoundToInt(rotation.y); 
-
-		if (rotationY == 0)
-			rotateZ(-distance);
-		else if (rotationY == 90)
-			rotateX(-distance);
-		else if (rotationY == 180)
-			rotateZ(distance);
-		else if (rotationY == 270)
-			rotateX(distance);
-	}
-
-	void rotateInOrOut(float distance)
-	{
-		Vector3 rotation = Root.instance.entityToolManagerGO.transform.localRotation.eulerAngles;
-		int rotationY = Mathf.RoundToInt(rotation.y); 
-
-		if (rotationY == 0)
-			rotateX(-distance);
-		else if (rotationY == 90)
-			rotateZ(distance);
-		else if (rotationY == 180)
-			rotateX(distance);
-		else if (rotationY == 270)
-			rotateZ(-distance);
-	}
-
-	void rotateZenitLeftOrRight(float distance)
-	{
-		rotateY(-distance);
-	}
-
-	void rotateX(float distance)
-	{
-		m_dragDistance.x += angleStep * distance;
-		float alignedDistance = m_dragDistance.x;
-		alignedDistance = Mathf.Round(alignedDistance / angleStep) * angleStep;
-		m_dragDistance.x -= alignedDistance;
-
+		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.instance.transform.Rotate(alignedDistance, 0, 0, Space.Self);
-			Root.instance.alignmentManager.align(desc.instance.transform);
-			desc.worldPos = desc.instance.transform.position;
+			desc.instance.transform.Rotate(0, playerPosDelta.y, 0, Space.Self);
+			desc.instance.transform.Rotate(playerPosDelta.z, 0, playerPosDelta.x, Space.World);
 			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 
-	void rotateY(float distance)
+	void updateAlignment()
 	{
-		m_dragDistance.y += angleStep * distance;
-		float alignedDistance = m_dragDistance.y;
-		alignedDistance = Mathf.Round(alignedDistance / angleStep) * angleStep;
-		m_dragDistance.y -= alignedDistance;
+		Quaternion rotation = Root.instance.playerHeadGO.transform.rotation;
+		Vector3 position = Root.instance.playerGO.transform.position;
 
-		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.instance.transform.Rotate(0, alignedDistance, 0, Space.Self);
-			Root.instance.alignmentManager.align(desc.instance.transform);
-			desc.worldPos = desc.instance.transform.position;
-			desc.rotation = desc.instance.transform.rotation;
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		bool rotationChanged = !rotation.Equals(m_alignmentRotation);
+		bool positionChanged = !position.Equals(m_alignmentPosition);
+
+		m_alignmentRotation = rotation;
+		m_alignmentPosition = position;
+
+		if (positionChanged || rotationChanged) {
+			m_alignmentNeeded = true;
+			m_idleTime = Time.unscaledTime;
+		} else if (m_alignmentNeeded && Time.unscaledTime - m_idleTime > 0.2f) {
+			// Align selected objects
+			foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+				Root.instance.alignmentManager.align(desc.instance.transform);
+				desc.worldPos = desc.instance.transform.position;
+				desc.rotation = desc.instance.transform.rotation;
+				Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+			}
+			m_alignmentNeeded = false;
 		}
 	}
 
-	void rotateZ(float distance)
+	public void resetToolState()
 	{
-		m_dragDistance.z += angleStep * distance;
-		float alignedDistance = m_dragDistance.z;
-		alignedDistance = Mathf.Round(alignedDistance / angleStep) * angleStep;
-		m_dragDistance.z -= alignedDistance;
-
-		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.instance.transform.Rotate(0, 0, alignedDistance, Space.Self);
-			Root.instance.alignmentManager.align(desc.instance.transform);
-			desc.worldPos = desc.instance.transform.position;
-			desc.rotation = desc.instance.transform.rotation;
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
-		}
+		m_prevPlayerPos = Root.instance.playerGO.transform.position;
+		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
+		m_idleTime = Time.unscaledTime;
 	}
+
+	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
+	{
+		Root.instance.alignmentManager.align(oldSelection);
+	}
+
 }
