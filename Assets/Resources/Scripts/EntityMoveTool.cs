@@ -15,14 +15,11 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	Vector3 m_alignmentPosition;
 	bool m_alignmentNeeded;
 
-
-	bool m_freeRoam;
-
 	public void OnEnable()
 	{
 		m_alignmentNeeded = false;
-		m_freeRoam = false;
 		resetToolState();
+		Root.instance.player.setWalkSpeed(1);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
@@ -36,17 +33,10 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
-		if (Input.GetMouseButtonDown(0)) {
-			m_freeRoam = !m_freeRoam;	
-			if (m_freeRoam)
-				Root.instance.player.setDefaultWalkSpeed();
-			else
-				Root.instance.player.setWalkSpeed(1);
-			resetToolState();
-		}
+		if (Input.GetMouseButtonDown(0))
+			Root.instance.player.unselectAllEntityInstances();
 
-		if (!m_freeRoam)
-			updateMove();
+		updateMove();
 		updateAlignment();
 	}
 

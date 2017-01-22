@@ -35,17 +35,10 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
-		if (Input.GetMouseButtonDown(0)) {
-			m_freeRoam = !m_freeRoam;	
-			if (m_freeRoam)
-				Root.instance.player.setDefaultWalkSpeed();
-			else
-				Root.instance.player.setWalkSpeed(1);
-			resetToolState();
-		}
+		if (Input.GetMouseButtonDown(0))
+			Root.instance.player.unselectAllEntityInstances();
 
-		if (!m_freeRoam)
-			updateRotate();
+		updateRotate();
 		updateAlignment();
 	}
 

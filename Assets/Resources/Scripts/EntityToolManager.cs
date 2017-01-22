@@ -20,7 +20,6 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	[HideInInspector] public EntityMoveTool moveTool;
 	[HideInInspector] public EntityRotateTool rotateTool;
 
-	GameObject m_switchToolOnUnselect = null;
 	GameObject m_buttonUnderPointer;
 	int m_buttonUnderPointerFrameTime;
 	PointerEventData m_ped = new PointerEventData(null);
@@ -43,19 +42,20 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
 
 		deactivateAllTools();
-		activateTool(createToolGo);
+		activateTool(moveToolGo, false, true);
+		activateTool(createToolGo, true, false);
 	}
 
 	void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.Q))
-			activateTool(createToolGo);
+			activateTool(createToolGo, true, false);
 		else if (Input.GetKeyDown(KeyCode.E))
-			activateTool(selectionToolGo);
+			activateTool(selectionToolGo, true, false);
 		else if (Input.GetKeyDown(KeyCode.R))
-			activateTool(rotateToolGo);
+			activateTool(rotateToolGo, false, true);
 		else if (Input.GetKeyDown(KeyCode.M))
-			activateTool(moveToolGo);
+			activateTool(moveToolGo, false, true);
 	}
 
 	public void deactivateAllTools()
@@ -66,21 +66,25 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		rotateToolGo.SetActive(false);
 	}
 
-	public void activateTool(GameObject tool, GameObject switchToolOnUnselect = null)
+	public void activateTool(GameObject tool, bool setAsMainTool, bool setAsSubTool)
 	{
 		deactivateAllTools();
-		m_switchToolOnUnselect = switchToolOnUnselect;
-		Root.instance.player.currentTool = tool;
 		tool.SetActive(true);	
+
+		if (setAsMainTool)
+			Root.instance.player.mainTool = tool;
+		if (setAsSubTool)
+			Root.instance.player.subTool = tool;
 	}
 
-	public bool activateSwitchTool()
+	public void activateMainTool()
 	{
-		if (!m_switchToolOnUnselect)
-			return false;
+		activateTool(Root.instance.player.mainTool, false, false);
+	}
 
-		activateTool(m_switchToolOnUnselect);
-		return true;
+	public void activateSubTool()
+	{
+		activateTool(Root.instance.player.subTool, false, false);
 	}
 
 	public void repositionMenuAccordingToSelection(List<EntityInstanceDescription> selection)
@@ -96,8 +100,11 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
 		repositionMenuAccordingToSelection(newSelection);
-		if (newSelection.Count == 0)
-			activateSwitchTool();
+
+		if (newSelection.Count > 0 && Root.instance.player.mainTool.activeSelf)
+			activateSubTool();
+		else if (newSelection.Count == 0 && Root.instance.player.subTool.activeSelf)
+			activateMainTool();
 	}
 
 	public GameObject getButtonUnderPointer()

@@ -6,13 +6,13 @@ using UnityStandardAssets.Characters.FirstPerson;
 public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
 	public EntityClass entityClassInUse = null;
-	public GameObject currentTool;
 	public List<EntityInstanceDescription> selectedEntityInstances = new List<EntityInstanceDescription>();
+
+	public GameObject mainTool;
+	public GameObject subTool;
 
 	void Start()
 	{
-		currentTool = Root.instance.entityToolManager.moveTool.gameObject;
-
 		if (moveToGround) {
 			Vector3 worldPos = transform.position;
 			worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + 1;
