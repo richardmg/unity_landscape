@@ -19,9 +19,8 @@ public class EntitySelectionTool : MonoBehaviour
 				player.unselectEntityInstance(entityInstance.entityInstanceDescription);
 				//Root.instance.entityToolManager.repositionMenuAccordingToSelection();
 			} else {
-				if (!Input.GetKey(KeyCode.LeftShift))
-					player.unselectAllEntityInstances();
-				player.selectEntityInstance(entityInstance.entityInstanceDescription);
+				bool unselectEverythingElse = !Input.GetKey(KeyCode.LeftShift);
+				player.selectEntityInstance(entityInstance.entityInstanceDescription, unselectEverythingElse);
 			}
 		} else {
 			player.unselectAllEntityInstances();

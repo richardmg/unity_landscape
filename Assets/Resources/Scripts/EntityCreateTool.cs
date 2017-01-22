@@ -30,7 +30,7 @@ public class EntityCreateTool : MonoBehaviour
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);
 
 		if (autoSelect) {
-			Root.instance.player.selectEntityInstance(desc);
+			Root.instance.player.selectEntityInstance(desc, true);
 			Root.instance.entityToolManager.activateTool(Root.instance.entityToolManager.moveToolGo, gameObject);
 		}
 	}

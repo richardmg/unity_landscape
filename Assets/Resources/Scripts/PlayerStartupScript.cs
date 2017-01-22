@@ -19,9 +19,11 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 		}
 	}
 
-	public void selectEntityInstance(EntityInstanceDescription entityInstance)
+	public void selectEntityInstance(EntityInstanceDescription entityInstance, bool unselectEverythingElse = false)
 	{
 		List<EntityInstanceDescription> oldSelection = new List<EntityInstanceDescription>(selectedEntityInstances);
+		if (unselectEverythingElse)
+			selectedEntityInstances.Clear();
 		selectedEntityInstances.Add(entityInstance);
 		Root.instance.notificationManager.notifySelectionChanged(oldSelection, selectedEntityInstances);
 	}
