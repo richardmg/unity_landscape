@@ -85,14 +85,42 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 		// Calculate how much the head has tilted up/down
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
-		float xAngleDelta = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
+		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
 		m_prevPlayerRotation = playerRotation;
-		playerPosDelta.y = xAngleDelta * 0.1f;
+
+		playerPosDelta.Scale(new Vector3(1, 0.1f, 1));
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.position += playerPosDelta;
 			desc.worldPos = desc.instance.transform.position;
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
+	}
+
+	void updateRotate()
+	{
+		// Get the players position, but ignore height
+		float startHeight = m_prevPlayerPos.y;
+		Vector3 playerPos = Root.instance.playerGO.transform.position;
+		playerPos.y = startHeight;
+
+		// Calculate how much the player moved sine last update
+		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
+		m_prevPlayerPos = playerPos;
+
+		// Calculate how much the head has tilted left/right
+		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
+		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
+		m_prevPlayerRotation = playerRotation;
+
+		playerPosDelta.Scale(new Vector3(-30, 4, 30));
+
+		// Inform the app about the position update of the selected objects
+		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.instance.transform.Rotate(0, playerPosDelta.y, 0, Space.Self);
+			desc.instance.transform.Rotate(playerPosDelta.z, 0, playerPosDelta.x, Space.World);
+			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
@@ -121,10 +149,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 			}
 			m_alignmentNeeded = false;
 		}
-	}
-
-	void updateRotate()
-	{
 	}
 
 	public void resetToolState()
