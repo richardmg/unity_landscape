@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using ToolMode = System.Int32;
 
-public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
+public class EntityElevateTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
-	Vector3 m_prevPlayerPos;
 	float m_prevPlayerXRotation;
+	Quaternion m_prevPlayerRotation;
 	float m_idleTime;
 
 	Quaternion m_alignmentRotation;
@@ -41,14 +41,13 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateMove()
 	{
-		// Get the players position, but ignore height
-		float startHeight = m_prevPlayerPos.y;
-		Vector3 playerPos = Root.instance.playerGO.transform.position;
-		playerPos.y = startHeight;
+		// Calculate how much the head has tilted up/down
+		Vector3 playerPosDelta = Vector3.zero;
+		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
+		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
+		m_prevPlayerRotation = playerRotation;
 
-		// Calculate how much the player moved sine last update
-		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
-		m_prevPlayerPos = playerPos;
+		playerPosDelta.Scale(new Vector3(1, 0.1f, 1));
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
@@ -86,7 +85,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public void resetToolState()
 	{
-		m_prevPlayerPos = Root.instance.playerGO.transform.position;
+		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
 		m_idleTime = Time.unscaledTime;
 	}
 

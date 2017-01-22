@@ -10,6 +10,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public GameObject createToolGo;
 	public GameObject moveToolGo;
 	public GameObject rotateToolGo;
+	public GameObject elevateToolGo;
 
 	public float offsetZ = 5f;
 	public float offsetY = -2f;
@@ -19,6 +20,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	[HideInInspector] public EntityCreateTool createTool;
 	[HideInInspector] public EntityMoveTool moveTool;
 	[HideInInspector] public EntityRotateTool rotateTool;
+	[HideInInspector] public EntityElevateTool elevateTool;
 
 	GameObject m_buttonUnderPointer;
 	int m_buttonUnderPointerFrameTime;
@@ -33,6 +35,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		createTool = moveToolGo.GetComponent<EntityCreateTool>();
 		moveTool = moveToolGo.GetComponent<EntityMoveTool>();
 		rotateTool = rotateToolGo.GetComponent<EntityRotateTool>();
+		elevateTool = rotateToolGo.GetComponent<EntityElevateTool>();
 
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
@@ -56,6 +59,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 			activateTool(rotateToolGo, false, true);
 		else if (Input.GetKeyDown(KeyCode.M))
 			activateTool(moveToolGo, false, true);
+		else if (Input.GetKeyDown(KeyCode.L))
+			activateTool(elevateToolGo, false, true);
 	}
 
 	public void deactivateAllTools()
@@ -64,6 +69,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		createToolGo.SetActive(false);
 		moveToolGo.SetActive(false);
 		rotateToolGo.SetActive(false);
+		elevateToolGo.SetActive(false);
 	}
 
 	public void activateTool(GameObject tool, bool setAsMainTool, bool setAsSubTool)
