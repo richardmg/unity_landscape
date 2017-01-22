@@ -8,6 +8,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	Vector3 m_prevPlayerPos;
 	float m_prevPlayerXRotation;
+	Quaternion m_prevPlayerRotation;
 	float m_idleTime;
 
 	Quaternion m_alignmentRotation;
@@ -50,6 +51,13 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
 		m_prevPlayerPos = playerPos;
 
+		// Calculate how much the head has tilted up/down
+		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
+		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
+		m_prevPlayerRotation = playerRotation;
+
+		playerPosDelta.Scale(new Vector3(1, 0.1f, 1));
+
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.position += playerPosDelta;
@@ -87,6 +95,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	public void resetToolState()
 	{
 		m_prevPlayerPos = Root.instance.playerGO.transform.position;
+		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
 		m_idleTime = Time.unscaledTime;
 	}
 
