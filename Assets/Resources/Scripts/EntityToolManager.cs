@@ -112,11 +112,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
 		repositionMenuAccordingToSelection(newSelection);
-
-		if (newSelection.Count > 0 && Root.instance.player.mainTool.activeSelf)
-			setSubTool(Root.instance.player.subTool);
-		else if (newSelection.Count == 0 && Root.instance.player.subTool.activeSelf)
-			setMainTool(Root.instance.player.mainTool);
+		setSubTool(Root.instance.player.subTool);
+		setMainTool(Root.instance.player.mainTool);
 	}
 
 	public GameObject getButtonUnderPointer()
