@@ -68,7 +68,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.position += playerPosDelta;
 			if (align)
-				Root.instance.worldScaleManager.align(desc.instance.transform);
+				Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
@@ -89,7 +89,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	void alignSelection(List<EntityInstanceDescription> selection)
 	{
 		foreach (EntityInstanceDescription desc in selection) {
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
@@ -223,13 +223,13 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void moveX(float distance)
 	{
-		m_dragDistance.x += Root.instance.worldScaleManager.baseScale.x * distance;
-		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.x);
+		m_dragDistance.x += Root.instance.alignmentManager.voxelSize.x * distance;
+		float dragDistance = Root.instance.alignmentManager.align(m_dragDistance.x);
 		m_dragDistance.x -= dragDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.position += desc.instance.transform.right * dragDistance;
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
@@ -237,13 +237,13 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void moveY(float distance)
 	{
-		m_dragDistance.y += Root.instance.worldScaleManager.baseScale.y * distance;
-		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.y);
+		m_dragDistance.y += Root.instance.alignmentManager.voxelSize.y * distance;
+		float dragDistance = Root.instance.alignmentManager.align(m_dragDistance.y);
 		m_dragDistance.y -= dragDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.position += desc.instance.transform.up * dragDistance;
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
@@ -251,13 +251,13 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void moveZ(float distance)
 	{
-		m_dragDistance.z += Root.instance.worldScaleManager.baseScale.z * distance;
-		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.z);
+		m_dragDistance.z += Root.instance.alignmentManager.voxelSize.z * distance;
+		float dragDistance = Root.instance.alignmentManager.align(m_dragDistance.z);
 		m_dragDistance.z -= dragDistance;
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.position += desc.instance.transform.forward * dragDistance;
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}

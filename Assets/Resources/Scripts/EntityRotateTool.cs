@@ -169,7 +169,7 @@ public class EntityRotateTool : MonoBehaviour
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.Rotate(alignedDistance, 0, 0, Space.Self);
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
@@ -185,7 +185,7 @@ public class EntityRotateTool : MonoBehaviour
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.Rotate(0, alignedDistance, 0, Space.Self);
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
@@ -201,7 +201,7 @@ public class EntityRotateTool : MonoBehaviour
 
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.Rotate(0, 0, alignedDistance, Space.Self);
-			Root.instance.worldScaleManager.align(desc.instance.transform);
+			Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);

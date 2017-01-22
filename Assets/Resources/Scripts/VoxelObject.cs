@@ -65,7 +65,7 @@ public class VoxelObject
 		if (applyGlobalScale) {
 			// Only apply global scale if go will exist as
 			// standalone, and not as a child of a VoxelObjectRoot.
-			go.transform.localScale = Root.instance.worldScaleManager.baseScale;
+			go.transform.localScale = Root.instance.alignmentManager.voxelSize;
 		}
 		return go;
 	}

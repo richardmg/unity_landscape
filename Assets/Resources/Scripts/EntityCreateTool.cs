@@ -21,7 +21,7 @@ public class EntityCreateTool : MonoBehaviour
 		// Vector3 worldPos = Camera.main.transform.position + (Camera.main.transform.forward * 5);
 		// worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos);
 
-		worldPos = Root.instance.worldScaleManager.align(worldPos);
+		worldPos = Root.instance.alignmentManager.align(worldPos);
 
 		EntityClass entityClass = new EntityClass();
 		entityClass.voxelObjectRoot.add(new VoxelObject(0, 4));

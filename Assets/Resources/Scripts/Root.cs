@@ -50,7 +50,7 @@ public class Root : MonoBehaviour {
 	[HideInInspector]
 	public CommandPrompt commandPrompt;
 	[HideInInspector]
-	public WorldScaleManager worldScaleManager;
+	public AlignmentManager alignmentManager;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -75,7 +75,7 @@ public class Root : MonoBehaviour {
 		entityInstanceManager = entityInstanceManagerGO.GetComponent<EntityInstanceManager>();
 		player = playerGO.GetComponent<PlayerStartupScript>();
 		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
-		worldScaleManager = worldScaleManagerGO.GetComponent<WorldScaleManager>();
+		alignmentManager = worldScaleManagerGO.GetComponent<AlignmentManager>();
 
 		meshManager = new MeshManager();
 		entityClassManager = new EntityClassManager();
