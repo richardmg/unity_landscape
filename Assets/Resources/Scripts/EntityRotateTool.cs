@@ -9,17 +9,9 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 	Vector3 m_prevPlayerPos;
 	float m_prevPlayerXRotation;
 	Quaternion m_prevPlayerRotation;
-	float m_idleTime;
-
-	Quaternion m_alignmentRotation;
-	Vector3 m_alignmentPosition;
-	bool m_alignmentNeeded;
-	bool m_freeRoam;
 
 	public void OnEnable()
 	{
-		m_alignmentNeeded = false;
-		m_freeRoam = false;
 		resetToolState();
 		Root.instance.player.setWalkSpeed(1);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
@@ -39,7 +31,7 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 			Root.instance.player.unselectAllEntityInstances();
 
 		updateRotate();
-		updateAlignment();
+		Root.instance.entityToolManager.updateAlignment();
 	}
 
 	void updateRotate()
@@ -69,37 +61,10 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		}
 	}
 
-	void updateAlignment()
-	{
-		Quaternion rotation = Root.instance.playerHeadGO.transform.rotation;
-		Vector3 position = Root.instance.playerGO.transform.position;
-
-		bool rotationChanged = !rotation.Equals(m_alignmentRotation);
-		bool positionChanged = !position.Equals(m_alignmentPosition);
-
-		m_alignmentRotation = rotation;
-		m_alignmentPosition = position;
-
-		if (positionChanged || rotationChanged) {
-			m_alignmentNeeded = true;
-			m_idleTime = Time.unscaledTime;
-		} else if (m_alignmentNeeded && Time.unscaledTime - m_idleTime > 0.2f) {
-			// Align selected objects
-			foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-				Root.instance.alignmentManager.align(desc.instance.transform);
-				desc.worldPos = desc.instance.transform.position;
-				desc.rotation = desc.instance.transform.rotation;
-				Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
-			}
-			m_alignmentNeeded = false;
-		}
-	}
-
 	public void resetToolState()
 	{
 		m_prevPlayerPos = Root.instance.playerGO.transform.position;
 		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
-		m_idleTime = Time.unscaledTime;
 	}
 
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)

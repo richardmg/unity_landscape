@@ -26,6 +26,11 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	int m_buttonUnderPointerFrameTime;
 	PointerEventData m_ped = new PointerEventData(null);
 
+	float m_idleTime;
+	Quaternion m_alignmentRotation;
+	Vector3 m_alignmentPosition;
+	bool m_alignmentNeeded;
+
 	void Awake()
 	{
 		// Only show entity menus when there is a entity selection
@@ -134,6 +139,32 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		}
 
 		return null;
+	}
+
+	public void updateAlignment()
+	{
+		Quaternion rotation = Root.instance.playerHeadGO.transform.rotation;
+		Vector3 position = Root.instance.playerGO.transform.position;
+
+		bool rotationChanged = !rotation.Equals(m_alignmentRotation);
+		bool positionChanged = !position.Equals(m_alignmentPosition);
+
+		m_alignmentRotation = rotation;
+		m_alignmentPosition = position;
+
+		if (positionChanged || rotationChanged) {
+			m_alignmentNeeded = true;
+			m_idleTime = Time.unscaledTime;
+		} else if (m_alignmentNeeded && Time.unscaledTime - m_idleTime > 0.2f) {
+			// Align selected objects
+			foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+				Root.instance.alignmentManager.align(desc.instance.transform);
+				desc.worldPos = desc.instance.transform.position;
+				desc.rotation = desc.instance.transform.rotation;
+				Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+			}
+			m_alignmentNeeded = false;
+		}
 	}
 }
 
