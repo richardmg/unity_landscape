@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
-using UnityStandardAssets.Characters.FirstPerson;
+using ToolMode = System.Int32;
 
-public class EntityMoveTool : MonoBehaviour, IEntityTool, IEntityInstanceSelectionListener
+public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	Vector3 m_dragDistance;
 	Vector3 m_prevPlayerPos;
@@ -17,21 +17,25 @@ public class EntityMoveTool : MonoBehaviour, IEntityTool, IEntityInstanceSelecti
 	bool inHoriontalDrag = false;
 	bool inDrag = false;
 
+	ToolMode m_currentMode;
+
+	public const ToolMode kMoveObject = 0;
+	public const ToolMode kRotateObject = 1;
+	public const ToolMode kMovePlayer = 2;
+
 	public void OnEnable()
 	{
+		m_currentMode = kMoveObject;
 		m_dragDistance = Vector3.zero;
-
-		m_prevPlayerPos = Root.instance.playerGO.transform.position;
-		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
-
-		m_idleTime = Time.unscaledTime;
+		resetToolState();
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
 
 	public void OnDisable()
 	{
-		Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
+		m_currentMode = kMovePlayer;
+		Root.instance.player.setDefaultWalkSpeed();
 		Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.removeEntitySelectionListener(this);
 	}
@@ -42,6 +46,27 @@ public class EntityMoveTool : MonoBehaviour, IEntityTool, IEntityInstanceSelecti
 		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.updateSelection();
 
+		if (Input.GetKeyDown(KeyCode.E)) {
+			m_currentMode = (m_currentMode == kMoveObject) ? kMovePlayer : kMoveObject;
+			resetToolState();
+		} else if (Input.GetKeyDown(KeyCode.R)) {
+			m_currentMode = (m_currentMode == kRotateObject) ? kMovePlayer : kRotateObject;
+			resetToolState();
+		}
+
+		if (m_currentMode == kMoveObject) {
+			Root.instance.player.setWalkSpeed(1);
+			updateMove();
+		} else if (m_currentMode == kRotateObject) {
+			Root.instance.player.setWalkSpeed(1);
+			updateRotate();
+		} else {
+			Root.instance.player.setDefaultWalkSpeed();
+		}
+	}
+
+	void updateMove()
+	{
 		// Get the players position, but ignore height
 		float startHeight = m_prevPlayerPos.y;
 		Vector3 playerPos = Root.instance.playerGO.transform.position;
@@ -74,20 +99,20 @@ public class EntityMoveTool : MonoBehaviour, IEntityTool, IEntityInstanceSelecti
 		}
 	}
 
+	void updateRotate()
+	{
+	}
+
+	public void resetToolState()
+	{
+		m_prevPlayerPos = Root.instance.playerGO.transform.position;
+		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
+		m_idleTime = Time.unscaledTime;
+	}
+
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
 		Root.instance.alignmentManager.align(oldSelection);
-
-		// Slow down player when there is a selection
-		if (newSelection.Count > 0) {
-			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 1;
-		} else {
-			Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
-		}
-	}
-
-	public void setAlternativeMode(bool alternativeMode)
-	{
 	}
 
 	/***************** CLICK *******************/

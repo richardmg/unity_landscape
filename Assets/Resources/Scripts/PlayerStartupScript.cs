@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	public bool moveToGround = true;
@@ -17,6 +18,16 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 			worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos) + 1;
 			transform.position = worldPos;
 		}
+	}
+
+	public void setWalkSpeed(float speed)
+	{
+		GetComponent<FirstPersonController>().m_WalkSpeed = speed;
+	}
+
+	public void setDefaultWalkSpeed()
+	{
+		setWalkSpeed(4);
 	}
 
 	public void selectEntityInstance(EntityInstanceDescription entityInstance, bool unselectEverythingElse = false)

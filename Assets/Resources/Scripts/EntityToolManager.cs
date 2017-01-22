@@ -4,11 +4,6 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public interface IEntityTool
-{
-	void setAlternativeMode(bool alternativeMode);
-}
-
 public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	public GameObject selectionToolGo;
@@ -75,9 +70,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public void activateTool(GameObject tool, GameObject switchToolOnUnselect = null)
 	{
-		m_switchToolOnUnselect = switchToolOnUnselect;	
-		Root.instance.player.currentTool = tool;
 		deactivateAllTools();
+		m_switchToolOnUnselect = switchToolOnUnselect;
+		Root.instance.player.currentTool = tool;
 		tool.SetActive(true);	
 	}
 
@@ -85,6 +80,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		if (!m_switchToolOnUnselect)
 			return false;
+
 		activateTool(m_switchToolOnUnselect);
 		return true;
 	}
