@@ -11,8 +11,7 @@ public class WorldScaleManager : MonoBehaviour
 		transform.rotation = targetTransform.rotation;
 		Transform descParent = targetTransform.parent;
 		targetTransform.SetParent(transform, true);
-		Vector3 localPos = align(targetTransform.localPosition);
-		targetTransform.localPosition = localPos;
+		targetTransform.localPosition = align(targetTransform.localPosition);;
 		targetTransform.SetParent(descParent, true);
 	}
 
