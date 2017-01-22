@@ -102,8 +102,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public void repositionMenuAccordingToSelection(List<EntityInstanceDescription> selection)
 	{
 		GetComponent<Canvas>().enabled = selection.Count != 0;	
-		if (selection.Count != 0) {
-			transform.SetParent(selection[0].instance.transform);
+		if (selection.Count != 0 && selectionTool.lastHit.normal.magnitude != 0) {
+			//transform.SetParent(selection[0].instance.transform);
 			transform.position = selectionTool.lastHit.point;
 			transform.rotation = Quaternion.LookRotation(selectionTool.lastHit.normal * -1, transform.parent.up);
 		}
