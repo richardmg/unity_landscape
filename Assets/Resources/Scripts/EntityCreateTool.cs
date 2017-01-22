@@ -29,8 +29,10 @@ public class EntityCreateTool : MonoBehaviour
 		EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos);
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);
 
-		if (autoSelect)
+		if (autoSelect) {
 			Root.instance.player.selectEntityInstance(desc, true);
+			Root.instance.entityToolManager.activateTool(Root.instance.entityToolManager.placeToolGo, false, true);
+		}
 	}
 
 	bool getRayWorldHitPoint(out Vector3 v)
