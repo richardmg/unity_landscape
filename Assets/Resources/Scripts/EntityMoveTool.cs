@@ -17,6 +17,10 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	bool inHoriontalDrag = false;
 	bool inDrag = false;
 
+	Quaternion m_alignmentRotation;
+	Vector3 m_alignmentPosition;
+	bool m_alignmentNeeded;
+
 	ToolMode m_currentMode;
 
 	public const ToolMode kMoveObject = 0;
@@ -27,6 +31,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		m_currentMode = kMoveObject;
 		m_dragDistance = Vector3.zero;
+		m_alignmentNeeded = false;
 		resetToolState();
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
@@ -63,6 +68,8 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		} else {
 			Root.instance.player.setDefaultWalkSpeed();
 		}
+
+		updateAlignment();
 	}
 
 	void updateMove()
@@ -82,20 +89,37 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		m_prevPlayerRotation = playerRotation;
 		playerPosDelta.y = xAngleDelta * 0.1f;
 
-		// Only align when movement has subsided
-		bool align = false;
-		if (playerPosDelta.magnitude > 0f || xAngleDelta != 0)
-			m_idleTime = Time.unscaledTime;
-		else if (Time.unscaledTime - m_idleTime > 0.2f)
-			align = true;
-
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.instance.transform.position += playerPosDelta;
-			if (align)
-				Root.instance.alignmentManager.align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
+	}
+
+	void updateAlignment()
+	{
+		Quaternion rotation = Root.instance.playerHeadGO.transform.rotation;
+		Vector3 position = Root.instance.playerGO.transform.position;
+
+		bool rotationChanged = !rotation.Equals(m_alignmentRotation);
+		bool positionChanged = !position.Equals(m_alignmentPosition);
+
+		m_alignmentRotation = rotation;
+		m_alignmentPosition = position;
+
+		if (positionChanged || rotationChanged) {
+			m_alignmentNeeded = true;
+			m_idleTime = Time.unscaledTime;
+		} else if (m_alignmentNeeded && Time.unscaledTime - m_idleTime > 0.2f) {
+			// Align selected objects
+			foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+				Root.instance.alignmentManager.align(desc.instance.transform);
+				desc.worldPos = desc.instance.transform.position;
+				desc.rotation = desc.instance.transform.rotation;
+				Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+			}
+			m_alignmentNeeded = false;
 		}
 	}
 
