@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
+public class EntityMoveTool : MonoBehaviour, IEntityTool, IEntityInstanceSelectionListener
 {
 	Vector3 m_dragDistance;
 	Vector3 m_prevPlayerPos;
@@ -32,7 +32,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	public void OnDisable()
 	{
 		Root.instance.player.GetComponent<FirstPersonController>().m_WalkSpeed = 4;
-		alignSelection(Root.instance.player.selectedEntityInstances);
+		Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.removeEntitySelectionListener(this);
 	}
 
@@ -76,7 +76,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
-		alignSelection(oldSelection);
+		Root.instance.alignmentManager.align(oldSelection);
 
 		// Slow down player when there is a selection
 		if (newSelection.Count > 0) {
@@ -86,13 +86,8 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		}
 	}
 
-	void alignSelection(List<EntityInstanceDescription> selection)
+	public void setAlternativeMode(bool alternativeMode)
 	{
-		foreach (EntityInstanceDescription desc in selection) {
-			Root.instance.alignmentManager.align(desc.instance.transform);
-			desc.worldPos = desc.instance.transform.position;
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
-		}
 	}
 
 	/***************** CLICK *******************/

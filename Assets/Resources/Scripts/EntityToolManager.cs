@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+public interface IEntityTool
+{
+	void setAlternativeMode(bool alternativeMode);
+}
+
 public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	public GameObject selectionToolGo;
