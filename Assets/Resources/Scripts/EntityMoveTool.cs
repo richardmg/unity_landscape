@@ -33,10 +33,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
-		// Resolve which objects should be seleced
-		if (Root.instance.entityToolManager.getButtonUnderPointer() == null && Input.GetMouseButtonDown(0))
-			Root.instance.entityToolManager.selectionTool.updateSelection();
-
 		updateMove();
 		updateAlignment();
 	}

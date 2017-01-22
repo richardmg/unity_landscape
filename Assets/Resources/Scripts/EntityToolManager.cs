@@ -53,12 +53,14 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Alpha1))
+		if (Input.GetKeyDown(KeyCode.Q))
 			activateTool(createToolGo);
-		else if (Input.GetKeyDown(KeyCode.Alpha2))
+		else if (Input.GetKeyDown(KeyCode.E))
 			activateTool(moveToolGo);
-		else if (Input.GetKeyDown(KeyCode.Alpha3))
+		else if (Input.GetKeyDown(KeyCode.R))
 			activateTool(rotateToolGo);
+		else if (Input.GetKeyDown(KeyCode.F))
+			activateTool(selectionToolGo);
 	}
 
 	public void deactivateAllTools()

@@ -9,19 +9,17 @@ public class EntitySelectionTool : MonoBehaviour
 	[HideInInspector]
 	public RaycastHit lastHit;
 
-	public void updateSelection()
+	public void Update()
 	{
+		if (!Input.GetMouseButtonDown(0))
+			return;
+
 		PlayerStartupScript player = Root.instance.player;
 		EntityInstance entityInstance = getClickedEntityInstance();
 
 		if (entityInstance) {
-			if (player.selectedEntityInstances.Contains(entityInstance.entityInstanceDescription)) {
-				player.unselectEntityInstance(entityInstance.entityInstanceDescription);
-				//Root.instance.entityToolManager.repositionMenuAccordingToSelection();
-			} else {
-				bool unselectEverythingElse = !Input.GetKey(KeyCode.LeftShift);
-				player.selectEntityInstance(entityInstance.entityInstanceDescription, unselectEverythingElse);
-			}
+			bool unselectEverythingElse = !Input.GetKey(KeyCode.LeftShift);
+			player.selectEntityInstance(entityInstance.entityInstanceDescription, unselectEverythingElse);
 		} else {
 			player.unselectAllEntityInstances();
 		}
