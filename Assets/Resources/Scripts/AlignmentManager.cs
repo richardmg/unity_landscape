@@ -30,6 +30,7 @@ public class AlignmentManager : MonoBehaviour
 		foreach (EntityInstanceDescription desc in selection) {
 			align(desc.instance.transform);
 			desc.worldPos = desc.instance.transform.position;
+			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}

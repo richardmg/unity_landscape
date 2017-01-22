@@ -154,13 +154,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 			m_alignmentNeeded = true;
 			m_idleTime = Time.unscaledTime;
 		} else if (m_alignmentNeeded && Time.unscaledTime - m_idleTime > 0.2f) {
-			// Align selected objects
-			foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-				Root.instance.alignmentManager.align(desc.instance.transform);
-				desc.worldPos = desc.instance.transform.position;
-				desc.rotation = desc.instance.transform.rotation;
-				Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
-			}
+			Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
 			m_alignmentNeeded = false;
 		}
 	}
