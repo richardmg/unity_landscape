@@ -43,11 +43,6 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
 
 		deactivateAllTools();
-
-		// Selection tool is controlled by each
-		// tool individually, and is always active
-		selectionToolGo.SetActive(true);
-		// Start with create tool active
 		activateTool(createToolGo);
 	}
 
@@ -56,15 +51,16 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		if (Input.GetKeyDown(KeyCode.Q))
 			activateTool(createToolGo);
 		else if (Input.GetKeyDown(KeyCode.E))
-			activateTool(moveToolGo);
+			activateTool(selectionToolGo);
 		else if (Input.GetKeyDown(KeyCode.R))
 			activateTool(rotateToolGo);
-		else if (Input.GetKeyDown(KeyCode.F))
-			activateTool(selectionToolGo);
+		else if (Input.GetKeyDown(KeyCode.M))
+			activateTool(moveToolGo);
 	}
 
 	public void deactivateAllTools()
 	{
+		selectionToolGo.SetActive(false);
 		createToolGo.SetActive(false);
 		moveToolGo.SetActive(false);
 		rotateToolGo.SetActive(false);
