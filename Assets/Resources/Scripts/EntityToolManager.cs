@@ -50,22 +50,26 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
 
 		deactivateAllTools();
-		activateTool(moveToolGo, false, true);
-		activateTool(createToolGo, true, false);
+		setSubTool(moveToolGo);
+		setMainTool(createToolGo);
 	}
 
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Q))
-			activateTool(createToolGo, true, false);
-		else if (Input.GetKeyDown(KeyCode.E))
-			activateTool(selectionToolGo, true, false);
-		else if (Input.GetKeyDown(KeyCode.R))
-			activateTool(rotateToolGo, false, true);
-		else if (Input.GetKeyDown(KeyCode.M))
-			activateTool(moveToolGo, false, true);
-		else if (Input.GetKeyDown(KeyCode.P))
-			activateTool(placeToolGo, false, true);
+		if (Input.GetKeyDown(KeyCode.Q)) {
+			setMainTool(createToolGo);
+		} else if (Input.GetKeyDown(KeyCode.E)) {
+			setMainTool(selectionToolGo);
+		} else if (Input.GetKeyDown(KeyCode.R)) {
+			setMainTool(selectionToolGo);
+			setSubTool(rotateToolGo);
+		} else if (Input.GetKeyDown(KeyCode.M)) {
+			setMainTool(selectionToolGo);
+			setSubTool(moveToolGo);
+		} else if (Input.GetKeyDown(KeyCode.P)) {
+			setMainTool(selectionToolGo);
+			setSubTool(placeToolGo);
+		}
 	}
 
 	public void deactivateAllTools()
@@ -77,25 +81,22 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		placeToolGo.SetActive(false);
 	}
 
-	public void activateTool(GameObject tool, bool setAsMainTool, bool setAsSubTool)
+	public void setSubTool(GameObject tool)
 	{
-		deactivateAllTools();
-		tool.SetActive(true);	
-
-		if (setAsMainTool)
-			Root.instance.player.mainTool = tool;
-		if (setAsSubTool)
-			Root.instance.player.subTool = tool;
+		Root.instance.player.subTool = tool;
+		if (Root.instance.player.selectedEntityInstances.Count > 0) {
+			deactivateAllTools();
+			tool.SetActive(true);	
+		}
 	}
 
-	public void activateMainTool()
+	public void setMainTool(GameObject tool)
 	{
-		activateTool(Root.instance.player.mainTool, false, false);
-	}
-
-	public void activateSubTool()
-	{
-		activateTool(Root.instance.player.subTool, false, false);
+		Root.instance.player.mainTool = tool;
+		if (Root.instance.player.selectedEntityInstances.Count == 0) {
+			deactivateAllTools();
+			tool.SetActive(true);	
+		}
 	}
 
 	public void repositionMenuAccordingToSelection(List<EntityInstanceDescription> selection)
@@ -113,9 +114,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		repositionMenuAccordingToSelection(newSelection);
 
 		if (newSelection.Count > 0 && Root.instance.player.mainTool.activeSelf)
-			activateSubTool();
+			setSubTool(Root.instance.player.subTool);
 		else if (newSelection.Count == 0 && Root.instance.player.subTool.activeSelf)
-			activateMainTool();
+			setMainTool(Root.instance.player.mainTool);
 	}
 
 	public GameObject getButtonUnderPointer()
