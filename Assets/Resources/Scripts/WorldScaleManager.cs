@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class WorldScaleManager : MonoBehaviour
 {
-	public Vector3 entityBaseScale = new Vector3(0.2f, 0.2f, 0.2f);
+	public Vector3 baseScale = new Vector3(0.2f, 0.2f, 0.2f);
 
 	public void align(Transform targetTransform)
 	{
@@ -17,7 +17,7 @@ public class WorldScaleManager : MonoBehaviour
 
 	public float align(float v)
 	{
-		return Mathf.Round(v / entityBaseScale.x) * entityBaseScale.x;
+		return Mathf.Round(v / baseScale.x) * baseScale.x;
 	}
 
 	public Vector3 align(Vector3 v)

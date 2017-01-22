@@ -223,7 +223,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void moveX(float distance)
 	{
-		m_dragDistance.x += Root.instance.worldScaleManager.entityBaseScale.x * distance;
+		m_dragDistance.x += Root.instance.worldScaleManager.baseScale.x * distance;
 		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.x);
 		m_dragDistance.x -= dragDistance;
 
@@ -237,7 +237,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void moveY(float distance)
 	{
-		m_dragDistance.y += Root.instance.worldScaleManager.entityBaseScale.y * distance;
+		m_dragDistance.y += Root.instance.worldScaleManager.baseScale.y * distance;
 		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.y);
 		m_dragDistance.y -= dragDistance;
 
@@ -251,7 +251,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void moveZ(float distance)
 	{
-		m_dragDistance.z += Root.instance.worldScaleManager.entityBaseScale.z * distance;
+		m_dragDistance.z += Root.instance.worldScaleManager.baseScale.z * distance;
 		float dragDistance = Root.instance.worldScaleManager.align(m_dragDistance.z);
 		m_dragDistance.z -= dragDistance;
 
