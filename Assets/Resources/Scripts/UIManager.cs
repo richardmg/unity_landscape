@@ -26,17 +26,11 @@ public class UIManager : MonoBehaviour {
 	public GameObject entityPainterGO;
 	public GameObject backButton;
 
-	[HideInInspector]
-	public GameObject currentMenu;
-
-	[HideInInspector]
-	public UIBackground background;
-	[HideInInspector]
-	public UIEntityClassPicker entityClassPicker;
-	[HideInInspector]
-	public EntityPainter entityPainter;
-	[HideInInspector]
-	public ConstructionEditor constructionEditor;
+	[HideInInspector] public GameObject currentMenu;
+	[HideInInspector] public UIBackground background;
+	[HideInInspector] public UIEntityClassPicker entityClassPicker;
+	[HideInInspector] public EntityPainter entityPainter;
+	[HideInInspector] public ConstructionEditor constructionEditor;
 
 	List<UIManagerStackItem> stack = new List<UIManagerStackItem>();
 	MonoBehaviour m_mouseGrab = null;

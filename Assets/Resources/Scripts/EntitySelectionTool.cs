@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class EntitySelectionTool : MonoBehaviour
 {
-	[HideInInspector]
-	public RaycastHit lastHit;
+	[HideInInspector] public RaycastHit lastHit;
 
 	public void Update()
 	{

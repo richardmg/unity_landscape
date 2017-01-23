@@ -7,12 +7,9 @@ public class TileLayerTerrain : MonoBehaviour
 	public int tileCount = 4;
 	public float tileSize = 1000;
 
-	[Range (33, 512)]
-	public int heightmapResolution = 33;
-	[Range (0, 200)]
-	public int pixelError = 50;
-	[Range (0.1f, 5)]
-	public float textureScale = 1;
+	[Range (33, 512)] public int heightmapResolution = 33;
+	[Range ( 0, 200)] public int pixelError = 50;
+	[Range (0.1f, 5)] public float textureScale = 1;
 	public Texture2D terrainTexture;
 
 	GameObject[,] m_tileMatrix;
@@ -23,12 +20,9 @@ public class TileLayerTerrain : MonoBehaviour
 
 	public static TileLayerTerrain worldTerrain;
 
-	[HideInInspector]
-	public float noiseScaleOct0 = 0.003f;
-	[HideInInspector]
-	public float noiseScaleOct1 = 0.02f;
-	[HideInInspector]
-	public float noiseScaleOct2 = 0.1f;
+	[HideInInspector] public float noiseScaleOct0 = 0.003f;
+	[HideInInspector] public float noiseScaleOct1 = 0.02f;
+	[HideInInspector] public float noiseScaleOct2 = 0.1f;
 
 	public void Awake()
 	{

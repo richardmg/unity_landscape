@@ -5,8 +5,7 @@ using Lod = System.Int32;
 
 public class VoxelObjectRootMonoBehaviour : MonoBehaviour
 {
-	[HideInInspector]
-	public VoxelObjectRoot voxelObjectRoot;
+	[HideInInspector] public VoxelObjectRoot voxelObjectRoot;
 }
 
 public class VoxelObjectRoot

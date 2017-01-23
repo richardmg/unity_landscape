@@ -6,22 +6,14 @@ using LandscapeType = System.Int32;
 
 public class LandscapeManager : MonoBehaviour
 {
-	[Range (0, 700)]
-	public float tileHeightOct0 = 200;
-	[Range (0, 200)]
-	public float tileHeightOct1 = 10;
-	[Range (0, 20)]
-	public float tileHeightOct2 = 1;
+	[Range (0, 700)] public float tileHeightOct0 = 200;
+	[Range (0, 200)] public float tileHeightOct1 = 10;
+	[Range (0,  20)] public float tileHeightOct2 = 1;
+	[Range (0,   1)] public float treeBorder = 0.5f;
 
-	[Range (0, 1)]
-	public float treeBorder = 0.5f;
-
-	[HideInInspector]
-	public float noiseScaleOct0 = 0.003f;
-	[HideInInspector]
-	public float noiseScaleOct1 = 0.02f;
-	[HideInInspector]
-	public float noiseScaleOct2 = 0.1f;
+	[HideInInspector] public float noiseScaleOct0 = 0.003f;
+	[HideInInspector] public float noiseScaleOct1 = 0.02f;
+	[HideInInspector] public float noiseScaleOct2 = 0.1f;
 
 	public const LandscapeType kEmpty = 0;
 	public const LandscapeType kSea = 1;

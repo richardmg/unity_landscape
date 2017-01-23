@@ -43,8 +43,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	public static int globalInstanceDescriptionCount;
 
-	[HideInInspector]
-	public TileEngine tileEngine;
+	[HideInInspector] public TileEngine tileEngine;
 
 	private Page[,] m_pages;
 

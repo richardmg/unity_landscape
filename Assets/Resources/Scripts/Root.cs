@@ -24,8 +24,7 @@ public class Root : MonoBehaviour {
 	public Material voxelMaterialLit;
 	public Texture2D textureAtlas;
 
-	[HideInInspector]
-	public static Root instance;
+	[HideInInspector] public static Root instance;
 
 	[HideInInspector] public NotificationManager notificationManager;
 	[HideInInspector] public MeshManager meshManager;
