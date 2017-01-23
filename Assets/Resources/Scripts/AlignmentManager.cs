@@ -28,10 +28,10 @@ public class AlignmentManager : MonoBehaviour
 
 	public void align(Transform targetTransform)
 	{
+		targetTransform.rotation = align(targetTransform.rotation);
 		transform.rotation = targetTransform.rotation;
 		Transform descParent = targetTransform.parent;
 		targetTransform.SetParent(transform, true);
-		targetTransform.rotation = align(targetTransform.rotation);
 		targetTransform.localPosition = align(targetTransform.localPosition);
 		targetTransform.SetParent(descParent, true);
 	}
