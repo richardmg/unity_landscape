@@ -27,30 +27,18 @@ public class Root : MonoBehaviour {
 	[HideInInspector]
 	public static Root instance;
 
-	[HideInInspector]
-	public NotificationManager notificationManager;
-	[HideInInspector]
-	public MeshManager meshManager;
-	[HideInInspector]
-	public UIManager uiManager;
-	[HideInInspector]
-	public EntityToolManager entityToolManager;
-	[HideInInspector]
-	public LandscapeManager landscapeManager;
-	[HideInInspector]
-	public PlayerStartupScript player;
-	[HideInInspector]
-	public AtlasManager atlasManager;
-	[HideInInspector]
-	public EntityClassManager entityClassManager;
-	[HideInInspector]
-	public EntityInstanceManager entityInstanceManager;
-	[HideInInspector]
-	public ProjectManager projectManager;
-	[HideInInspector]
-	public CommandPrompt commandPrompt;
-	[HideInInspector]
-	public AlignmentManager alignmentManager;
+	[HideInInspector] public NotificationManager notificationManager;
+	[HideInInspector] public MeshManager meshManager;
+	[HideInInspector] public UIManager uiManager;
+	[HideInInspector] public EntityToolManager entityToolManager;
+	[HideInInspector] public LandscapeManager landscapeManager;
+	[HideInInspector] public PlayerStartupScript player;
+	[HideInInspector] public AtlasManager atlasManager;
+	[HideInInspector] public EntityClassManager entityClassManager;
+	[HideInInspector] public EntityInstanceManager entityInstanceManager;
+	[HideInInspector] public ProjectManager projectManager;
+	[HideInInspector] public CommandPrompt commandPrompt;
+	[HideInInspector] public AlignmentManager alignmentManager;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
