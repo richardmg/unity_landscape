@@ -51,8 +51,8 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		float yRotDelta = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
 		m_prevPlayerRotation = playerRotation;
 
-		playerPosDelta.Scale(new Vector3(1, 0.1f, 1));
-		yRotDelta *= 4;
+		playerPosDelta.Scale(new Vector3(1, 0.05f, 1));
+		yRotDelta *= 3;
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {

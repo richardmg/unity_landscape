@@ -31,8 +31,8 @@ public class AlignmentManager : MonoBehaviour
 		transform.rotation = targetTransform.rotation;
 		Transform descParent = targetTransform.parent;
 		targetTransform.SetParent(transform, true);
-		targetTransform.localPosition = align(targetTransform.localPosition);
 		targetTransform.rotation = align(targetTransform.rotation);
+		targetTransform.localPosition = align(targetTransform.localPosition);
 		targetTransform.SetParent(descParent, true);
 	}
 
