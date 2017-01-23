@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 using ToolMode = System.Int32;
 
-public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
+public class EntityPlaceTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	Vector3 m_prevPlayerPos;
 	float m_prevPlayerXRotation;
