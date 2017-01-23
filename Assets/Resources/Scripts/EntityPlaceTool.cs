@@ -47,7 +47,7 @@ public class EntityPlaceTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 		// Calculate how much the head has tilted up/down
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
-		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
+		//playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
 		m_prevPlayerRotation = playerRotation;
 
 		playerPosDelta.Scale(new Vector3(1, 0.1f, 1));
