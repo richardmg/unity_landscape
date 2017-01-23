@@ -56,10 +56,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.Q)) {
+		if (Input.GetKeyDown(KeyCode.C)) {
 			setMainTool(createToolGo);
-		} else if (Input.GetKeyDown(KeyCode.E)) {
-			setMainTool(selectionToolGo);
 		} else if (Input.GetKeyDown(KeyCode.R)) {
 			setMainTool(selectionToolGo);
 			setSubTool(rotateToolGo);
