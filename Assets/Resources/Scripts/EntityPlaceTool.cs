@@ -45,17 +45,21 @@ public class EntityPlaceTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
 		m_prevPlayerPos = playerPos;
 
-		// Calculate how much the head has tilted up/down
+		// Calculate how much the head has tilted left/right
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
 		//playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
+		float yRotDelta = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
 		m_prevPlayerRotation = playerRotation;
 
 		playerPosDelta.Scale(new Vector3(1, 0.1f, 1));
+		yRotDelta *= 4;
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
+			desc.instance.transform.Rotate(0, yRotDelta, 0, Space.Self);
 			desc.instance.transform.position += playerPosDelta;
 			desc.worldPos = desc.instance.transform.position;
+			desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}

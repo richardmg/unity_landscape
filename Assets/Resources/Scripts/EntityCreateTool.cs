@@ -30,8 +30,9 @@ public class EntityCreateTool : MonoBehaviour
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);
 
 		if (autoSelect) {
-			Root.instance.player.selectEntityInstance(desc, true);
-			Root.instance.entityToolManager.setSubTool(Root.instance.entityToolManager.placeToolGo);
+			//Root.instance.player.selectEntityInstance(desc, true);
+			Root.instance.entityToolManager.setMainTool(Root.instance.entityToolManager.selectionToolGo);
+			Root.instance.entityToolManager.setSubTool(Root.instance.entityToolManager.moveToolGo);
 		}
 	}
 
