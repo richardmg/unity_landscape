@@ -46,34 +46,23 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Vector3 headDir = Root.instance.playerHeadGO.transform.forward;
 
 		Vector3 normalizedHeadPos = headPos - m_lastHeadPos;
+		Vector3 ortogonalHeadDir = Vector3.Cross(m_lastHeadDirection, Vector3.up);
 		float zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection) * 30;
+		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir) * 30;
 
 		m_lastHeadPos = headPos;
 		m_lastHeadDirection = headDir;
 
-		// xMovement = Vector3.dot(newHeadPosDirection, Vector3.cross(newHeadPosDirection, prevHead.forward))
-
-		// Get the players position, but ignore height
-		float startHeight = m_prevPlayerPos.y;
-		Vector3 playerPos = Root.instance.playerGO.transform.position;
-		playerPos.y = startHeight;
-
-		// Calculate how much the player moved sine last update
-		Vector3 playerPosDelta = playerPos - m_prevPlayerPos;
-		m_prevPlayerPos = playerPos;
-
 		// Calculate how much the head has tilted left/right
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
-		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
+		float yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y) * 4;
 		m_prevPlayerRotation = playerRotation;
-
-		playerPosDelta.Scale(new Vector3(30, 4, 30));
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.voxelRotation.x += zMovement;
-//			desc.voxelRotation.y += playerPosDelta.x;
-//			desc.voxelRotation.z += playerPosDelta.y;
+			desc.voxelRotation.y += xMovement;
+			desc.voxelRotation.z += yMovement;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
