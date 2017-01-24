@@ -48,7 +48,7 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Vector3 normalizedHeadPos = headPos - m_lastHeadPos;
 		Vector3 ortogonalHeadDir = Vector3.Cross(m_lastHeadDirection, Vector3.up);
 		float zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection) * 30;
-		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir) * 30;
+		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir) * -40;
 
 		m_lastHeadPos = headPos;
 		m_lastHeadDirection = headDir;
