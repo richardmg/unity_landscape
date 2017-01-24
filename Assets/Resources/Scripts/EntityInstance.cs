@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
+using VoxelRotation = UnityEngine.Vector3;
 
 public class EntityInstanceDescription
 {
@@ -14,7 +15,12 @@ public class EntityInstanceDescription
 
 	public int entityClassID;	
 	public Vector3 worldPos;
-	public Quaternion rotation;
+
+	public Quaternion rotation; // Remove
+
+	// steps to apply from zero rotation; rotate(y), rotateLocal(x), rotateLocal(z).
+	public VoxelRotation voxelRotation;
+
 	public bool isStatic;
 
 	private static int s_debugId = 0;
