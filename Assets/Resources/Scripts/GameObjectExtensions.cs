@@ -59,10 +59,15 @@ public static class UIManager_GameObjectExtensions
 
 	public static void setVoxelRotation(this Transform transform, VoxelRotation rotation)
 	{
+		// Note: The difference from using Quaternion directly is that we choose
+		// to apply y rotation first. This makes them easier to work with when
+		// rotating them in the UI. Also, the rotation should set either x or z, not
+		// both, as this becomes confusing to work with in the UI.
+		Debug.Assert(rotation.x == 0 || rotation.z == 0);
 		transform.rotation = Quaternion.Euler(0, 0, 0);
 		transform.Rotate(0, rotation.y, 0, Space.Self);
 		transform.Rotate(rotation.x, 0, 0, Space.Self);
-		transform.Rotate(0, rotation.z, 0, Space.Self);
+		transform.Rotate(0, 0, rotation.z, Space.Self);
 	}
 
 }
