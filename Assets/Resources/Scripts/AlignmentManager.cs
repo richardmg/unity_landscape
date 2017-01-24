@@ -19,24 +19,20 @@ public class AlignmentManager : MonoBehaviour
 
 	public void align(Transform targetTransform)
 	{
-		float angle = Quaternion.Angle(targetTransform.rotation, Quaternion.Euler(Vector3.up));
-		print(angle);
-		targetTransform.rotation = Quaternion.RotateTowards(Quaternion.Euler(Vector3.up), targetTransform.rotation, align(angle, rotationStep));
-
-//		transform.rotation = targetTransform.rotation;
-//		Transform descParent = targetTransform.parent;
-//		targetTransform.SetParent(transform, true);
-//		targetTransform.localPosition = align(targetTransform.localPosition);
-//		targetTransform.SetParent(descParent, true);
+		transform.rotation = targetTransform.rotation;
+		Transform descParent = targetTransform.parent;
+		targetTransform.SetParent(transform, true);
+		targetTransform.localPosition = align(targetTransform.localPosition);
+		targetTransform.SetParent(descParent, true);
 	}
 
 	public void align(List<EntityInstanceDescription> selection)
 	{
 		foreach (EntityInstanceDescription desc in selection) {
-			align(desc.instance.transform);
-			desc.worldPos = desc.instance.transform.position;
-			desc.rotation = desc.instance.transform.rotation;
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+//			align(desc.instance.transform);
+//			desc.worldPos = desc.instance.transform.position;
+//			desc.rotation = desc.instance.transform.rotation;
+//			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 

@@ -50,13 +50,13 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
 		m_prevPlayerRotation = playerRotation;
 
-		playerPosDelta.Scale(new Vector3(-30, 4, 30));
+		playerPosDelta.Scale(new Vector3(30, 4, 30));
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.instance.transform.Rotate(0, playerPosDelta.y, 0, Space.Self);
-			desc.instance.transform.Rotate(playerPosDelta.z, 0, playerPosDelta.x, Space.World);
-			desc.rotation = desc.instance.transform.rotation;
+			desc.voxelRotation.x += playerPosDelta.z;
+			desc.voxelRotation.y += playerPosDelta.x;
+			desc.voxelRotation.z += playerPosDelta.y;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}

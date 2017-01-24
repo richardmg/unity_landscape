@@ -16,9 +16,11 @@ public class EntityInstanceDescription
 	public int entityClassID;	
 	public Vector3 worldPos;
 
-	public Quaternion rotation; // Remove
-
-	// steps to apply from zero rotation; rotate(y), rotateLocal(x), rotateLocal(z).
+	// Steps to apply voxelRotation:
+	// transform.rotation = Quaternion.Euler(0, 0, 0);
+	// transform.Rotate(voxelRotation.x, 0, 0, Space.Self);
+	// transform.Rotate(0, voxelRotation.y, 0, Space.World);
+	// transform.Rotate(0, voxelRotation.y, 0, Space.Self);
 	public VoxelRotation voxelRotation;
 
 	public bool isStatic;
@@ -49,7 +51,7 @@ public class EntityInstanceDescription
 		entityClass.instanceDescriptionCount++;
 		entityClassID = entityClass.id;
 		this.worldPos = worldPos;
-		rotation = Quaternion.Euler(0, 0, 0);
+		voxelRotation = new VoxelRotation(0, 0, 0);
 		this.isStatic = isStatic;
 	}
 
@@ -75,7 +77,7 @@ public class EntityInstance : MonoBehaviour {
 	public void syncTransformWithDescription()
 	{
 		transform.position = entityInstanceDescription.worldPos;
-		transform.rotation = entityInstanceDescription.rotation;
+		transform.setVoxelRotation(entityInstanceDescription.voxelRotation);
 	}
 
 	public void updateMesh()

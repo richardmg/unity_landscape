@@ -61,7 +61,7 @@ public class EntityClass {
 	{
 		GameObject go = createGameObject(parent, lod, name);
 		go.transform.position = desc.worldPos;
-		go.transform.rotation = desc.rotation;
+		go.transform.setVoxelRotation(desc.voxelRotation);
 		go.isStatic = desc.isStatic;
 
 		desc.instance = go.GetComponent<EntityInstance>();

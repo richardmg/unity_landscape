@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using Lod = System.Int32;
+using VoxelRotation = UnityEngine.Vector3;
 
 public static class UIManager_GameObjectExtensions
 {
@@ -54,6 +55,14 @@ public static class UIManager_GameObjectExtensions
 		topLevelMesh.CombineMeshes(combine);
 
 		return topLevelMesh;
+	}
+
+	public static void setVoxelRotation(this Transform transform, VoxelRotation rotation)
+	{
+		transform.rotation = Quaternion.Euler(0, 0, 0);
+		transform.Rotate(rotation.x, 0, 0, Space.Self);
+		transform.Rotate(0, rotation.y, 0, Space.World);
+		transform.Rotate(0, rotation.z, 0, Space.Self);
 	}
 
 }

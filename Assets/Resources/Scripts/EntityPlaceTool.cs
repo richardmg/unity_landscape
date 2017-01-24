@@ -59,7 +59,7 @@ public class EntityPlaceTool : MonoBehaviour, IEntityInstanceSelectionListener
 			desc.instance.transform.Rotate(0, yRotDelta, 0, Space.Self);
 			desc.instance.transform.position += playerPosDelta;
 			desc.worldPos = desc.instance.transform.position;
-			desc.rotation = desc.instance.transform.rotation;
+			//desc.rotation = desc.instance.transform.rotation;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
