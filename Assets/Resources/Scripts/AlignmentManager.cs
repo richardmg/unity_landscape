@@ -28,12 +28,28 @@ public class AlignmentManager : MonoBehaviour
 
 	public void align(Transform targetTransform)
 	{
-		targetTransform.rotation = align(targetTransform.rotation);
+		//targetTransform.rotation = align(targetTransform.rotation);
+
+		Vector3 result = new Vector3();
+		Vector3 angles = targetTransform.rotation.eulerAngles;
+		result.x = align(angles.x, rotationSteps.x);
+		result.y = align(angles.y, rotationSteps.y);
+		result.z = align(angles.z, rotationSteps.z);
+
+		float angleTowardsGround = Vector3.Angle(Vector3.up, targetTransform.up);
+		float angleAroundY = Vector3.Angle(Vector3.right, targetTransform.right);
+		float angleAroundZ = Quaternion.Angle(targetTransform.rotation, Quaternion.Euler(targetTransform.up));
+
+		print("ground: " + angleTowardsGround + ", y: " + angleAroundY + ", z: " + angleAroundZ);
+		//print(angles.z + ", " + result.z + ", " + targetTransform.localRotation.z);
+//		targetTransform.rotation = Quaternion.Euler(0, 0, 0);
+//		targetTransform.Rotate(new Vector3(0, 0, result.z), Space.Self);
+
 		transform.rotation = targetTransform.rotation;
 		Transform descParent = targetTransform.parent;
-		targetTransform.SetParent(transform, true);
-		targetTransform.localPosition = align(targetTransform.localPosition);
-		targetTransform.SetParent(descParent, true);
+//		targetTransform.SetParent(transform, true);
+//		targetTransform.localPosition = align(targetTransform.localPosition);
+//		targetTransform.SetParent(descParent, true);
 	}
 
 	public void align(List<EntityInstanceDescription> selection)
