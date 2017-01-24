@@ -60,9 +60,9 @@ public static class UIManager_GameObjectExtensions
 	public static void setVoxelRotation(this Transform transform, VoxelRotation rotation)
 	{
 		transform.rotation = Quaternion.Euler(0, 0, 0);
-		transform.Rotate(rotation.x, 0, 0, Space.Self);
-		transform.Rotate(0, rotation.y, 0, Space.World);
 		transform.Rotate(0, rotation.z, 0, Space.Self);
+		transform.Rotate(rotation.x, 0, 0, Space.Self);
+		transform.Rotate(0, rotation.y, 0, Space.Self);
 	}
 
 }

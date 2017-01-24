@@ -46,20 +46,20 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		m_prevPlayerPos = playerPos;
 
 		// Calculate how much the head has tilted up/down and left/right
-		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
-		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
-		float yRotDelta = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
-		m_prevPlayerRotation = playerRotation;
+//		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
+//		playerPosDelta.y = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x);
+//		float yRotDelta = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y);
+//		m_prevPlayerRotation = playerRotation;
 
 		playerPosDelta.Scale(new Vector3(1, 0.05f, 1));
-		yRotDelta *= 3;
+//		yRotDelta *= 3;
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			//desc.instance.transform.Rotate(0, yRotDelta, 0, Space.Self);
 			desc.instance.transform.position += playerPosDelta;
 			desc.worldPos = desc.instance.transform.position;
-			desc.voxelRotation.y += yRotDelta;
+			//desc.voxelRotation.y += yRotDelta;
 			desc.voxelRotation.z += playerPosDelta.y;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
