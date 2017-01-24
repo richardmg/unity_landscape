@@ -36,6 +36,9 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateRotate()
 	{
+		// zMovement = Vector3.dot(newHeadPosDirection, prevHead.forward)
+		// xMovement = Vector3.dot(newHeadPosDirection, Vector3.cross(newHeadPosDirection, prevHead.forward))
+
 		// Get the players position, but ignore height
 		float startHeight = m_prevPlayerPos.y;
 		Vector3 playerPos = Root.instance.playerGO.transform.position;
