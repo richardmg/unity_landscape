@@ -57,42 +57,21 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		m_lastHeadPos = headPos;
 		m_lastHeadDirection = headDir;
 
-		// Calculate which direction to push the objects
-		EntityInstanceDescription mainDesc = Root.instance.player.selectedEntityInstances[0];
-		Transform mainTransform = mainDesc.instance.transform;
-		Vector3 direction = playerTransform.forward;
-		float dist = Vector3.Distance(mainTransform.forward, playerTransform.forward);
-		selectNearest(ref direction, ref dist, mainTransform.right);
-		selectNearest(ref direction, ref dist, mainTransform.up);
-		selectNearest(ref direction, ref dist, mainTransform.forward * -1);
-		selectNearest(ref direction, ref dist, mainTransform.right * -1);
-		selectNearest(ref direction, ref dist, mainTransform.up * -1);
-		direction.y = 0;
-		direction.Normalize();
-
 		// Calculate how much the head has tilted up/down
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
 		float yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x) * 0.05f;
 		m_prevPlayerRotation = playerRotation;
 
+		Vector3 pushDirection = Root.instance.entityToolManager.getPushDirection();
+
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			Transform t = desc.instance.transform;
-			t.Translate(Vector3.Cross(direction, Vector3.up) * xMovement, Space.World);
-			t.Translate(direction * zMovement, Space.World);
+			t.Translate(Vector3.Cross(pushDirection, Vector3.up) * xMovement, Space.World);
+			t.Translate(pushDirection * zMovement, Space.World);
 			t.Translate(new Vector3(0, yMovement, 0), Space.Self);
 			desc.worldPos = t.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
-		}
-	}
-
-	void selectNearest(ref Vector3 current, ref float currentDist, Vector3 other)
-	{
-		Transform playerTransform = Root.instance.playerGO.transform;
-		float dist = Vector3.Distance(other, playerTransform.forward);
-		if (dist < currentDist) {
-			current = other;
-			currentDist = dist;
 		}
 	}
 

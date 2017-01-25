@@ -156,5 +156,32 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 			m_alignmentNeeded = false;
 		}
 	}
+
+	public Vector3 getPushDirection()
+	{
+		// Return the object-algined direction the first selected object is being pushed by the user
+		Transform mainTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
+		Vector3 direction = Vector3.zero;
+		float dist = Mathf.Infinity;
+		selectNearest(ref direction, ref dist, mainTransform.forward);
+		selectNearest(ref direction, ref dist, mainTransform.right);
+		selectNearest(ref direction, ref dist, mainTransform.up);
+		selectNearest(ref direction, ref dist, mainTransform.forward * -1);
+		selectNearest(ref direction, ref dist, mainTransform.right * -1);
+		selectNearest(ref direction, ref dist, mainTransform.up * -1);
+		direction.y = 0;
+		direction.Normalize();
+		return direction;
+	}
+
+	void selectNearest(ref Vector3 current, ref float currentDist, Vector3 other)
+	{
+		Transform playerTransform = Root.instance.playerGO.transform;
+		float dist = Vector3.Distance(other, playerTransform.forward);
+		if (dist < currentDist) {
+			current = other;
+			currentDist = dist;
+		}
+	}
 }
 
