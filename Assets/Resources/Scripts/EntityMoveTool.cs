@@ -7,7 +7,6 @@ using ToolMode = System.Int32;
 public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
 
-
 	public void OnEnable()
 	{
 		Root.instance.player.setWalkSpeed(1);
@@ -26,6 +25,8 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		if (Input.GetMouseButtonDown(0))
 			Root.instance.player.unselectAllEntityInstances();
+		if (Root.instance.player.selectedEntityInstances.Count == 0)
+			return;
 
 		updateMove();
 		Root.instance.entityToolManager.updateAlignment();
@@ -33,9 +34,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateMove()
 	{
-		if (Root.instance.player.selectedEntityInstances.Count == 0)
-			return;
-
 		float xMovement, yMovement, zMovement;
 		Root.instance.entityToolManager.getPlayerMovement(out xMovement, out zMovement);
 		Root.instance.entityToolManager.getPlayerHeadMovement(out yMovement);

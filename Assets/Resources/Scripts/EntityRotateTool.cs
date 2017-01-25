@@ -6,20 +6,12 @@ using ToolMode = System.Int32;
 
 public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
-	float m_prevPlayerXRotation;
-
-	Vector3 m_lastHeadPos;
-	Vector3 m_lastHeadDirection;
 
 	public void OnEnable()
 	{
-		resetToolState();
 		Root.instance.player.setWalkSpeed(1);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
-
-		m_lastHeadPos = Root.instance.playerHeadGO.transform.position;
-		m_lastHeadDirection = Root.instance.playerHeadGO.transform.forward;
 	}
 
 	public void OnDisable()
@@ -33,6 +25,8 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		if (Input.GetMouseButtonDown(0))
 			Root.instance.player.unselectAllEntityInstances();
+		if (Root.instance.player.selectedEntityInstances.Count == 0)
+			return;
 
 		updateRotate();
 		Root.instance.entityToolManager.updateAlignment();
@@ -40,27 +34,16 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateRotate()
 	{
-		Vector3 headPos = Root.instance.playerHeadGO.transform.position;
-		Vector3 headDir = Root.instance.playerHeadGO.transform.forward;
-
-		Vector3 normalizedHeadPos = headPos - m_lastHeadPos;
-		Vector3 ortogonalHeadDir = Vector3.Cross(m_lastHeadDirection, Vector3.up);
-		float zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection) * 30;
-		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir) * -40;
-
-		m_lastHeadPos = headPos;
-		m_lastHeadDirection = headDir;
+		float xMovement, zMovement;
+		Root.instance.entityToolManager.getPlayerMovement(out xMovement, out zMovement);
+		Vector3 pushDirection = Root.instance.entityToolManager.getPlayerPushDirectionOfFirstSelectedObject();
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.voxelRotation.x += zMovement;
-			desc.voxelRotation.y += xMovement;
+			desc.voxelRotation.x += zMovement * 30;
+			desc.voxelRotation.y += xMovement * -40;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
-	}
-
-	public void resetToolState()
-	{
 	}
 
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
