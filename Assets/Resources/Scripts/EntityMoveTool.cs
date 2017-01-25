@@ -6,13 +6,10 @@ using ToolMode = System.Int32;
 
 public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
-	float m_prevPlayerXRotation;
-	Quaternion m_prevPlayerRotation;
 
 
 	public void OnEnable()
 	{
-		resetToolState();
 		Root.instance.player.setWalkSpeed(1);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
@@ -39,14 +36,9 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		if (Root.instance.player.selectedEntityInstances.Count == 0)
 			return;
 
-		float xMovement, zMovement;
+		float xMovement, yMovement, zMovement;
 		Root.instance.entityToolManager.getPlayerMovement(out xMovement, out zMovement);
-
-		// Calculate how much the head has tilted up/down
-		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
-		float yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x) * 0.05f;
-		m_prevPlayerRotation = playerRotation;
-
+		Root.instance.entityToolManager.getPlayerHeadMovement(out yMovement);
 		Vector3 pushDirection = Root.instance.entityToolManager.getPlayerPushDirectionOfFirstSelectedObject();
 
 		// Inform the app about the position update of the selected objects
@@ -58,11 +50,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 			desc.worldPos = t.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
-	}
-
-	public void resetToolState()
-	{
-		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
 	}
 
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)

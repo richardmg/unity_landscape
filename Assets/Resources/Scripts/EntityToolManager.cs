@@ -25,8 +25,10 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	GameObject m_buttonUnderPointer;
 	int m_buttonUnderPointerFrameTime;
 	PointerEventData m_ped = new PointerEventData(null);
+
 	Vector3 m_lastHeadPos;
 	Vector3 m_lastHeadDirection;
+	Quaternion m_prevPlayerRotation;
 
 	float m_idleTime;
 	Quaternion m_alignmentRotation;
@@ -163,8 +165,17 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public void resetToolHelpers()
 	{
-		m_lastHeadPos = Root.instance.playerHeadGO.transform.position;
-		m_lastHeadDirection = Root.instance.playerHeadGO.transform.forward;
+		Transform headTransform = Root.instance.playerHeadGO.transform;
+		m_lastHeadPos = headTransform.position;
+		m_lastHeadDirection = headTransform.forward;
+		m_prevPlayerRotation = headTransform.rotation;
+	}
+
+	public void getPlayerHeadMovement(out float yMovement)
+	{
+		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
+		yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x) * 0.05f;
+		m_prevPlayerRotation = playerRotation;
 	}
 
 	public void getPlayerMovement(out float xMovement, out float zMovement)
