@@ -6,9 +6,7 @@ using ToolMode = System.Int32;
 
 public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
-	Vector3 m_prevPlayerPos;
 	float m_prevPlayerXRotation;
-	Quaternion m_prevPlayerRotation;
 
 	Vector3 m_lastHeadPos;
 	Vector3 m_lastHeadDirection;
@@ -53,24 +51,16 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		m_lastHeadPos = headPos;
 		m_lastHeadDirection = headDir;
 
-		// Calculate how much the head has tilted left/right
-		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
-		float yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.y, m_prevPlayerRotation.eulerAngles.y) * 4;
-		m_prevPlayerRotation = playerRotation;
-
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.voxelRotation.x += zMovement;
 			desc.voxelRotation.y += xMovement;
-//			desc.voxelRotation.z += xMovement;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
 
 	public void resetToolState()
 	{
-		m_prevPlayerPos = Root.instance.playerGO.transform.position;
-		m_prevPlayerRotation = Root.instance.playerHeadGO.transform.rotation;
 	}
 
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
