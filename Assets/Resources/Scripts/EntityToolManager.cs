@@ -202,33 +202,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		Transform pusher = Root.instance.playerGO.transform;
 		Transform pushed = Root.instance.player.selectedEntityInstances[0].instance.transform;
-		return getPushDirection(pusher, pushed);
-	}
-
-	public Vector3 getPushDirection(Transform pusher, Transform pushed)
-	{
-		// Return the object-algined direction the first selected object is being pushed by the user
-		Vector3 pusherForward = pusher.forward;
-		Vector3 direction = Vector3.zero;
-		float dist = Mathf.Infinity;
-		selectNearest(ref direction, ref dist, pushed.forward, pusherForward);
-		selectNearest(ref direction, ref dist, pushed.right, pusherForward);
-		selectNearest(ref direction, ref dist, pushed.up, pusherForward);
-		selectNearest(ref direction, ref dist, pushed.forward * -1, pusherForward);
-		selectNearest(ref direction, ref dist, pushed.right * -1, pusherForward);
-		selectNearest(ref direction, ref dist, pushed.up * -1, pusherForward);
-		direction.y = 0;
-		direction.Normalize();
-		return direction;
-	}
-
-	void selectNearest(ref Vector3 currentDirection, ref float currentDist, Vector3 otherDirection, Vector3 forward)
-	{
-		float dist = Vector3.Distance(otherDirection, forward);
-		if (dist < currentDist) {
-			currentDirection = otherDirection;
-			currentDist = dist;
-		}
+		return pusher.getVoxelPushDirection(pushed);
 	}
 }
 
