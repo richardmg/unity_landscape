@@ -171,14 +171,16 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_prevPlayerRotation = headTransform.rotation;
 	}
 
-	public void getPlayerHeadMovement(out float yMovement)
+	public Vector2 getPlayerHeadMovement()
 	{
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
-		yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x) * 0.05f;
+		float yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x) * 0.05f;
 		m_prevPlayerRotation = playerRotation;
+
+		return new Vector2(0, yMovement);
 	}
 
-	public void getPlayerMovement(out float xMovement, out float zMovement)
+	public Vector2 getPlayerMovement()
 	{
 		Transform headTransform = Root.instance.playerHeadGO.transform;
 		Vector3 headPos = headTransform.position;
@@ -187,11 +189,13 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		Vector3 normalizedHeadPos = headPos - m_lastHeadPos;
 		Vector3 ortogonalHeadDir = Vector3.Cross(m_lastHeadDirection, Vector3.up);
 
-		zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection);
-		xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir);
+		float zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection);
+		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir);
 
 		m_lastHeadPos = headPos;
 		m_lastHeadDirection = headDir;
+
+		return new Vector2(xMovement, zMovement);
 	}
 
 	public Vector3 getPlayerPushDirectionOfFirstSelectedObject()

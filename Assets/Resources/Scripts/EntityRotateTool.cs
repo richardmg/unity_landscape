@@ -34,14 +34,13 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateRotate()
 	{
-		float xMovement, zMovement;
-		Root.instance.entityToolManager.getPlayerMovement(out xMovement, out zMovement);
+		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
 		Vector3 pushDirection = Root.instance.entityToolManager.getPlayerPushDirectionOfFirstSelectedObject();
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.voxelRotation.x += zMovement * 30;
-			desc.voxelRotation.y += xMovement * -40;
+			desc.voxelRotation.x += playerMovement.y * 30;
+			desc.voxelRotation.y += playerMovement.x * -40;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}

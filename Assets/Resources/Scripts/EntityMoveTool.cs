@@ -34,17 +34,16 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateMove()
 	{
-		float xMovement, yMovement, zMovement;
-		Root.instance.entityToolManager.getPlayerMovement(out xMovement, out zMovement);
-		Root.instance.entityToolManager.getPlayerHeadMovement(out yMovement);
+		Vector3 headMovement = Root.instance.entityToolManager.getPlayerHeadMovement();
+		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
 		Vector3 pushDirection = Root.instance.entityToolManager.getPlayerPushDirectionOfFirstSelectedObject();
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			Transform t = desc.instance.transform;
-			t.Translate(Vector3.Cross(pushDirection, Vector3.up) * xMovement, Space.World);
-			t.Translate(pushDirection * zMovement, Space.World);
-			t.Translate(new Vector3(0, yMovement, 0), Space.Self);
+			t.Translate(Vector3.Cross(pushDirection, Vector3.up) * playerMovement.x, Space.World);
+			t.Translate(pushDirection * playerMovement.y, Space.World);
+			t.Translate(new Vector3(0, headMovement.y, 0), Space.Self);
 			desc.worldPos = t.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
