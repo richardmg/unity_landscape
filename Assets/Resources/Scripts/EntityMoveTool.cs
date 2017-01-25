@@ -41,18 +41,36 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateMove()
 	{
-		Vector3 headPos = Root.instance.playerHeadGO.transform.position;
-		Vector3 headDir = Root.instance.playerHeadGO.transform.forward;
+		if (Root.instance.player.selectedEntityInstances.Count == 0)
+			return;
+		
+		Transform playerTransform = Root.instance.playerGO.transform;
+		Transform headTransform = Root.instance.playerHeadGO.transform;
+		Vector3 headPos = headTransform.position;
+		Vector3 headDir = headTransform.forward;
 
 		Vector3 normalizedHeadPos = headPos - m_lastHeadPos;
 		Vector3 ortogonalHeadDir = Vector3.Cross(m_lastHeadDirection, Vector3.up);
 		float zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection);
-		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir) * -1;
+		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir);
 
 		m_lastHeadPos = headPos;
 		m_lastHeadDirection = headDir;
 
-		// Calculate how much the head has tilted up/down and left/right
+		// Calculate which direction to push the objects
+		EntityInstanceDescription mainDesc = Root.instance.player.selectedEntityInstances[0];
+		Transform mainTransform = mainDesc.instance.transform;
+		Vector3 direction = playerTransform.forward;
+		float dist = Vector3.Distance(mainTransform.forward, playerTransform.forward);
+		selectNearest(ref direction, ref dist, mainTransform.right);
+		selectNearest(ref direction, ref dist, mainTransform.up);
+		selectNearest(ref direction, ref dist, mainTransform.forward * -1);
+		selectNearest(ref direction, ref dist, mainTransform.right * -1);
+		selectNearest(ref direction, ref dist, mainTransform.up * -1);
+		direction.y = 0;
+		direction.Normalize();
+
+		// Calculate how much the head has tilted up/down
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;
 		float yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x) * 0.05f;
 		m_prevPlayerRotation = playerRotation;
@@ -60,24 +78,21 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			Transform t = desc.instance.transform;
-			Vector3 right = t.right;
-			right.y = 0;
-			right.Normalize();
-
-			Vector3 forward = t.forward;
-			if (forward.y == 0)
-				forward.y = 1;
-			else if (forward.y < 0)
-				zMovement *= -1;
-			else
-				forward.y = 0;
-			forward.Normalize();
-
-			t.Translate(right * xMovement, Space.World);
-			t.Translate(forward * zMovement, Space.World);
+			t.Translate(Vector3.Cross(direction, Vector3.up) * xMovement, Space.World);
+			t.Translate(direction * zMovement, Space.World);
 			t.Translate(new Vector3(0, yMovement, 0), Space.Self);
 			desc.worldPos = t.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+		}
+	}
+
+	void selectNearest(ref Vector3 current, ref float currentDist, Vector3 other)
+	{
+		Transform playerTransform = Root.instance.playerGO.transform;
+		float dist = Vector3.Distance(other, playerTransform.forward);
+		if (dist < currentDist) {
+			current = other;
+			currentDist = dist;
 		}
 	}
 
