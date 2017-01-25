@@ -9,8 +9,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	float m_prevPlayerXRotation;
 	Quaternion m_prevPlayerRotation;
 
-	Vector3 m_lastHeadPos;
-	Vector3 m_lastHeadDirection;
 
 	public void OnEnable()
 	{
@@ -18,9 +16,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Root.instance.player.setWalkSpeed(1);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
-
-		m_lastHeadPos = Root.instance.playerHeadGO.transform.position;
-		m_lastHeadDirection = Root.instance.playerHeadGO.transform.forward;
 	}
 
 	public void OnDisable()
@@ -43,19 +38,9 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		if (Root.instance.player.selectedEntityInstances.Count == 0)
 			return;
-		
-		Transform playerTransform = Root.instance.playerGO.transform;
-		Transform headTransform = Root.instance.playerHeadGO.transform;
-		Vector3 headPos = headTransform.position;
-		Vector3 headDir = headTransform.forward;
 
-		Vector3 normalizedHeadPos = headPos - m_lastHeadPos;
-		Vector3 ortogonalHeadDir = Vector3.Cross(m_lastHeadDirection, Vector3.up);
-		float zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection);
-		float xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir);
-
-		m_lastHeadPos = headPos;
-		m_lastHeadDirection = headDir;
+		float xMovement, zMovement;
+		Root.instance.entityToolManager.getPlayerMovement(out xMovement, out zMovement);
 
 		// Calculate how much the head has tilted up/down
 		Quaternion playerRotation = Root.instance.playerHeadGO.transform.rotation;

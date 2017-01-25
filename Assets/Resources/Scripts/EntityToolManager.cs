@@ -25,6 +25,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	GameObject m_buttonUnderPointer;
 	int m_buttonUnderPointerFrameTime;
 	PointerEventData m_ped = new PointerEventData(null);
+	Vector3 m_lastHeadPos;
+	Vector3 m_lastHeadDirection;
 
 	float m_idleTime;
 	Quaternion m_alignmentRotation;
@@ -77,6 +79,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		moveToolGo.SetActive(false);
 		rotateToolGo.SetActive(false);
 		placeToolGo.SetActive(false);
+
+		resetToolHelpers();
 	}
 
 	public void setSubTool(GameObject tool)
@@ -155,6 +159,28 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 			Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
 			m_alignmentNeeded = false;
 		}
+	}
+
+	public void resetToolHelpers()
+	{
+		m_lastHeadPos = Root.instance.playerHeadGO.transform.position;
+		m_lastHeadDirection = Root.instance.playerHeadGO.transform.forward;
+	}
+
+	public void getPlayerMovement(out float xMovement, out float zMovement)
+	{
+		Transform headTransform = Root.instance.playerHeadGO.transform;
+		Vector3 headPos = headTransform.position;
+		Vector3 headDir = headTransform.forward;
+
+		Vector3 normalizedHeadPos = headPos - m_lastHeadPos;
+		Vector3 ortogonalHeadDir = Vector3.Cross(m_lastHeadDirection, Vector3.up);
+
+		zMovement = Vector3.Dot(normalizedHeadPos, m_lastHeadDirection);
+		xMovement = Vector3.Dot(normalizedHeadPos, ortogonalHeadDir);
+
+		m_lastHeadPos = headPos;
+		m_lastHeadDirection = headDir;
 	}
 
 	public Vector3 getPlayerPushDirectionOfFirstSelectedObject()
