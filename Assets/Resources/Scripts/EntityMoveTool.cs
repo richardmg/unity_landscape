@@ -62,7 +62,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 		float yMovement = Mathf.DeltaAngle(playerRotation.eulerAngles.x, m_prevPlayerRotation.eulerAngles.x) * 0.05f;
 		m_prevPlayerRotation = playerRotation;
 
-		Vector3 pushDirection = Root.instance.entityToolManager.getPushDirection();
+		Vector3 pushDirection = Root.instance.entityToolManager.getPlayerPushDirectionOfFirstSelectedObject();
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {

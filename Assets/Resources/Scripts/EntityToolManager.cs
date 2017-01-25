@@ -157,29 +157,35 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		}
 	}
 
-	public Vector3 getPushDirection()
+	public Vector3 getPlayerPushDirectionOfFirstSelectedObject()
+	{
+		Transform pusher = Root.instance.playerGO.transform;
+		Transform pushed = Root.instance.player.selectedEntityInstances[0].instance.transform;
+		return getPushDirection(pusher, pushed);
+	}
+
+	public Vector3 getPushDirection(Transform pusher, Transform pushed)
 	{
 		// Return the object-algined direction the first selected object is being pushed by the user
-		Transform mainTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
+		Vector3 pusherForward = pusher.forward;
 		Vector3 direction = Vector3.zero;
 		float dist = Mathf.Infinity;
-		selectNearest(ref direction, ref dist, mainTransform.forward);
-		selectNearest(ref direction, ref dist, mainTransform.right);
-		selectNearest(ref direction, ref dist, mainTransform.up);
-		selectNearest(ref direction, ref dist, mainTransform.forward * -1);
-		selectNearest(ref direction, ref dist, mainTransform.right * -1);
-		selectNearest(ref direction, ref dist, mainTransform.up * -1);
+		selectNearest(ref direction, ref dist, pushed.forward, pusherForward);
+		selectNearest(ref direction, ref dist, pushed.right, pusherForward);
+		selectNearest(ref direction, ref dist, pushed.up, pusherForward);
+		selectNearest(ref direction, ref dist, pushed.forward * -1, pusherForward);
+		selectNearest(ref direction, ref dist, pushed.right * -1, pusherForward);
+		selectNearest(ref direction, ref dist, pushed.up * -1, pusherForward);
 		direction.y = 0;
 		direction.Normalize();
 		return direction;
 	}
 
-	void selectNearest(ref Vector3 current, ref float currentDist, Vector3 other)
+	void selectNearest(ref Vector3 currentDirection, ref float currentDist, Vector3 otherDirection, Vector3 forward)
 	{
-		Transform playerTransform = Root.instance.playerGO.transform;
-		float dist = Vector3.Distance(other, playerTransform.forward);
+		float dist = Vector3.Distance(otherDirection, forward);
 		if (dist < currentDist) {
-			current = other;
+			currentDirection = otherDirection;
 			currentDist = dist;
 		}
 	}
