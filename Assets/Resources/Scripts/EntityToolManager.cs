@@ -72,6 +72,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 			setMainTool(selectionToolGo);
 			setSubTool(placeToolGo);
 		}
+
+		if (Input.GetMouseButtonDown(1))
+			setSubTool(Root.instance.player.subTool == rotateToolGo ? moveToolGo : rotateToolGo);
 	}
 
 	public void deactivateAllTools()
