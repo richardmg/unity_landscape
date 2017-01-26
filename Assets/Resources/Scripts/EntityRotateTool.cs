@@ -6,12 +6,16 @@ using ToolMode = System.Int32;
 
 public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
+	Vector3 m_pushDirection;
 
 	public void OnEnable()
 	{
 		Root.instance.player.setWalkSpeed(1);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
+
+		Transform firstTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
+		m_pushDirection = Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, false, Space.Self);
 	}
 
 	public void OnDisable()
@@ -34,15 +38,12 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateRotate()
 	{
-		Transform firstTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
-
 		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
-		Vector3 pushDirection = Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, Space.Self);
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.voxelRotation.x += (pushDirection.z != 0 ? playerMovement.y : -playerMovement.x) * 40;
-			desc.voxelRotation.y += (pushDirection.z != 0 ? playerMovement.x : -playerMovement.y) * 40;
+			desc.voxelRotation.x += (m_pushDirection.z != 0 ? (playerMovement.y * m_pushDirection.z) : (playerMovement.x * m_pushDirection.x)) * 40;
+			desc.voxelRotation.y += (m_pushDirection.z != 0 ? -(playerMovement.x * m_pushDirection.z) : (playerMovement.y * m_pushDirection.x)) * 40;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
