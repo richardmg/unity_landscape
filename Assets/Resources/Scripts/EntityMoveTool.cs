@@ -39,7 +39,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 		Vector3 headMovement = Root.instance.entityToolManager.getPlayerHeadMovement();
 		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
-		Vector3 pushDirection =  Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, false, Space.World);
+		Vector3 pushDirection =  Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, true, false, true, Space.World);
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {

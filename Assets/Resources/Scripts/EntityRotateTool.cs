@@ -6,7 +6,7 @@ using ToolMode = System.Int32;
 
 public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
-	Vector3 m_pushDirection;
+	int m_pushDirectionZ;
 	int m_tippedBack;
 
 	public void OnEnable()
@@ -16,8 +16,8 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 
 		Transform firstTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
-		m_pushDirection = Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, false, Space.Self);
-		m_tippedBack = Vector3.Dot(Vector3.forward, firstTransform.up) >= 0 ? 1 : -1;
+		m_pushDirectionZ = (int)Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, false, false, true, Space.Self).z;
+		m_tippedBack = Vector3.Dot(Vector3.forward, firstTransform.up) < 0 ? 1 : -1;
 	}
 
 	public void OnDisable()
@@ -42,10 +42,13 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
 
+		Transform firstTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
+		bool straightUp = Mathf.RoundToInt(Vector3.Dot(Vector3.up, firstTransform.up) * 1000) > 995;
+
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
-			desc.voxelRotation.x += (m_pushDirection.z != 0 ? (playerMovement.y * m_pushDirection.z) : (playerMovement.x * m_pushDirection.x)) * 40;
-			desc.voxelRotation.y += (m_pushDirection.z != 0 ? -(playerMovement.x * m_pushDirection.z) : (playerMovement.y * m_pushDirection.x)) * 40 * m_tippedBack;
+			desc.voxelRotation.x += (m_pushDirectionZ > 0 ? playerMovement.y : -playerMovement.y) * 40;
+			desc.voxelRotation.y += playerMovement.x * (straightUp ? 1 : m_tippedBack) * 40;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}

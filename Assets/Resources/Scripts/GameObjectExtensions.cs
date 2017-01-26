@@ -70,25 +70,35 @@ public static class UIManager_GameObjectExtensions
 		transform.Rotate(0, 0, rotation.z, Space.Self);
 	}
 
-	public static Vector3 getVoxelPushDirection(this Transform pusher, Transform pushed, bool includeY, Space space)
+	public static Vector3 getVoxelPushDirection(this Transform pusher, Transform pushed, bool includeX, bool includeY, bool includeZ, Space space)
 	{
-		// Return the direction the first selected object is being pushed by the
-		// user. The direction will only be one out of the pushed transforms local
-		// x, y (and if includeY == true), z.
 		Vector3 pusherForward = pusher.forward;
 		Vector3 direction = Vector3.zero;
 		float dist = Mathf.Infinity;
-		pusher.selectNearest(ref direction, ref dist, pushed.forward, (space == Space.World ? pushed.forward : Vector3.forward), pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.right, (space == Space.World ? pushed.right : Vector3.right), pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.forward * -1, (space == Space.World ? pushed.forward : Vector3.forward) * -1, pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.right * -1, (space == Space.World ? pushed.right : Vector3.right) * -1, pusherForward);
+
+		if (includeX) {
+			pusher.selectNearest(ref direction, ref dist, pushed.right, (space == Space.World ? pushed.right : Vector3.right), pusherForward);
+			pusher.selectNearest(ref direction, ref dist, pushed.right * -1, (space == Space.World ? pushed.right : Vector3.right) * -1, pusherForward);
+		}
 		if (includeY) {
 			pusher.selectNearest(ref direction, ref dist, pushed.up, (space == Space.World ? pushed.up : Vector3.up), pusherForward);
 			pusher.selectNearest(ref direction, ref dist, pushed.up * -1, (space == Space.World ? pushed.up : Vector3.up) * -1, pusherForward);
-		} else {
-			direction.y = 0;
+		}
+		if (includeZ) {
+			pusher.selectNearest(ref direction, ref dist, pushed.forward, (space == Space.World ? pushed.forward : Vector3.forward), pusherForward);
+			pusher.selectNearest(ref direction, ref dist, pushed.forward * -1, (space == Space.World ? pushed.forward : Vector3.forward) * -1, pusherForward);
+		}
+
+		if (space == Space.World) {
+			if (!includeX)
+				direction.x = 0;
+			if (!includeY)
+				direction.y = 0;
+			if (!includeZ)
+				direction.z = 0;
 			direction.Normalize();
 		}
+
 		return direction;
 	}
 
