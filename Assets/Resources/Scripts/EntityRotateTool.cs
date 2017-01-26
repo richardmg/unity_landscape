@@ -35,7 +35,7 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 	void updateRotate()
 	{
 		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
-		Vector3 pushDirection = Root.instance.entityToolManager.getPlayerPushDirectionOfFirstSelectedObject();
+		Vector3 pushDirection = Root.instance.entityToolManager.getPushDirectionOfFirstSelectedObject(Space.Self);
 
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {

@@ -198,11 +198,11 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		return new Vector2(xMovement, zMovement);
 	}
 
-	public Vector3 getPlayerPushDirectionOfFirstSelectedObject()
+	public Vector3 getPushDirectionOfFirstSelectedObject(Space space)
 	{
 		Transform pusher = Root.instance.playerGO.transform;
 		Transform pushed = Root.instance.player.selectedEntityInstances[0].instance.transform;
-		return pusher.getVoxelPushDirection(pushed);
+		return pusher.getVoxelPushDirection(pushed, space);
 	}
 }
 

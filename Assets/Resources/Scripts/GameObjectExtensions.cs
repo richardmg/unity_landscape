@@ -70,29 +70,30 @@ public static class UIManager_GameObjectExtensions
 		transform.Rotate(0, 0, rotation.z, Space.Self);
 	}
 
-	public static Vector3 getVoxelPushDirection(this Transform pusher, Transform pushed)
+	public static Vector3 getVoxelPushDirection(this Transform pusher, Transform pushed, Space space)
 	{
-		// Return the object-algined direction the first selected object is being pushed by the user
+		// Return the direction the first selected object is being pushed by the
+		// user. The direction will only be one out of the pushed transforms local x or z
 		Vector3 pusherForward = pusher.forward;
 		Vector3 direction = Vector3.zero;
 		float dist = Mathf.Infinity;
-		pusher.selectNearest(ref direction, ref dist, pushed.forward, pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.right, pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.up, pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.forward * -1, pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.right * -1, pusherForward);
-		pusher.selectNearest(ref direction, ref dist, pushed.up * -1, pusherForward);
+		pusher.selectNearest(ref direction, ref dist, pushed.forward, (space == Space.World ? pushed.forward : Vector3.forward), pusherForward);
+		pusher.selectNearest(ref direction, ref dist, pushed.right, (space == Space.World ? pushed.right : Vector3.right), pusherForward);
+		pusher.selectNearest(ref direction, ref dist, pushed.up, (space == Space.World ? pushed.up : Vector3.up), pusherForward);
+		pusher.selectNearest(ref direction, ref dist, pushed.forward * -1, (space == Space.World ? pushed.forward : Vector3.forward) * -1, pusherForward);
+		pusher.selectNearest(ref direction, ref dist, pushed.right * -1, (space == Space.World ? pushed.right : Vector3.right) * -1, pusherForward);
+		pusher.selectNearest(ref direction, ref dist, pushed.up * -1, (space == Space.World ? pushed.up : Vector3.up) * -1, pusherForward);
 		direction.y = 0;
 		direction.Normalize();
 		return direction;
 	}
 
 	private static void selectNearest(this Transform transform, ref Vector3 currentDirection,
-		ref float currentDist, Vector3 otherDirection, Vector3 forward)
+		ref float currentDist, Vector3 otherDirection, Vector3 otherDirectionSubstitute, Vector3 forward)
 	{
 		float dist = Vector3.Distance(otherDirection, forward);
 		if (dist < currentDist) {
-			currentDirection = otherDirection;
+			currentDirection = otherDirectionSubstitute;
 			currentDist = dist;
 		}
 	}
