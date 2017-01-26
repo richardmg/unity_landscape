@@ -7,6 +7,7 @@ using ToolMode = System.Int32;
 public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 {
 	Vector3 m_pushDirection;
+	int m_tippedBack;
 
 	public void OnEnable()
 	{
@@ -16,6 +17,7 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 		Transform firstTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
 		m_pushDirection = Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, false, Space.Self);
+		m_tippedBack = Vector3.Dot(Vector3.forward, firstTransform.up) >= 0 ? 1 : -1;
 	}
 
 	public void OnDisable()
@@ -43,7 +45,7 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.voxelRotation.x += (m_pushDirection.z != 0 ? (playerMovement.y * m_pushDirection.z) : (playerMovement.x * m_pushDirection.x)) * 40;
-			desc.voxelRotation.y += (m_pushDirection.z != 0 ? -(playerMovement.x * m_pushDirection.z) : (playerMovement.y * m_pushDirection.x)) * 40;
+			desc.voxelRotation.y += (m_pushDirection.z != 0 ? -(playerMovement.x * m_pushDirection.z) : (playerMovement.y * m_pushDirection.x)) * 40 * m_tippedBack;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
