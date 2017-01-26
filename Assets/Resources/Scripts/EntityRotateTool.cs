@@ -54,7 +54,8 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		// Inform the app about the position update of the selected objects
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.voxelRotation.x += (m_pushDirectionZ > 0 ? playerMovement.y : -playerMovement.y) * 40;
-			desc.voxelRotation.y += playerMovement.x * (straightUp ? 1 : m_tippedBack) * 40;
+			desc.voxelRotation.y += (m_pushDirectionZ > 0 ? playerMovement.x : -playerMovement.x)
+				* ((straightUp && m_pushDirectionZ > 0) ? 1 : m_tippedBack) * 40;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
 	}
