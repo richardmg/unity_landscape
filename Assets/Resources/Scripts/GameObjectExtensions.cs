@@ -89,16 +89,6 @@ public static class UIManager_GameObjectExtensions
 			pusher.selectNearest(ref direction, ref dist, pushed.forward * -1, (space == Space.World ? pushed.forward : Vector3.forward) * -1, pusherForward);
 		}
 
-		if (space == Space.World) {
-			if (!includeX)
-				direction.x = 0;
-			if (!includeY)
-				direction.y = 0;
-			if (!includeZ)
-				direction.z = 0;
-			direction.Normalize();
-		}
-
 		return direction;
 	}
 
