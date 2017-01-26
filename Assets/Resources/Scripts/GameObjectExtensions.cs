@@ -73,7 +73,7 @@ public static class UIManager_GameObjectExtensions
 	public static Vector3 getVoxelPushDirection(this Transform pusher, Transform pushed, Space space)
 	{
 		// Return the direction the first selected object is being pushed by the
-		// user. The direction will only be one out of the pushed transforms local x or z
+		// user. The direction will only be one out of the pushed transforms local x y, or z
 		Vector3 pusherForward = pusher.forward;
 		Vector3 direction = Vector3.zero;
 		float dist = Mathf.Infinity;
@@ -83,8 +83,6 @@ public static class UIManager_GameObjectExtensions
 		pusher.selectNearest(ref direction, ref dist, pushed.forward * -1, (space == Space.World ? pushed.forward : Vector3.forward) * -1, pusherForward);
 		pusher.selectNearest(ref direction, ref dist, pushed.right * -1, (space == Space.World ? pushed.right : Vector3.right) * -1, pusherForward);
 		pusher.selectNearest(ref direction, ref dist, pushed.up * -1, (space == Space.World ? pushed.up : Vector3.up) * -1, pusherForward);
-		direction.y = 0;
-		direction.Normalize();
 		return direction;
 	}
 
