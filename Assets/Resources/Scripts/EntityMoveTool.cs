@@ -34,12 +34,12 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateMove()
 	{
-		EntityInstanceDescription firstDesc = Root.instance.player.selectedEntityInstances[0];
-		bool flat = Mathf.RoundToInt(firstDesc.instance.transform.up.y * 1000) == 0;
+		Transform firstTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
+		bool flat = Mathf.RoundToInt(firstTransform.up.y * 1000) == 0;
 
 		Vector3 headMovement = Root.instance.entityToolManager.getPlayerHeadMovement();
 		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
-		Vector3 pushDirection = Root.instance.entityToolManager.getPushDirection(Space.World);
+		Vector3 pushDirection =  Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, Space.World);
 
 		// Only push along x or z
 		pushDirection.y = 0;
