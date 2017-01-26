@@ -35,7 +35,13 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 			return;
 
 		updateRotate();
-		Root.instance.entityToolManager.updateAlignment();
+
+		if (Root.instance.entityToolManager.playerIdle()) {
+			Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
+			Transform firstTransform = Root.instance.player.selectedEntityInstances[0].instance.transform;
+			m_pushDirectionZ = (int)Root.instance.playerGO.transform.getVoxelPushDirection(firstTransform, false, false, true, Space.Self).z;
+			m_tippedBack = Vector3.Dot(Vector3.forward, firstTransform.up) < 0 ? 1 : -1;
+		}
 	}
 
 	void updateRotate()

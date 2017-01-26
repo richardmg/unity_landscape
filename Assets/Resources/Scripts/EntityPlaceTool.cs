@@ -31,7 +31,9 @@ public class EntityPlaceTool : MonoBehaviour, IEntityInstanceSelectionListener
 			Root.instance.player.unselectAllEntityInstances();
 
 		updateMove();
-		Root.instance.entityToolManager.updateAlignment();
+
+		if (Root.instance.entityToolManager.playerIdle())
+			Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
 	}
 
 	void updateMove()

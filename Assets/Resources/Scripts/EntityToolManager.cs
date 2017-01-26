@@ -33,7 +33,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	float m_idleTime;
 	Quaternion m_alignmentRotation;
 	Vector3 m_alignmentPosition;
-	bool m_alignmentNeeded;
+	bool m_idleTimerRunning;
 
 	void Awake()
 	{
@@ -146,7 +146,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		return null;
 	}
 
-	public void updateAlignment()
+	public bool playerIdle()
 	{
 		Quaternion rotation = Root.instance.playerHeadGO.transform.rotation;
 		Vector3 position = Root.instance.playerGO.transform.position;
@@ -158,12 +158,13 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_alignmentPosition = position;
 
 		if (positionChanged || rotationChanged) {
-			m_alignmentNeeded = true;
+			m_idleTimerRunning = true;
 			m_idleTime = Time.unscaledTime;
-		} else if (m_alignmentNeeded && Time.unscaledTime - m_idleTime > 0.2f) {
-			Root.instance.alignmentManager.align(Root.instance.player.selectedEntityInstances);
-			m_alignmentNeeded = false;
+		} else if (m_idleTimerRunning && Time.unscaledTime - m_idleTime > 0.2f) {
+			m_idleTimerRunning = false;
+			return true;
 		}
+		return false;
 	}
 
 	public void resetToolHelpers()
