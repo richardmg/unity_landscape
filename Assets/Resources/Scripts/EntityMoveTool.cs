@@ -34,6 +34,9 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void updateMove()
 	{
+		EntityInstanceDescription firstDesc = Root.instance.player.selectedEntityInstances[0];
+		bool flat = Mathf.RoundToInt(firstDesc.instance.transform.up.y * 1000) == 0;
+
 		Vector3 headMovement = Root.instance.entityToolManager.getPlayerHeadMovement();
 		Vector2 playerMovement = Root.instance.entityToolManager.getPlayerMovement();
 		Vector3 pushDirection = Root.instance.entityToolManager.getPushDirection(Space.World);
@@ -47,7 +50,8 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 			Transform t = desc.instance.transform;
 			t.Translate(Vector3.Cross(pushDirection, Vector3.up) * playerMovement.x, Space.World);
 			t.Translate(pushDirection * playerMovement.y, Space.World);
-			t.Translate(new Vector3(0, headMovement.y, 0), Space.Self);
+			t.Translate(new Vector3(0, headMovement.y, 0), flat ? Space.World : Space.Self);
+
 			desc.worldPos = t.position;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
 		}
