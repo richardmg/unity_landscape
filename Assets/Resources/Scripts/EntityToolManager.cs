@@ -146,7 +146,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		return null;
 	}
 
-	public bool playerIdle()
+	public bool playerIdle(float timeout = 0.2f)
 	{
 		Quaternion rotation = Root.instance.playerHeadGO.transform.rotation;
 		Vector3 position = Root.instance.playerGO.transform.position;
@@ -160,7 +160,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		if (positionChanged || rotationChanged) {
 			m_idleTimerRunning = true;
 			m_idleTime = Time.unscaledTime;
-		} else if (m_idleTimerRunning && Time.unscaledTime - m_idleTime > 0.2f) {
+		} else if (m_idleTimerRunning && Time.unscaledTime - m_idleTime > timeout) {
 			m_idleTimerRunning = false;
 			return true;
 		}
