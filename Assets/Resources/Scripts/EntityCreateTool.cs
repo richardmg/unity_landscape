@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class EntityCreateTool : MonoBehaviour
 {
-
 	public bool autoSelect = true;
 
 	void Update()
@@ -18,19 +17,18 @@ public class EntityCreateTool : MonoBehaviour
 		if (!getRayWorldHitPoint(out worldPos))
 			return;
 		
-		// Vector3 worldPos = Camera.main.transform.position + (Camera.main.transform.forward * 5);
-		// worldPos.y = Root.instance.landscapeManager.sampleHeight(worldPos);
+		Transform playerTransform = Root.instance.playerGO.transform;
+		Vector3 rotation = playerTransform.rotation.eulerAngles;
 
-		worldPos = Root.instance.alignmentManager.align(worldPos);
+		Root.instance.alignmentManager.align(ref worldPos, ref rotation);
 
 		EntityClass entityClass = new EntityClass();
 		entityClass.voxelObjectRoot.add(new VoxelObject(0, 4));
 
-		EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos);
+		EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos, rotation);
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);
 
 		if (autoSelect) {
-			//Root.instance.player.selectEntityInstance(desc, true);
 			Root.instance.entityToolManager.setMainTool(Root.instance.entityToolManager.selectionToolGo);
 			Root.instance.entityToolManager.setSubTool(Root.instance.entityToolManager.moveToolGo);
 		}

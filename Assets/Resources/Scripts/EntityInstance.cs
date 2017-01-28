@@ -45,13 +45,13 @@ public class EntityInstanceDescription
 		Root.instance.entityClassManager.getEntity(entityClassID).instanceDescriptionCount--;
 	}
 
-	public EntityInstanceDescription(EntityClass entityClass, Vector3 worldPos, bool isStatic = true)
+	public EntityInstanceDescription(EntityClass entityClass, Vector3 worldPos, Vector3 rotation, bool isStatic = true)
 	{
 		debugId = s_debugId++;
 		entityClass.instanceDescriptionCount++;
 		entityClassID = entityClass.id;
 		this.worldPos = worldPos;
-		voxelRotation = new VoxelRotation(0, 0, 0);
+		voxelRotation = rotation;
 		this.isStatic = isStatic;
 	}
 
