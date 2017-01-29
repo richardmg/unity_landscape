@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class EntityCreateTool : MonoBehaviour
 {
-	public bool autoSelect = true;
-
 	void Update()
 	{
 		if (!Input.GetMouseButtonDown(0))
@@ -27,11 +25,6 @@ public class EntityCreateTool : MonoBehaviour
 
 		EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos, rotation);
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);
-
-		if (autoSelect) {
-			Root.instance.entityToolManager.setMainTool(Root.instance.entityToolManager.selectionToolGo);
-			Root.instance.entityToolManager.setSubTool(Root.instance.entityToolManager.moveToolGo);
-		}
 	}
 
 	bool getRayWorldHitPoint(out Vector3 v)

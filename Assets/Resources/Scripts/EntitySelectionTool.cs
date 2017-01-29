@@ -8,20 +8,26 @@ public class EntitySelectionTool : MonoBehaviour
 {
 	[HideInInspector] public RaycastHit lastHit;
 
-	public void Update()
+	public void selectSingleObjectUnderPointer()
 	{
-		if (!Input.GetMouseButtonDown(0))
-			return;
-
 		PlayerStartupScript player = Root.instance.player;
 		EntityInstance entityInstance = getClickedEntityInstance();
 
 		if (entityInstance) {
-			bool unselectEverythingElse = !Input.GetKey(KeyCode.LeftShift);
-			player.selectEntityInstance(entityInstance.entityInstanceDescription, unselectEverythingElse);
+			EntityInstanceDescription desc = entityInstance.entityInstanceDescription;
+			if (!player.selectedEntityInstances.Contains(desc))
+				player.selectEntityInstance(desc, true);
+			else
+				player.unselectAllEntityInstances();
 		} else {
 			player.unselectAllEntityInstances();
 		}
+	}
+
+	public void selectMultipleObjectsUnderPointer()
+	{
+		Debug.Assert(false, "not implemented");
+		//bool unselectEverythingElse = !Input.GetKey(KeyCode.LeftShift);
 	}
 
 	EntityInstance getClickedEntityInstance()

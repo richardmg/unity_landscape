@@ -11,10 +11,10 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public void OnEnable()
 	{
-		Root.instance.player.setWalkSpeed(1);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
-		updatePushDirection();
+		if (Root.instance.player.selectedEntityInstances.Count != 0)
+			updatePushDirection();
 	}
 
 	public void OnDisable()
@@ -27,7 +27,7 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 	void Update()
 	{
 		if (Input.GetMouseButtonDown(0))
-			Root.instance.player.unselectAllEntityInstances();
+			Root.instance.entityToolManager.selectionTool.selectSingleObjectUnderPointer();
 		if (Root.instance.player.selectedEntityInstances.Count == 0)
 			return;
 
@@ -65,6 +65,10 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
 		Root.instance.alignmentManager.align(oldSelection);
+		if (newSelection.Count != 0)
+			Root.instance.player.setWalkSpeed(1);
+		else
+			Root.instance.player.setDefaultWalkSpeed();
 	}
 
 }

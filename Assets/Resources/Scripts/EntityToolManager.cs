@@ -22,6 +22,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	[HideInInspector] public EntityRotateTool rotateTool;
 	[HideInInspector] public EntityPlaceTool placeTool;
 
+	List<GameObject> m_toolBar;
+	int m_toolBarIndex = 0;
+
 	GameObject m_buttonUnderPointer;
 	int m_buttonUnderPointerFrameTime;
 	PointerEventData m_ped = new PointerEventData(null);
@@ -54,29 +57,24 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
 
 		deactivateAllTools();
-		setSubTool(moveToolGo);
-		setMainTool(createToolGo);
+		initToolBar();
+		setTool(0);
 	}
 
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.C)) {
-			setMainTool(createToolGo);
-		} else if (Input.GetKeyDown(KeyCode.R)) {
-			setMainTool(selectionToolGo);
-			setSubTool(rotateToolGo);
-		} else if (Input.GetKeyDown(KeyCode.M)) {
-			setMainTool(selectionToolGo);
-			setSubTool(moveToolGo);
-		} else if (Input.GetKeyDown(KeyCode.P)) {
-			setMainTool(selectionToolGo);
-			setSubTool(placeToolGo);
-		}
+		if (Input.GetKeyDown(KeyCode.E))
+			setTool(m_toolBarIndex < m_toolBar.Count - 1 ? m_toolBarIndex + 1 : 0);	
+		else if (Input.GetKeyDown(KeyCode.Q))
+			setTool(m_toolBarIndex > 0 ? m_toolBarIndex - 1 : m_toolBar.Count - 1);	
+	}
 
-//		if (Input.GetMouseButtonDown(0))
-//			setSubTool(moveToolGo);
-//		else if (Input.GetMouseButtonDown(1))
-//			setSubTool(rotateToolGo);
+	void initToolBar()
+	{
+		m_toolBar = new List<GameObject>();
+		m_toolBar.Add(createToolGo);
+		m_toolBar.Add(moveToolGo);
+		m_toolBar.Add(rotateToolGo);
 	}
 
 	public void deactivateAllTools()
@@ -90,16 +88,13 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		resetToolHelpers();
 	}
 
-	public void setSubTool(GameObject tool)
+	public void setTool(int index)
 	{
-		Root.instance.player.subTool = tool;
-		updateTool();
-	}
-
-	public void setMainTool(GameObject tool)
-	{
-		Root.instance.player.mainTool = tool;
-		updateTool();
+		m_toolBar[m_toolBarIndex].SetActive(false);
+		m_toolBarIndex = index;
+		resetToolHelpers();
+		m_toolBar[m_toolBarIndex].SetActive(true);
+		print("Tool: " + m_toolBar[m_toolBarIndex]);
 	}
 
 	public void repositionMenuAccordingToSelection(List<EntityInstanceDescription> selection)
@@ -114,20 +109,8 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public void onSelectionChanged(List<EntityInstanceDescription> oldSelection, List<EntityInstanceDescription> newSelection)
 	{
+		resetToolHelpers();
 		repositionMenuAccordingToSelection(newSelection);
-		updateTool();
-	}
-
-	void updateTool()
-	{
-		deactivateAllTools();
-		if (Root.instance.player.selectedEntityInstances.Count > 0) {
-			if (Root.instance.player.subTool)
-				Root.instance.player.subTool.SetActive(true);
-		} else {
-			if (Root.instance.player.mainTool)
-				Root.instance.player.mainTool.SetActive(true);
-		}
 	}
 
 	public GameObject getButtonUnderPointer()
