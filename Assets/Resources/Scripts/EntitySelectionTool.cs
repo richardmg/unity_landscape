@@ -11,17 +11,18 @@ public class EntitySelectionTool : MonoBehaviour
 	public void selectSingleObjectUnderPointer()
 	{
 		PlayerStartupScript player = Root.instance.player;
-		EntityInstance entityInstance = getClickedEntityInstance();
 
-		if (entityInstance) {
-			EntityInstanceDescription desc = entityInstance.entityInstanceDescription;
-			if (!player.selectedEntityInstances.Contains(desc))
-				player.selectEntityInstance(desc, true);
-			else
-				player.unselectAllEntityInstances();
-		} else {
+		if (player.selectedEntityInstances.Count > 0) {
 			player.unselectAllEntityInstances();
+			return;
 		}
+
+		EntityInstance entityInstance = getClickedEntityInstance();
+		if (!entityInstance)
+			return;
+		
+		EntityInstanceDescription desc = entityInstance.entityInstanceDescription;
+		player.selectEntityInstance(desc, true);
 	}
 
 	public void selectMultipleObjectsUnderPointer()
