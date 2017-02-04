@@ -225,7 +225,7 @@ public class VoxelMeshFactory {
 			while (x2 != Root.kSubImageWidth) {
 				int x1 = getFirstFaceForZ(x2 + 1, y1, true);
 				if (x1 == kNotFound) {
-					x2 =  Root.kSubImageWidth;
+					x2 = Root.kSubImageWidth;
 					continue;
 				}
 
@@ -467,14 +467,14 @@ public class VoxelMeshFactory {
 			Color c2 = (startX == 0) ? Color.clear : texture.GetPixel(startPixelX + startX - 1, startPixelY + y);
 
 			if (searchForVisible) {
-				if (face == kFrontLeft && c1.a == 1 && c2.a == 0)
+				if (face == kFrontLeft && Mathf.CeilToInt(c1.a) == 1 && Mathf.CeilToInt(c2.a) == 0)
 					return y;
-				if (face == kFrontRight && c1.a == 0 && c2.a == 1)
+				if (face == kFrontRight && Mathf.CeilToInt(c1.a) == 0 && Mathf.CeilToInt(c2.a) == 1)
 					return y;
 			} else {
-				if (face == kFrontLeft && (c1.a == c2.a || c1.a == 0))
+				if (face == kFrontLeft && (Mathf.CeilToInt(c1.a) == Mathf.CeilToInt(c2.a) || Mathf.CeilToInt(c1.a) == 0))
 					return y;
-				if (face == kFrontRight && (c1.a == c2.a || c2.a == 0))
+				if (face == kFrontRight && (Mathf.CeilToInt(c1.a) == Mathf.CeilToInt(c2.a) || Mathf.CeilToInt(c2.a) == 0))
 					return y;
 			}
 		}
@@ -489,14 +489,14 @@ public class VoxelMeshFactory {
 			Color c2 = (startY == 0) ? Color.clear : texture.GetPixel(startPixelX + x, startPixelY + startY - 1);
 
 			if (searchForVisible) {
-				if (face == kFrontBottom && c1.a == 1 && c2.a == 0)
+				if (face == kFrontBottom && Mathf.CeilToInt(c1.a) == 1 && Mathf.CeilToInt(c2.a) == 0)
 					return x;
-				if (face == kFrontTop && c1.a == 0 && c2.a == 1)
+				if (face == kFrontTop && Mathf.CeilToInt(c1.a) == 0 && Mathf.CeilToInt(c2.a) == 1)
 					return x;
 			} else {
-				if (face == kFrontBottom && (c1.a == c2.a || c1.a == 0))
+				if (face == kFrontBottom && (Mathf.CeilToInt(c1.a) == Mathf.CeilToInt(c2.a) || Mathf.CeilToInt(c1.a) == 0))
 					return x;
-				if (face == kFrontTop && (c1.a == c2.a || c2.a == 0))
+				if (face == kFrontTop && (Mathf.CeilToInt(c1.a) == Mathf.CeilToInt(c2.a) || Mathf.CeilToInt(c2.a) == 0))
 					return x;
 			}
 		}
