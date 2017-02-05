@@ -21,7 +21,7 @@ public class EntityCreateTool : MonoBehaviour
 		Root.instance.alignmentManager.align(ref worldPos, ref rotation);
 
 		EntityClass entityClass = new EntityClass();
-		entityClass.voxelObjectRoot.add(new VoxelObject(0, 1f));
+		entityClass.voxelObjectRoot.add(new VoxelObject(0, 1.0f));
 
 		EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos, rotation);
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);

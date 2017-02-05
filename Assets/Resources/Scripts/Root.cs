@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using Lod = System.Int32;
 
 public class Root : MonoBehaviour {
-	public static readonly int kAtlasWidth = 2048;
-	public static readonly int kAtlasHeight = 2048;
-	public static readonly int kSubImageWidth = 16;
-	public static readonly int kSubImageHeight = 16;
+	public static readonly int kAtlasWidth = 1024;
+	public static readonly int kAtlasHeight = 512;
+	public static readonly int kSubImageWidth = 1024;
+	public static readonly int kSubImageHeight = 512;
 
 	public GameObject playerGO;
 	public GameObject playerHeadGO;

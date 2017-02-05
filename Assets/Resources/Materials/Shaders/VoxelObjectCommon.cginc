@@ -2,8 +2,8 @@
 
 #define M_PI 3.1415926535897932384626433832795
 
-static float2 _TextureSize = float2(2048, 2048);
-static float2 _SubImageSize = float2(16, 16);
+static float2 _TextureSize = float2(1024, 512);
+static float2 _SubImageSize = float2(1024, 512);
 static float2 _UVAtlasOnePixel = 1.0f / _TextureSize;
 static float2 _UVAtlasHalfPixel = _UVAtlasOnePixel / 2;
 static float _ClampOffset = 0.00001;
