@@ -175,4 +175,9 @@ public class EntityClass {
 	{
 		return entityName + " (ID: " + id + ")";
 	}
+
+	public static bool operator !(EntityClass entityClass)
+	{
+		return entityClass == null;
+	}
 }

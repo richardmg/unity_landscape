@@ -13,7 +13,7 @@ public class VoxelObjectRoot
 	public Vector3 snapshotOffset = new Vector3(0, 0, -15);
 	public Vector3 scale = new Vector3(1, 1, 1);
 
-	private List<VoxelObject> voxelObjects = new List<VoxelObject>();
+	public List<VoxelObject> voxelObjects = new List<VoxelObject>();
 
 	public void add(VoxelObject vo)
 	{

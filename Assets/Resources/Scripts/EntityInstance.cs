@@ -113,4 +113,9 @@ public class EntityInstance : MonoBehaviour {
 	{
 		return "Instance from " +  entityClass.ToString();
 	}
+
+	public static bool operator !(EntityInstance entityInstance)
+	{
+		return entityInstance == null;
+	}
 }

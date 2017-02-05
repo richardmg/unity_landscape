@@ -102,10 +102,14 @@ public class EntityPainter : MonoBehaviour {
 		
 		m_entityClass = entityClass;
 
-		Debug.Log("Not implemented");
+		Debug.Log("Not implemented, painting first voxel object found in entity class");
 		m_atlasIndexList = new List<int>(); 
+		List<VoxelObject> voxelObjects = m_entityClass.voxelObjectRoot.voxelObjects;
+		if (voxelObjects.Count > 0)
+			m_atlasIndexList.Add(voxelObjects[0].atlasIndex);
 
 		updateThumbnails();
+		setListIndex(0);
 	}
 
 	public void createThumbnails()

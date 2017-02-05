@@ -229,24 +229,30 @@ public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler, IEntityCl
 	{
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		bool createTemporary = (entityClass == null);
-		if (createTemporary)
+		if (createTemporary) {
 			entityClass = new EntityClass("", selectedIndex);
+			entityClass.voxelObjectRoot.add(new VoxelObject(selectedIndex, 1f));
+		}
 
-		Root.instance.uiManager.constructionEditor.setEntityClass(entityClass);
-		Root.instance.uiManager.uiConstructionEditorGO.pushDialog((bool accepted) => {
-			if (entityClass.removed)
-				return;
-			
-			if (accepted) {
-				VoxelObjectRoot root = Root.instance.uiManager.constructionEditor.createVoxelObjectRoot();	
-				entityClass.setVoxelObjectRoot(root);
-				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
-			} else if (createTemporary) {
-				entityClass.remove();
-			}
-
-			selectEntityClass(entityClass);
+		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
+		Root.instance.uiManager.uiPaintEditorGO.pushDialog((bool accepted) => {
 		});
+
+//		Root.instance.uiManager.constructionEditor.setEntityClass(entityClass);
+//		Root.instance.uiManager.uiConstructionEditorGO.pushDialog((bool accepted) => {
+//			if (entityClass.removed)
+//				return;
+//			
+//			if (accepted) {
+//				VoxelObjectRoot root = Root.instance.uiManager.constructionEditor.createVoxelObjectRoot();	
+//				entityClass.setVoxelObjectRoot(root);
+//				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
+//			} else if (createTemporary) {
+//				entityClass.remove();
+//			}
+//
+//			selectEntityClass(entityClass);
+//		});
 	}
 
 }
