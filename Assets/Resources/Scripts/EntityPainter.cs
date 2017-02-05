@@ -93,7 +93,7 @@ public class EntityPainter : MonoBehaviour {
 
 	public void setEntityClass(EntityClass entityClass)
 	{
-		// Setting class explixit means we should modify
+		// Setting class explisit means we should modify
 		// the whole class and not a single instance
 		m_entityInstance = null;
 
@@ -102,7 +102,7 @@ public class EntityPainter : MonoBehaviour {
 		
 		m_entityClass = entityClass;
 
-		Debug.Log("Not implemenbted");
+		Debug.Log("Not implemented");
 		m_atlasIndexList = new List<int>(); 
 
 		updateThumbnails();
