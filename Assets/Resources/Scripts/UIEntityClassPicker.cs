@@ -229,30 +229,25 @@ public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler, IEntityCl
 	{
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		bool createTemporary = (entityClass == null);
+
 		if (createTemporary) {
-			entityClass = new EntityClass("", selectedIndex);
+			// Create a temporary entity class with one voxel object. If the
+			// user clicks "ok" after painting, it will be stored.
+			// Note: selected index logic needs to change for the created
+			// voxel object. Ask instead for an available slot in the
+			// atlas. SelectedIndex points to available EntityClasses, and
+			// are not be atlas indices.
+			entityClass = new EntityClass("New entity", selectedIndex);
 			entityClass.voxelObjectRoot.add(new VoxelObject(selectedIndex, 1f));
 		}
 
 		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
 		Root.instance.uiManager.uiPaintEditorGO.pushDialog((bool accepted) => {
+			if (accepted)
+				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
+			else if (createTemporary)
+				entityClass.remove();
 		});
-
-//		Root.instance.uiManager.constructionEditor.setEntityClass(entityClass);
-//		Root.instance.uiManager.uiConstructionEditorGO.pushDialog((bool accepted) => {
-//			if (entityClass.removed)
-//				return;
-//			
-//			if (accepted) {
-//				VoxelObjectRoot root = Root.instance.uiManager.constructionEditor.createVoxelObjectRoot();	
-//				entityClass.setVoxelObjectRoot(root);
-//				Root.instance.notificationManager.notifyEntityClassChanged(entityClass);
-//			} else if (createTemporary) {
-//				entityClass.remove();
-//			}
-//
-//			selectEntityClass(entityClass);
-//		});
 	}
 
 }
