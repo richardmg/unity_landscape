@@ -238,7 +238,8 @@ public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler, IEntityCl
 			// atlas. SelectedIndex points to available EntityClasses, and
 			// are not be atlas indices.
 			entityClass = new EntityClass("New entity", selectedIndex);
-			entityClass.voxelObjectRoot.add(new VoxelObject(selectedIndex, 1f));
+			int freeAtlasIndex = Root.instance.atlasManager.acquireIndex();
+			entityClass.voxelObjectRoot.add(new VoxelObject(freeAtlasIndex, 1f));
 		}
 
 		Root.instance.uiManager.entityPainter.setEntityClass(entityClass);
