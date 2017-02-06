@@ -52,6 +52,13 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
 
+	void OnDisable()
+	{
+		// When we disable the fps tools menu, clear the selection so that we
+		// don't jump directly into a tool upon return
+		Root.instance.player.unselectAllEntityInstances();
+	}
+
 	void Start()
 	{
 		m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);

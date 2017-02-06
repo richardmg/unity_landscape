@@ -9,6 +9,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	public void OnEnable()
 	{
+		Root.instance.uiManager.grabMouse(this);
 		onSelectionChanged(Root.instance.player.selectedEntityInstances, Root.instance.player.selectedEntityInstances);
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
@@ -22,8 +23,6 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
-		if (!Root.instance.uiManager.grabMouseOnPress(this))
-			return;
 		if (Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.selectSingleObjectUnderPointer();
 		if (Root.instance.player.selectedEntityInstances.Count == 0)

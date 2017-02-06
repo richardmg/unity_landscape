@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class EntityCreateTool : MonoBehaviour
 {	
-
 	void Update()
 	{
 		if (!Input.GetMouseButtonDown(0))
