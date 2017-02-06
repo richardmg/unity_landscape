@@ -26,6 +26,8 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 
 	void Update()
 	{
+		if (!Root.instance.uiManager.grabMouseOnPress(this))
+			return;
 		if (Input.GetMouseButtonDown(0))
 			Root.instance.entityToolManager.selectionTool.selectSingleObjectUnderPointer();
 		if (Root.instance.player.selectedEntityInstances.Count == 0)

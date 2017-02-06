@@ -5,12 +5,13 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class EntityCreateTool : MonoBehaviour
-{
+{	
+
 	void Update()
 	{
 		if (!Input.GetMouseButtonDown(0))
 			return;
-
+		
 		Vector3 worldPos;
 		if (!getRayWorldHitPoint(out worldPos))
 			return;

@@ -8,7 +8,7 @@ public class ColorPicker : MonoBehaviour {
 
 	void Update ()
 	{
-		if (!Root.instance.uiManager.grabMouse(this))
+		if (!Root.instance.uiManager.grabMouseOnPress(this))
 			return;
 
 		RawImage image = GetComponent<RawImage>();

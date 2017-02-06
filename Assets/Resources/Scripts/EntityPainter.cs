@@ -31,7 +31,9 @@ public class EntityPainter : MonoBehaviour {
 
 	void Update()
     {
-		if (!Root.instance.uiManager.grabMouse(this))
+		if (!Root.instance.uiManager.grabMouseOnPress(this))
+			return;
+		if (!Input.GetMouseButton(0))
 			return;
 
 		Vector2 uv = UIManager.getMousePosInsideRect(GetComponent<RectTransform>());

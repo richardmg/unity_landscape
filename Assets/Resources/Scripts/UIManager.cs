@@ -179,10 +179,13 @@ public class UIManager : MonoBehaviour {
 		return (uv.x > 0 && uv.x <= 1 && uv.y > 0 && uv.y <= 1);
 	}
 
-	public bool grabMouse(MonoBehaviour ui, bool requireMousePress = true)
+	public void grabMouse(MonoBehaviour ui)
 	{
-		if (requireMousePress && !Input.GetMouseButton(0))
-			return false;
+		m_mouseGrab = ui;
+	}
+
+	public bool grabMouseOnPress(MonoBehaviour ui)
+	{
 		if (m_mouseGrab == ui)
 			return true;
 		if (!Input.GetMouseButtonDown(0))
