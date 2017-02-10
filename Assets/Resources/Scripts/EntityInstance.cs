@@ -62,9 +62,9 @@ public class EntityInstanceDescription
 }
 
 public class EntityInstance : MonoBehaviour {
-	public EntityClass entityClass;
-	public EntityInstanceDescription entityInstanceDescription;
-	public bool instanceHidden = false;
+	[HideInInspector] public EntityClass entityClass;
+	[HideInInspector] public EntityInstanceDescription entityInstanceDescription;
+	[HideInInspector] public bool instanceHidden = false;
 
 	// Using a combined mesh is treated per instance, and should
 	// probably be the case for instances that are not selected

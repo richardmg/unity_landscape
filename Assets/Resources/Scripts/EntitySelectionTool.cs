@@ -36,14 +36,19 @@ public class EntitySelectionTool : MonoBehaviour
 		Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, Camera.main.nearClipPlane));
 		if (Physics.Raycast(ray, out lastHit)) {
 			GameObject go = lastHit.transform.gameObject;
+
 			EntityInstance entityInstance = go.GetComponent<EntityInstance>();
 			if (entityInstance)
 				return entityInstance;
 
-			// If the user clicked on a VoxelObject leaf, it
-			// will always have  a VoxelObjectRoot as parent
-			entityInstance = go.transform.parent.GetComponent<EntityInstance>();
-			return entityInstance;
+			if (go.GetComponent<VoxelObjectMonoBehaviour>()) {
+				// A VoxelObject leaf should always be in a
+				// EntityInstance->VoxelObjectRoot->VoxelObject relation.
+				// This relation is created by the EntityClass when creating an instance.
+				entityInstance = go.transform.parent.parent.GetComponent<EntityInstance>();
+				Debug.Assert(entityInstance);
+				return entityInstance;
+			}
 		}
 		return null;
 	}
