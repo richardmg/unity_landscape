@@ -81,7 +81,10 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 		IntCoord matrixCoord = m_tileEngine.matrixCoordForWorldPos(desc.worldPos);
 		GameObject tile = m_tileMatrix[matrixCoord.x, matrixCoord.y];
 		createInstance(tile, desc);
-		rebuildTileMesh(tile);
+
+		// Since we create the instance directly as a child of the tile, there
+		// is no need to rebuild the mesh.
+		//rebuildTileMesh(tile);
 	}
 
 	public void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc)
