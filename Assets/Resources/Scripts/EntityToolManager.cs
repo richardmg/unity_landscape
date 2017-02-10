@@ -11,6 +11,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public GameObject moveToolGo;
 	public GameObject rotateToolGo;
 	public GameObject placeToolGo;
+	public GameObject paintToolGo;
 
 	public float offsetZ = 5f;
 	public float offsetY = -2f;
@@ -21,6 +22,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	[HideInInspector] public EntityMoveTool moveTool;
 	[HideInInspector] public EntityRotateTool rotateTool;
 	[HideInInspector] public EntityPlaceTool placeTool;
+	[HideInInspector] public EntityPainterTool painterTool;
 
 	List<GameObject> m_toolBar;
 	int m_toolBarIndex = 0;
@@ -48,6 +50,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		moveTool = moveToolGo.GetComponent<EntityMoveTool>();
 		rotateTool = rotateToolGo.GetComponent<EntityRotateTool>();
 		placeTool = rotateToolGo.GetComponent<EntityPlaceTool>();
+		painterTool = rotateToolGo.GetComponent<EntityPainterTool>();
 
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
@@ -63,17 +66,15 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	{
 		m_ped.position = new Vector2(Screen.width / 2, Screen.height / 2);
 
-		deactivateAllTools();
 		initToolBar();
+		deactivateAllTools();
 		setTool(0);
 	}
 
 	void Update()
 	{
-		if (Input.GetKeyDown(KeyCode.E))
-			setTool(m_toolBarIndex < m_toolBar.Count - 1 ? m_toolBarIndex + 1 : 0);	
-		else if (Input.GetKeyDown(KeyCode.Q))
-			setTool(m_toolBarIndex > 0 ? m_toolBarIndex - 1 : m_toolBar.Count - 1);	
+		if (Input.anyKey)
+			setToolOnKeyPress();
 	}
 
 	void initToolBar()
@@ -82,17 +83,23 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_toolBar.Add(createToolGo);
 		m_toolBar.Add(moveToolGo);
 		m_toolBar.Add(rotateToolGo);
+		m_toolBar.Add(paintToolGo);
 	}
 
 	public void deactivateAllTools()
 	{
-		selectionToolGo.SetActive(false);
-		createToolGo.SetActive(false);
-		moveToolGo.SetActive(false);
-		rotateToolGo.SetActive(false);
-		placeToolGo.SetActive(false);
+		foreach (GameObject go in m_toolBar)
+			go.SetActive(false);
 
 		resetToolHelpers();
+	}
+
+	void setToolOnKeyPress()
+	{
+		if (Input.GetKeyDown(KeyCode.E))
+			setTool(m_toolBarIndex < m_toolBar.Count - 1 ? m_toolBarIndex + 1 : 0);
+		else if (Input.GetKeyDown(KeyCode.Q))
+			setTool(m_toolBarIndex > 0 ? m_toolBarIndex - 1 : m_toolBar.Count - 1);
 	}
 
 	public void setTool(int index)
