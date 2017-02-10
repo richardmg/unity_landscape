@@ -73,7 +73,8 @@ public class ConstructionEditor : MonoBehaviour, IDragHandler, IPointerClickHand
 			m_voxelObjectRootGo.hideAndDestroy();
 
 		VoxelObjectRoot root = entityClass.voxelObjectRoot;
-		m_voxelObjectRootGo = root.createGameObject(transform, Root.kLod0);
+		m_voxelObjectRootGo = root.createGameObject(Root.kLod0);
+		m_voxelObjectRootGo.transform.SetParent(transform, false);
 
 		Vector3 cameraPos = root.snapshotOffset;
 		constructionCameraGO.transform.localPosition = cameraPos;

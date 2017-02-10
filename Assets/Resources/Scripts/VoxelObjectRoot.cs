@@ -11,7 +11,6 @@ public class VoxelObjectRootMonoBehaviour : MonoBehaviour
 public class VoxelObjectRoot
 {
 	public Vector3 snapshotOffset = new Vector3(0, 0, -15);
-	public Vector3 scale = new Vector3(1, 1, 1);
 
 	public List<VoxelObject> voxelObjects = new List<VoxelObject>();
 
@@ -21,28 +20,27 @@ public class VoxelObjectRoot
 		vo.voxelObjectRoot = this;
 	}
 
-	public GameObject createCombinedGameObject(Transform parent, Lod lod, string name = "VoxelObjectRoot")
+	public GameObject createCombinedGameObject(Lod lod, string name = "VoxelObjectRoot")
 	{
-		GameObject go = createGameObject(parent, lod);
+		GameObject go = createGameObject(lod);
 		go.addMeshComponents(lod, go.createCombinedMesh(lod));
 		while (go.transform.childCount > 0)
 			go.transform.GetChild(0).gameObject.hideAndDestroy();
 		return go;
 	}
 
-	public GameObject createGameObject(Transform parent, Lod lod, string name = "VoxelObjectRoot")
+	public GameObject createGameObject(Lod lod, string name = "VoxelObjectRoot")
 	{
 		GameObject go = new GameObject(name);
 		foreach (VoxelObject vo in voxelObjects)
 			vo.createGameObject(go.transform, lod, false);
 
 		go.AddComponent<VoxelObjectRootMonoBehaviour>().voxelObjectRoot = this;
-		go.transform.parent = parent;
-		Vector3 localScale = Vector3.one;
-		localScale.Scale(scale);
-		localScale.Scale(Root.instance.alignmentManager.voxelSize);
-		go.transform.localScale = localScale;
-		go.transform.localPosition = Vector3.zero;
+//		Vector3 localScale = Vector3.one;
+//		localScale.Scale(scale);
+//		localScale.Scale(Root.instance.alignmentManager.voxelSize);
+//		go.transform.localScale = localScale;
+//		go.transform.localPosition = Vector3.zero;
 
 		return go;
 	}

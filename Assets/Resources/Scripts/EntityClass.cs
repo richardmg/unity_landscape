@@ -54,8 +54,15 @@ public class EntityClass {
 		// Create a gameobject with a EntityInstance component, and with a VoxelObjectRoot as
 		// the only child. Then, for now, add one game object per voxel object under the root.
 		GameObject entityInstance = new GameObject(name);
-		entityInstance.transform.parent = parent;
-		m_voxelObjectRoot.createGameObject(entityInstance.transform, lod, "VoxelObjectRoot");
+		entityInstance.transform.SetParent(parent, false);
+		Vector3 worldScale = Vector3.one;
+		//worldScale.Scale(localScale);
+		worldScale.Scale(Root.instance.alignmentManager.voxelSize);
+		entityInstance.transform.localScale = worldScale;
+
+		GameObject rootGo = m_voxelObjectRoot.createGameObject(lod, "VoxelObjectRoot");
+		rootGo.transform.SetParent(entityInstance.transform, false);
+
 		EntityInstance entityInstanceMonoBehaviour = entityInstance.AddComponent<EntityInstance>();
 		entityInstanceMonoBehaviour.entityClass = this;
 		return entityInstance;
@@ -117,7 +124,7 @@ public class EntityClass {
 		Mesh mesh = m_mesh[lod];
 		if (mesh == null) {
 			// todo; optimize this part, if possible
-			GameObject go = m_voxelObjectRoot.createCombinedGameObject(null, Root.kLod0);
+			GameObject go = m_voxelObjectRoot.createCombinedGameObject(Root.kLod0);
 			m_mesh[lod] = go.GetComponent<MeshFilter>().sharedMesh;
 			go.hideAndDestroy();
 		}

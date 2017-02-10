@@ -91,7 +91,8 @@ public class EntityInstance : MonoBehaviour {
 			// Slow path
 			Debug.Log("taking slow path");
 			GetComponentInChildren<VoxelObjectRootMonoBehaviour>().transform.gameObject.hideAndDestroy();
-			entityClass.voxelObjectRoot.createGameObject(transform, Root.kLod0, "VoxelObjectRoot");
+			GameObject rootGo = entityClass.voxelObjectRoot.createGameObject(Root.kLod0, "VoxelObjectRoot");
+			rootGo.transform.SetParent(transform, false);
 		}
 	}
 
