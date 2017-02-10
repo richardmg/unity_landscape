@@ -29,19 +29,26 @@ public class EntityClass {
 		Mesh = 1
 	}
 
+	public EntityClass()
+	{
+	}
+
 	public EntityClass(string name = "", int id = -1, bool notify = true)
 	{
+		// 'id' will be overwritten by entityClassManager if it's -1
+		this.id = id;
 		entityName = name != "" ? name : "Unnamed EntityClass";
 		m_voxelObjectRoot = new VoxelObjectRoot();
 		Root.instance.entityClassManager.addEntityClass(this, notify);
 	}
 
-	public EntityClass(EntityClass originalEntityClass)
+	public EntityClass createDeepClone(bool notify = true)
 	{
-		Debug.Log("not supported. Need to copy all children voxel objects");
-		this.entityName = originalEntityClass.entityName + "_clone";
-		m_voxelObjectRoot = new VoxelObjectRoot();
-		Root.instance.entityClassManager.addEntityClass(this);
+		EntityClass clone = new EntityClass();
+		clone.entityName = entityName + "_clone";
+		clone.voxelObjectRoot = m_voxelObjectRoot.createDeepClone();
+		Root.instance.entityClassManager.addEntityClass(clone, notify);
+		return clone;
 	}
 
 	public void remove()

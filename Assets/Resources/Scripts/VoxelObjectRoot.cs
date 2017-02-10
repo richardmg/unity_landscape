@@ -38,4 +38,13 @@ public class VoxelObjectRoot
 		go.AddComponent<VoxelObjectRootMonoBehaviour>().voxelObjectRoot = this;
 		return go;
 	}
+
+	public VoxelObjectRoot createDeepClone()
+	{
+		VoxelObjectRoot clone = new VoxelObjectRoot();
+		// create new voxel objects based on new atlas indices.
+		// for each aquired index, we need to copy pixels from old index.
+		Debug.Assert(false, "not implemented");
+		return clone;
+	}
 }

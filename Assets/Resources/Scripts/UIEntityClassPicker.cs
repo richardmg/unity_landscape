@@ -213,7 +213,7 @@ public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler, IEntityCl
 		EntityClass originalEntityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		if (originalEntityClass == null)
 			return;
-		EntityClass entityClass = new EntityClass(originalEntityClass);
+		EntityClass entityClass = originalEntityClass.createDeepClone();
 		selectIndex(entityClass.id);
 	}
 

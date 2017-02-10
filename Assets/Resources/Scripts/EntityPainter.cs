@@ -216,7 +216,9 @@ public class EntityPainter : MonoBehaviour {
 	{
 		Debug.Log("not implemented");
 		// Create a new entity class that we modify instead
-		EntityClass newClass = new EntityClass(m_entityClass);
+		// Todo: rather than taking a deep clone, we should
+		// take a shallow clone, and only clone the voxel objects changed.
+		EntityClass newClass = m_entityClass.createDeepClone();
 		//m_atlasIndexList = newClass.atlasIndexList();
 		m_currentAtlasIndex = m_atlasIndexList[m_currentListIndex];
 		m_entityClass = newClass;
