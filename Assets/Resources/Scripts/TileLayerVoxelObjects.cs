@@ -116,9 +116,9 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 //		Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
 //		tile.GetComponent<MeshFilter>().sharedMesh = mesh;
 
-//		EntityInstance[] selfAndchildren = tile.GetComponentsInChildren<EntityInstance>(true);
-//		for (int i = 0; i < selfAndchildren.Length; ++i)
-//			selfAndchildren[i].updateMesh();
+		EntityInstance[] selfAndchildren = tile.GetComponentsInChildren<EntityInstance>(true);
+		for (int i = 0; i < selfAndchildren.Length; ++i)
+			selfAndchildren[i].updateMesh();
 	}
 
 	public void removeAllTiles()
@@ -142,8 +142,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	GameObject createInstance(GameObject tile, EntityInstanceDescription desc)
 	{
-		Debug.Assert(desc.instance == null, "This description already carries an instance");
-
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(desc.entityClassID);
 		return entityClass.createGameObject(tile.transform, desc, Root.kLod0);
 	}

@@ -59,6 +59,8 @@ public class EntityClass {
 
 	public GameObject createGameObject(Transform parent, EntityInstanceDescription desc, Lod lod, string name = "EntityInstance")
 	{
+		Debug.Assert(desc.instance == null, "This description already carries an instance");
+
 		GameObject go = createGameObject(parent, lod, name);
 		go.transform.position = desc.worldPos;
 		go.transform.setVoxelRotation(desc.voxelRotation);
