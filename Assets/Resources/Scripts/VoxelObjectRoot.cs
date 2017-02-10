@@ -36,12 +36,6 @@ public class VoxelObjectRoot
 			vo.createGameObject(go.transform, lod, false);
 
 		go.AddComponent<VoxelObjectRootMonoBehaviour>().voxelObjectRoot = this;
-//		Vector3 localScale = Vector3.one;
-//		localScale.Scale(scale);
-//		localScale.Scale(Root.instance.alignmentManager.voxelSize);
-//		go.transform.localScale = localScale;
-//		go.transform.localPosition = Vector3.zero;
-
 		return go;
 	}
 }
