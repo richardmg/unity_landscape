@@ -19,6 +19,8 @@ public class EntityPainterTool : MonoBehaviour
 		if (Root.instance.player.selectedEntityInstances.Count == 0)
 			return;	
 
-		Debug.Log("Paint: " + Root.instance.player.selectedEntityInstances[0].instance);
+		EntityInstance instance = Root.instance.player.selectedEntityInstances[0].instance;
+		Root.instance.uiManager.entityPainter.setEntityInstance(instance);
+		Root.instance.uiManager.uiPaintEditorGO.pushDialog();
 	}
 }
