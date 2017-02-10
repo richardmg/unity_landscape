@@ -113,9 +113,12 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 
 	public void rebuildTileMesh(GameObject tile)
 	{
+		// Here we need to rebuild tile mesh in addition to self-standing
+		// entity instance (complex (many individual voxel objects) or single
+		// (combined mesh)). Currently we only handle complex entity instances.
+
 //		Mesh mesh = EntityInstance.createCombinedMesh(tile, Root.kLod0);
 //		tile.GetComponent<MeshFilter>().sharedMesh = mesh;
-
 		EntityInstance[] selfAndchildren = tile.GetComponentsInChildren<EntityInstance>(true);
 		for (int i = 0; i < selfAndchildren.Length; ++i)
 			selfAndchildren[i].updateMesh();

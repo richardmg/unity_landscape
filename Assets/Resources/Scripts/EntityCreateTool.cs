@@ -24,11 +24,6 @@ public class EntityCreateTool : MonoBehaviour
 		if (!entityClass)
 			return;
 
-		print(entityClass);
-		
-//		EntityClass entityClass = new EntityClass();
-//		entityClass.voxelObjectRoot.add(new VoxelObject(0, 1f));
-
 		EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos, rotation);
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);
 	}

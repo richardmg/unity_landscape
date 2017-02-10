@@ -54,6 +54,7 @@ public class EntityClass {
 		// Create a gameobject with a EntityInstance component, and with a VoxelObjectRoot as
 		// the only child. Then, for now, add one game object per voxel object under the root.
 		GameObject entityInstance = new GameObject(name);
+		entityInstance.transform.parent = parent;
 		m_voxelObjectRoot.createGameObject(entityInstance.transform, lod, "VoxelObjectRoot");
 		EntityInstance entityInstanceMonoBehaviour = entityInstance.AddComponent<EntityInstance>();
 		entityInstanceMonoBehaviour.entityClass = this;

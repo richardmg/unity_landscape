@@ -82,12 +82,17 @@ public class EntityInstance : MonoBehaviour {
 
 	public void updateMesh()
 	{
-		Debug.Assert(hasCombinedMesh);
-
-		MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-		MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
-		meshFilter.sharedMesh = entityClass.getMesh(Root.kLod0);
-		meshCollider.sharedMesh = meshFilter.sharedMesh;
+		if (hasCombinedMesh) {
+			MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
+			MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
+			meshFilter.sharedMesh = entityClass.getMesh(Root.kLod0);
+			meshCollider.sharedMesh = meshFilter.sharedMesh;
+		} else {
+			// Slow path
+			Debug.Log("taking slow path");
+			GetComponentInChildren<VoxelObjectRootMonoBehaviour>().transform.gameObject.hideAndDestroy();
+			entityClass.voxelObjectRoot.createGameObject(transform, Root.kLod0, "VoxelObjectRoot");
+		}
 	}
 
 	public static Mesh createCombinedMesh(GameObject root, Lod lod)
