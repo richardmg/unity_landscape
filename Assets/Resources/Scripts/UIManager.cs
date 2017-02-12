@@ -22,6 +22,7 @@ public class UIManager : MonoBehaviour {
 	public GameObject uiPaintEditorGO;
 	public GameObject uiConstructionEditorGO;
 	public GameObject uiEntityClassPickerGO;
+	public GameObject uiToolMenuGo;
 	public GameObject uiCommandPromptGO;
 	public GameObject entityPainterGO;
 	public GameObject backButton;
@@ -46,7 +47,7 @@ public class UIManager : MonoBehaviour {
 	void Start()
 	{
 		hideUI();
-		uiEntityClassPickerGO.pushDialog(rootDialogCallback, false);
+		showRootMenu();
 		setMenuVisible(false);
 		updateBackButton();
 	}
@@ -57,6 +58,7 @@ public class UIManager : MonoBehaviour {
 		uiFirstPersonGO.SetActive(false);
 		uiColorPickerGO.SetActive(false);
 		uiPaintEditorGO.SetActive(false);
+		uiToolMenuGo.SetActive(false);
 		uiConstructionEditorGO.SetActive(false);
 		uiEntityClassPickerGO.SetActive(false);
 		uiCommandPromptGO.SetActive(false);
@@ -109,20 +111,6 @@ public class UIManager : MonoBehaviour {
 		updateBackButton();
 	}
 
-	void rootDialogCallback(bool accepted)
-	{
-		setMenuVisible(false);
-		currentMenu = null;
-
-		UIEntityClassPicker picker = Root.instance.uiManager.entityClassPicker;
-		if (accepted)
-			Root.instance.player.entityClassInUse = picker.getSelectedEntityClass();
-		else if (Root.instance.player.entityClassInUse != null)
-			picker.selectEntityClass(Root.instance.player.entityClassInUse);
-
-		uiEntityClassPickerGO.pushDialog(rootDialogCallback, false);
-	}
-
 	public void showCommandPromptUI()
 	{
 		hideUI();
@@ -139,10 +127,10 @@ public class UIManager : MonoBehaviour {
 		enableCursorMode(visible);
 	}
 
-	public void resetToRootMenu()
+	public void showRootMenu()
 	{
 		popAll();
-		uiEntityClassPickerGO.pushDialog(rootDialogCallback, false);
+		uiToolMenuGo.pushDialog();
 		updateBackButton();
 	}
 
@@ -169,8 +157,10 @@ public class UIManager : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.Escape))
 			showCommandPromptUI();
 		else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetMouseButtonDown(1)) {
-			resetToRootMenu();
-			setMenuVisible(uiFirstPersonGO.activeSelf);
+			if (uiFirstPersonGO.activeSelf)
+				showRootMenu();
+			else
+				setMenuVisible(false);
 		}
 	}
 
