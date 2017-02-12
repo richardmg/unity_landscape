@@ -66,7 +66,7 @@ public class UIManager : MonoBehaviour {
 
 	void updateBackButton()
 	{
-		backButton.SetActive(stack.Count > 0);
+//		backButton.SetActive(stack.Count > 0);
 	}
 
 	public void push(GameObject ui, bool show = true, bool repush = false)
@@ -139,6 +139,13 @@ public class UIManager : MonoBehaviour {
 		enableCursorMode(visible);
 	}
 
+	public void resetToRootMenu()
+	{
+		popAll();
+		uiEntityClassPickerGO.pushDialog(rootDialogCallback, false);
+		updateBackButton();
+	}
+
 	public void enableCursorMode(bool on)
 	{
 		if (on) {
@@ -161,8 +168,10 @@ public class UIManager : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Escape))
 			showCommandPromptUI();
-		else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetMouseButtonDown(1))
+		else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetMouseButtonDown(1)) {
+			resetToRootMenu();
 			setMenuVisible(uiFirstPersonGO.activeSelf);
+		}
 	}
 
 	static public Vector2 getMousePosInsideRect(RectTransform rect, bool flipY = false)
