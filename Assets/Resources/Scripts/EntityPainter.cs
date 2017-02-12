@@ -104,14 +104,19 @@ public class EntityPainter : MonoBehaviour {
 		
 		m_entityClass = entityClass;
 
-		Debug.Log("Not implemented, painting first voxel object found in entity class");
+
+		updateIndexList();
+		updateThumbnails();
+		setListIndex(0);
+	}
+
+	void updateIndexList()
+	{
+		Debug.Log("Not really implemented, just painting first voxel object found in entity class");
 		m_atlasIndexList = new List<int>(); 
 		List<VoxelObject> voxelObjects = m_entityClass.voxelObjectRoot.voxelObjects;
 		if (voxelObjects.Count > 0)
 			m_atlasIndexList.Add(voxelObjects[0].atlasIndex);
-
-		updateThumbnails();
-		setListIndex(0);
 	}
 
 	public void createThumbnails()
@@ -193,7 +198,6 @@ public class EntityPainter : MonoBehaviour {
 			detachEntityClass();
 			copyPixelsBackToAtlas();
 			Root.instance.uiManager.entityClassPicker.selectEntityClass(m_entityClass);
-			m_entityInstance.entityInstanceDescription.entityClassID = m_entityClass.id;
 			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(m_entityInstance.entityInstanceDescription);
 		} else {
 			copyPixelsBackToAtlas();
@@ -214,14 +218,12 @@ public class EntityPainter : MonoBehaviour {
 
 	void detachEntityClass()
 	{
-		Debug.Log("not implemented");
-		// Create a new entity class that we modify instead
 		// Todo: rather than taking a deep clone, we should
 		// take a shallow clone, and only clone the voxel objects changed.
-		EntityClass newClass = m_entityClass.createDeepClone();
-		//m_atlasIndexList = newClass.atlasIndexList();
+		m_entityClass = m_entityClass.createDeepClone();
+		m_entityInstance.entityClass = m_entityClass;
+		updateIndexList();
 		m_currentAtlasIndex = m_atlasIndexList[m_currentListIndex];
-		m_entityClass = newClass;
 	}
 
 	public void onColorButtonClicked()

@@ -42,9 +42,8 @@ public class VoxelObjectRoot
 	public VoxelObjectRoot createDeepClone()
 	{
 		VoxelObjectRoot clone = new VoxelObjectRoot();
-		// create new voxel objects based on new atlas indices.
-		// for each aquired index, we need to copy pixels from old index.
-		Debug.Assert(false, "not implemented");
+		foreach (VoxelObject vo in voxelObjects)
+			clone.add(vo.createDeepClone());
 		return clone;
 	}
 }

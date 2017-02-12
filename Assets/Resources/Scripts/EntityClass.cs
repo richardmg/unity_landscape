@@ -42,15 +42,6 @@ public class EntityClass {
 		Root.instance.entityClassManager.addEntityClass(this, notify);
 	}
 
-	public EntityClass createDeepClone(bool notify = true)
-	{
-		EntityClass clone = new EntityClass();
-		clone.entityName = entityName + "_clone";
-		clone.voxelObjectRoot = m_voxelObjectRoot.createDeepClone();
-		Root.instance.entityClassManager.addEntityClass(clone, notify);
-		return clone;
-	}
-
 	public void remove()
 	{
 		Root.instance.entityClassManager.removeEntityClass(this);
@@ -185,6 +176,15 @@ public class EntityClass {
 
 		projectIO.writeInt(id);
 		projectIO.writeString(entityName);
+	}
+
+	public EntityClass createDeepClone(bool notify = true)
+	{
+		EntityClass clone = new EntityClass();
+		clone.entityName = entityName + "_clone";
+		clone.voxelObjectRoot = m_voxelObjectRoot.createDeepClone();
+		Root.instance.entityClassManager.addEntityClass(clone, notify);
+		return clone;
 	}
 
 	override public string ToString()

@@ -89,7 +89,7 @@ public class EntityInstance : MonoBehaviour {
 			meshCollider.sharedMesh = meshFilter.sharedMesh;
 		} else {
 			// Slow path
-			Debug.Log("taking slow path");
+			Debug.Log("taking slow path: " + this);
 			GetComponentInChildren<VoxelObjectRootMonoBehaviour>().transform.gameObject.hideAndDestroy();
 			GameObject rootGo = entityClass.voxelObjectRoot.createGameObject(Root.kLod0, "VoxelObjectRoot");
 			rootGo.transform.SetParent(transform, false);

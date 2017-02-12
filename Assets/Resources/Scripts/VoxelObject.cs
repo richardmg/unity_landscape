@@ -68,4 +68,12 @@ public class VoxelObject
 		}
 		return go;
 	}
+
+	public VoxelObject createDeepClone()
+	{
+		int freeAtlasIndex = Root.instance.atlasManager.acquireIndex();
+		Root.instance.atlasManager.copySubImageFromProjectToProject(atlasIndex, freeAtlasIndex);
+		VoxelObject vo = new VoxelObject(freeAtlasIndex, voxelDepth);
+		return vo;
+	}
 }
