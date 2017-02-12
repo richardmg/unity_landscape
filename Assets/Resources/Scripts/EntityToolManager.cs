@@ -111,6 +111,11 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		print("Tool: " + m_toolBar[m_toolBarIndex]);
 	}
 
+	public void setTool(GameObject toolGo)
+	{
+		setTool(m_toolBar.FindIndex(t => t == toolGo));
+	}
+
 	public void repositionMenuAccordingToSelection(List<EntityInstanceDescription> selection)
 	{
 		GetComponent<Canvas>().enabled = selection.Count != 0;	
