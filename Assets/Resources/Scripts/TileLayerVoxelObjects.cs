@@ -95,7 +95,6 @@ public class TileLayerVoxelObjects : MonoBehaviour, IEntityClassListener, IEntit
 	public void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc, EntityInstanceDescription.DirtyFlags flags)
 	{
 		desc.instance.syncWithDescription(flags);
-		desc.instance.updateMesh();
 	}
 
 	public void onEntityClassChanged(EntityClass entityClass)
