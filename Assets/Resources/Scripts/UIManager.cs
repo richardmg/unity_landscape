@@ -161,7 +161,7 @@ public class UIManager : MonoBehaviour {
 
 		if (Input.GetKeyDown(KeyCode.Escape))
 			showCommandPromptUI();
-		else if (Input.GetKeyDown(KeyCode.Tab))
+		else if (Input.GetKeyDown(KeyCode.Tab) || Input.GetMouseButtonDown(1))
 			setMenuVisible(uiFirstPersonGO.activeSelf);
 	}
 
