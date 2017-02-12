@@ -208,6 +208,12 @@ public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler, IEntityCl
 		y = (int)(-tableY * (image.rectTransform.rect.height / colCount));
 	}
 
+	public void onAddBlankSheetButtonClicked()
+	{
+		Root.instance.player.entityClassInUse = Root.instance.entityClassManager.getEntity(0);
+		Root.instance.uiManager.setMenuVisible(false);
+	}
+
 	public void onCloneButtonClicked()
 	{
 		EntityClass originalEntityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
@@ -229,6 +235,8 @@ public class UIEntityClassPicker : MonoBehaviour, IPointerDownHandler, IEntityCl
 	{
 		EntityClass entityClass = Root.instance.entityClassManager.getEntity(selectedIndex);
 		bool createTemporary = (entityClass == null);
+
+		Debug.Assert(!createTemporary, "edit button should no longer create new entities, only edit existing ones");
 
 		if (createTemporary) {
 			// Create a temporary entity class with one voxel object. If the

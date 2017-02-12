@@ -39,6 +39,13 @@ public class EntityClassManager : IProjectIOMember
 		allEntityClasses = new List<EntityClass>();
 	}
 
+	void createAndAddDefaultEntityClass()
+	{
+		EntityClass entityClass = new EntityClass("Blank sheet");
+		int freeAtlasIndex = Root.instance.atlasManager.acquireIndex();
+		entityClass.voxelObjectRoot.add(new VoxelObject(freeAtlasIndex, 1f));
+	}
+
 	public EntityClass getEntity(int id)
 	{
 		if (id < 0 || id >= allEntityClasses.Count)
@@ -49,6 +56,7 @@ public class EntityClassManager : IProjectIOMember
 	public void initNewProject()
 	{
 		removeAllEntityClasses();
+		createAndAddDefaultEntityClass();
 	}
 
 	public void load(ProjectIO projectIO)
