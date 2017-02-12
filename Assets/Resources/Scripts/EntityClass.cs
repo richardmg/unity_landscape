@@ -25,7 +25,7 @@ public class EntityClass {
 
 	DirtyFlags m_dirtyFlags;
 
-	public enum DirtyFlags {
+	[FlagsAttribute] public enum DirtyFlags {
 		Mesh = 1
 	}
 

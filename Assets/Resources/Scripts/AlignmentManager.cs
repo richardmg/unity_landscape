@@ -50,7 +50,7 @@ public class AlignmentManager : MonoBehaviour
 	{
 		foreach (EntityInstanceDescription desc in selection) {
 			align(ref desc.worldPos, ref desc.voxelRotation);
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc, EntityInstanceDescription.DirtyFlags.Transform);
 		}
 	}
 

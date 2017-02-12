@@ -59,7 +59,7 @@ public class EntityRotateTool : MonoBehaviour, IEntityInstanceSelectionListener
 		foreach (EntityInstanceDescription desc in Root.instance.player.selectedEntityInstances) {
 			desc.voxelRotation.x += (m_pushDirectionZ > 0 ? playerMovement.y : -playerMovement.y) * 40;
 			desc.voxelRotation.y += (straightUp ? playerMovement.x : playerMovement.x * m_tippedBack) * 40;
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc, EntityInstanceDescription.DirtyFlags.Transform);
 		}
 	}
 

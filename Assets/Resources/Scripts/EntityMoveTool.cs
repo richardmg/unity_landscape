@@ -54,7 +54,7 @@ public class EntityMoveTool : MonoBehaviour, IEntityInstanceSelectionListener
 			t.Translate(new Vector3(0, headMovement.y, 0), flat ? Space.World : Space.Self);
 
 			desc.worldPos = t.position;
-			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc);
+			Root.instance.notificationManager.notifyEntityInstanceDescriptionChanged(desc, EntityInstanceDescription.DirtyFlags.Transform);
 		}
 	}
 

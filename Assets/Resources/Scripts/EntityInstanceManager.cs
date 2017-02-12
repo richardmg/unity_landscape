@@ -105,7 +105,7 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 		Root.instance.entityClassManager.getEntity(desc.entityClassID).instanceDescriptionCount--;
 	}
 
-	public void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc)
+	public void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc, EntityInstanceDescription.DirtyFlags flags)
 	{
 		// todo: if the position has changed, we will need
 		// to change which tile the instance maps to

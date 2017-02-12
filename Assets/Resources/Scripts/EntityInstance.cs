@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Lod = System.Int32;
@@ -6,6 +7,11 @@ using VoxelRotation = UnityEngine.Vector3;
 
 public class EntityInstanceDescription
 {
+	[FlagsAttribute] public enum DirtyFlags {
+		Mesh = 1,
+		Transform = 2
+	}
+
 	// EntityInstanceDescription is a data structure that describes an
 	// entity instance in the world. While the world will be populated with
 	// EntityInstanceDescriptions (tracked by EntityInstanceManager), only a
@@ -74,10 +80,15 @@ public class EntityInstance : MonoBehaviour {
 	// todo: Currently this is not in use
 	public bool hasCombinedMesh = false;
 
-	public void syncTransformWithDescription()
+	public void syncWithDescription(EntityInstanceDescription.DirtyFlags flags)
 	{
-		transform.position = entityInstanceDescription.worldPos;
-		transform.setVoxelRotation(entityInstanceDescription.voxelRotation);
+		if ((flags & EntityInstanceDescription.DirtyFlags.Transform) != 0) {
+			transform.position = entityInstanceDescription.worldPos;
+			transform.setVoxelRotation(entityInstanceDescription.voxelRotation);
+		}
+		if ((flags & EntityInstanceDescription.DirtyFlags.Mesh) != 0) {
+			updateMesh();
+		}
 	}
 
 	public void updateMesh()

@@ -14,7 +14,7 @@ public interface IEntityInstanceDescriptionListener
 {
 	void onEntityInstanceDescriptionAdded(EntityInstanceDescription desc);
 	void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc);
-	void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc);
+	void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc, EntityInstanceDescription.DirtyFlags flags);
 }
 
 public interface IEntityInstanceSelectionListener
@@ -73,10 +73,10 @@ public class NotificationManager {
 			listener.onEntityInstanceDescriptionRemoved(desc);	
 	}
 
-	public void notifyEntityInstanceDescriptionChanged(EntityInstanceDescription desc)
+	public void notifyEntityInstanceDescriptionChanged(EntityInstanceDescription desc, EntityInstanceDescription.DirtyFlags flags)
 	{
 		foreach (IEntityInstanceDescriptionListener listener in entityInstanceListeners)
-			listener.onEntityInstanceDescriptionChanged(desc);
+			listener.onEntityInstanceDescriptionChanged(desc, flags);
 	}
 
 	public void notifyEntityClassAdded(EntityClass entityClass, bool postNotification = true)
