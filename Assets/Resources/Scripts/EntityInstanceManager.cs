@@ -99,7 +99,9 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	public void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc)
 	{
-		Debug.Assert(false, "Not implemented!");
+		IntCoord pageCoord = tileEngine.matrixCoordForWorldPos(desc.worldPos);
+		Tile tile = m_pages[pageCoord.x, pageCoord.y].getTileForWorldPos(desc.worldPos);
+		tile.entityInstanceDescriptions.Remove(desc);
 
 		EntityInstanceManager.globalInstanceDescriptionCount--;
 		Root.instance.entityClassManager.getEntity(desc.entityClassID).instanceDescriptionCount--;
