@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class AlignmentManager : MonoBehaviour
 {
-	public Vector3 voxelSize = new Vector3(0.2f, 0.2f, 0.2f);
+	public Vector3 voxelSize = new Vector3(0.05f, 0.05f, 0.05f);
 	public float rotationStep = 22.5f;
 	Transform m_childTransform;
 
