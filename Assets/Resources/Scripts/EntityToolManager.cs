@@ -12,6 +12,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public GameObject rotateToolGo;
 	public GameObject placeToolGo;
 	public GameObject paintToolGo;
+	public GameObject destroyToolGo;
 
 	public float offsetZ = 5f;
 	public float offsetY = -2f;
@@ -23,6 +24,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	[HideInInspector] public EntityRotateTool rotateTool;
 	[HideInInspector] public EntityPlaceTool placeTool;
 	[HideInInspector] public EntityPainterTool painterTool;
+	[HideInInspector] public EntityDestroyTool destroyTool;
 
 	List<GameObject> m_toolBar;
 	int m_toolBarIndex = 0;
@@ -51,6 +53,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		rotateTool = rotateToolGo.GetComponent<EntityRotateTool>();
 		placeTool = rotateToolGo.GetComponent<EntityPlaceTool>();
 		painterTool = rotateToolGo.GetComponent<EntityPainterTool>();
+		destroyTool = destroyToolGo.GetComponent<EntityDestroyTool>();
 
 		Root.instance.notificationManager.addEntitySelectionListener(this);
 	}
@@ -84,6 +87,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_toolBar.Add(moveToolGo);
 		m_toolBar.Add(rotateToolGo);
 		m_toolBar.Add(paintToolGo);
+		m_toolBar.Add(destroyToolGo);
 	}
 
 	public void deactivateAllTools()

@@ -30,4 +30,10 @@ public class UIToolMenu : MonoBehaviour
 		Root.instance.entityToolManager.setTool(Root.instance.entityToolManager.rotateToolGo);
 		Root.instance.uiManager.setMenuVisible(false);
 	}
+
+	public void onDestroyButtonClicked()
+	{
+		Root.instance.entityToolManager.setTool(Root.instance.entityToolManager.destroyToolGo);
+		Root.instance.uiManager.setMenuVisible(false);
+	}
 }

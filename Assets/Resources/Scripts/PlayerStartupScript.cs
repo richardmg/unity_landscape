@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityStandardAssets.Characters.FirstPerson;
 
-public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
+public class PlayerStartupScript : MonoBehaviour, IProjectIOMember, IEntityInstanceDescriptionListener {
 	public bool moveToGround = true;
 	public EntityClass entityClassInUse = null;
 	public List<EntityInstanceDescription> selectedEntityInstances = new List<EntityInstanceDescription>();
@@ -57,6 +57,13 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember {
 	{
 //		entityClassInUse = entityClass;
 	}
+
+	public void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc) {
+		print("deleted: " + desc);		
+	}
+
+	public void onEntityInstanceDescriptionAdded(EntityInstanceDescription desc) {}
+	public void onEntityInstanceDescriptionChanged(EntityInstanceDescription desc, EntityInstanceDescription.DirtyFlags flags) {}
 
 	public void initNewProject()
 	{
