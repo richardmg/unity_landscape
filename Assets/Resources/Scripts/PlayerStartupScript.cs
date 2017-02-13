@@ -11,6 +11,11 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember, IEntityInsta
 	public GameObject mainTool;
 	public GameObject subTool;
 
+	void Awake()
+	{
+		Root.instance.notificationManager.addEntityInstanceListener(this);
+	}
+
 	void Start()
 	{
 		if (moveToGround) {
@@ -59,7 +64,8 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember, IEntityInsta
 	}
 
 	public void onEntityInstanceDescriptionRemoved(EntityInstanceDescription desc) {
-		print("deleted: " + desc);		
+		if (selectedEntityInstances.Find(d => d == desc) != null)
+			unselectEntityInstance(desc);
 	}
 
 	public void onEntityInstanceDescriptionAdded(EntityInstanceDescription desc) {}

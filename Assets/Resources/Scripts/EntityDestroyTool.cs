@@ -10,7 +10,7 @@ public class EntityDestroyTool : MonoBehaviour
 	{
 		if (!Input.GetMouseButtonDown(0))
 			return;
-		
+
 		Root.instance.entityToolManager.selectionTool.selectSingleObjectUnderPointer();
 		if (Root.instance.player.selectedEntityInstances.Count == 0)
 			return;	
