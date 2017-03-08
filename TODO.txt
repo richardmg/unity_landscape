@@ -849,10 +849,12 @@ Game 8.0
 
     So, another thought is to make a halloween-ish game with an open world consisting of
     graveyards, dark forrests, misty swamps, evil villages, living dolls, etc. All the clishès.
-    All created procedurally. And all monsters will just follow you when you enter their domain, and
-    they see you. When you exit the domain, they will vanish. You will always get the feeling of being
-    followed. And they only move when you move, and with the same speed as you. So if you walk, they
-    walk, if you run, they run. So you can play the game in your own tempo, and even take a break.
+    All created procedurally. And all monsters will just follow you when you enter their domain (when
+    they first spot you). When you exit the domain, they will walk back to spawn point. You will always get the
+    feeling of being followed. And they only move when you move, and with the same speed as you. So if
+    you walk, they walk, if you run, they run. So you can play the game in your own tempo, and even take
+    breaks. When a monster follows you, its eyes will turn red, but otherwise be white. It should also be
+    visuals on the ground that marks the boundries of a domain.
         The point of the game is to find a missing item (e.g an alarm clock that wakes you from the
     bad dream). It is hidden somewhere in the world, and you need to search for clues spread out that points
     you in the right direction. Some clues are protected by riddles (e.g a sitting doll with a candle), which
@@ -862,10 +864,10 @@ Game 8.0
     between 45-180 degrees).
         The user can have/find a torch/match. When you light up a monster, it just looks like e.g a tree or bush
     instead and doesn't move for some time. But you need to save battery.
-        There are safe havens. E.g a fireplace or a other kinds of light. If the player enters them, the monsters
+        There are safehavens. E.g a fireplace or a other kinds of light. If the player enters them, the monsters
     starts walking back to spawn point while you are under the light.
         You always start the game beside your bed (which is placed just somewhere in the world / dream), which
-    is your first spawn point. Solved clues will be saved as new spawn point.
+    is your first spawn point. Solved clues will be saved as new spawn points.
         The technical challenge of this game is to
             1. create monsters that follows you.
             2. procedurally create a nice environment consisting of different domains. E.g start off
