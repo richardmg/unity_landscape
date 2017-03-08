@@ -855,10 +855,11 @@ Game 8.0
     walk, if you run, they run. So you can play the game in your own tempo, and even take a break.
         The point of the game is to find a missing item (e.g an alarm clock that wakes you from the
     bad dream). It is hidden somewhere in the world, and you need to search for clues spread out that points
-    you in the right direction. Some clues are protected by riddles (e.g a candle, which can be a math puzzle, image puzzle
-    memory game etc). Others are for free, but perhaps a bit harder to spot. When found, the point you in
-    the right direction. Depending on e.g how fast you solved the riddle, it will you give you a direction
-    range that is slim or wide (but never spot on, perhaps between 45-180 degrees).
+    you in the right direction. Some clues are protected by riddles (e.g a sitting doll with a candle), which
+    can be a math puzzle, image puzzle memory game etc). Others are for free, but perhaps a bit harder to spot.
+    When found, the doll points you in the right direction with both hands. Depending on e.g how fast you solved
+    the riddle, it will you give you a direction range that is slim or wide (but never spot on, perhaps
+    between 45-180 degrees).
         The user can have/find a torch/match. When you light up a monster, it just looks like e.g a tree or bush
     instead and doesn't move for some time. But you need to save battery.
         There are safe havens. E.g a fireplace or a other kinds of light. If the player enters them, the monsters
