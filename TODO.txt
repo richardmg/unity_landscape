@@ -839,6 +839,40 @@ Game 7.1.1
     - If taken by a mutant, he will feel dizzy for a few minutes.
     - The player can choose any animal as follower that can help out.
 
+Game 8.0
+---------------
+    After looking through AppStore, I realize that there are just too many voxel based mine-craft-ish
+    survival games on the market, where you can create voxel animals etc. And I don't want
+    to spend time creating something that others have done before. So atleast, steer clear of
+    voxel graphics and classic survival-by-constructing games. Besides, I think its actually better
+    if the game puts you right into the action.
+
+    So, another thought is to make a halloween-ish game with an open world consisting of
+    graveyards, dark forrests, misty swamps, evil villages, living dolls, etc. All the clishès.
+    All created procedurally. And all monsters will just follow you when you enter their domain, and
+    they see you. When you exit the domain, they will vanish. You will always get the feeling of being
+    followed. And they only move when you move, and with the same speed as you. So if you walk, they
+    walk, if you run, they run. So you can play the game in your own tempo, and even take a break.
+        The point of the game is to find a missing item (e.g an alarm clock that wakes you from the
+    bad dream). It is hidden somewhere in the world, and you need to search for clues spread out that points
+    you in the right direction. Some clues are protected by riddles (e.g a candle, which can be a math puzzle, image puzzle
+    memory game etc). Others are for free, but perhaps a bit harder to spot. When found, the point you in
+    the right direction. Depending on e.g how fast you solved the riddle, it will you give you a direction
+    range that is slim or wide (but never spot on, perhaps between 45-180 degrees).
+        The user can have/find a torch/match. When you light up a monster, it just looks like e.g a tree or bush
+    instead and doesn't move for some time. But you need to save battery.
+        There are safe havens. E.g a fireplace or a other kinds of light. If the player enters them, the monsters
+    starts walking back to spawn point while you are under the light.
+        You always start the game beside your bed (which is placed just somewhere in the world / dream), which
+    is your first spawn point. Solved clues will be saved as new spawn point.
+        The technical challenge of this game is to
+            1. create monsters that follows you.
+            2. procedurally create a nice environment consisting of different domains. E.g start off
+                by creating a forrest domain and graveyard domain.
+            3. Creating clues
+            4. perhaps try to make everything e.g use an oil-paint shader, to make the game
+                visually interresting.
+
 Technical
 ---------------
     - lodding: it makes sense to use more vertices for a model if it results in less
