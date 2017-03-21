@@ -875,6 +875,24 @@ Game 8.0
             3. Creating clues
             4. perhaps try to make everything e.g use an oil-paint shader, to make the game
                 visually interresting.
+    Some additional ideas:
+        1. In the village, people stay inside, and close the curtains, turn off the lights etc
+        when you pass by. And aim at you from shotguns out windows.
+        2. Perhaps instead of searching for just one alarm clock, you search for many pieces in
+        a puzzle.
+
+Game 8.1
+---------------
+    The game is about reconstructing species from bones and fossils. They are spread out in the landscape
+        and the player must find them.
+        - Each time the vulcano errupts (or earthquake), more bones (bigger bones/animals) becomes visible.
+        - You can choose to assemble bones correctly, or put together a fantasy creature. And you have
+            to build up a food chain.
+        - you can also find drift wood, fences, and parts of buildings, on the beach. They can be used to build
+            simple stuff. But this part is not important in the game.
+        - Bones are more visible at night, as they shine in your flashlight. But then it's also more scare
+            as ghosts and zombies roame the land. Most perils try to sneak up on you, always from behind.
+
 
 Technical
 ---------------
