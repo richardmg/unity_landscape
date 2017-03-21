@@ -898,6 +898,10 @@ Game 8.1
             to hunt you.
         - But perhaps bottom line, all creatures / ghost that you stare in the eyes will stand still, and not
             follow you until you turn your back on them.
+        - Maybe: During night time, the ghost of all the animals that have bones in the landscape will haunt
+            the island (perhaps close part of the bones). To make a species, you need to both collect the bones
+            at day, but also its soul at night. You can e.g collect the soul by paralyzing it with the flash
+            light, or let it follow you back to the layedout bone structure.
         - Maybe: you will need to pick flowers to get colors, so that you can paint the animals that you build, to
             personalize them a bit. And perhaps you need to find a spray can on the beach first to unlock
             this feature.
