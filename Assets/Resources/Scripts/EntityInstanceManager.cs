@@ -120,11 +120,13 @@ public class EntityInstanceManager : MonoBehaviour, IProjectIOMember, IEntityIns
 
 	public void load(ProjectIO projectIO)
 	{
-		globalInstanceDescriptionCount = 0;
+        Debug.Log("Load entity instances not implemented");
+        globalInstanceDescriptionCount = 0;
 	}
 
 	public void save(ProjectIO projectIO)
 	{
-	}
+        Debug.Log("Save entity instances not implemented");
+    }
 
 }

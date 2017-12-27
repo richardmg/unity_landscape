@@ -79,13 +79,16 @@ public class PlayerStartupScript : MonoBehaviour, IProjectIOMember, IEntityInsta
 
 	public void load(ProjectIO projectIO)
 	{
-//		entityClassInUse = Root.instance.entityClassManager.getEntity(projectIO.readInt());
-		selectedEntityInstances = new List<EntityInstanceDescription>();
-	}
+        Debug.Log("Load player not implemented");
+        //		entityClassInUse = Root.instance.entityClassManager.getEntity(projectIO.readInt());
+        selectedEntityInstances = new List<EntityInstanceDescription>();
+        entityClassInUse = Root.instance.entityClassManager.getEntity(0);
+    }
 
 	public void save(ProjectIO projectIO)
 	{
-//		projectIO.writeInt(entityClassInUse.id);
-	}
+        Debug.Log("Save player not implemented");
+        //		projectIO.writeInt(entityClassInUse.id);
+    }
 
 }

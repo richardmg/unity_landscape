@@ -72,10 +72,11 @@ public class Root : MonoBehaviour {
 
 	void Start()
 	{
-		// Restore session on Start to ensure that all gameobjects
-		// have been initialized on Awake, and started to subscribe
-		// for notifications.
-		projectManager.restoreSession();
+        // Restore session on Start to ensure that all gameobjects
+        // have been initialized on Awake, and started to subscribe
+        // for notifications.
+        projectManager.restoreSession();
+        //projectManager.createProject("defaultworld", true);
 	}
 
 	public Material voxelMaterialForLod(Lod lod)

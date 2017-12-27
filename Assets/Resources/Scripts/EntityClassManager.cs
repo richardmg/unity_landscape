@@ -48,8 +48,10 @@ public class EntityClassManager : IProjectIOMember
 
 	public EntityClass getEntity(int id)
 	{
-		if (id < 0 || id >= allEntityClasses.Count)
-			return null;
+        if (id < 0 || id >= allEntityClasses.Count) {
+            Debug.Log("EntityClassManager: Enity class does not exist: " + id);
+            return null;
+        }
 		return allEntityClasses[id];
 	}
 

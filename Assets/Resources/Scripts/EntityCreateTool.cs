@@ -21,8 +21,10 @@ public class EntityCreateTool : MonoBehaviour
 		Root.instance.alignmentManager.align(ref worldPos, ref rotation);
 
 		EntityClass entityClass = Root.instance.player.entityClassInUse;
-		if (!entityClass)
-			return;
+        if (!entityClass) {
+            Debug.Log("Cannot create entity instance. Player holds no entity class.");
+            return;
+        }
 
 		EntityInstanceDescription desc = new EntityInstanceDescription(entityClass, worldPos, rotation);
 		Root.instance.notificationManager.notifyEntityInstanceDescriptionAdded(desc);

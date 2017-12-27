@@ -114,7 +114,7 @@ public class EntityClass {
 
 	public Mesh getMesh(Lod lod)
 	{
-		Debug.Assert(!removed, "This entity class has beed removed from project. The caller has and old reference!");
+		Debug.Assert(!removed, "This entity class has been removed from project. The caller has and old reference!");
 
 		if (unmarkDirty(DirtyFlags.Mesh))
 			m_mesh = new Mesh[Root.kLodCount];
@@ -165,9 +165,8 @@ public class EntityClass {
 
 	void initFromLoad(ProjectIO projectIO)
 	{
-		Debug.Log("Load entity class not implemented");
-
-		m_voxelObjectRoot = null;
+        m_voxelObjectRoot.add(new VoxelObject(0, 1f));
+        Debug.Log("Load entity class not implemented");
 	}
 
 	public void save(ProjectIO projectIO)
