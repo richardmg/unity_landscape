@@ -1,4 +1,6 @@
-﻿
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+
 #include "UnityCG.cginc"
 #include "VoxelObjectCommon.cginc"
 
@@ -84,7 +86,7 @@ v2f vert(appdata v)
 	float voxelDepth = round(v.cubeDesc.a * _VoxelDepthMaxValue);
 
 	v2f o;
-	o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+	o.vertex = UnityObjectToClipPos(v.vertex);
 	o.normal = mul(unity_ObjectToWorld, float4(v.normal, 0)).xyz;
 	o.uvAtlas = float3(v.uvAtlas, depthForCode[normalCode]);
 	o.uvPixel = float3(v.uvPixel, voxelDepth);
