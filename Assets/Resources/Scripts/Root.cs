@@ -56,17 +56,52 @@ public class Root : MonoBehaviour {
 
 	void Awake()
 	{
+		// Manager components in the following list are those that also exists in the
+		// editor tree. Managers that do that typically do so because they have properties
+		// that can be tweaked directly in the editor.
+
+		// The UIManager stores all 2D dialogs that can be presented to the user
 		uiManager = uiGO.GetComponent<UIManager>();
+
+		// The EntitiyToolManager stores all tools that the user can use
+		// to create, paint move etc the objects in the scene. 
 		entityToolManager = entityToolManagerGO.GetComponent<EntityToolManager>();
+
+		// The LandscapeManager stores information about the the ground, like
+		// the height and biom at a specific world pos.
 		landscapeManager = landscapeGO.GetComponent<LandscapeManager>();
+
+		// The EntityInstanceManager stores all entities in the world
 		entityInstanceManager = entityInstanceManagerGO.GetComponent<EntityInstanceManager>();
+
+		// PlayerStartupScript controls information about to user, like
+		// which tool he's using, and how fast he can walk.
 		player = playerGO.GetComponent<PlayerStartupScript>();
+
+		// The CommandPrompt is the in-game debug/introspection interface
 		commandPrompt = commandPromptGO.GetComponent<CommandPrompt>();
+
+		// The AlignmentManager helps aligning entities in the world so
+		// they are more easy to move around and rotate by the user
 		alignmentManager = worldScaleManagerGO.GetComponent<AlignmentManager>();
 
+		// -------------------------------------------------------------------
+
+		// The following components don't need an editor API, so we create them explicit from code
+
+		// MeshMananger do nothing ATM
 		meshManager = new MeshManager();
+
+		// The EntityClassManager stores all entity classes that has been created.
+		// Any EntityInstance in the world is an instance of an EntityClass.
 		entityClassManager = new EntityClassManager();
+
+		// The ProjectManager handles loading and saving a project
 		projectManager = new ProjectManager();
+
+		// The AtlasManager handles the texture atlas that contains all the
+		// paintings done by the user, which will also be used as the shape
+		// and texture of the EntityClasses. 
 		atlasManager = new AtlasManager();
 	}
 
