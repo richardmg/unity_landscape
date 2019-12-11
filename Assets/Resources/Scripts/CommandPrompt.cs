@@ -54,6 +54,8 @@ public class CommandPrompt : MonoBehaviour {
 		helpList.Add("player pos: print players position");
 		helpList.Add("player move [x] [z]: move player on top of landscape at position");
 		helpList.Add("landscape rebuild : rebuild all landscape tiles");
+		helpList.Add("skycamera show [height]: show sky camera (at a specific height)");
+		helpList.Add("skycamera hide: hide sky camera");
 		helpList.Add("close : close console");
 		helpList.Add("clear : clear console");
 		helpList.Add("help [keyword] : show help");
@@ -114,6 +116,13 @@ public class CommandPrompt : MonoBehaviour {
 		return tokens.Count > 0;
 	}
 
+	string peekToken()
+	{
+		if (tokens.Count == 0)
+			return "<no more tokens>";
+		return tokens[0];
+	}
+
 	string nextToken()
 	{
 		if (tokens.Count == 0)
@@ -121,6 +130,11 @@ public class CommandPrompt : MonoBehaviour {
 		string token = tokens[0];
 		tokens.RemoveAt(0);
 		return token;
+	}
+
+	bool hasMoreTokens()
+	{
+		return tokens.Count != 0;
 	}
 
 	int nextInt()
@@ -298,6 +312,17 @@ public class CommandPrompt : MonoBehaviour {
 				accepted = true;
 			} else if (token == "entity") {
 				log("Player holds entity: " + Root.instance.player.entityClassInUse);
+				accepted = true;
+			}
+		} else if (token == "skycamera") {
+			token = nextToken();
+			if (token == "show") {
+				if (hasNext())
+					Root.instance.skyCamera.orbitHeight = nextInt();
+				Root.instance.skyCameraGO.SetActive(true);
+				accepted = true;
+			} else if (token == "hide") {
+				Root.instance.skyCameraGO.SetActive(false);
 				accepted = true;
 			}
 		} else if (token == "entity") {

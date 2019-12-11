@@ -15,6 +15,7 @@ public class Root : MonoBehaviour {
 	public GameObject entityToolManagerGO;
 	public GameObject landscapeGO;
 	public GameObject snapshotCameraGO;
+	public GameObject skyCameraGO;
 	public GameObject commandPromptGO;
 	public GameObject entityInstanceManagerGO;
 	public GameObject worldScaleManagerGO;
@@ -38,6 +39,7 @@ public class Root : MonoBehaviour {
 	[HideInInspector] public ProjectManager projectManager;
 	[HideInInspector] public CommandPrompt commandPrompt;
 	[HideInInspector] public AlignmentManager alignmentManager;
+	[HideInInspector] public SkyCamera skyCamera;
 
 	public const Lod kNoLod = -1;
 	public const Lod kLod0 = 0;
@@ -84,6 +86,9 @@ public class Root : MonoBehaviour {
 		// The AlignmentManager helps aligning entities in the world so
 		// they are more easy to move around and rotate by the user
 		alignmentManager = worldScaleManagerGO.GetComponent<AlignmentManager>();
+
+		// The sky camera is a debug helper, showing the world from bird perspective
+		skyCamera = skyCameraGO.GetComponent<SkyCamera>();
 
 		// -------------------------------------------------------------------
 
