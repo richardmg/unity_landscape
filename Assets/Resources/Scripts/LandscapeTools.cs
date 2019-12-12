@@ -21,7 +21,7 @@ public class LandscapeTools
 		GameObject gameObject = Terrain.CreateTerrainGameObject(createGroundTerrainData(desc));
 		Terrain terrain = gameObject.GetComponent<Terrain>();
 		terrain.heightmapPixelError = desc.pixelError;
-		terrain.castShadows = false;
+		terrain.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
 		return gameObject;
 	}
 
