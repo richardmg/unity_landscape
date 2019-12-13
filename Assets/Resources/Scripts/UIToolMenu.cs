@@ -19,6 +19,12 @@ public class UIToolMenu : MonoBehaviour
 		Root.instance.uiManager.setMenuVisible(false);
 	}
 
+	public void onPaint3DButtonClicked()
+	{
+		Root.instance.entityToolManager.setTool(Root.instance.entityToolManager.paint3DToolGo);
+		Root.instance.uiManager.setMenuVisible(false);
+	}
+
 	public void onMoveButtonClicked()
 	{
 		Root.instance.entityToolManager.setTool(Root.instance.entityToolManager.moveToolGo);

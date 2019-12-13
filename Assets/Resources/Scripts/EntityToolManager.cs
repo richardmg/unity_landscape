@@ -12,6 +12,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	public GameObject rotateToolGo;
 	public GameObject placeToolGo;
 	public GameObject paintToolGo;
+	public GameObject paint3DToolGo;
 	public GameObject destroyToolGo;
 
 	public float offsetZ = 5f;
@@ -24,6 +25,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 	[HideInInspector] public EntityRotateTool rotateTool;
 	[HideInInspector] public EntityPlaceTool placeTool;
 	[HideInInspector] public EntityPainterTool painterTool;
+	[HideInInspector] public EntityPainter3DTool painter3DTool;
 	[HideInInspector] public EntityDestroyTool destroyTool;
 
 	List<GameObject> m_toolBar;
@@ -51,8 +53,9 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		createTool = moveToolGo.GetComponent<EntityCreateTool>();
 		moveTool = moveToolGo.GetComponent<EntityMoveTool>();
 		rotateTool = rotateToolGo.GetComponent<EntityRotateTool>();
-		placeTool = rotateToolGo.GetComponent<EntityPlaceTool>();
-		painterTool = rotateToolGo.GetComponent<EntityPainterTool>();
+		placeTool = placeToolGo.GetComponent<EntityPlaceTool>();
+		painterTool = paintToolGo.GetComponent<EntityPainterTool>();
+		painter3DTool = paint3DToolGo.GetComponent<EntityPainter3DTool>();
 		destroyTool = destroyToolGo.GetComponent<EntityDestroyTool>();
 
 		Root.instance.notificationManager.addEntitySelectionListener(this);
@@ -87,6 +90,7 @@ public class EntityToolManager : MonoBehaviour, IEntityInstanceSelectionListener
 		m_toolBar.Add(moveToolGo);
 		m_toolBar.Add(rotateToolGo);
 		m_toolBar.Add(paintToolGo);
+		m_toolBar.Add(paint3DToolGo);
 		m_toolBar.Add(destroyToolGo);
 	}
 
